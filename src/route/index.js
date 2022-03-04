@@ -1,8 +1,8 @@
-import homeRouter from "./home"
+import authRouter from "./auth"
 
 
 
 let configRoute = (app) =>{
-   app.use("/", homeRouter);
+   app.use("/v1/api/auth", authRouter);
 }
 module.exports = configRoute;
