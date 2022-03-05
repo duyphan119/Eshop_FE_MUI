@@ -10,7 +10,7 @@ module.exports = {
       userId: {
         type: Sequelize.STRING
       },
-      productId: {
+      sizeId: {
         type: Sequelize.STRING
       },
       quantity: {
