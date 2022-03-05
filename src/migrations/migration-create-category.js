@@ -16,6 +16,12 @@ module.exports = {
       slug: {
         type: Sequelize.STRING
       },
+      groupId: {
+        type: Sequelize.STRING
+      },
+      buyerTypeId: {
+        type: Sequelize.STRING
+      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE

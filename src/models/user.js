@@ -20,8 +20,9 @@ module.exports = (sequelize, DataTypes) => {
     hash: DataTypes.STRING,
     birthday: DataTypes.DATE,
     gender: DataTypes.BOOLEAN,
-    isAdmin: DataTypes.BOOLEAN,
     avatar: DataTypes.STRING,
+    phoneNumber: DataTypes.STRING,
+    isAdmin: DataTypes.BOOLEAN,
   }, {
     sequelize,
     modelName: 'User',
