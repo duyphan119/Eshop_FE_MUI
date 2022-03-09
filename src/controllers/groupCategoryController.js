@@ -1,37 +1,34 @@
 import db from "../models";
 import slugify from "slugify";
-const categoryController = {
+const groupCategoryController = {
   create: async (req, res) => {
     try {
-      const { name, description, groupId, buyerTypeId } = req.body;
+      const { name, description } = req.body;
       const id = (new Date().getTime() * Math.random()) / Math.random();
       const slug = slugify(name);
-      const savedCategory = await db.Category.create({
+      const savedGroupCategory = await db.GroupCategory.create({
         id,
         name,
         description,
         slug,
-        groupId,
-        buyerTypeId,
       });
-      res.status(200).json(savedCategory);
+      res.status(200).json(savedGroupCategory);
     } catch (error) {
       return res.status(500).json(error);
     }
   },
   getAll: async (req, res) => {
     try {
-      const categories = await db.Category.findAll();
-      res.status(200).json(categories);
+      const groupCategories = await db.GroupCategory.findAll();
+      res.status(200).json(groupCategories);
     } catch (error) {
-      console.log(error)
       return res.status(500).json(error);
     }
   },
   getById: async (req, res) => {
     try {
-      const { categoryId } = req.params;
-      const category = await db.Category.findByPk(categoryId);
+      const { groupCategoryId } = req.params;
+      const category = await db.GroupCategory.findByPk(groupCategoryId);
       res.status(200).json(category);
     } catch (error) {
       return res.status(500).json(error);
@@ -39,45 +36,43 @@ const categoryController = {
   },
   getBySlug: async (req, res) => {
     try {
-      const { categorySlug } = req.params;
-      const category = await db.Category.findOne({
+      const { groupCategorySlug } = req.params;
+      const groupCategory = await db.GroupCategory.findOne({
         where: {
-          slug: categorySlug,
+          slug: groupCategorySlug,
         },
       });
-      res.status(200).json(category);
+      res.status(200).json(groupCategory);
     } catch (error) {
       return res.status(500).json(error);
     }
   },
   update: async (req, res) => {
     try {
-      const { categoryId } = req.params;
-      const { name, description, groupId, buyerTypeId } = req.body;
+      const { groupCategoryId } = req.params;
+      const { name, description } = req.body;
       const slug = slugify(name);
-      await db.Category.update(
+      await db.GroupCategory.update(
         {
           name,
           description,
           slug,
-          groupId,
-          buyerTypeId,
         },
-        { where: { id: categoryId } }
+        { where: { id: groupCategoryId } }
       );
-      res.status(200).json("This category is updated");
+      res.status(200).json("This group category is updated");
     } catch (error) {
       return res.status(500).json(error);
     }
   },
   delete: async (req, res) => {
     try {
-      const { categoryId } = req.params;
-      await db.Category.destroy({ where: { id: categoryId } });
-      res.status(200).json("This category is deleted");
+      const { groupCategoryId } = req.params;
+      await db.GroupCategory.destroy({ where: { id: groupCategoryId } });
+      res.status(200).json("This group category is deleted");
     } catch (error) {
       return res.status(500).json(error);
     }
   },
 };
-module.exports = categoryController;
+module.exports = groupCategoryController;

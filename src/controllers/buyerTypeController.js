@@ -1,37 +1,34 @@
 import db from "../models";
 import slugify from "slugify";
-const categoryController = {
+const buyerTypeController = {
   create: async (req, res) => {
     try {
-      const { name, description, groupId, buyerTypeId } = req.body;
+      const { name, description } = req.body;
       const id = (new Date().getTime() * Math.random()) / Math.random();
       const slug = slugify(name);
-      const savedCategory = await db.Category.create({
+      const savedBuyerType = await db.BuyerType.create({
         id,
         name,
         description,
         slug,
-        groupId,
-        buyerTypeId,
       });
-      res.status(200).json(savedCategory);
+      res.status(200).json(savedBuyerType);
     } catch (error) {
       return res.status(500).json(error);
     }
   },
   getAll: async (req, res) => {
     try {
-      const categories = await db.Category.findAll();
-      res.status(200).json(categories);
+      const buyerTypes = await db.BuyerType.findAll();
+      res.status(200).json(buyerTypes);
     } catch (error) {
-      console.log(error)
       return res.status(500).json(error);
     }
   },
   getById: async (req, res) => {
     try {
-      const { categoryId } = req.params;
-      const category = await db.Category.findByPk(categoryId);
+      const { buyerTypeId } = req.params;
+      const category = await db.BuyerType.findByPk(buyerTypeId);
       res.status(200).json(category);
     } catch (error) {
       return res.status(500).json(error);
@@ -39,45 +36,43 @@ const categoryController = {
   },
   getBySlug: async (req, res) => {
     try {
-      const { categorySlug } = req.params;
-      const category = await db.Category.findOne({
+      const { buyerTypeSlug } = req.params;
+      const buyerType = await db.BuyerType.findOne({
         where: {
-          slug: categorySlug,
+          slug: buyerTypeSlug,
         },
       });
-      res.status(200).json(category);
+      res.status(200).json(buyerType);
     } catch (error) {
       return res.status(500).json(error);
     }
   },
   update: async (req, res) => {
     try {
-      const { categoryId } = req.params;
-      const { name, description, groupId, buyerTypeId } = req.body;
+      const { buyerTypeId } = req.params;
+      const { name, description } = req.body;
       const slug = slugify(name);
-      await db.Category.update(
+      await db.BuyerType.update(
         {
           name,
           description,
           slug,
-          groupId,
-          buyerTypeId,
         },
-        { where: { id: categoryId } }
+        { where: { id: buyerTypeId } }
       );
-      res.status(200).json("This category is updated");
+      res.status(200).json("This group category is updated");
     } catch (error) {
       return res.status(500).json(error);
     }
   },
   delete: async (req, res) => {
     try {
-      const { categoryId } = req.params;
-      await db.Category.destroy({ where: { id: categoryId } });
-      res.status(200).json("This category is deleted");
+      const { buyerTypeId } = req.params;
+      await db.BuyerType.destroy({ where: { id: buyerTypeId } });
+      res.status(200).json("This group category is deleted");
     } catch (error) {
       return res.status(500).json(error);
     }
   },
 };
-module.exports = categoryController;
+module.exports = buyerTypeController;

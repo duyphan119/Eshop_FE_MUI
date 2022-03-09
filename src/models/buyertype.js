@@ -9,10 +9,18 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
+      BuyerType.hasMany(models.Category, {
+        foreignKey: "id"
+      })
     }
   }
   BuyerType.init(
     {
+      id: {
+        type: DataTypes.STRING,
+        primaryKey: true,
+        allowNull: false,
+      },
       name: DataTypes.STRING,
       description: DataTypes.STRING,
       slug: DataTypes.STRING,

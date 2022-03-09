@@ -17,7 +17,7 @@ const sequelize = new Sequelize("test-my-shop", "root", null, {
   logging: false,
 });
 
-let connectDB = async () => {
+const connectDB = async () => {
   try {
     await sequelize.authenticate();
     console.log("Connection has been established successfully.");
@@ -26,4 +26,4 @@ let connectDB = async () => {
   }
 };
 
-module.exports = connectDB;
+module.exports = {connectDB, sequelize};
