@@ -1,5 +1,7 @@
 import db from "../models";
 import slugify from "slugify";
+import { QueryTypes } from "@sequelize/core";
+import { sequelize } from "../config/connectDB";
 const categoryController = {
   create: async (req, res) => {
     try {
@@ -21,10 +23,11 @@ const categoryController = {
   },
   getAll: async (req, res) => {
     try {
+      
       const categories = await db.Category.findAll();
       res.status(200).json(categories);
     } catch (error) {
-      console.log(error)
+      console.log(error);
       return res.status(500).json(error);
     }
   },

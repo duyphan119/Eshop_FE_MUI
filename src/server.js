@@ -6,6 +6,7 @@ import cors from "cors";
 import { connectDB } from "./config/connectDB";
 import passport from "passport";
 import cookieSession from "cookie-session";
+import path from "path";
 dotenv.config();
 
 let app = express();
@@ -30,6 +31,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(passport.initialize());
 app.use(passport.session());
+app.use(express.static(path.join(__dirname, "/public")));
 // Config route
 configRoute(app);
 

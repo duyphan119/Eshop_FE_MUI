@@ -24,6 +24,23 @@ const productController = {
       res.status(500).json(error);
     }
   },
+  getByCategorySlug: async (req, res) => {
+    try {
+      const { categorySlug } = req.params;
+      const products = await sequelize.query(
+        `select p.id, p.name, p.oldPrice, p.newPrice, p.color, p.colorCode, p.slug, p.createdAt, p.updatedAt, 
+        p.description, p.categoryId
+        from products p, categories c, groupcategories g, buyertypes b
+        where p.categoryId = c.id and c.groupCategoryId = g.id and g.buyerTypeId = b.id and
+        (c.slug = '${categorySlug}' or g.slug = '${categorySlug}' or b.slug = '${categorySlug}')`,
+        { type: QueryTypes.SELECT, raw: true }
+      );
+      res.status(200).json(products);
+    } catch (error) {
+      console.log(error);
+      res.status(500).json(error);
+    }
+  },
   getBySlug: async (req, res) => {
     try {
       const { productSlug } = req.params;

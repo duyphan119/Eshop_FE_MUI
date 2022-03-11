@@ -8,6 +8,8 @@ router.post("/login", authController.login);
 router.post("/register", authController.register);
 router.post("/logout", authController.logout);
 router.post("/refresh", authController.refreshToken);
+router.post("/verify-email", authController.verifyEmail);
+router.post("/send-email", authController.getAuthenticatedEmailCode);
 router.get(
   "/facebook",
   passport.authenticate("facebook", {
@@ -20,11 +22,13 @@ router.get(
     ],
   })
 );
-router.get("/facebook/success", (req, res) => {
-  console.log(req);
-  res.status(200).json();
-
-});
+router.get(
+  "/google",
+  passport.authenticate("google", {
+    scope: ["email", "profile"],
+  })
+);
+router.get("/oauth/success", authController.oauthSuccess);
 router.get("/login/failed", (req, res) => {
   req.logOut();
   res.status(200).json();
@@ -37,7 +41,18 @@ router.get(
   "/facebook/callback",
   passport.authenticate("facebook", {
     failureRedirect: "/login/failed",
-    successRedirect: "/v1/api/auth/facebook/success",
+    successRedirect: "http://localhost:3000/oauth/success",
+  }),
+  function (req, res) {
+    // Successful authentication, redirect home.
+    res.redirect("/");
+  }
+);
+router.get(
+  "/google/callback",
+  passport.authenticate("google", {
+    failureRedirect: "/login/failed",
+    successRedirect: "http://localhost:3000/oauth/success",
   }),
   function (req, res) {
     // Successful authentication, redirect home.

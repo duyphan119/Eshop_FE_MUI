@@ -33,10 +33,10 @@ const userController = {
         hash,
         firstName,
         lastName,
-        avatar,
-        gender,
-        birthday,
-        phoneNumber,
+        avatar: avatar === "" ? null : avatar,
+        gender: gender === "" ? null : gender,
+        birthday: birthday === "" ? null : birthday,
+        phoneNumber: phoneNumber === "" ? null : phoneNumber,
         isAdmin: isAdmin ? isAdmin : false,
       });
       res.status(200).json("New user is created");
@@ -63,6 +63,7 @@ const userController = {
   },
   update: async (req, res) => {
     try {
+      console.log(req.body)
       const {
         email,
         password,

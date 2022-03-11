@@ -1,5 +1,7 @@
 import db from "../models";
 import slugify from "slugify";
+import { QueryTypes } from "@sequelize/core";
+import { sequelize } from "../config/connectDB";
 const buyerTypeController = {
   create: async (req, res) => {
     try {
@@ -18,10 +20,38 @@ const buyerTypeController = {
     }
   },
   getAll: async (req, res) => {
+    const { all } = req.query;
     try {
-      const buyerTypes = await db.BuyerType.findAll();
+      let buyerTypes = await db.BuyerType.findAll({ raw: true });
+      if (all) {
+        for (let i = 0; i < buyerTypes.length; i++) {
+          let groups = await sequelize.query(
+            `select g.id, g.name, g.slug, g.description, g.createdAt, g.updatedAt, g.buyerTypeId
+            from groupcategories g, buyertypes b where   g.buyerTypeId = '${buyerTypes[i].id}' 
+            and g.buyerTypeId=b.id`,
+            { type: QueryTypes.SELECT, raw: true }
+          );
+          for (let j = 0; j < groups.length; j++) {
+            let categories = await sequelize.query(
+              `select c.id, c.name, c.slug, c.description, c.createdAt, c.updatedAt, c.groupCategoryId
+              from groupcategories g, categories c  where  c.groupCategoryId = '${groups[j].id}' 
+              and c.groupCategoryId=g.id`,
+              { type: QueryTypes.SELECT, raw: true }
+            );
+            groups[j] = {
+              ...groups[j],
+              categories,
+            };
+          }
+          buyerTypes[i] = {
+            ...buyerTypes[i],
+            groups: groups,
+          };
+        }
+      }
       res.status(200).json(buyerTypes);
     } catch (error) {
+      console.log(error);
       return res.status(500).json(error);
     }
   },

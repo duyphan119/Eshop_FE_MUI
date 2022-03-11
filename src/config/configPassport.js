@@ -1,5 +1,6 @@
 import passport from "passport";
-import passportFacebook from"passport-facebook"
+import passportFacebook from "passport-facebook";
+import passportGoogle from "passport-google-oauth20";
 import dotenv from "dotenv";
 dotenv.config();
 passport.use(
@@ -8,13 +9,44 @@ passport.use(
       clientID: process.env.FACEBOOK_APP_ID,
       clientSecret: process.env.FACEBOOK_APP_SECRET,
       callbackURL: "/v1/api/auth/facebook/callback",
+      profileFields: [
+        "id",
+        "displayName",
+        "first_name",
+        "last_name",
+        "picture",
+        "gender",
+        "emails",
+        "birthday",
+      ],
     },
     function (accessToken, refreshToken, profile, cb) {
-      console.log(profile);
       cb(null, profile);
       // User.findOrCreate({ facebookId: profile.id }, function (err, user) {
       //   return cb(err, user);
       // });
+    }
+  )
+);
+passport.use(
+  new passportGoogle.Strategy(
+    {
+      clientID: process.env.GOOGLE_CLIENT_ID,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+      callbackURL: "/v1/api/auth/google/callback",
+      profileFields: [
+        "id",
+        "displayName",
+        "first_name",
+        "last_name",
+        "picture",
+        "gender",
+        "emails",
+        "birthday",
+      ],
+    },
+    function (accessToken, refreshToken, profile, cb) {
+      cb(null, profile);
     }
   )
 );
