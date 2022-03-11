@@ -1,9 +1,12 @@
 @import "~bootstrap/scss/bootstrap";
 :root {
-  --main-color: rgb(36, 68, 143);
+  --main-color: #fcaf17;
 }
 html {
   font-size: 62.5%;
+}
+* {
+  box-sizing: border-box;
 }
 a {
   text-decoration: none;
@@ -18,145 +21,77 @@ ul {
   padding: 0;
   margin: 0;
 }
-.header {
+$mobile: 768px;
+$tablet: 1240px;
+button {
+  cursor: pointer;
+}
+header{
+  position: relative;
+
+}
+@mixin animate($animation, $duration, $method, $times) {
+  animation: $animation $duration $method $times;
+}
+@mixin keyframes($name) {
+  @keyframes #{$name} {
+    @content;
+  }
+}
+@mixin mobile {
+  @media screen and (max-width: $mobile) {
+    @content;
+  }
+}
+@mixin tablet {
+  @media screen and (max-width: $tablet) and (min-width: $mobile) {
+    @content;
+  }
+}
+.form-title {
   color: var(--main-color);
-  align-items: center;
-  padding: 10px 0;
-  .header__left {
-    form {
-      width: 80%;
-      display: flex;
-      align-items: center;
-      padding: 4px;
-      background-color: white;
-      color: var(--main-color);
-      border: 1px solid var(--main-color);
-      input {
-        flex: 1;
-        padding: 1px;
-        border: none;
-        outline: none;
-      }
-      svg {
-        font-size: 1.6rem;
-      }
-    }
-  }
-  .header__middle {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    a {
-      font-size: 4rem;
-      font-weight: bold;
-    }
-  }
-  .header__right {
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
-    .header__right-icons {
-      display: flex;
-      align-items: center;
-      .header__right-icon {
-        margin-left: 10px;
-        a {
-          position: relative;
-          font-size: 3rem;
-          span {
-            position: absolute;
-            left: 50%;
-            top: 55%;
-            transform: translate(-50%, 0);
-            transition: all 0.2s linear;
-            opacity: 1;
-            font-size: 1rem;
-          }
-          &:hover {
-            span {
-              transform: translate(-50%, -100%);
-              opacity: 0;
-            }
-          }
-        }
-      }
-    }
-  }
+  font-size: 3rem;
+  text-align: center;
+  margin-bottom: 20px;
 }
-
-.banner {
-  .banner__img {
+.form-group {
+  padding: 5px 0;
+  .form-label {
+    display: block;
+    font-size: 1.6rem;
+    margin-left: 1px;
+  }
+  .form-control {
+    font-size: 1.6rem;
+    padding: 5px;
+    outline: none;
     width: 100%;
-    position: relative;
-    img {
-      width: 100%;
+    border: 2px solid gray;
+    &:focus {
+      border: 2px solid var(--main-color);
+      box-shadow: unset;
     }
-    a {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      background-color: white;
-      color: var(--main-color);
-      padding: 10px 20px;
-      font-size: 1.6rem;
-      min-width: 120px;
-      cursor: pointer;
-      border: 1px solid white;
-      &:hover {
-        background-color: var(--main-color);
-        color: white;
-      }
-    }
+  }
+
+  .form-error {
+    color: red;
+    font-size: 1.2rem;
   }
 }
-
-.products {
+.form-submit {
+  border: 1px solid var(--main-color);
+  background-color: var(--main-color);
+  color: white;
   font-size: 1.6rem;
-  margin-top: 20px;
-  .products__title {
-    font-weight: bold;
-    font-size: 3rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+  padding: 10px;
+  border-radius: 5px;
+  display: block;
+  min-width: 120px;
+  margin: 10px auto 0 auto;
+  &:hover {
+    opacity: 0.8;
   }
-  .products__item {
-    a {
-      width: 100%;
-      img {
-        width: 100%;
-      }
-    }
-    .products__item-name {
-      a {
-        font-size: 1.8rem;
-      }
-    }
-    .products__item-colors {
-      display: flex;
-      align-items: center;
-      margin-top: 6px;
-      .products__item-color {
-        width: 14px;
-        height: 14px;
-        border-radius: 50%;
-        margin-right: 6px;
-      }
-    }
-  }
-  .products__view-more {
-    margin-top: 30px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    a {
-      padding: 5px 20px;
-      background-color: var(--main-color);
-      color: white;
-      cursor: pointer;
-      width: 150px;
-      text-align: center;
-    }
+  &.full-width {
+    width: 100%;
   }
 }

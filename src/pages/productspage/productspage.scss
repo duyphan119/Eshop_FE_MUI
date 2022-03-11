@@ -1,0 +1,11 @@
+.products-page__container {
+  .products-page {
+    .products-filter {
+      max-width: 20%;
+    }
+    .card-product {
+      max-width: unset !important;
+      flex: unset !important;
+    }
+  }
+}

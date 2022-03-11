@@ -1,0 +1,39 @@
+.card-product{
+   max-width: 20% !important;
+   flex:0 0 20% !important;
+   margin: 8px 0;
+   .card-product__img{
+      display: block;
+      overflow: hidden;
+      img{
+         width: 100%;
+         object-fit: cover;
+         max-height: 350px;
+         &:hover{
+            transform: scale(1.1);
+         }
+      }
+   }
+   .card-product__name{
+      display: block;
+      margin-top:4px;
+      font-size: 1.4rem;
+      font-weight: bold;
+      &:hover{
+         color:var(--main-color);
+      }
+   }
+   .card-product__price{
+      display: flex;
+      font-size: 1.4rem;
+      font-weight: bold;
+      .card-product__price-new{
+         color:var(--main-color);
+      }
+      .card-product__price-old{
+         color:gray;
+         text-decoration: line-through;
+         margin-left: 10px;
+      }
+   }
+}

@@ -1,0 +1,42 @@
+.banner-slider {
+  width: 100%;
+  overflow: hidden;
+  position: relative;
+  .banner-slider__wrapper {
+    display: flex;
+    transition: transform 0.5s ease;
+    .banner-slider__list {
+      display: flex;
+      .banner-slider__item {
+        width: 100vw;
+        .banner-slider__item-link {
+          width: 100%;
+          img {
+            width: 100%;
+            max-height: 470px;
+            object-fit: cover;
+          }
+        }
+      }
+    }
+  }
+  .banner-slider__dots {
+    position: absolute;
+    left: 50%;
+    bottom: 10px;
+    transform: translateX(-50%);
+    display: flex;
+    align-items: center;
+    .banner-slider__dot {
+      width: 10px;
+      height: 10px;
+      border: 1px solid white;
+      background-color: white;
+      border-radius: 50%;
+      margin: 0 5px;
+      &.active {
+        background-color: var(--main-color);
+      }
+    }
+  }
+}

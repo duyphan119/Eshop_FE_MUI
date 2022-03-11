@@ -1,0 +1,184 @@
+@import "../../App.scss";
+.my-navbar__container {
+  .my-navbar {
+    font-size: 1.4rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    .my-navbar__left {
+      cursor: pointer;
+    }
+    .my-navbar__middle {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex: 1;
+      margin: 0 20px;
+      .my-navbar__middle-categories {
+        @include tablet {
+          display: none;
+        }
+        @include mobile {
+          display: none;
+        }
+        font-size: 1.8rem;
+        display: flex;
+        .my-navbar__middle-category {
+          position: relative;
+          &.has-child {
+            position: static !important;
+          }
+          &:hover {
+            .notificationcategories {
+              display: block;
+            }
+          }
+          .my-navbar__middle-category-link {
+            padding: 0 9px;
+            position: relative;
+            display: block;
+            &::after {
+              content: "";
+              position: absolute;
+              bottom: 0;
+              left: 0;
+              width: 0%;
+              height: 2px;
+              background-color: var(--main-color);
+            }
+            &:hover {
+              &::after {
+                width: 100%;
+                @include keyframes(sprint) {
+                  0% {
+                    width: 0;
+                  }
+                  100% {
+                    width: 100%;
+                  }
+                }
+                @include animate(sprint, 0.1s, linear, 1);
+              }
+            }
+          }
+        }
+      }
+      .my-navbar__middle-form {
+        display: flex;
+        border-radius: 5px;
+        height: 30px;
+        .my-navbar__middle-form-input {
+          padding: 0 4px;
+          border-top-left-radius: 5px;
+          border-bottom-left-radius: 5px;
+          border: 0.5px solid lightgray;
+          width: 150px;
+          outline: none;
+        }
+        .my-navbar__middle-form-icon {
+          background-color: var(--main-color);
+          border: 1px solid var(--main-color);
+          border-top-right-radius: 5px;
+          border-bottom-right-radius: 5px;
+          color: white;
+          width: 48px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-size: 2rem;
+          cursor: pointer;
+        }
+      }
+    }
+    .my-navbar__right {
+      .my-navbar__right-icons {
+        display: flex;
+        align-items: center;
+        .my-navbar__right-icon {
+          margin-left: 15px;
+          &:first-child {
+            .my-navbar__right-icon-link {
+              position: relative;
+              svg {
+                font-size: 2.8rem;
+              }
+              &:hover {
+                .my-navbar__right-icon-link-notification {
+                  display: block;
+                  transform: scale(1);
+                }
+              }
+              .my-navbar__right-icon-link-notification {
+                position: absolute;
+                top: calc(100% + 10px);
+                right: 0;
+                z-index: 1;
+                background-color: white;
+                display: none;
+                padding: 5px 10px;
+                transform: scale(0);
+                transform-origin: 90% 0 0;
+                @include keyframes(notification) {
+                  from {
+                    display: none;
+                    transform: scale(0);
+                  }
+                  to {
+                    transform: scale(1);
+                    display: block;
+                  }
+                }
+                @include animate(notification, 0.5s, ease, 1);
+                &::before {
+                  content: "";
+                  position: absolute;
+                  top: -10px;
+                  left: 0;
+                  width: 100%;
+                  height: 10px;
+                }
+                a {
+                  padding: 5px 0;
+                  display: block;
+                  white-space: nowrap;
+                  &:hover {
+                    color: var(--main-color);
+                  }
+                }
+                div {
+                  padding: 5px 0;
+                  cursor: pointer;
+                  &:hover {
+                    color: var(--main-color);
+                  }
+                }
+              }
+            }
+          }
+          .my-navbar__right-icon-link {
+            position: relative;
+            svg {
+              font-size: 2.2rem;
+            }
+            span {
+              position: absolute;
+              top: -5px;
+              right: -5px;
+              font-size: 1.2rem;
+              background-color: var(--main-color);
+              color: white;
+              width: 16px;
+              height: 16px;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              border-radius: 50%;
+            }
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,22 @@
+.services{
+   .service{
+      padding: 20px 0;
+      .service__link{
+         display: flex;
+         align-items: center;
+         font-size: 1.3rem;
+         .service__info{
+            margin-left: 10px;
+            .service__title{
+               font-size: 1.4rem;
+            }
+            .service__detail{
+               
+               span{
+                  color:var(--main-color);
+               }
+            }
+         }
+      }
+   }
+}

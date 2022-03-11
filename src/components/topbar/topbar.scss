@@ -1,0 +1,29 @@
+.top-bar {
+  display: flex;
+  align-items: center;
+  padding: 5px 0;
+  .top-bar__item {
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+    margin-right: 10px;
+    .top-bar__item-link {
+      svg {
+        font-size: 2rem;
+        margin-right: 5px;
+        transform: translateY(-2px);
+      }
+      span {
+        font-weight: 600;
+        color: var(--main-color);
+      }
+      .tel-free{
+         background-color: #ee4d2d;
+         color:white;
+         padding: 1px 5px;
+         border-radius: 10px;
+         margin-left: 5px;
+      }
+    }
+  }
+}

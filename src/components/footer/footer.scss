@@ -1,0 +1,98 @@
+.footer {
+  background-color: #1e1c56;
+  padding: 50px 0 20px 0;
+  color: white;
+  font-size: 1.4rem;
+  .footer__email-register {
+    .footer__form-title {
+      margin-top: 20px;
+    }
+    .footer__form {
+      background-color: #626189;
+      border: 1px solid white;
+      display: flex;
+      margin-top: 5px;
+      border-radius: 5px;
+      overflow: hidden;
+      input {
+        padding: 16px 14px;
+        flex: 1;
+        border: none;
+        outline: none;
+        background-color: inherit;
+        color: white;
+        &::placeholder {
+          color: white;
+          font-size: 1.6rem;
+        }
+      }
+      button {
+        display: block;
+        border: 1px solid white;
+        color: var(--main-color);
+        padding: 0 24px;
+        font-size: 1.6rem;
+      }
+    }
+  }
+  .footer__social {
+    display: flex;
+    margin-top: 20px;
+    .footer__social-link {
+      display: block;
+      width: 32px;
+      height: 32px;
+      margin-right: 4px;
+      img {
+        height: 32px;
+        width: 32px;
+      }
+    }
+  }
+  .footer__title {
+    margin-bottom: 10px;
+  }
+  .footer__supports,
+  .footer__pages {
+    .footer__support,
+    .footer__page {
+      display: block;
+      margin: 10px 0;
+      &:hover {
+        color: var(--main-color);
+      }
+    }
+  }
+  .footer__contacts {
+    .footer__address,
+    .footer__phone,
+    .footer__mail,
+    .footer__vat {
+      display: flex;
+      align-items: center;
+      margin-bottom: 10px;
+      img {
+        margin-right: 10px;
+      }
+      a {
+        &:hover {
+          color: var(--main-color);
+        }
+      }
+    }
+    .footer__phone {
+      div {
+        a {
+          display: block;
+        }
+      }
+    }
+  }
+  .footer__copyright {
+    text-align: center;
+    font-size: 1.2rem;
+    span {
+      color: var(--main-color);
+    }
+  }
+}

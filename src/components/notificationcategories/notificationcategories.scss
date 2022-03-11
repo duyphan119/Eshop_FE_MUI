@@ -1,0 +1,41 @@
+.notificationcategories {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background-color: white;
+  width: 100%;
+  min-height: 120px;
+  z-index: 2;
+  display: none;
+  padding: 20px;
+  &::before {
+    content: "";
+    position: absolute;
+    top: -12px;
+    left: 0;
+    width: 100%;
+    height: 12px;
+  }
+  .notificationcategories__groups {
+    display: flex;
+    .notificationcategories__group {
+      display: flex;
+      flex-direction: column;
+      margin-right: 100px;
+      .notificationcategories__group-name {
+        font-weight: bold;
+        margin-bottom: 5px;
+        &:hover {
+          color: var(--main-color);
+        }
+      }
+      .notificationcategories__group-item {
+        font-size: 1.4rem;
+        margin: 5px 0;
+        &:hover {
+          color: var(--main-color);
+        }
+      }
+    }
+  }
+}
