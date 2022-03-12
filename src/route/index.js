@@ -7,6 +7,7 @@ import sizeRouter from "./size";
 import imagesProductRouter from "./imagesProduct";
 import productRouter from "./product";
 import fileRouter from "./file";
+import cartRouter from "./cart";
 
 const configRoute = (app) => {
   app.use("/v1/api/auth", authRouter);
@@ -18,5 +19,6 @@ const configRoute = (app) => {
   app.use("/v1/api/images-product", imagesProductRouter);
   app.use("/v1/api/product", productRouter);
   app.use("/v1/api/file", fileRouter);
+  app.use("/v1/api/cart", cartRouter);
 };
 module.exports = configRoute;
