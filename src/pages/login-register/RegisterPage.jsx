@@ -1,16 +1,14 @@
-import Container from "react-bootstrap/esm/Container";
-import { useDispatch, useSelector } from "react-redux";
-import { Navigate, useNavigate } from "react-router-dom";
-import { Link } from "react-router-dom";
-import Input from "../../components/custom/Input";
 import { useFormik } from "formik";
-import * as Yup from "yup";
-import "./loginregister.scss";
-import { apiGetCodeVerifyEmail, apiRegister } from "../../api/apiAuth";
-import RadioButton from "../../components/custom/RadioButton";
+import { useEffect, useRef, useState } from "react";
+import Container from "react-bootstrap/esm/Container";
 import { AiOutlineGoogle } from "react-icons/ai";
 import { FaFacebookF } from "react-icons/fa";
-import { useEffect, useRef, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { Link, Navigate, useNavigate } from "react-router-dom";
+import * as Yup from "yup";
+import { apiGetCodeVerifyEmail, apiRegister } from "../../api/apiAuth";
+import Input from "../../components/custom/Input";
+import "./loginregister.scss";
 const RegisterPage = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -85,7 +83,7 @@ const RegisterPage = () => {
     <div className="login-register">
       <Container>
         <form onSubmit={formik.handleSubmit}>
-          <div className="login-register__title">ĐĂNG KÝ</div>
+          <div className="form-title">ĐĂNG KÝ</div>
           {codeVerifyEmail ? (
             <>
               <div>Còn: {(codeVerifyEmail.expiresIn - duration) / 1000}s</div>
@@ -177,7 +175,7 @@ const RegisterPage = () => {
                   padding: "0 1px",
                 }}
               >
-                <Link to={`/`} style={{ fontSize: "1.4rem" }}>
+                <Link to={`/login`} style={{ fontSize: "1.4rem" }}>
                   Đăng nhập
                 </Link>
               </div>
@@ -190,7 +188,7 @@ const RegisterPage = () => {
               </button>
             </>
           ) : (
-            <button className="login-register__submit full-width" type="submit">
+            <button className="form-submit full-width" type="submit">
               Tiếp theo
             </button>
           )}

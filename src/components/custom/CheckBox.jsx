@@ -7,6 +7,9 @@ const CheckBox = ({ fields, label, value, onChange, onBlur }) => {
         style={{
           marginRight: "2px",
           marginTop: "10px",
+          width:"16px",
+          height:"16px",
+          transform:"translateY(1px)"
         }}
         {...fields}
         type="checkbox"

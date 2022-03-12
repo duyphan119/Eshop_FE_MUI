@@ -34,7 +34,7 @@ const LoginPage = () => {
     <div className="login-register">
       <Container>
         <form onSubmit={handleSubmit}>
-          <div className="login-register__title">ĐĂNG NHẬP</div>
+          <div className="form-title">ĐĂNG NHẬP</div>
           <Input
             fields={{
               type: "text",
@@ -71,7 +71,7 @@ const LoginPage = () => {
             <Link to={`/`} style={{ fontSize: "1.2rem" }}>
               Quên mật khẩu?
             </Link>
-            <Link to={`/`} style={{ fontSize: "1.2rem" }}>
+            <Link to={`/register`} style={{ fontSize: "1.2rem" }}>
               Đăng ký
             </Link>
           </div>

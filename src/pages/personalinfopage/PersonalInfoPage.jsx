@@ -14,15 +14,14 @@ import "./personalinfopage.scss";
 import { formatDate } from "../../utils";
 const PersonalInfoPage = () => {
   const user = useSelector((state) => state.auth.currentUser);
-
   const dispatch = useDispatch();
   const formik = useFormik({
     initialValues: {
       firstName: user.firstName ? user.firstName : "",
       lastName: user.lastName ? user.lastName : "",
-      gender: user.gender ? user.gender : "",
+      gender: user.gender === null ? "" : user.gender,
       phoneNumber: user.phoneNumber ? user.phoneNumber : "",
-      birthday: user.birthday ? formatDate("yyyy-MM-dd",user.birthday) : "",
+      birthday: user.birthday ? formatDate("yyyy-MM-dd", user.birthday) : "",
       avatar: user.avatar ? user.avatar : "",
     },
     onSubmit: (values) => {
@@ -64,13 +63,15 @@ const PersonalInfoPage = () => {
           <ul>
             <li className="personal-info__birthday">
               <span>Ngày sinh:</span>{" "}
-              {`${user.birthday ? formatDate("dd-MM-yyyy",user.birthday) : ""}`}
+              {`${
+                user.birthday ? formatDate("dd-MM-yyyy", user.birthday) : ""
+              }`}
             </li>
             <li className="personal-info__gender">
-              <span>Giới tính:</span>Nam
+              <span>Giới tính:</span>{user.gender === null ? "" : (user.gender ? "Nam" : "Nữ")}
             </li>
             <li className="personal-info__phone">
-              <span>Số điên thoại:</span>0385981196
+              <span>Số điên thoại:</span>{user.phoneNumber === null ? "" : user.phoneNumber}
             </li>
           </ul>
         </Col>
@@ -159,11 +160,11 @@ const PersonalInfoPage = () => {
                           text: "Chọn giới tính",
                         },
                         {
-                          value: "male",
+                          value: 1,
                           text: "Nam",
                         },
                         {
-                          value: "female",
+                          value: 0,
                           text: "Nữ",
                         },
                       ]}

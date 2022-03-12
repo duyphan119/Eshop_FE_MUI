@@ -14,6 +14,7 @@ import NotificationCategories from "../notificationcategories/NotificationCatego
 const Navbar = () => {
   const user = useSelector((state) => state.auth.currentUser);
   const buyerTypes = useSelector((state) => state.buyerType.list);
+  const cart = useSelector((state) => state.cart.list);
   const dispatch = useDispatch();
   const handleLogout = () => {
     apiLogout(dispatch);
@@ -46,10 +47,16 @@ const Navbar = () => {
                     className="my-navbar__middle-category has-child"
                     key={item.id}
                   >
-                    <Link to={`/${item.slug}`} className="my-navbar__middle-category-link">
+                    <Link
+                      to={`/${item.slug}`}
+                      className="my-navbar__middle-category-link"
+                    >
                       {item.name.toUpperCase()}
                     </Link>
-                    <NotificationCategories groups={item.groups} buyerType={item} />
+                    <NotificationCategories
+                      groups={item.groups}
+                      buyerType={item}
+                    />
                   </li>
                 );
               })}
@@ -113,9 +120,9 @@ const Navbar = () => {
                 </Link>
               </li>
               <li className="my-navbar__right-icon">
-                <Link to={`/`} className="my-navbar__right-icon-link">
+                <Link to={`/cart`} className="my-navbar__right-icon-link">
                   <BsBag />
-                  <span>1</span>
+                  {cart && (cart.length === 0) ? "" : <span>{cart.length}</span>}
                 </Link>
               </li>
             </ul>

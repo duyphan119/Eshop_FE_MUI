@@ -1,6 +1,7 @@
 import React, { useRef, useState } from "react";
 import Col from "react-bootstrap/esm/Col";
 import { BsChevronDown, BsChevronUp } from "react-icons/bs";
+import CheckBox from "../custom/CheckBox";
 import "./productfilter.scss";
 const ProductsFilter = () => {
   const color = useRef();
@@ -23,6 +24,22 @@ const ProductsFilter = () => {
   });
   const [menuSizes, setMenuSizes] = useState({
     sizes: ["XS", "S", "M", "L", "XL", "2XL", "3XL", "4XL"],
+    isShowing: true,
+  });
+  const [menuRangePrices, setMenuRangePrices] = useState({
+    rangePrices: [
+      { text: "Nhỏ hơn 100,000đ", min: null, max: 100000 },
+      {
+        text: "Từ 100,000đ - 300,000đ",
+        min: 100000,
+        max: 300000,
+      },
+      {
+        text: "Từ 300,000đ - 500,000đ",
+        min: 300000,
+        max: 500000,
+      },
+    ],
     isShowing: true,
   });
   const handleMouseEnter = (target, _color) => {
@@ -60,6 +77,21 @@ const ProductsFilter = () => {
           key={item}
         >
           {item}
+        </div>
+      );
+    });
+  };
+  const handleShowRangePrices = () => {
+    return menuRangePrices.rangePrices.map((item, index) => {
+      return (
+        <div
+          key={item.text}
+          className="products-filter__menu-item products-filter__menu-range-range-price"
+        >
+          <CheckBox
+            fields={{ name: "rangePrices", id: "rangePrices" + index }}
+            label={item.text}
+          />
         </div>
       );
     });
@@ -109,6 +141,29 @@ const ProductsFilter = () => {
         {menuSizes.isShowing && (
           <div className="products-filter__menu-items products-filter__menu-sizes">
             {handleShowSizes()}
+          </div>
+        )}
+      </div>
+      <div className="products-filter__menu">
+        <div
+          className="products-filter__menu-title"
+          onClick={() =>
+            setMenuRangePrices((prev) => {
+              return {
+                ...prev,
+                isShowing: !prev.isShowing,
+              };
+            })
+          }
+        >
+          <div className="products-filter__menu-text">Khoảng giá (VNĐ)</div>
+          <div className="products-filter__menu-append">
+            {menuRangePrices.isShowing ? <BsChevronUp /> : <BsChevronDown />}
+          </div>
+        </div>
+        {menuRangePrices.isShowing && (
+          <div className="products-filter__menu-items products-filter__menu-range-range-prices">
+            {handleShowRangePrices()}
           </div>
         )}
       </div>

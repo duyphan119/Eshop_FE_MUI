@@ -33,6 +33,15 @@
             color: var(--main-color);
           }
         }
+        &.products-filter__menu-range-range-price {
+          color: black;
+          background-color: white;
+          border: none;
+          padding: 0 6px;
+          &:hover {
+            color: var(--main-color);
+          }
+        }
 
         &.products-filter__menu-color,
         &.products-filter__menu-size {

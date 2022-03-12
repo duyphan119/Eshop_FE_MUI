@@ -11,8 +11,7 @@ export const formatDate = (format, date) => {
       newDate.getDate() < 10 ? "0" + newDate.getDate() : newDate.getDate();
     if (format === "dd-MM-yyyy") {
       result = `${day}-${month}-${year}`;
-    }
-    else if(format === "yyyy-MM-dd"){
+    } else if (format === "yyyy-MM-dd") {
       result = `${year}-${month}-${day}`;
     }
     return result;
@@ -21,3 +20,28 @@ export const formatDate = (format, date) => {
     return "";
   }
 };
+export const convertSizeStringToNumber = (size) => {
+  switch (size) {
+    case "XS":
+      return 0;
+    case "S":
+      return 1;
+    case "M":
+      return 2;
+    case "L":
+      return 3;
+    case "XL":
+      return 4;
+    case "2XL":
+      return 5;
+    case "3XL":
+      return 6;
+    case "4XL":
+      return 7;
+    default:
+      return -1;
+  }
+};
+export const separateThousands = (x) =>{
+  return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+}

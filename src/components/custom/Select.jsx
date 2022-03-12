@@ -2,6 +2,7 @@ import Form from "react-bootstrap/esm/Form";
 import FormSelect from "react-bootstrap/esm/FormSelect";
 
 const Select = ({ label, fields, error, onChange, onBlur, options, value }) => {
+  console.log(value);
   return (
     <Form.Group className="form-group">
       {label && (
