@@ -27,15 +27,36 @@ const productController = {
   getByCategorySlug: async (req, res) => {
     try {
       const { categorySlug } = req.params;
-      const { all } = req.query;
-      let products = await sequelize.query(
-        `select p.id, p.name, p.oldPrice, p.newPrice, p.color, p.colorCode, p.slug, p.createdAt, p.updatedAt, 
-        p.description, p.categoryId
-        from products p, categories c, groupcategories g, buyertypes b
-        where p.categoryId = c.id and c.groupCategoryId = g.id and g.buyerTypeId = b.id and
-        (c.slug = '${categorySlug}' or g.slug = '${categorySlug}' or b.slug = '${categorySlug}') order by createdAt desc`,
-        { type: QueryTypes.SELECT, raw: true }
-      );
+      const { all, sortBy, sortType, color, size, newPrice } = req.query;
+      const queryString = `select p.*
+      from products p, categories c, groupcategories g, buyertypes b
+      where p.categoryId = c.id and c.groupCategoryId = g.id and g.buyerTypeId = b.id and
+      (c.slug = '${categorySlug}' or g.slug = '${categorySlug}' or b.slug = '${categorySlug}')
+      ${(() => {
+        let filterString = "";
+        if (color) {
+          filterString += "and (";
+          let colorFilters = JSON.parse(color);
+          colorFilters.forEach((colorFilter, index) => {
+            if (index === 0) {
+              filterString += `p.color = '${colorFilter}'`;
+            }else{
+              filterString += `or p.color = '${colorFilter}'`;
+            }
+          });
+          filterString += ")";
+        }
+        return filterString;
+      })()} 
+      ${
+        sortBy && sortType
+          ? `order by p.${sortBy} ${sortType}`
+          : "order by p.createdAt desc"
+      }`;
+      let products = await sequelize.query(queryString, {
+        type: QueryTypes.SELECT,
+        raw: true,
+      });
       if (!all || products.length === 0) {
         return res.status(200).json(products);
       }
@@ -118,88 +139,30 @@ const productController = {
     }
   },
 };
+
 const filterProduct = async (products) => {
-  try {
-    let newProducts = products;
-    let count = 0;
-    let l = 0;
-    let indices = [];
-    while (l < products.length) {
-      let tempProduct = { ...newProducts[count] };
-      let index = newProducts.findIndex(
-        (item) => item.slug === tempProduct.slug && item.id !== tempProduct.id
-      );
-      if (index === -1) {
-        if (!newProducts[count].productColors) {
-          let imagesProduct = await getImages(newProducts[count]);
-          let sizes = await getSizes(newProducts[count]);
-          newProducts[count].productColors = [
-            {
-              color: newProducts[count].color,
-              colorCode: newProducts[count].colorCode,
-              images: imagesProduct,
-              sizes,
-            },
-          ];
-          delete newProducts[count].color;
-          delete newProducts[count].colorCode;
-        }
-      } else {
-        if (!indices.includes(index)) {
-          console.log(index)
-
-          if (!newProducts[count].productColors) {
-            let imagesProduct = await getImages(newProducts[count]);
-            let sizes = await getSizes("desc", newProducts[count]);
-            newProducts[count].productColors = [
-              {
-                color: newProducts[count].color,
-                colorCode: newProducts[count].colorCode,
-                images: imagesProduct,
-                sizes,
-              },
-            ];
-            delete newProducts[count].color;
-            delete newProducts[count].colorCode;
-          }
-          let imagesProduct = await getImages(newProducts[index]);
-          let sizes = await getSizes("desc", newProducts[index]);
-
-          newProducts[count].productColors.push({
-            color: newProducts[index].color,
-            colorCode: newProducts[index].colorCode,
-            images: imagesProduct,
-            sizes,
-          });
-          if (indices.length === 0 || index > indices[indices.length - 1]) {
-            indices.push(index);
-            newProducts.splice(index, 1);
-          }
-        }
-        count++;
-      }
-      l++;
+  const newProducts = [];
+  for (let i = 0; i < products.length; i++) {
+    let imagesProduct = await getImages(products[i]);
+    let sizes = await getSizes("desc", products[i]);
+    let index = newProducts.findIndex((item) => item.slug === products[i].slug);
+    let productColor = {
+      color: products[i].color,
+      colorCode: products[i].colorCode,
+      images: imagesProduct,
+      sizes,
+    };
+    products[i].productColors = [];
+    if (index === -1) {
+      // Thêm
+      products[i].productColors.push(productColor);
+      newProducts.push(products[i]);
+    } else {
+      // Gộm
+      newProducts[index].productColors.push(productColor);
     }
-    let n = newProducts.length;
-    if (!newProducts[n - 1].productColors) {
-      let imagesProduct = await getImages(newProducts[n - 1]);
-      let sizes = await getSizes("desc", newProducts[n - 1]);
-      newProducts[n - 1].productColors = [
-        {
-          color: newProducts[n - 1].color,
-          colorCode: newProducts[n - 1].colorCode,
-          images: imagesProduct,
-          sizes,
-        },
-      ];
-      delete newProducts[n - 1].color;
-      delete newProducts[n - 1].colorCode;
-    }
-    return newProducts;
-  } catch (error) {
-    console.log(error);
-    return [];
   }
+  return newProducts;
 };
 
 const getImages = async (product) => {
