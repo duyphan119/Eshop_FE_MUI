@@ -2,6 +2,7 @@ import Col from "react-bootstrap/esm/Col";
 import { Link } from "react-router-dom";
 import "./cardproduct.scss";
 import * as constants from "../../constants";
+import { separateThousands } from "../../utils";
 const CardProduct = ({ item }) => {
   return (
     <Col xs={3} className="card-product">
@@ -21,8 +22,8 @@ const CardProduct = ({ item }) => {
         {item.name}
       </Link>
       <div className="card-product__price">
-        <div className="card-product__price-new">{item.newPrice}</div>
-        <div className="card-product__price-old">{item.oldPrice}</div>
+        <div className="card-product__price-new">{separateThousands(item.newPrice)}đ</div>
+        <div className="card-product__price-old">{separateThousands(item.oldPrice)}đ</div>
       </div>
     </Col>
   );

@@ -3,7 +3,7 @@ import Col from "react-bootstrap/esm/Col";
 import { BsChevronDown, BsChevronUp } from "react-icons/bs";
 import CheckBox from "../custom/CheckBox";
 import "./productfilter.scss";
-const ProductsFilter = () => {
+const ProductsFilter = ({ filters, setFilters }) => {
   const color = useRef();
   const [menuColors, setMenuColors] = useState({
     colors: [
@@ -19,6 +19,10 @@ const ProductsFilter = () => {
         color: "Xanh lá cây",
         colorCode: "green",
       },
+      {
+        color: "Trắng",
+        colorCode: "white",
+      },
     ],
     isShowing: true,
   });
@@ -28,16 +32,14 @@ const ProductsFilter = () => {
   });
   const [menuRangePrices, setMenuRangePrices] = useState({
     rangePrices: [
-      { text: "Nhỏ hơn 100,000đ", min: null, max: 100000 },
+      { text: "Nhỏ hơn 100,000đ", value: "100000;" },
       {
         text: "Từ 100,000đ - 300,000đ",
-        min: 100000,
-        max: 300000,
+        value: "100000;300000",
       },
       {
         text: "Từ 300,000đ - 500,000đ",
-        min: 300000,
-        max: 500000,
+        value: "300000;500000",
       },
     ],
     isShowing: true,
@@ -49,15 +51,35 @@ const ProductsFilter = () => {
   const handleMouseLeave = () => {
     color.current.style.border = "1px solid rgb(245, 245, 245)";
   };
-  const handleShowColors = () => {
+  const handleFilter = (name, value) => {
+    let _filters = [...filters];
+    let index1 = _filters.findIndex((item1) => item1.name === name);
+    if (index1 !== -1) {
+      let index2 = _filters[index1].values.findIndex(
+        (item2) => item2 === value
+      );
+      if (index2 === -1) _filters[index1].values.push(value);
+      else _filters[index1].values.splice(index2, 1);
+
+      setFilters(_filters);
+    }
+  };
+  const showColors = () => {
     return menuColors.colors.map((item) => {
       return (
         <div
-          className="products-filter__menu-color products-filter__menu-item"
+          className={`products-filter__menu-color products-filter__menu-item ${
+            filters
+              .find((it) => it.name === "color")
+              .values.findIndex((x) => x === item.color) !== -1
+              ? "active"
+              : ""
+          }`}
           key={item.color + item.colorCode}
           ref={color}
           onMouseEnter={(e) => handleMouseEnter(e.target, item.colorCode)}
           onMouseLeave={handleMouseLeave}
+          onClick={() => handleFilter("color", item.color)}
         >
           <span
             style={{
@@ -69,19 +91,27 @@ const ProductsFilter = () => {
       );
     });
   };
-  const handleShowSizes = () => {
+
+  const showSizes = () => {
     return menuSizes.sizes.map((item) => {
       return (
         <div
-          className="products-filter__menu-size products-filter__menu-item"
+          className={`products-filter__menu-size products-filter__menu-item ${
+            filters
+              .find((it) => it.name === "size")
+              .values.findIndex((x) => x === item) !== -1
+              ? "active"
+              : ""
+          }`}
           key={item}
+          onClick={() => handleFilter("size", item)}
         >
           {item}
         </div>
       );
     });
   };
-  const handleShowRangePrices = () => {
+  const showRangePrices = () => {
     return menuRangePrices.rangePrices.map((item, index) => {
       return (
         <div
@@ -91,11 +121,13 @@ const ProductsFilter = () => {
           <CheckBox
             fields={{ name: "rangePrices", id: "rangePrices" + index }}
             label={item.text}
+            onChange={() => handleFilter("newPrice", item.value)}
           />
         </div>
       );
     });
   };
+
   return (
     <Col xs={3} className="products-filter">
       <div className="products-filter__menu">
@@ -117,7 +149,7 @@ const ProductsFilter = () => {
         </div>
         {menuColors.isShowing && (
           <div className="products-filter__menu-items products-filter__menu-colors">
-            {handleShowColors()}
+            {showColors()}
           </div>
         )}
       </div>
@@ -140,7 +172,7 @@ const ProductsFilter = () => {
         </div>
         {menuSizes.isShowing && (
           <div className="products-filter__menu-items products-filter__menu-sizes">
-            {handleShowSizes()}
+            {showSizes()}
           </div>
         )}
       </div>
@@ -163,7 +195,7 @@ const ProductsFilter = () => {
         </div>
         {menuRangePrices.isShowing && (
           <div className="products-filter__menu-items products-filter__menu-range-range-prices">
-            {handleShowRangePrices()}
+            {showRangePrices()}
           </div>
         )}
       </div>

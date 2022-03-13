@@ -16,6 +16,10 @@
         margin: 3px;
         border-radius: 5px;
         padding: 6px;
+        position: relative;
+        &.active{
+          text-decoration: underline;
+        }
         &.products-filter__menu-color {
           span {
             width: 1.8rem;
