@@ -9,7 +9,7 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
-      BuyerType.hasMany(models.Category, {
+      BuyerType.hasMany(models.GroupCategory, {
         foreignKey: "id"
       })
     }

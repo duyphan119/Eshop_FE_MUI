@@ -1,13 +1,12 @@
 import db from "../models";
 import { QueryTypes } from "@sequelize/core";
 import { sequelize } from "../config/connectDB";
+import imagesProductService from "../services/imagesProductService";
 const imagesProductController = {
   create: async (req, res) => {
     try {
-      const { image, productId } = req.body;
-      const id = new Date().getTime() * Math.random() / Math.random();
-      const savedSize = await db.ImagesProduct.create({ id, image, productId });
-      res.status(200).json(savedSize);
+      const savedImageProduct = await imagesProductService.create(req.body);
+      res.status(200).json(savedImageProduct);
     } catch (error) {
       res.status(500).json(error);
     }
@@ -50,9 +49,7 @@ const imagesProductController = {
   delete: async (req, res) => {
     try {
       const { imagesProductId } = req.params;
-      await db.ImagesProduct.destroy(
-        { where: { id: imagesProductId } }
-      );
+      await db.ImagesProduct.destroy({ where: { id: imagesProductId } });
       res.status(200).json("This size is deleted");
     } catch (error) {
       res.status(500).json(error);

@@ -9,9 +9,6 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
-      Category.belongsTo(models.BuyerType, {
-        foreignKey: "buyerTypeId",
-      });
       Category.belongsTo(models.GroupCategory, {
         foreignKey: "groupCategoryId",
       });
@@ -31,7 +28,6 @@ module.exports = (sequelize, DataTypes) => {
       description: DataTypes.STRING,
       slug: DataTypes.STRING,
       groupCategoryId: DataTypes.STRING,
-      buyerTypeId: DataTypes.STRING,
     },
     {
       sequelize,

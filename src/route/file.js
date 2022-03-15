@@ -8,7 +8,6 @@ const storage = multer.diskStorage({
     cb(null, "./src/public/imgs/");
   },
   filename: function (req, file, cb) {
-    console.log(file);
     const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
     const splitFileName = file.originalname.split(".");
     cb(
@@ -25,8 +24,13 @@ const storage = multer.diskStorage({
 const upload = multer({ storage: storage });
 router.post(
   "/upload-image",
-  upload.single("avatar"),
+  upload.single("image"),
   fileController.uploadImage
+);
+router.post(
+  "/upload-images",
+  upload.array("images", 20),
+  fileController.uploadImages
 );
 
 module.exports = router;

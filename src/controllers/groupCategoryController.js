@@ -1,5 +1,6 @@
 import db from "../models";
 import slugify from "slugify";
+import groupCategoryService from "../services/groupCategoryService";
 const groupCategoryController = {
   create: async (req, res) => {
     try {
@@ -43,6 +44,17 @@ const groupCategoryController = {
         },
       });
       res.status(200).json(groupCategory);
+    } catch (error) {
+      return res.status(500).json(error);
+    }
+  },
+  getByBuyerTypeSlug: async (req, res) => {
+    try {
+      const groupCategories =
+        await groupCategoryService.getGroupCategoriesByBuyerTypeSlug(
+          req.params
+        );
+      res.status(200).json(groupCategories);
     } catch (error) {
       return res.status(500).json(error);
     }

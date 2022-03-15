@@ -12,9 +12,6 @@ module.exports = (sequelize, DataTypes) => {
       Comment.belongsTo(models.User, {
         foreignKey: "userId",
       });
-      Comment.belongsTo(models.Product, {
-        foreignKey: "productId",
-      });
     }
   }
   Comment.init(
@@ -25,8 +22,9 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
       },
       userId: DataTypes.STRING,
-      productId: DataTypes.STRING,
+      productSlug: DataTypes.STRING,
       content: DataTypes.STRING,
+      replyTo: DataTypes.STRING,
       rate: DataTypes.INTEGER,
     },
     {

@@ -9,8 +9,8 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
-      GroupCategory.hasMany(models.Category, {
-        foreignKey: "id"
+      GroupCategory.belongsTo(models.BuyerType, {
+        foreignKey: "buyerTypeId"
       })
     }
   }
@@ -23,6 +23,7 @@ module.exports = (sequelize, DataTypes) => {
       },
       name: DataTypes.STRING,
       description: DataTypes.STRING,
+      buyerTypeId: DataTypes.STRING,
       slug: DataTypes.STRING,
     },
     {

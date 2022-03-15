@@ -2,6 +2,7 @@ import db from "../models";
 import slugify from "slugify";
 import { QueryTypes } from "@sequelize/core";
 import { sequelize } from "../config/connectDB";
+import categoryService from "../services/categoryService";
 const categoryController = {
   create: async (req, res) => {
     try {
@@ -50,7 +51,17 @@ const categoryController = {
       });
       res.status(200).json(category);
     } catch (error) {
+      console.log(error)
       return res.status(500).json(error);
+    }
+  },
+  getByBuyerTypeSlug: async (req, res) => {
+    try {
+      const categories = await categoryService.getCategoriesByBuyerTypeSlug(req.params);
+      res.status(200).json(categories);
+    } catch (error) {
+      console.log(error)
+      return res.state(500).json(500);
     }
   },
   update: async (req, res) => {
