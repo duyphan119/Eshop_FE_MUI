@@ -1,4 +1,5 @@
-import multer from "multer";
+import http from "http";
+import fs from "fs";
 const fileController = {
   uploadImage: (req, res) => {
     console.log(req.file);
@@ -16,5 +17,8 @@ const fileController = {
     });
     res.status(200).json(images);
   },
+  // downloadFile: (req, res) => {
+    
+  // }
 };
 module.exports = fileController;

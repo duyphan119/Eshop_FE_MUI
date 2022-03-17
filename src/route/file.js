@@ -32,5 +32,5 @@ router.post(
   upload.array("images", 20),
   fileController.uploadImages
 );
-
+// router.post("/download-file", fileController.downloadFile)
 module.exports = router;

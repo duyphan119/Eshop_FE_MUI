@@ -1,12 +1,20 @@
 import commentService from "../services/commentService";
 const commentController = {
   create: async (req, res) => {
-    try {
-      const savedComment = await commentService.createComment(req.body);
-      res.status(200).json(savedComment);
-    } catch (error) {
-      return res.status(500).json(error);
-    }
+    const response = await commentService.create(req.body);
+    res.status(response.status).json(response.data);
+  },
+  update: async (req, res) => {
+    const response = await commentService.updateById(req.params, req.body);
+    res.status(response.status).json(response.data);
+  },
+  getByProductSlug: async (req, res) => {
+    const response = await commentService.getByProductSlug(req.params);
+    res.status(response.status).json(response.data);
+  },
+  getById: async (req, res) => {
+    const response = await commentService.getById(req.params);
+    res.status(response.status).json(response.data);
   },
 };
 module.exports = commentController;

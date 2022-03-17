@@ -15,6 +15,9 @@ const sequelize = new Sequelize("test-my-shop", "root", null, {
   host: "localhost",
   dialect: "mysql" /* one of 'mysql' | 'mariadb' | 'postgres' | 'mssql' */,
   logging: false,
+  query: {
+    raw: true,
+  },
 });
 
 const connectDB = async () => {
@@ -26,4 +29,4 @@ const connectDB = async () => {
   }
 };
 
-module.exports = {connectDB, sequelize};
+module.exports = { connectDB, sequelize };

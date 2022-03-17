@@ -1,7 +1,7 @@
 import db from "../models";
 import { QueryTypes, Op } from "@sequelize/core";
 import { sequelize } from "../config/connectDB";
-const createComment = async (body) => {
+const create = async (body) => {
   try {
     const { userId, productSlug, replyTo, rate, content } = body;
     const id = (new Date().getTime() * Math.random()) / Math.random();
@@ -11,7 +11,7 @@ const createComment = async (body) => {
         productSlug,
         replyTo,
       },
-      raw: true,
+      
     });
     if (comment) {
       return await updateComment({ commentId: comment.id }, body);
@@ -24,18 +24,20 @@ const createComment = async (body) => {
       content,
       id,
     });
-    return savedComment;
+    return { status: 200, data: savedComment };
   } catch (error) {
-    return;
+    console.log(error);
+    return { status: 500, data: error };
   }
 };
-const getCommentsByProductSlug = async (productSlug) => {
+const getByProductSlug = async (params) => {
   try {
+    const { productSlug } = params;
     const comments = await db.Comment.findAll({
       where: {
         productSlug: productSlug,
       },
-      raw: true,
+      
     });
     for (let i = 0; i < comments.length; i++) {
       const infosUser = await sequelize.query(
@@ -52,7 +54,7 @@ const getCommentsByProductSlug = async (productSlug) => {
     return [];
   }
 };
-const updateComment = async (params, body) => {
+const updateById = async (params, body) => {
   try {
     const { userId, productSlug, replyTo, rate, content } = body;
     const { commentId } = params;
@@ -76,10 +78,34 @@ const updateComment = async (params, body) => {
         },
       }
     );
-    return body;
+    return { status: 200, data: body };
   } catch (error) {
     console.log(error);
-    return;
+    return { status: 500, data: error };
   }
 };
-module.exports = { getCommentsByProductSlug, updateComment, createComment };
+const getById = async (params) => {
+  try {
+    const { commentId } = params;
+    const comments = await db.Comment.findAll({
+      where: {
+        productSlug: productSlug,
+      },
+      
+    });
+    for (let i = 0; i < comments.length; i++) {
+      const infosUser = await sequelize.query(
+        `SELECT avatar, firstName, lastName, email, id 
+       from users where id = '${comments[i].userId}' order by createdAt desc`,
+        { type: QueryTypes.SELECT, raw: true }
+      );
+      comments[i].user = infosUser[0];
+      delete comments[i].userId;
+    }
+    return comments;
+  } catch (error) {
+    console.log(error);
+    return [];
+  }
+};
+module.exports = { getByProductSlug, updateById, create };

@@ -9,18 +9,20 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
-      WishListItem.belongsTo(models.WishList, {
-        foreignKey: "wishListId",
-      });
-      WishListItem.belongsTo(models.Product, {
-        foreignKey: "productId",
+      WishListItem.belongsTo(models.User, {
+        foreignKey: "userId",
       });
     }
   }
   WishListItem.init(
     {
-      wishListId: DataTypes.STRING,
-      productId: DataTypes.STRING,
+      id: {
+        type: DataTypes.STRING,
+        primaryKey: true,
+        allowNull: false,
+      },
+      userId: DataTypes.STRING,
+      productSlug: DataTypes.STRING,
     },
     {
       sequelize,

@@ -1,15 +1,15 @@
 import productService from "../services/productService";
 const productController = {
   create: async (req, res) => {
-    const response = await productService.getByCategorySlug(req.query);
+    const response = await productService.create(req.body);
     res.status(response.status).json(response.data);
   },
   getByCategorySlug: async (req, res) => {
-    const response = await productService.getByCategorySlug(req.params, req.query);
+    const response = await productService.getByCategorySlug(req.user, req.params, req.query);
     res.status(response.status).json(response.data);
   },
   getBySlug: async (req, res) => {
-    const response = await productService.getBySlug(req.params, req.query);
+    const response = await productService.getBySlug(req.user, req.params, req.query);
     res.status(response.status).json(response.data);
   },
   getAll: async (req, res) => {

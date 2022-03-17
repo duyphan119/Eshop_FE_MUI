@@ -4,13 +4,11 @@ import commentService from "./commentService";
 import { QueryTypes } from "@sequelize/core";
 import db, { sequelize } from "../models";
 import slugify from "slugify";
-const getProductsAllFields = async (products) => {
+const getProductsAllFields = async (user, products) => {
   const newProducts = [];
   for (let i = 0; i < products.length; i++) {
-    let imagesProduct = await imagesProductService.getImagesProduct(
-      products[i]
-    );
-    let sizes = await sizeService.getSizes(products[i]);
+    let imagesProduct = await imagesProductService.getByProductId(products[i]);
+    let sizes = await sizeService.getByProductId(products[i]);
     let index = newProducts.findIndex((item) => item.slug === products[i].slug);
     let productColor = {
       color: products[i].color,
@@ -18,14 +16,25 @@ const getProductsAllFields = async (products) => {
       images: imagesProduct,
       sizes,
     };
+    delete products[i].color;
+    delete products[i].colorCode;
     products[i].productColors = [];
     if (index === -1) {
       // Thêm
-      let comments = await commentService.getCommentsByProductSlug(
-        products[i].slug
-      );
+      let comments = await commentService.getByProductSlug({
+        productSlug: products[i].slug,
+      });
       products[i].productColors.push(productColor);
       products[i].comments = comments;
+      products[i].isWished = false;
+      if (user) {
+        let queryString = `select * from wishlistitems where productSlug = '${products[i].slug}' and userId = ${user.id}`;
+        const checkWishlist = await sequelize.query(queryString, {
+          type: QueryTypes.SELECT,
+          
+        });
+        products[i].isWished = checkWishlist.length !== 0;
+      }
       newProducts.push(products[i]);
     } else {
       // Gộm
@@ -40,10 +49,8 @@ const getTotalPages = async (query) => {
     let queryString = `select distinct slug from products`;
     const products = await sequelize.query(queryString, {
       type: QueryTypes.SELECT,
-      raw: true,
+      
     });
-    console.log("total = "+Math.round(products.length / limit))
-    console.log(products.length, limit)
     return {
       status: 200,
       data: Math.round(products.length / limit),
@@ -134,7 +141,7 @@ const getAll = async (query) => {
       offset ${(p - 1) * limit}) x where p.slug = x.slug`;
     const products = await sequelize.query(queryString, {
       type: QueryTypes.SELECT,
-      raw: true,
+      
     });
     return {
       status: 200,
@@ -148,7 +155,7 @@ const getAll = async (query) => {
     };
   }
 };
-const getBySlug = async (params, query) => {
+const getBySlug = async (user, params, query) => {
   try {
     const { productSlug } = params;
     const { all } = query;
@@ -156,12 +163,12 @@ const getBySlug = async (params, query) => {
       where: {
         slug: productSlug,
       },
-      raw: true,
+      
     });
     if (!all || products.length === 0) {
       return res.status(200).json(products);
     }
-    const newProducts = await getProductsAllFields(products);
+    const newProducts = await getProductsAllFields(user, products);
     return {
       status: 200,
       data: newProducts[0],
@@ -174,7 +181,7 @@ const getBySlug = async (params, query) => {
     };
   }
 };
-const getByCategorySlug = async (params, query) => {
+const getByCategorySlug = async (user, params, query) => {
   try {
     const { categorySlug } = params;
     const { all, sortBy, sortType, color, size, newPrice, p, num } = query;
@@ -263,7 +270,7 @@ const getByCategorySlug = async (params, query) => {
     where p.slug = x.slug`;
     let products = await sequelize.query(queryString, {
       type: QueryTypes.SELECT,
-      raw: true,
+      
     });
     if (!all || products.length === 0) {
       return {
@@ -271,7 +278,7 @@ const getByCategorySlug = async (params, query) => {
         data: products,
       };
     }
-    const newProducts = await getProductsAllFields(products);
+    const newProducts = await getProductsAllFields(user, products);
     return {
       status: 200,
       data: newProducts,
@@ -294,7 +301,7 @@ const create = async (body) => {
       colorCode,
       description,
       categoryId,
-    } = req.body;
+    } = body;
     const id = (new Date().getTime() * Math.random()) / Math.random();
     const slug = slugify(name.toLowerCase());
     const savedProduct = await db.Product.create({

@@ -1,97 +1,32 @@
-import db from "../models";
-import slugify from "slugify";
-import { QueryTypes } from "@sequelize/core";
-import { sequelize } from "../config/connectDB";
 import categoryService from "../services/categoryService";
 const categoryController = {
   create: async (req, res) => {
-    try {
-      const { name, description, groupId, buyerTypeId } = req.body;
-      const id = (new Date().getTime() * Math.random()) / Math.random();
-      const slug = slugify(name);
-      const savedCategory = await db.Category.create({
-        id,
-        name,
-        description,
-        slug,
-        groupId,
-        buyerTypeId,
-      });
-      res.status(200).json(savedCategory);
-    } catch (error) {
-      return res.status(500).json(error);
-    }
+    const response = await categoryService.create(req.body);
+    res.status(response.status).json(response.status);
   },
   getAll: async (req, res) => {
-    try {
-      
-      const categories = await db.Category.findAll();
-      res.status(200).json(categories);
-    } catch (error) {
-      console.log(error);
-      return res.status(500).json(error);
-    }
+    const response = await categoryService.getAll(req.query);
+    res.status(response.status).json(response.status);
   },
   getById: async (req, res) => {
-    try {
-      const { categoryId } = req.params;
-      const category = await db.Category.findByPk(categoryId);
-      res.status(200).json(category);
-    } catch (error) {
-      return res.status(500).json(error);
-    }
+    const response = await categoryService.getById(req.params);
+    res.status(response.status).json(response.status);
   },
   getBySlug: async (req, res) => {
-    try {
-      const { categorySlug } = req.params;
-      const category = await db.Category.findOne({
-        where: {
-          slug: categorySlug,
-        },
-      });
-      res.status(200).json(category);
-    } catch (error) {
-      console.log(error)
-      return res.status(500).json(error);
-    }
+    const response = await categoryService.getBySlug(req.params);
+    res.status(response.status).json(response.status);
   },
   getByBuyerTypeSlug: async (req, res) => {
-    try {
-      const categories = await categoryService.getCategoriesByBuyerTypeSlug(req.params);
-      res.status(200).json(categories);
-    } catch (error) {
-      console.log(error)
-      return res.state(500).json(500);
-    }
+    const response = await categoryService.getByBuyerTypeSlug(req.params);
+    res.status(response.status).json(response.status);
   },
   update: async (req, res) => {
-    try {
-      const { categoryId } = req.params;
-      const { name, description, groupId, buyerTypeId } = req.body;
-      const slug = slugify(name);
-      await db.Category.update(
-        {
-          name,
-          description,
-          slug,
-          groupId,
-          buyerTypeId,
-        },
-        { where: { id: categoryId } }
-      );
-      res.status(200).json("This category is updated");
-    } catch (error) {
-      return res.status(500).json(error);
-    }
+    const response = await categoryService.updateById(req.params, req.body);
+    res.status(response.status).json(response.status);
   },
   delete: async (req, res) => {
-    try {
-      const { categoryId } = req.params;
-      await db.Category.destroy({ where: { id: categoryId } });
-      res.status(200).json("This category is deleted");
-    } catch (error) {
-      return res.status(500).json(error);
-    }
+    const response = await categoryService.deleteById(req.params);
+    res.status(response.status).json(response.status);
   },
 };
 module.exports = categoryController;
