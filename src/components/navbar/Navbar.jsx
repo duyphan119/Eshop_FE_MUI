@@ -15,6 +15,7 @@ const Navbar = () => {
   const user = useSelector((state) => state.auth.currentUser);
   const buyerTypes = useSelector((state) => state.buyerType.list);
   const cart = useSelector((state) => state.cart.list);
+  const wishlist = useSelector((state) => state.wishlist.list);
   const dispatch = useDispatch();
   const handleLogout = () => {
     apiLogout(dispatch);
@@ -114,15 +115,15 @@ const Navbar = () => {
                 </div>
               </li>
               <li className="my-navbar__right-icon">
-                <Link to={`/`} className="my-navbar__right-icon-link">
+                <Link to={`/wishlist`} className="my-navbar__right-icon-link">
                   <BsHeart />
-                  <span>1</span>
+                  {wishlist && (wishlist.length === 0 ? "" : <span>{wishlist.length}</span>)}
                 </Link>
               </li>
               <li className="my-navbar__right-icon">
                 <Link to={`/cart`} className="my-navbar__right-icon-link">
                   <BsBag />
-                  {cart && (cart.length === 0) ? "" : <span>{cart.length}</span>}
+                  {cart && (cart.length === 0 ? "" : <span>{cart.length}</span>)}
                 </Link>
               </li>
             </ul>

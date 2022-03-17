@@ -2,6 +2,7 @@ import axios from "axios";
 import jwtDecode from "jwt-decode";
 import { apiRefreshToken } from "../api/apiAuth";
 import { refreshToken } from "../redux/authSlice";
+import { showToastMessage } from "../redux/toastSlice";
 export const configAxios = (user, dispatch) => {
   const instance = axios.create({
     withCredentials: true,
@@ -16,8 +17,17 @@ export const configAxios = (user, dispatch) => {
             config.headers["authorization"] = `Bearer ${data.accessToken}`;
           }
         } else {
-           config.headers["authorization"] = `Bearer ${user.accessToken}`;
+          config.headers["authorization"] = `Bearer ${user.accessToken}`;
         }
+      } else {
+        dispatch(
+          showToastMessage({
+            type: "error",
+            text: "Đăng nhập để thực hiện thao tác này",
+            title: "Thất bại",
+            isOpen: true,
+          })
+        );
       }
       return config;
     },

@@ -1,11 +1,29 @@
 import Col from "react-bootstrap/esm/Col";
 import { Link } from "react-router-dom";
-import "./cardproduct.scss";
-import * as constants from "../../constants";
+import { useDispatch, useSelector } from "react-redux";
+import { BsHeart, BsHeartFill } from "react-icons/bs";
 import { separateThousands } from "../../utils";
+import * as constants from "../../constants";
+import "./cardproduct.scss";
+import { apiAddToWishlist } from "../../api/apiWishlist";
 const CardProduct = ({ item }) => {
+  const dispatch = useDispatch();
+  const user = useSelector((state) => state.auth.currentUser);
+  const handleAddToWishList = () => {
+    apiAddToWishlist(
+      user,
+      { productSlug: item.slug, userId: user.id },
+      dispatch
+    );
+  };
   return (
     <Col xs={3} className="card-product">
+      <div
+        className={`card-product__wish ${item.isWished ? "is-wished" : ""}`}
+        onClick={handleAddToWishList}
+      >
+        {item.isWished ? <BsHeartFill /> : <BsHeart />}
+      </div>
       <Link to={`/product/${item.slug}`} className="card-product__img">
         <img
           src={(() => {
@@ -22,8 +40,14 @@ const CardProduct = ({ item }) => {
         {item.name}
       </Link>
       <div className="card-product__price">
-        <div className="card-product__price-new">{separateThousands(item.newPrice)}đ</div>
-        <div className="card-product__price-old">{separateThousands(item.oldPrice)}đ</div>
+        <div className="card-product__price-new">
+          {separateThousands(item.newPrice)}đ
+        </div>
+        {item.oldPrice !== item.newPrice && (
+          <div className="card-product__price-old">
+            {separateThousands(item.oldPrice)}đ
+          </div>
+        )}
       </div>
     </Col>
   );

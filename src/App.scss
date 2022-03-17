@@ -95,3 +95,12 @@ header {
     width: 100%;
   }
 }
+.stars{
+  display: flex;
+  align-items: center;
+  font-size: 1.6rem;
+  .star{
+    color:var(--main-color);
+    margin-right: 1px;
+  }
+}

@@ -3,16 +3,24 @@ import Col from "react-bootstrap/esm/Col";
 import Container from "react-bootstrap/esm/Container";
 import Row from "react-bootstrap/esm/Row";
 import { BsChevronDown } from "react-icons/bs";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import {
   useLocation,
   useNavigate,
   useParams,
   useSearchParams,
 } from "react-router-dom";
-import { apiGetProductsByCategorySlug } from "../../api/apiProduct";
+import { apiGetAllBuyerTypes } from "../../api/apiBuyerType";
+import { apiGetCategoryBySlug } from "../../api/apiCategory";
+import { apiGetGroupCategoryBySlug } from "../../api/apiGroupCategory";
+import {
+  apiGetProductsByCategorySlug,
+  apiGetTotalPages,
+} from "../../api/apiProduct";
 import Products from "../../components/products/Products";
 import ProductsFilter from "../../components/productsfilter/ProductsFilter";
+import ProductsOfBuyerTypePage from "../productsofbuyertypepage/ProductsOfBuyerTypePage";
+import Paginations from "../../components/pagination/Pagination";
 import "./productspage.scss";
 const sortFilters = [
   {
@@ -47,12 +55,20 @@ const sortFilters = [
     type: "desc",
   },
 ];
+const limitProductsInPage = 2;
 const ProductsPage = () => {
+  const products = useSelector((state) => state.product.list);
+  const buyerTypes = useSelector((state) => state.buyerType.list);
+  const user = useSelector((state) => state.auth.currentUser);
+  const [titleProducts, setTitleProducts] = useState("");
   const navigate = useNavigate();
   const params = useParams();
   const location = useLocation();
   const { categorySlug } = params;
   const [queries] = useSearchParams();
+  const [totalPages, setTotalPages] = useState(1);
+  const [currentPage, setCurrentPage] = useState(1);
+  console.log(products);
   const [sortBy, setSortBy] = useState({
     name: queries.get("sortBy") ? queries.get("sortBy") : sortFilters[0].name,
     type: queries.get("sortType")
@@ -75,6 +91,21 @@ const ProductsPage = () => {
   ]);
   const dispatch = useDispatch();
   useEffect(() => {
+    apiGetAllBuyerTypes(dispatch);
+  }, [dispatch]);
+
+  useEffect(() => {
+    const api = async () => {
+      const totalPages = await apiGetTotalPages(
+        categorySlug,
+        location.search,
+        limitProductsInPage
+      );
+      setTotalPages(totalPages);
+    };
+    api();
+  }, [categorySlug, location]);
+  useEffect(() => {
     let url = "";
     let _filters = [...filters].filter((item) => item.values.length !== 0);
     if (sortBy.name === "" && sortBy.type === "") {
@@ -93,15 +124,48 @@ const ProductsPage = () => {
     }
     if (!window.location.href.endsWith(url)) navigate(url);
   }, [sortBy, categorySlug, filters, navigate]);
-  useEffect(() => {
-    apiGetProductsByCategorySlug(categorySlug, location.search, dispatch);
-  }, [categorySlug, location, dispatch]);
 
+  useEffect(() => {
+    const api = async () => {
+      let data = await apiGetGroupCategoryBySlug(categorySlug);
+      if (!data) {
+        data = await apiGetCategoryBySlug(categorySlug);
+        if (data) {
+          setTitleProducts(data.name);
+        }
+      } else {
+        setTitleProducts(data.name);
+      }
+    };
+    api();
+  }, [categorySlug]);
+  useEffect(() => {
+    if (
+      buyerTypes.length !== 0 &&
+      !buyerTypes.find((item) => item.slug === categorySlug)
+    ) {
+      let query = "";
+      if (location.search === "") {
+        query += `?num=${limitProductsInPage}&p=${currentPage}`;
+      } else {
+        query += `${location.search}&num=${limitProductsInPage}&p=${currentPage}`;
+      }
+      apiGetProductsByCategorySlug(user, categorySlug, query, dispatch);
+    }
+  }, [user, buyerTypes, categorySlug, location, dispatch, currentPage]);
+
+  if (buyerTypes.find((item) => item.slug === categorySlug)) {
+    return (
+      <ProductsOfBuyerTypePage
+        buyerType={buyerTypes.find((item) => item.slug === categorySlug)}
+      />
+    );
+  }
   return (
     <Container className="products-page__container">
       <Row className="products-page">
         <Col xs={12} className="products-page__title">
-          ÁO SƠ MI NAM
+          {titleProducts.toUpperCase()}
         </Col>
         <ProductsFilter filters={filters} setFilters={setFilters} />
         <Col xs={9}>
@@ -138,7 +202,12 @@ const ProductsPage = () => {
               </div>
             </div>
           </Container>
-          <Products />
+          <Products products={products} />
+          <Paginations
+            totalPages={totalPages}
+            currentPage={currentPage}
+            setCurrentPage={setCurrentPage}
+          />
         </Col>
       </Row>
     </Container>

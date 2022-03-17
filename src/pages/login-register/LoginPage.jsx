@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Container from "react-bootstrap/esm/Container";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
@@ -30,6 +30,9 @@ const LoginPage = () => {
   const handleLoginGoogle = () => {
     window.open("http://localhost:8080/v1/api/auth/google");
   };
+  useEffect(()=>{
+    document.title = "Đăng nhập";
+  },[])
   return (
     <div className="login-register">
       <Container>

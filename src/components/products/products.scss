@@ -1,4 +1,9 @@
 .products {
   padding: 10px 0;
+  .products__not-found{
+    font-size: 1.6rem;
+    background-color: rgb(223, 245, 164);
+    padding-block: 10px;
+  }
 }
 

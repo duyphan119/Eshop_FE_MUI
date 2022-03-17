@@ -3,14 +3,14 @@ import { useEffect, useRef, useState } from "react";
 import Container from "react-bootstrap/esm/Container";
 import { AiOutlineGoogle } from "react-icons/ai";
 import { FaFacebookF } from "react-icons/fa";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { Link, Navigate, useNavigate } from "react-router-dom";
 import * as Yup from "yup";
 import { apiGetCodeVerifyEmail, apiRegister } from "../../api/apiAuth";
 import Input from "../../components/custom/Input";
+import * as constants from "../../constants";
 import "./loginregister.scss";
 const RegisterPage = () => {
-  const dispatch = useDispatch();
   const navigate = useNavigate();
   const [codeVerifyEmail, setCodeVerifyEmail] = useState();
   const [code, setCode] = useState("");
@@ -20,9 +20,6 @@ const RegisterPage = () => {
     initialValues: {
       email: "",
       password: "",
-      // gender: "Nam",
-      // phoneNumber: "",
-      // birthDay: "2000-01-01",
       firstName: "",
       lastName: "",
       confirmPassword: "",
@@ -44,8 +41,9 @@ const RegisterPage = () => {
           /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
           "Email is incorrect"
         ),
-      password: Yup.string().required("Bắt buộc nhập trường này"),
-      // phoneNumber: Yup.string().required("Bắt buộc nhập trường này"),
+      password: Yup.string()
+        .required("Bắt buộc nhập trường này")
+        .min(6, "Mật khẩu tối thiểu 6 kí tự"),
       firstName: Yup.string().required("Bắt buộc nhập trường này"),
       lastName: Yup.string().required("Bắt buộc nhập trường này"),
       confirmPassword: Yup.string()
@@ -57,7 +55,7 @@ const RegisterPage = () => {
     if (codeVerifyEmail) {
       interval.current = setInterval(() => {
         setDuration((prev) => {
-          if(prev + 1000 === codeVerifyEmail.expiresIn){
+          if (prev + 1000 === codeVerifyEmail.expiresIn) {
             return 0;
           }
           return prev + 1000;
@@ -68,14 +66,16 @@ const RegisterPage = () => {
   if (codeVerifyEmail && duration >= codeVerifyEmail.expiresIn) {
     clearInterval(interval.current);
   }
-  
 
   const handleLoginFacebook = () => {
-    window.open("http://localhost:8080/v1/api/auth/facebook");
+    window.open(`${constants.SERVER_URL}/v1/api/auth/facebook`);
   };
   const handleLoginGoogle = () => {
-    window.open("http://localhost:8080/v1/api/auth/google");
+    window.open(`${constants.SERVER_URL}/v1/api/auth/google`);
   };
+  useEffect(() => {
+    document.title = "Đăng ký tài khoản";
+  }, []);
   if (useSelector((state) => state.auth.currentUser)) {
     return <Navigate to={`/`} />;
   }
@@ -183,7 +183,10 @@ const RegisterPage = () => {
           )}
           {codeVerifyEmail ? (
             <>
-              <button className="login-register__submit full-width" type="submit">
+              <button
+                className="login-register__submit full-width"
+                type="submit"
+              >
                 Đăng ký
               </button>
             </>

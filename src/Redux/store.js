@@ -3,8 +3,10 @@ import authSlice from "./authSlice";
 import buyerTypeSlice from "./buyerTypeSlice";
 import cartSlice from "./cartSlice";
 import categorySlice from "./categorySlice";
+import groupCategorySlice from "./groupCategorySlice";
 import productSlice from "./productSlice";
 import toastSlice from "./toastSlice";
+import wishlistSlice from "./wishlistSlice";
 const store = configureStore({
   reducer: {
     category: categorySlice,
@@ -12,7 +14,9 @@ const store = configureStore({
     toast: toastSlice,
     buyerType: buyerTypeSlice,
     product: productSlice,
-    cart:cartSlice
+    cart: cartSlice,
+    groupCategory: groupCategorySlice,
+    wishlist: wishlistSlice
   },
 });
 

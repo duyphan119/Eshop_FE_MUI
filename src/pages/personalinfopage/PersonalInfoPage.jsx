@@ -1,5 +1,5 @@
 import { useFormik } from "formik";
-import React from "react";
+import React, { useEffect } from "react";
 import Col from "react-bootstrap/esm/Col";
 import Container from "react-bootstrap/esm/Container";
 import Row from "react-bootstrap/esm/Row";
@@ -12,6 +12,7 @@ import * as Yup from "yup";
 import { apiUpdateUser } from "../../api/apiUser";
 import "./personalinfopage.scss";
 import { formatDate } from "../../utils";
+import Profile from "../../components/profile/Profile";
 const PersonalInfoPage = () => {
   const user = useSelector((state) => state.auth.currentUser);
   const dispatch = useDispatch();
@@ -38,43 +39,17 @@ const PersonalInfoPage = () => {
   });
   const handleSelectPicture = async (e) => {
     const formData = new FormData();
-    formData.append("avatar", e.target.files[0]);
+    formData.append("image", e.target.files[0]);
     const avatar = await apiUploadImage(formData);
-    formik.setFieldValue("avatar", avatar);
+    formik.setFieldValue("image", avatar);
   };
+  useEffect(() => {
+    document.title = "Thông tin khách hàng";
+  }, []);
   return (
     <Container>
       <Row className="personal-info">
-        <Col xs={3} className="personal-info__profile">
-          <img
-            src={`${
-              formik.values.avatar.includes("http")
-                ? formik.values.avatar
-                : `${constants.SERVER_URL}${formik.values.avatar}`
-            }`}
-            alt=""
-          />
-          <div className="personal-info__name">
-            {`${user.firstName ? user.firstName : ""} ${
-              user.lastName ? user.lastName : ""
-            }`}
-          </div>
-          <div className="personal-info__email">{user.email}</div>
-          <ul>
-            <li className="personal-info__birthday">
-              <span>Ngày sinh:</span>{" "}
-              {`${
-                user.birthday ? formatDate("dd-MM-yyyy", user.birthday) : ""
-              }`}
-            </li>
-            <li className="personal-info__gender">
-              <span>Giới tính:</span>{user.gender === null ? "" : (user.gender ? "Nam" : "Nữ")}
-            </li>
-            <li className="personal-info__phone">
-              <span>Số điên thoại:</span>{user.phoneNumber === null ? "" : user.phoneNumber}
-            </li>
-          </ul>
-        </Col>
+        <Profile user={user}/>
         <Col xs={9} className="personal-info__form">
           <form onSubmit={formik.handleSubmit}>
             <div className="form-title">THÔNG TIN CÁ NHÂN</div>

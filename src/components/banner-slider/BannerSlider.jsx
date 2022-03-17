@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import "./banner-slider.scss";
 const banners = [
   {
-    src: "https://bizweb.dktcdn.net/100/438/408/themes/848101/assets/slider_1.jpg?1646486842767",
+    src: "https://bizweb.dktcdn.net/100/438/408/themes/848101/assets/slider_1.jpg?1647343206623",
     to: "/",
   },
   {
@@ -27,7 +27,7 @@ const BannerSlider = () => {
   const [indexBanner, setIndexBanner] = useState(0);
 
   useEffect(() => {
-     const timerId = setInterval(() => {
+    const timer = setInterval(() => {
       setIndexBanner((prev) => {
         if (prev + 1 === banners.length) {
           return 0;
@@ -35,7 +35,7 @@ const BannerSlider = () => {
         return prev + 1;
       });
     }, 3000);
-    return clearInterval(timerId);
+    return () => clearInterval(timer);
   }, []);
   return (
     <div className="banner-slider">

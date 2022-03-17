@@ -16,16 +16,20 @@ import ProductPage from "./pages/productpage/ProductPage";
 import { useDispatch, useSelector } from "react-redux";
 import { apiGetCartByUser } from "./api/apiCart";
 import { useEffect } from "react";
+import NotFoundPage from "./pages/notfoundpage/NotFoundPage";
+import { socket, SocketContext } from "./context";
+import ProductFormPage from "./pages/productformpage/ProductFormPage";
+import WishListPage from "./pages/wishlistpage/WishListPage";
 const App = () => {
   const user = useSelector((state) => state.auth.currentUser);
   const dispatch = useDispatch();
   useEffect(() => {
-    if(user){
+    if (user) {
       apiGetCartByUser(user, dispatch);
     }
   }, [user, dispatch]);
   return (
-    <>
+    <SocketContext.Provider value={socket}>
       <BannerTop />
       <header>
         <TopBar />
@@ -39,11 +43,14 @@ const App = () => {
         <Route path="/account" element={<PersonalInfoPage />} />
         <Route path="/:categorySlug" element={<ProductsPage />} />
         <Route path="/cart" element={<CartPage />} />
+        <Route path="/wishlist" element={<WishListPage />} />
         <Route path="/product/:productSlug" element={<ProductPage />} />
+        <Route path="/product/add" element={<ProductFormPage />} />
+        <Route path="*" element={<NotFoundPage />} />
       </Routes>
       <Footer />
       <ToastMessage />
-    </>
+    </SocketContext.Provider>
   );
 };
 

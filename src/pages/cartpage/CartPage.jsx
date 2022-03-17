@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import Col from "react-bootstrap/esm/Col";
 import Container from "react-bootstrap/esm/Container";
 import Row from "react-bootstrap/esm/Row";
@@ -36,6 +37,9 @@ const CartPage = () => {
     })
     return result;
   }
+  useEffect(()=>{
+    document.title = "Giỏ hàng";
+  },[])
   return (
     <div className="cart-page">
       <Container className="cart-page__container">

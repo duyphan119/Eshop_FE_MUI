@@ -1,0 +1,32 @@
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  .pagination__page-item {
+    font-size: 1.4rem;
+    width: 32px;
+    height: 32px;
+    border: 1px solid var(--main-color);
+    border-radius: 2px;
+    cursor: pointer;
+    margin: 10px 2px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--main-color);
+    background-color: unset;
+    user-select: none;
+    svg {
+      font-size: 1rem;
+    }
+    &.disabled {
+      cursor: default;
+      color: unset;
+      border: 1px solid black;
+    }
+    &.active {
+      background-color: var(--main-color);
+      color: white;
+    }
+  }
+}

@@ -1,15 +1,24 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import Col from "react-bootstrap/esm/Col";
 import Container from "react-bootstrap/esm/Container";
 import Row from "react-bootstrap/esm/Row";
 import { AiOutlineMinus, AiOutlinePlus } from "react-icons/ai";
-import { BsCartPlus } from "react-icons/bs";
+import {
+  BsCartPlus,
+  BsChevronDown,
+  BsChevronUp,
+  BsStar,
+  BsStarFill,
+  BsStarHalf,
+} from "react-icons/bs";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import { apiAddToCart } from "../../api/apiCart";
 import { apiGetProductBySlug } from "../../api/apiProduct";
+import Comments from "../../components/comments/Comments";
 import * as constants from "../../constants";
-import { convertSizeStringToNumber } from "../../utils";
+import { SocketContext } from "../../context";
+import { convertSizeStringToNumber, separateThousands } from "../../utils";
 import "./productpage.scss";
 const ProductPage = () => {
   const user = useSelector((state) => state.auth.currentUser);
@@ -17,14 +26,24 @@ const ProductPage = () => {
   const [indexSize, setIndexSize] = useState(0);
   const [indexColor, setIndexColor] = useState(0);
   const [indexImage, setIndexImage] = useState(0);
+  const [indexSlide, setIndexSlide] = useState(0);
   const [quantity, setQuantity] = useState(1);
   const params = useParams();
   const dispatch = useDispatch();
   const { productSlug } = params;
+  const socket = useContext(SocketContext);
+
+  useEffect(() => {
+    product && socket.emit("join-room", product.slug);
+  }, [socket, product]);
+
   useEffect(() => {
     const callApi = async () => {
-      const data = await apiGetProductBySlug(productSlug);
-      setProduct(data);
+      const data = await apiGetProductBySlug(user, productSlug, dispatch);
+      if (data) {
+        document.title = data.name;
+        setProduct(data);
+      }
     };
     callApi();
   }, [productSlug]);
@@ -49,6 +68,15 @@ const ProductPage = () => {
       dispatch
     );
   };
+  const handleChangeSlide = (step) => {
+    let newIndex = indexSlide + step;
+    if (
+      newIndex >= 0 &&
+      newIndex < product.productColors[indexColor].images.length * 3
+    ) {
+      setIndexSlide(newIndex);
+    }
+  };
   if (!product) {
     return "";
   }
@@ -56,11 +84,79 @@ const ProductPage = () => {
     <div className="product-page">
       <Container className="product-page__container">
         <Row className="product-page__main">
-          <Col xs={1}>
-            <div className="product-page__main-slider"></div>
-          </Col>
-          <Col xs={5}>
-            <div className="product-page__main-image">
+          <Col xs={6} className="product-page__main-info-product-image">
+            <Col
+              xs={2}
+              className="product-page__main-slider"
+              style={{
+                padding: `${
+                  product.productColors[indexColor].images.length < 5 &&
+                  "0 10px"
+                }`,
+              }}
+            >
+              <div
+                className="product-page__main-slider-prev-btn"
+                style={{
+                  display: `${
+                    product.productColors[indexColor].images.length < 5 &&
+                    "none"
+                  }`,
+                }}
+                onClick={() => handleChangeSlide(-1)}
+              >
+                <BsChevronUp />
+              </div>
+              <div
+                className="product-page__main-slider-wrapper"
+                style={{
+                  transform: `translateY(-${
+                    indexSlide >= 0 &&
+                    indexSlide <
+                      product.productColors[indexColor].images.length * 3 - 4 &&
+                    indexSlide * 134
+                  }px)`,
+                }}
+              >
+                <div className="product-page__main-slider-list">
+                  {product.productColors[indexColor].images.map(
+                    (item, index) => (
+                      <div
+                        className={`product-page__main-slider-item ${
+                          index === indexImage ? "active" : ""
+                        }`}
+                        key={item.id}
+                        onClick={() => setIndexImage(index)}
+                      >
+                        <img
+                          src={(() => {
+                            try {
+                              return `${constants.SERVER_URL}${item.image}`;
+                            } catch (error) {
+                              return constants.IMAGE_IS_NOT_AVAILABLE_URL;
+                            }
+                          })()}
+                          alt=""
+                        />
+                      </div>
+                    )
+                  )}
+                </div>
+              </div>
+              <div
+                className="product-page__main-slider-next-btn"
+                onClick={() => handleChangeSlide(1)}
+                style={{
+                  display: `${
+                    product.productColors[indexColor].images.length < 5 &&
+                    "none"
+                  }`,
+                }}
+              >
+                <BsChevronDown />
+              </div>
+            </Col>
+            <Col xs={10} className="product-page__main-image">
               <img
                 src={(() => {
                   try {
@@ -71,13 +167,37 @@ const ProductPage = () => {
                 })()}
                 alt=""
               />
-            </div>
+            </Col>
           </Col>
           <Col xs={6} className="product-page__main-info">
             <div className="product-page__main-info-name">{product.name}</div>
-            <div className="product-page__main-info-stars stars"></div>
+            <div className="product-page__main-info-stars stars">
+              {(() => {
+                const n = product.comments.length;
+                const rating = product.comments.reduce(
+                  (prev, cur) => prev + cur.rate / n,
+                  0
+                );
+                return [1, 2, 3, 4, 5].map((item, index) => {
+                  return (
+                    <div
+                      className="product-page__main-info-star star"
+                      key={new Date().getTime() + index}
+                    >
+                      {item <= rating ? (
+                        <BsStarFill />
+                      ) : item - 1 >= rating ? (
+                        <BsStar />
+                      ) : (
+                        <BsStarHalf />
+                      )}
+                    </div>
+                  );
+                });
+              })()}
+            </div>
             <div className="product-page__main-info-price">
-              {product.newPrice}đ
+              {separateThousands(product.newPrice)}đ
             </div>
             <hr className="product-page__main-info-separate" />
             <div className="product-page__main-info-color">
@@ -139,6 +259,7 @@ const ProductPage = () => {
                     return [];
                   }
                 })().map((item, index) => {
+                  console.log(index, indexSize);
                   return (
                     <div
                       className={`product-page__main-info-size-detail ${
@@ -194,6 +315,12 @@ const ProductPage = () => {
             </div>
           </Col>
         </Row>
+        <Comments
+          user={user}
+          socket={socket}
+          product={product}
+          setProduct={setProduct}
+        />
       </Container>
     </div>
   );

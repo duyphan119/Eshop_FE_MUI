@@ -32,14 +32,14 @@ const ProductsFilter = ({ filters, setFilters }) => {
   });
   const [menuRangePrices, setMenuRangePrices] = useState({
     rangePrices: [
-      { text: "Nhỏ hơn 100,000đ", value: "100000;" },
+      { text: "Nhỏ hơn 100,000đ", value: ";999000" },
       {
-        text: "Từ 100,000đ - 300,000đ",
-        value: "100000;300000",
+        text: "Từ 100,000đ - 250,000đ",
+        value: "100000;249000",
       },
       {
-        text: "Từ 300,000đ - 500,000đ",
-        value: "300000;500000",
+        text: "Từ 250,000đ - 500,000đ",
+        value: "250000;500000",
       },
     ],
     isShowing: true,

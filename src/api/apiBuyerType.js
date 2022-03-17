@@ -10,3 +10,11 @@ export const apiGetAllBuyerTypes = async (dispatch) => {
     console.log(error);
   }
 };
+export const apiGetBuyerTypeBySlug = async (slug) => {
+  try {
+    const res = await axios.get(`${API_URL}/slug/${slug}`);
+    return res.data
+  } catch (error) {
+    console.log(error);
+  }
+};

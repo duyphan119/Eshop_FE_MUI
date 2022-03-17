@@ -10,3 +10,12 @@ export const apiUploadImage = async (formData) => {
   }
   return null;
 };
+export const apiUploadImages = async (formData) => {
+  try {
+    const res = await axios.post(`${API_URL}/upload-images`, formData);
+    return res.data;
+  } catch (error) {
+    console.log(error);
+  }
+  return null;
+};
