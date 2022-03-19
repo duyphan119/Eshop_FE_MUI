@@ -5,7 +5,7 @@ import Row from "react-bootstrap/esm/Row";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { apiGetCategoriesByBuyerTypeSlug } from "../../api/apiCategory";
-import { apigetByBuyerTypeSlug } from "../../api/apiGroupCategory";
+import { apiGetGroupCategoriesByBuyerTypeSlug } from "../../api/apiGroupCategory";
 import { apiGetProductsByCategorySlug } from "../../api/apiProduct";
 import BannerSlider from "../../components/banner-slider/BannerSlider";
 import Categories from "../../components/categories/Categories";
@@ -22,7 +22,7 @@ const ProductsOfBuyerTypePage = ({ buyerType }) => {
   const dispatch = useDispatch();
   useEffect(() => {
     apiGetCategoriesByBuyerTypeSlug(buyerType.slug, dispatch);
-    apigetByBuyerTypeSlug(buyerType.slug, dispatch);
+    apiGetGroupCategoriesByBuyerTypeSlug(buyerType.slug, dispatch);
   }, [buyerType, dispatch]);
   useEffect(() => {
     groupCategories.length !== 0 &&

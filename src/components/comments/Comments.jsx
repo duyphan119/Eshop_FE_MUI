@@ -12,7 +12,10 @@ import { useDispatch } from "react-redux";
 const Comments = ({ product, setProduct, user, socket }) => {
   const [message, setMessage] = useState(
     (() => {
-      const comment = product.comments.find((item) => item.user.id === user.id);
+      let comment;
+      if(user){
+        comment = product.comments.find((item) => item.user.id === user.id);
+      }
       return comment ? comment : { content: "", rate: 0 };
     })()
   );

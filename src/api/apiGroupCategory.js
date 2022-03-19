@@ -10,7 +10,7 @@ export const apiGetAllGroupCategories = async (dispatch) => {
     console.log(error);
   }
 };
-export const apigetByBuyerTypeSlug = async (buyerTypeSlug, dispatch) => {
+export const apiGetGroupCategoriesByBuyerTypeSlug = async (buyerTypeSlug, dispatch) => {
   try {
     const res = await axios.get(`${API_URL}/buyerTypeSlug/${buyerTypeSlug}`);
     dispatch(getAllGroupCategories(res.data));

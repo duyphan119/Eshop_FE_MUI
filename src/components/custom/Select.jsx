@@ -16,13 +16,15 @@ const Select = ({ label, fields, error, onChange, onBlur, options, value }) => {
         onBlur={onBlur}
         className="form-control"
       >
-        {options.map((item) => {
-          return (
-            <option key={item.value} value={item.value}>
-              {item.text}
-            </option>
-          );
-        })}
+        <option value={value}>{label}</option>
+        {options &&
+          options.map((item) => {
+            return (
+              <option key={item.value} value={item.value}>
+                {item.text}
+              </option>
+            );
+          })}
       </FormSelect>
       {error && <span className="form-error">{error}</span>}
     </Form.Group>

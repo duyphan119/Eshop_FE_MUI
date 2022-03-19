@@ -4,7 +4,10 @@ import Container from "react-bootstrap/esm/Container";
 import Row from "react-bootstrap/esm/Row";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
-import { apiGetWishListByUser } from "../../api/apiWishlist";
+import {
+  apiGetWishListByUser,
+  apiRemoveWishlistItem
+} from "../../api/apiWishlist";
 import Profile from "../../components/profile/Profile";
 import * as constants from "../../constants";
 import { convertSizeStringToNumber, separateThousands } from "../../utils";
@@ -25,6 +28,10 @@ const WishListPage = () => {
     user && apiGetWishListByUser(user, dispatch);
   }, [user, dispatch]);
   if (!wishlist) return "";
+
+  const handleRemove = (item) => {
+    apiRemoveWishlistItem(user, item.id, dispatch);
+  };
   return (
     <div className="wishlist-page">
       <Container className="wishlist-page__container">
@@ -33,7 +40,7 @@ const WishListPage = () => {
           <Col xs={9} className="wishlist-page__body">
             <div className="wishlist-page__header">
               <div>Sản phẩm yêu thích</div>
-              <div>2 sản phẩm</div>
+              <div>{wishlist && wishlist.length} sản phẩm</div>
             </div>
             <hr />
             <div className="wishlist-page__list">
@@ -65,7 +72,9 @@ const WishListPage = () => {
                         {item.product.productColors.map(
                           (productColor, index) => (
                             <div
-                              className={`wishlist-page__item-main-info-color ${index === indexColor ? "active" : ""}`}
+                              className={`wishlist-page__item-main-info-color ${
+                                index === indexColor ? "active" : ""
+                              }`}
                               key={index + new Date()}
                             >
                               <img
@@ -101,7 +110,7 @@ const WishListPage = () => {
                     </div>
                   </div>
                   <div className="wishlist-page__item-main-actions">
-                    <button>XOÁ</button>
+                    <button onClick={() => handleRemove(item)}>XOÁ</button>
                     <button>THÊM VÀO GIỎ HÀNG</button>
                   </div>
                 </div>

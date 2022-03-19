@@ -2,9 +2,9 @@ import { Link } from "react-router-dom";
 import "./bannertop.scss";
 const BannerTop = () => {
   return (
-    <section className="banner-top">
+    <div className="banner-top">
       <Link to="/" className="banner-top-link"></Link>
-    </section>
+    </div>
   );
 };
 

@@ -19,15 +19,6 @@ export const configAxios = (user, dispatch) => {
         } else {
           config.headers["authorization"] = `Bearer ${user.accessToken}`;
         }
-      } else {
-        dispatch(
-          showToastMessage({
-            type: "error",
-            text: "Đăng nhập để thực hiện thao tác này",
-            title: "Thất bại",
-            isOpen: true,
-          })
-        );
       }
       return config;
     },

@@ -140,6 +140,7 @@ const ProductsPage = () => {
     api();
   }, [categorySlug]);
   useEffect(() => {
+    console.log(buyerTypes);
     if (
       buyerTypes.length !== 0 &&
       !buyerTypes.find((item) => item.slug === categorySlug)
@@ -161,6 +162,7 @@ const ProductsPage = () => {
       />
     );
   }
+
   return (
     <Container className="products-page__container">
       <Row className="products-page">

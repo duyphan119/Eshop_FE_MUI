@@ -1,0 +1,20 @@
+.payment__title {
+  font-size: 2.2rem;
+  font-weight: bold;
+}
+.payments__methods {
+  .payments__method {
+    font-size: 1.6rem;
+    display: flex;
+    align-items: center;
+    border: 1px solid black;
+    padding: 10px;
+    input {
+      width: 20px;
+      height: 20px;
+      transform: translateY(-25%);
+      margin-right: 10px !important;
+      background-color:var(--main-color);
+    }
+  }
+}

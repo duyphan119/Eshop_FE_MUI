@@ -32,7 +32,7 @@ const ProductPage = () => {
   const dispatch = useDispatch();
   const { productSlug } = params;
   const socket = useContext(SocketContext);
-
+  console.log(product);
   useEffect(() => {
     product && socket.emit("join-room", product.slug);
   }, [socket, product]);
@@ -46,7 +46,7 @@ const ProductPage = () => {
       }
     };
     callApi();
-  }, [productSlug]);
+  }, [productSlug, user, dispatch]);
   const handleChangeQuantity = (e, step) => {
     try {
       let amount = product.productColors[indexColor].sizes[indexSize].amount;

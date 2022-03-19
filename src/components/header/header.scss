@@ -1,0 +1,19 @@
+header {
+  position: relative;
+  width: 100%;
+  background-color: white;
+  &.show {
+    position: fixed;
+    z-index: 1;
+    top: 0;
+    left: 0;
+  }
+  .banner-top {
+    .banner-top-link {
+      background-image: url(https://bizweb.dktcdn.net/100/438/408/themes/848101/assets/bannertop.jpg?1646486842767);
+      height: 80px;
+      background-position: center;
+      display: block;
+    }
+  }
+}

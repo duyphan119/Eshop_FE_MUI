@@ -1,28 +1,16 @@
-import { Routes, Route } from "react-router-dom";
-import BannerTop from "./components/bannertop/BannerTop";
-import TopBar from "./components/topbar/TopBar";
-import Navbar from "./components/navbar/Navbar";
-import HomePage from "./pages/homepage/HomePage";
-import OAuthPage from "./pages/oauthpage/OAuthPage";
-import Footer from "./components/footer/Footer";
-import "./App.scss";
-import LoginPage from "./pages/login-register/LoginPage";
-import RegisterPage from "./pages/login-register/RegisterPage";
-import PersonalInfoPage from "./pages/personalinfopage/PersonalInfoPage";
-import ToastMessage from "./components/toastmessage/ToastMessage";
-import ProductsPage from "./pages/productspage/ProductsPage";
-import CartPage from "./pages/cartpage/CartPage";
-import ProductPage from "./pages/productpage/ProductPage";
+import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { apiGetCartByUser } from "./api/apiCart";
-import { useEffect } from "react";
-import NotFoundPage from "./pages/notfoundpage/NotFoundPage";
 import { socket, SocketContext } from "./context";
-import ProductFormPage from "./pages/productformpage/ProductFormPage";
-import WishListPage from "./pages/wishlistpage/WishListPage";
+import { routes } from "./routes";
+import Footer from "./components/footer/Footer";
+import Header from "./components/header/Header";
+import ToastMessage from "./components/toastmessage/ToastMessage";
+import "./App.scss";
 const App = () => {
   const user = useSelector((state) => state.auth.currentUser);
   const dispatch = useDispatch();
+
   useEffect(() => {
     if (user) {
       apiGetCartByUser(user, dispatch);
@@ -30,24 +18,8 @@ const App = () => {
   }, [user, dispatch]);
   return (
     <SocketContext.Provider value={socket}>
-      <BannerTop />
-      <header>
-        <TopBar />
-        <Navbar />
-      </header>
-      <Routes>
-        <Route path="/" element={<HomePage />} />
-        <Route path="/oauth/success" element={<OAuthPage />} />
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="/register" element={<RegisterPage />} />
-        <Route path="/account" element={<PersonalInfoPage />} />
-        <Route path="/:categorySlug" element={<ProductsPage />} />
-        <Route path="/cart" element={<CartPage />} />
-        <Route path="/wishlist" element={<WishListPage />} />
-        <Route path="/product/:productSlug" element={<ProductPage />} />
-        <Route path="/product/add" element={<ProductFormPage />} />
-        <Route path="*" element={<NotFoundPage />} />
-      </Routes>
+      <Header/>
+      {routes()}
       <Footer />
       <ToastMessage />
     </SocketContext.Provider>

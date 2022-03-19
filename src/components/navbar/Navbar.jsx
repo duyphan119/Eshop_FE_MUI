@@ -24,113 +24,112 @@ const Navbar = () => {
     apiGetAllBuyerTypes(dispatch);
   }, [dispatch]);
   return (
-    <Container className="my-navbar__container">
-      <Row>
-        <Col xs={12} className="my-navbar">
-          <div className="my-navbar__left">
-            <Link to="/">
-              <img
-                src="https://bizweb.dktcdn.net/100/438/408/themes/848101/assets/logo.svg?1646486842767"
-                alt=""
-              />
-            </Link>
-          </div>
-          <div className="my-navbar__middle">
-            <ul className="my-navbar__middle-categories">
-              <li className="my-navbar__middle-category">
-                <Link to={`/`} className="my-navbar__middle-category-link">
-                  SALE UP TO 66%
-                </Link>
-              </li>
-              {buyerTypes.map((item) => {
-                return (
-                  <li
-                    className="my-navbar__middle-category has-child"
-                    key={item.id}
+    <Row>
+      <Col xs={12} className="my-navbar">
+        <div className="my-navbar__left">
+          <Link to="/">
+            <img
+              src="https://bizweb.dktcdn.net/100/438/408/themes/848101/assets/logo.svg?1646486842767"
+              alt=""
+            />
+          </Link>
+        </div>
+        <div className="my-navbar__middle">
+          <ul className="my-navbar__middle-categories">
+            <li className="my-navbar__middle-category">
+              <Link to={`/`} className="my-navbar__middle-category-link">
+                SALE UP TO 66%
+              </Link>
+            </li>
+            {buyerTypes.map((item) => {
+              return (
+                <li
+                  className="my-navbar__middle-category has-child"
+                  key={item.id}
+                >
+                  <Link
+                    to={`/${item.slug}`}
+                    className="my-navbar__middle-category-link"
                   >
-                    <Link
-                      to={`/${item.slug}`}
-                      className="my-navbar__middle-category-link"
-                    >
-                      {item.name.toUpperCase()}
-                    </Link>
-                    <NotificationCategories
-                      groups={item.groups}
-                      buyerType={item}
-                    />
-                  </li>
-                );
-              })}
+                    {item.name.toUpperCase()}
+                  </Link>
+                  <NotificationCategories
+                    groups={item.groups}
+                    buyerType={item}
+                  />
+                </li>
+              );
+            })}
 
-              <li className="my-navbar__middle-category">
-                <Link to={`/`} className="my-navbar__middle-category-link">
-                  POLO YODY
-                </Link>
-              </li>
-              <li className="my-navbar__middle-category">
-                <Link to={`/`} className="my-navbar__middle-category-link">
-                  BỘ SƯU TẬP
-                </Link>
-              </li>
-              <li className="my-navbar__middle-category">
-                <Link to={`/`} className="my-navbar__middle-category-link">
-                  YOLO LOVE
-                </Link>
-              </li>
-              <li className="my-navbar__middle-category">
-                <Link to={`/`} className="my-navbar__middle-category-link">
-                  ĐỒNG PHỤC
-                </Link>
-              </li>
-            </ul>
-            <form className="my-navbar__middle-form">
-              <input
-                type="text"
-                className="my-navbar__middle-form-input"
-                placeholder="Tìm sản phẩm"
-              />
-              <div className="my-navbar__middle-form-icon">
-                <MdSearch />
-              </div>
-            </form>
-          </div>
-          <div className="my-navbar__right">
-            <ul className="my-navbar__right-icons">
-              <li className="my-navbar__right-icon">
-                <div className="my-navbar__right-icon-link">
-                  <AiOutlineUser />
-                  <div className="my-navbar__right-icon-link-notification">
-                    {!user ? (
-                      <>
-                        <Link to={`/register`}>Đăng ký</Link>
-                        <Link to={`/login`}>Đăng nhập</Link>
-                      </>
-                    ) : (
-                      <>
-                        <Link to={`/account`}>Thông tin cá nhân</Link>
-                        <div onClick={handleLogout}>Đăng xuất</div>
-                      </>
-                    )}
-                  </div>
+            <li className="my-navbar__middle-category">
+              <Link to={`/`} className="my-navbar__middle-category-link">
+                POLO YODY
+              </Link>
+            </li>
+            <li className="my-navbar__middle-category">
+              <Link to={`/`} className="my-navbar__middle-category-link">
+                BỘ SƯU TẬP
+              </Link>
+            </li>
+            <li className="my-navbar__middle-category">
+              <Link to={`/`} className="my-navbar__middle-category-link">
+                YOLO LOVE
+              </Link>
+            </li>
+            <li className="my-navbar__middle-category">
+              <Link to={`/`} className="my-navbar__middle-category-link">
+                ĐỒNG PHỤC
+              </Link>
+            </li>
+          </ul>
+          <form className="my-navbar__middle-form">
+            <input
+              type="text"
+              className="my-navbar__middle-form-input"
+              placeholder="Tìm sản phẩm"
+            />
+            <div className="my-navbar__middle-form-icon">
+              <MdSearch />
+            </div>
+          </form>
+        </div>
+        <div className="my-navbar__right">
+          <ul className="my-navbar__right-icons">
+            <li className="my-navbar__right-icon">
+              <div className="my-navbar__right-icon-link">
+                <AiOutlineUser />
+                <div className="my-navbar__right-icon-link-notification">
+                  {!user ? (
+                    <>
+                      <Link to={`/register`}>Đăng ký</Link>
+                      <Link to={`/login`}>Đăng nhập</Link>
+                    </>
+                  ) : (
+                    <>
+                      <Link to={`/account`}>Thông tin cá nhân</Link>
+                      <div onClick={handleLogout}>Đăng xuất</div>
+                    </>
+                  )}
                 </div>
-              </li>
-              <li className="my-navbar__right-icon">
-                <Link to={`/wishlist`} className="my-navbar__right-icon-link">
-                  <BsHeart />
-                  {wishlist && (wishlist.length === 0 ? "" : <span>{wishlist.length}</span>)}
-                </Link>
-              </li>
-              <li className="my-navbar__right-icon">
-                <Link to={`/cart`} className="my-navbar__right-icon-link">
-                  <BsBag />
-                  {cart && (cart.length === 0 ? "" : <span>{cart.length}</span>)}
-                </Link>
-              </li>
-            </ul>
-          </div>
-        </Col>
-      </Row>
-    </Container>
+              </div>
+            </li>
+            <li className="my-navbar__right-icon">
+              <Link to={`/wishlist`} className="my-navbar__right-icon-link">
+                <BsHeart />
+                {wishlist &&
+                  (wishlist.length === 0 ? "" : <span>{wishlist.length}</span>)}
+              </Link>
+            </li>
+            <li className="my-navbar__right-icon">
+              <Link to={`/cart`} className="my-navbar__right-icon-link">
+                <BsBag />
+                {cart && (cart.length === 0 ? "" : <span>{cart.length}</span>)}
+              </Link>
+            </li>
+          </ul>
+        </div>
+      </Col>
+    </Row>
   );
 };
 
