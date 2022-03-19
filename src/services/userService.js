@@ -14,7 +14,10 @@ const create = async (body) => {
       isAdmin,
     } = body;
     // Check email
-    const checkedUser = await db.User.findOne({ where: { email: email } });
+    const checkedUser = await db.User.findOne({
+      where: { email: email },
+      raw: true,
+    });
     if (checkedUser) {
       return { status: 500, data: "Email was available" };
     }
@@ -45,7 +48,7 @@ const create = async (body) => {
 };
 const getAll = async () => {
   try {
-    const users = await db.User.findAll();
+    const users = await db.User.findAll({ raw: true });
     return { status: 200, data: users };
   } catch (error) {
     console.log(error);

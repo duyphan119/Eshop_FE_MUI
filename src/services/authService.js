@@ -11,7 +11,7 @@ const login = async (body) => {
     // Check email
     const checkedUser = await db.User.findOne({
       where: { email: email },
-      
+      raw: true,
     });
     if (!checkedUser) {
       return { status: 500, data: "Email or password can be incorrect" };
@@ -56,8 +56,12 @@ const register = async (body) => {
       isAdmin,
     } = body;
     // Check email
-    const checkedUser = await db.User.findOne({ where: { email: email } });
+    const checkedUser = await db.User.findOne({
+      where: { email: email },
+      raw: true,
+    });
     if (checkedUser) {
+      console.log("ngu");
       return { status: 500, data: "Email was available" };
     }
     // Hash password
@@ -108,14 +112,14 @@ const refreshToken = async (cookies) => {
     return { status: 500, data: error };
   }
 };
-const oauthSuccess = async (user) => {
+const oauthSuccess = async (reqUser, res) => {
   try {
-    if (user) {
-      const user = user._json;
+    if (reqUser) {
+    const user = reqUser._json;
       // Check email
       const resUser = await db.User.findOne({
         where: { email: user.email },
-        
+        raw: true,
       });
       if (!resUser) {
         const id = (
@@ -160,7 +164,7 @@ const oauthSuccess = async (user) => {
           },
           res
         );
-        res.status(200).json({ ...newUser.dataValues, accessToken });
+        return { status: 200, data: { ...newUser.dataValues, accessToken } };
       } else {
         // Create access token
         const accessToken = createAccessToken({

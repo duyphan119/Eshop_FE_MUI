@@ -7,7 +7,7 @@ const getByProductId = async (product) => {
       where: {
         productId: product.id,
       },
-      
+      raw: true
     });
     return imagesProduct;
   } catch (error) {

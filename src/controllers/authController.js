@@ -18,7 +18,7 @@ const authController = {
     res.status(200).json("Log out successful");
   },
   oauthSuccess: async (req, res) => {
-    const response = await authService.oauthSuccess(req.user);
+    const response = await authService.oauthSuccess(req.user, res);
     res.status(response.status).json(response.data);
   },
   getAuthenticatedEmailCode: async (req, res) => {

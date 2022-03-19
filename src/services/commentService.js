@@ -11,7 +11,7 @@ const create = async (body) => {
         productSlug,
         replyTo,
       },
-      
+      raw: true
     });
     if (comment) {
       return await updateComment({ commentId: comment.id }, body);
@@ -37,7 +37,7 @@ const getByProductSlug = async (params) => {
       where: {
         productSlug: productSlug,
       },
-      
+      raw: true
     });
     for (let i = 0; i < comments.length; i++) {
       const infosUser = await sequelize.query(
@@ -87,11 +87,11 @@ const updateById = async (params, body) => {
 const getById = async (params) => {
   try {
     const { commentId } = params;
-    const comments = await db.Comment.findAll({
+    const comments = await db.Comment.findOne({
       where: {
-        productSlug: productSlug,
+        id: commentId,
       },
-      
+      raw: true
     });
     for (let i = 0; i < comments.length; i++) {
       const infosUser = await sequelize.query(
@@ -108,4 +108,4 @@ const getById = async (params) => {
     return [];
   }
 };
-module.exports = { getByProductSlug, updateById, create };
+module.exports = { getByProductSlug, updateById, create, getById };

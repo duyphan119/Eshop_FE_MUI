@@ -9,12 +9,15 @@ const getByBuyerTypeSlug = async (params) => {
       `select g.* from  groupcategories g, buyertypes b
            where b.slug = '${buyerTypeSlug}' and 
            g.buyerTypeId = b.id order by createdAt desc`,
-      { type: QueryTypes.SELECT,  }
+      { type: QueryTypes.SELECT }
     );
-    return groupCategories;
+    return { status: 200, data: groupCategories };
   } catch (error) {
     console.log(error);
-    return [];
+    return {
+      status: 500,
+      data: error,
+    };
   }
 };
 const getBySlug = async (params) => {
@@ -24,6 +27,7 @@ const getBySlug = async (params) => {
       where: {
         slug: groupCategorySlug,
       },
+      raw: true,
     });
     return { status: 200, data: groupCategory };
   } catch (error) {
@@ -62,13 +66,13 @@ const updateById = async (params, body) => {
 };
 const getAll = async (query) => {
   try {
-    const groupCategories = await db.GroupCategory.findAll();
+    const groupCategories = await db.GroupCategory.findAll({ raw: true });
     return { status: 200, data: groupCategories };
   } catch (error) {
     console.log(error);
     return { status: 500, data: error };
   }
-}
+};
 const getById = async (params) => {
   try {
     const { groupCategoryId } = params;
@@ -78,7 +82,7 @@ const getById = async (params) => {
     console.log(error);
     return { status: 500, data: error };
   }
-}
+};
 const create = async (body) => {
   try {
     const { name, description } = body;
@@ -95,5 +99,13 @@ const create = async (body) => {
     console.log(error);
     return { status: 500, data: error };
   }
-}
-module.exports = { getByBuyerTypeSlug, getBySlug, deleteById, updateById, getAll, getById, create };
+};
+module.exports = {
+  getByBuyerTypeSlug,
+  getBySlug,
+  deleteById,
+  updateById,
+  getAll,
+  getById,
+  create,
+};

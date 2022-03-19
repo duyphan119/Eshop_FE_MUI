@@ -40,9 +40,9 @@ const getById = async (params) => {
   }
 };
 
-const create = async () => {
+const create = async (body) => {
   try {
-    const { size, amount, productId } = req.body;
+    const { size, amount, productId } = body;
     const id = (new Date().getTime() * Math.random()) / Math.random();
     const savedSize = await db.Size.create({ id, size, amount, productId });
     return { status: 200, data: savedSize };

@@ -10,7 +10,7 @@ const create = async (body) => {
         userId,
         sizeId,
       },
-      
+      raw: true
     });
 
     if (!checkedItem) {
@@ -59,7 +59,7 @@ const getByUser = async (params) => {
       where: {
         userId: userId,
       },
-      
+      raw: true
     });
     for (let i = 0; i < cartItems.length; i++) {
       cartItems[i] = await getCartItemAllFields(cartItems[i]);
@@ -121,7 +121,7 @@ const getCartItemAllFields = async (item) => {
     where: {
       productId: products[0].id,
     },
-    
+    raw: true
   });
   products[0].images = imagesProduct;
   newItem.size = size.dataValues;

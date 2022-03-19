@@ -22,21 +22,21 @@ const create = async (req, res) => {
 const getAll = async (query) => {
   const { all } = query;
   try {
-    let buyerTypes = await db.BuyerType.findAll();
+    let buyerTypes = await db.BuyerType.findAll({raw:true});
     if (all) {
       for (let i = 0; i < buyerTypes.length; i++) {
         let groups = await sequelize.query(
           `select g.id, g.name, g.slug, g.description, g.createdAt, g.updatedAt, g.buyerTypeId
            from groupcategories g, buyertypes b where   g.buyerTypeId = '${buyerTypes[i].id}' 
            and g.buyerTypeId=b.id`,
-          { type: QueryTypes.SELECT }
+          { type: QueryTypes.SELECT, raw: true }
         );
         for (let j = 0; j < groups.length; j++) {
           let categories = await sequelize.query(
             `select c.id, c.name, c.slug, c.description, c.createdAt, c.updatedAt, c.groupCategoryId
              from groupcategories g, categories c  where  c.groupCategoryId = '${groups[j].id}' 
              and c.groupCategoryId=g.id`,
-            { type: QueryTypes.SELECT }
+            { type: QueryTypes.SELECT, raw: true}
           );
           groups[j] = {
             ...groups[j],
@@ -71,7 +71,7 @@ const getBySlug = async (params) => {
     const buyerType = await db.BuyerType.findOne({
       where: {
         slug: buyerTypeSlug,
-      },
+      }, raw: true
     });
     return { status: 500, data: buyerType };
   } catch (error) {

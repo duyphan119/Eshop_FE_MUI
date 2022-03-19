@@ -23,7 +23,7 @@ const getBySlug = async (params) => {
     const category = await db.Category.findOne({
       where: {
         slug: categorySlug,
-      },
+      },raw: true
     });
     return { status: 200, data: category };
   } catch (error) {
@@ -43,7 +43,7 @@ const getById = async (params) => {
 };
 const getAll = async (query) => {
   try {
-    const categories = await db.Category.findAll();
+    const categories = await db.Category.findAll({raw:true});
     return { status: 200, data: categories };
   } catch (error) {
     console.log(error);

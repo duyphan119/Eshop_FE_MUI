@@ -29,7 +29,7 @@ const getByUser = async (params) => {
       where: {
         userId: userId,
       },
-      
+      raw: true
     });
     for (let i = 0; i < wishlistItems.length; i++) {
       let product = await productService.getBySlug(

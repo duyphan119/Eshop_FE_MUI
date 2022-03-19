@@ -1,4 +1,4 @@
-import cartService from "../services/authService";
+import cartService from "../services/cartService";
 const cartController = {
   create: async (req, res) => {
     const response = await cartService.create(req.body);

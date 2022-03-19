@@ -9,7 +9,9 @@ const wishlistController = {
     res.status(response.status).json(response.data);
   },
   update: async (req, res) => {},
-  delete: async (req, res) => {},
+  delete: async (req, res) => {
+    const response = await wishlistService.deleteById(req.params);
+    res.status(response.status).json(response.data);},
   getById: async (req, res) => {},
 };
 module.exports = wishlistController;
