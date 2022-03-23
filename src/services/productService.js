@@ -7,8 +7,12 @@ import slugify from "slugify";
 const getProductsAllFields = async (user, products) => {
   const newProducts = [];
   for (let i = 0; i < products.length; i++) {
-    let imagesProduct = await imagesProductService.getByProductId(products[i]);
-    let sizes = await sizeService.getByProductId(products[i]);
+    let imagesProduct = (
+      await imagesProductService.getByProductId({ productId: products[i].id })
+    ).data;
+    let sizes = (
+      await sizeService.getByProductId({ productId: products[i].id })
+    ).data;
     let index = newProducts.findIndex((item) => item.slug === products[i].slug);
     let productColor = {
       color: products[i].color,
@@ -31,7 +35,7 @@ const getProductsAllFields = async (user, products) => {
         let queryString = `select * from wishlistitems where productSlug = '${products[i].slug}' and userId = ${user.id}`;
         const checkWishlist = await sequelize.query(queryString, {
           type: QueryTypes.SELECT,
-          raw: true
+          raw: true,
         });
         products[i].isWished = checkWishlist.length !== 0;
       }
@@ -49,7 +53,7 @@ const getTotalPages = async (query) => {
     let queryString = `select distinct slug from products`;
     const products = await sequelize.query(queryString, {
       type: QueryTypes.SELECT,
-      raw: true
+      raw: true,
     });
     return {
       status: 200,
@@ -136,12 +140,20 @@ const getById = async (params) => {
 const getAll = async (query) => {
   try {
     const { p, limit } = query;
-    let queryString = `select * from products p, 
+    let queryString = "";
+    if (p && limit) {
+      queryString = `select p.* , c.name as categoryName from products p, categories c,
       (select distinct slug from products limit ${limit} 
-      offset ${(p - 1) * limit}) x where p.slug = x.slug`;
+        offset ${
+          (p - 1) * limit
+        }) x where p.slug = x.slug and p.categoryId = c.id order by createdAt desc`;
+    } else {
+      queryString = `select p.* , c.name as categoryName from products p, categories c,
+      (select distinct slug from products
+       ) x where p.slug = x.slug and p.categoryId = c.id order by createdAt desc`;
+    }
     const products = await sequelize.query(queryString, {
       type: QueryTypes.SELECT,
-      
     });
     return {
       status: 200,
@@ -163,10 +175,13 @@ const getBySlug = async (user, params, query) => {
       where: {
         slug: productSlug,
       },
-      raw: true
+      raw: true,
     });
     if (!all || products.length === 0) {
-      return res.status(200).json(products);
+      return {
+        status: 200,
+        data: null,
+      };
     }
     const newProducts = await getProductsAllFields(user, products);
     return {
@@ -270,7 +285,7 @@ const getByCategorySlug = async (user, params, query) => {
     where p.slug = x.slug`;
     let products = await sequelize.query(queryString, {
       type: QueryTypes.SELECT,
-      raw: true
+      raw: true,
     });
     if (!all || products.length === 0) {
       return {
@@ -302,7 +317,8 @@ const create = async (body) => {
       description,
       categoryId,
     } = body;
-    const id = (new Date().getTime() * Math.random()) / Math.random();
+    const id = await generateId();
+    console.log(id);
     const slug = slugify(name.toLowerCase());
     const savedProduct = await db.Product.create({
       id,
@@ -327,6 +343,30 @@ const create = async (body) => {
     };
   }
 };
+
+const generateId = async () => {
+  let result = "P";
+  let date = new Date();
+  result += date.getFullYear().toString().substring(2);
+
+  let queryString = `select count(id) as total from products`;
+  const queryResult = await sequelize.query(queryString, {
+    type: QueryTypes.SELECT,
+    raw: true,
+  });
+  let count = queryResult[0].total + 1;
+  let prefix = "";
+  if (count < 10) {
+    prefix = "000";
+  } else if (count < 100) {
+    prefix = "00";
+  } else if (count < 1000) {
+    prefix = "0";
+  }
+  result += prefix + count;
+  return result;
+};
+
 module.exports = {
   deleteById,
   getTotalPages,

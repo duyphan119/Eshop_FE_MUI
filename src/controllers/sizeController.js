@@ -20,5 +20,9 @@ const sizeController = {
     const response = await sizeService.deleteById(req.params);
     res.status(response.status).json(response.data);
   },
+  getByProductId: async (req, res) => {
+    const response = await sizeService.getByProductId(req.params);
+    res.status(response.status).json(response.data);
+  },
 };
 module.exports = sizeController;

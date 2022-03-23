@@ -1,17 +1,24 @@
 import db from "../models";
 import { QueryTypes } from "@sequelize/core";
 import { sequelize } from "../config/connectDB";
-const getByProductId = async (product) => {
+const getByProductId = async (params) => {
   try {
+    const { productId } = params;
     let sizes = await sequelize.query(
       `select * from sizes
-         where productId = '${product.id}' order by createdAt desc`,
+         where productId = '${productId}' order by createdAt desc`,
       { type: QueryTypes.SELECT, raw: true }
     );
-    return sizes;
+    return {
+      status: 200,
+      data: sizes,
+    };
   } catch (error) {
     console.log(error);
-    return [];
+    return {
+      status: 500,
+      data: error,
+    };
   }
 };
 

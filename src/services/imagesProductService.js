@@ -1,18 +1,19 @@
 import db from "../models";
 import { QueryTypes } from "@sequelize/core";
 import { sequelize } from "../config/connectDB";
-const getByProductId = async (product) => {
+const getByProductId = async (params) => {
   try {
+    const { productId } = params;
     let imagesProduct = await db.ImagesProduct.findAll({
       where: {
-        productId: product.id,
+        productId: productId,
       },
-      raw: true
+      raw: true,
     });
-    return imagesProduct;
+    return { status: 200, data: imagesProduct };
   } catch (error) {
     console.log(error);
-    return [];
+    return { status: 500, data: error };
   }
 };
 const create = async (body) => {

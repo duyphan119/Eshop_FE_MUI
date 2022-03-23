@@ -5,7 +5,7 @@ const sgMail = require("@sendgrid/mail");
 import dotenv from "dotenv";
 dotenv.config();
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
-const login = async (body) => {
+const login = async (body, res) => {
   try {
     const { email, password } = body;
     // Check email

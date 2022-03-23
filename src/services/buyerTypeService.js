@@ -73,7 +73,7 @@ const getBySlug = async (params) => {
         slug: buyerTypeSlug,
       }, raw: true
     });
-    return { status: 500, data: buyerType };
+    return { status: 200, data: buyerType };
   } catch (error) {
     console.log(error);
     return { status: 500, data: error };

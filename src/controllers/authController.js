@@ -1,7 +1,7 @@
 import authService from "../services/authService";
 const authController = {
   login: async (req, res) => {
-    const response = await authService.login(req.body);
+    const response = await authService.login(req.body, res);
     res.status(response.status).json(response.data);
   },
   register: async (req, res) => {
