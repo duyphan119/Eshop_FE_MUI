@@ -33,8 +33,13 @@ const wishlistSlice = createSlice({
       state.list = state.list.filter((item) => item.id !== id);
       localStorage.setItem("shop-of-duy:wishlist", JSON.stringify(state.list));
     },
+    removeWishlistItemByProductSlug: (state, action) => {
+      const productSlug = action.payload;
+      state.list = state.list.filter((item) => item.productSlug !== productSlug);
+      localStorage.setItem("shop-of-duy:wishlist", JSON.stringify(state.list));
+    },
   },
 });
-export const { getWishlist, addToWishlist, updateWishlist, removeWishlistItem } =
+export const { getWishlist, addToWishlist, updateWishlist, removeWishlistItem, removeWishlistItemByProductSlug } =
   wishlistSlice.actions;
 export default wishlistSlice.reducer;

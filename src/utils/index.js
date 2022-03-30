@@ -9,10 +9,16 @@ export const formatDate = (format, date) => {
         : newDate.getMonth() + 1;
     let day =
       newDate.getDate() < 10 ? "0" + newDate.getDate() : newDate.getDate();
+    let hours = newDate.getHours() < 10 ? "0" + newDate.getHours() : newDate.getHours();
+    let minutes = newDate.getMinutes() < 10 ? "0" + newDate.getMinutes() : newDate.getMinutes();
+    let seconds = newDate.getSeconds() < 10 ? "0" + newDate.getSeconds() : newDate.getSeconds();
+    
     if (format === "dd-MM-yyyy") {
       result = `${day}-${month}-${year}`;
     } else if (format === "yyyy-MM-dd") {
       result = `${year}-${month}-${day}`;
+    }else if (format === "dd-MM-yyyy HH:mm:ss") {
+      result = `${day}-${month}-${year} ${hours}:${minutes}:${seconds}`;
     }
     return result;
   } catch (error) {

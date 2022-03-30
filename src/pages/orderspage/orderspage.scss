@@ -1,0 +1,55 @@
+.orders-page {
+  background-color: #f8f8f8;
+  font-size: 1.6rem;
+  padding-block: 30px;
+  .orders-page__container {
+    .orders-page__main {
+      .orders-page__body {
+        padding-left: 30px;
+        background-color: white;
+        background-clip: content-box;
+        .orders-page__header {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          padding: 10px 30px;
+        }
+        hr {
+          margin: 0;
+        }
+        .orders-page__list {
+          .orders-page__item {
+            padding: 10px 30px;
+            display: flex;
+            .orders-page__item-child {
+              flex: 4;
+              padding: 0 5px;
+              font-size: 1.4rem;
+              display: flex;
+              align-items: center;
+              &.flex-5 {
+                flex: 5;
+              }
+              &.flex-3 {
+               flex: 3;
+             }
+              &.action {
+                flex: 1;
+                color: red;
+                cursor: pointer;
+                font-size: 1.8rem;
+              }
+            }
+            &.header {
+              background-color: #f8f8f8;
+              font-weight: bold;
+              &+.orders-page__item{
+                 padding-top: 20px;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

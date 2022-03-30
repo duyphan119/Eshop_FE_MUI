@@ -47,150 +47,157 @@ const PersonalInfoPage = () => {
     document.title = "Thông tin khách hàng";
   }, []);
   return (
-    <Container>
-      <Row className="personal-info">
-        <Profile user={user}/>
-        <Col xs={9} className="personal-info__form">
-          <form onSubmit={formik.handleSubmit}>
-            <div className="form-title">THÔNG TIN CÁ NHÂN</div>
-            <Row>
-              <Col xs={8}>
-                <Row>
-                  <Col xs={6}>
-                    <Input
-                      fields={{
-                        type: "text",
-                        name: "firstName",
-                        placeholder: "Tên",
-                        id: "firstName",
-                        autoComplete: "off",
-                      }}
-                      label="Tên"
-                      value={formik.values.firstName}
-                      onChange={formik.handleChange}
-                      onBlur={formik.handleBlur}
-                      error={
-                        formik.touched.firstName && formik.errors.firstName
-                      }
-                    />
-                  </Col>
-                  <Col xs={6}>
-                    <Input
-                      fields={{
-                        type: "text",
-                        name: "lastName",
-                        placeholder: "Họ",
-                        id: "lastName",
-                        autoComplete: "off",
-                      }}
-                      label="Họ"
-                      value={formik.values.lastName}
-                      onChange={formik.handleChange}
-                      onBlur={formik.handleBlur}
-                      error={formik.touched.lastName && formik.errors.lastName}
-                    />
-                  </Col>
-                  <Col xs={6}>
-                    <Input
-                      fields={{
-                        type: "date",
-                        name: "birthday",
-                        placeholder: "Ngày sinh",
-                        id: "birthday",
-                        autoComplete: "off",
-                      }}
-                      label="Ngày sinh"
-                      value={formik.values.birthday}
-                      onChange={formik.handleChange}
-                      onBlur={formik.handleBlur}
-                      error={formik.touched.birthday && formik.errors.birthday}
-                    />
-                  </Col>
-                  <Col xs={6}>
-                    <Input
-                      fields={{
-                        type: "text",
-                        name: "phoneNumber",
-                        placeholder: "Số điện thoại",
-                        id: "phoneNumber",
-                        autoComplete: "off",
-                      }}
-                      label="Số điện thoại"
-                      value={formik.values.phoneNumber}
-                      onChange={formik.handleChange}
-                      onBlur={formik.handleBlur}
-                      error={
-                        formik.touched.phoneNumber && formik.errors.phoneNumber
-                      }
-                    />
-                  </Col>
-                  <Col xs={6}>
-                    <Select
-                      fields={{
-                        name: "gender",
-                      }}
-                      options={[
-                        {
-                          value: "",
-                          text: "Chọn giới tính",
-                        },
-                        {
-                          value: 1,
-                          text: "Nam",
-                        },
-                        {
-                          value: 0,
-                          text: "Nữ",
-                        },
-                      ]}
-                      value={formik.values.gender}
-                      onChange={formik.handleChange}
-                      onBlur={formik.handleBlur}
-                      label="Giới tính"
-                    />
-                  </Col>
-                </Row>
-              </Col>
-              <Col xs={4}>
-                <label
-                  htmlFor="avatar"
-                  style={{
-                    width: "200px",
-                    height: "200px",
-                    border: "1px solid gray",
-                    margin: "10px auto",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    cursor: "pointer",
-                    backgroundImage: `url(${
-                      formik.values.avatar.includes("http")
-                        ? formik.values.avatar
-                        : `${constants.SERVER_URL}${formik.values.avatar}`
-                    })`,
-                    backgroundSize: "cover",
-                    backgroundPosition: "center",
-                  }}
-                >
-                  {formik.values.avatar === "" ? "Chọn ảnh đại diện" : ""}
-                </label>
-                <input
-                  type="file"
-                  name="avatar"
-                  id="avatar"
-                  hidden
-                  onChange={handleSelectPicture}
-                />
-              </Col>
-            </Row>
+    <div className="personal-info-page">
+      <Container className="personal-info-page__container">
+        <Row className="personal-info-page__main">
+          <Profile user={user} />
+          <Col xs={9} className="personal-info-page__body">
+            <form onSubmit={formik.handleSubmit}>
+              <div className="form-title">THÔNG TIN CÁ NHÂN</div>
+              <Row>
+                <Col xs={8}>
+                  <Row>
+                    <Col xs={12}>
+                      <Input
+                        fields={{
+                          type: "text",
+                          name: "firstName",
+                          placeholder: "Tên",
+                          id: "firstName",
+                          autoComplete: "off",
+                        }}
+                        label="Tên"
+                        value={formik.values.firstName}
+                        onChange={formik.handleChange}
+                        onBlur={formik.handleBlur}
+                        error={
+                          formik.touched.firstName && formik.errors.firstName
+                        }
+                      />
+                    </Col>
+                    <Col xs={12}>
+                      <Input
+                        fields={{
+                          type: "text",
+                          name: "lastName",
+                          placeholder: "Họ",
+                          id: "lastName",
+                          autoComplete: "off",
+                        }}
+                        label="Họ"
+                        value={formik.values.lastName}
+                        onChange={formik.handleChange}
+                        onBlur={formik.handleBlur}
+                        error={
+                          formik.touched.lastName && formik.errors.lastName
+                        }
+                      />
+                    </Col>
+                    <Col xs={12}>
+                      <Input
+                        fields={{
+                          type: "date",
+                          name: "birthday",
+                          placeholder: "Ngày sinh",
+                          id: "birthday",
+                          autoComplete: "off",
+                        }}
+                        label="Ngày sinh"
+                        value={formik.values.birthday}
+                        onChange={formik.handleChange}
+                        onBlur={formik.handleBlur}
+                        error={
+                          formik.touched.birthday && formik.errors.birthday
+                        }
+                      />
+                    </Col>
+                    <Col xs={12}>
+                      <Input
+                        fields={{
+                          type: "text",
+                          name: "phoneNumber",
+                          placeholder: "Số điện thoại",
+                          id: "phoneNumber",
+                          autoComplete: "off",
+                        }}
+                        label="Số điện thoại"
+                        value={formik.values.phoneNumber}
+                        onChange={formik.handleChange}
+                        onBlur={formik.handleBlur}
+                        error={
+                          formik.touched.phoneNumber &&
+                          formik.errors.phoneNumber
+                        }
+                      />
+                    </Col>
+                    <Col xs={12}>
+                      <Select
+                        fields={{
+                          name: "gender",
+                        }}
+                        options={[
+                          {
+                            value: "",
+                            text: "Chọn giới tính",
+                          },
+                          {
+                            value: 1,
+                            text: "Nam",
+                          },
+                          {
+                            value: 0,
+                            text: "Nữ",
+                          },
+                        ]}
+                        value={formik.values.gender}
+                        onChange={formik.handleChange}
+                        onBlur={formik.handleBlur}
+                        label="Giới tính"
+                      />
+                    </Col>
+                  </Row>
+                </Col>
+                <Col xs={4}>
+                  <label
+                    htmlFor="avatar"
+                    style={{
+                      width: "200px",
+                      height: "200px",
+                      border: "1px solid gray",
+                      margin: "10px auto",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      cursor: "pointer",
+                      backgroundImage: `url(${
+                        formik.values.avatar.includes("http")
+                          ? formik.values.avatar
+                          : `${constants.SERVER_URL}${formik.values.avatar}`
+                      })`,
+                      backgroundSize: "cover",
+                      backgroundPosition: "center",
+                    }}
+                  >
+                    {formik.values.avatar === "" ? "Chọn ảnh đại diện" : ""}
+                  </label>
+                  <input
+                    type="file"
+                    name="avatar"
+                    id="avatar"
+                    hidden
+                    onChange={handleSelectPicture}
+                  />
+                </Col>
+              </Row>
 
-            <button className="form-submit" type="submit">
-              Lưu
-            </button>
-          </form>
-        </Col>
-      </Row>
-    </Container>
+              <button className="form-submit" type="submit">
+                Lưu
+              </button>
+            </form>
+          </Col>
+        </Row>
+      </Container>
+    </div>
   );
 };
 

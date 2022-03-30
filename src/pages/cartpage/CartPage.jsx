@@ -6,7 +6,7 @@ import { AiOutlineMinus, AiOutlinePlus } from "react-icons/ai";
 import { BsArrowRightShort, BsHeart } from "react-icons/bs";
 import { GoTrashcan } from "react-icons/go";
 import { useDispatch, useSelector } from "react-redux";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { apiRemoveCartItem, apiUpdateCart } from "../../api/apiCart";
 import * as constants from "../../constants";
 import { separateThousands } from "../../utils";
@@ -15,6 +15,7 @@ const CartPage = () => {
   const user = useSelector((state) => state.auth.currentUser);
   const cart = useSelector((state) => state.cart.list);
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const handleChangeQuantity = (item, step) => {
     const newQuantity = item.quantity + step;
     if (newQuantity >= 0 && newQuantity <= item.size.amount) {
@@ -40,6 +41,11 @@ const CartPage = () => {
   useEffect(()=>{
     document.title = "Giỏ hàng";
   },[])
+
+  const handleCheckout = () => {
+    navigate("/payment");
+  }
+
   return (
     <div className="cart-page">
       <Container className="cart-page__container">
@@ -181,8 +187,8 @@ const CartPage = () => {
                     <div className="cart-page__total-price-key">Tổng cộng:</div>
                     <div className="cart-page__total-price-value">{separateThousands(getTotalPrice())}đ</div>
                   </div>
-                  <button className="cart-page__btn-check-out">
-                    Thanh toán (2)
+                  <button className="cart-page__btn-check-out" onClick={handleCheckout}>
+                    Thanh toán ({cart.length})
                   </button>
                   <p>Dùng mã giảm giá của YODY trong bước tiếp theo</p>
                 </div>

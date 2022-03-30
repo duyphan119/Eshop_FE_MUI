@@ -1,4 +1,4 @@
-.payment__title {
+.payments__title {
   font-size: 2.2rem;
   font-weight: bold;
 }
@@ -14,7 +14,117 @@
       height: 20px;
       transform: translateY(-25%);
       margin-right: 10px !important;
-      background-color:var(--main-color);
+      background-color: var(--main-color);
+    }
+  }
+}
+.payments__list {
+  .payments__item {
+    display: flex;
+    align-items: center;
+    margin-inline: 20px;
+    &:last-child {
+      padding-block: 20px;
+      border-bottom: 0.5px solid lightgray;
+    }
+    .payments__item-img {
+      width: 50px;
+      height: 50px;
+      position: relative;
+      img {
+        width: 50px;
+        height: 50px;
+        object-fit: contain;
+        border-radius: 10px;
+        border: 1px solid lightgray;
+      }
+      span {
+        position: absolute;
+        top: -10px;
+        right: -10px;
+        background-color: var(--main-color);
+        border-radius: 50%;
+        width: 20px;
+        height: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+    }
+    .payments__item-info {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      margin-inline: 10px;
+      .payments__item-info-name {
+        font-size: 1.6rem;
+      }
+      .payments__item-info-color {
+        color: gray;
+        font-size: 1.2rem;
+      }
+    }
+    .payments__item-price {
+      color: gray;
+      font-size: 1.6rem;
+    }
+  }
+}
+.payments__result {
+  margin-inline: 20px;
+  padding-block: 15px;
+  .payments__result-item {
+    padding-block: 2px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 1.6rem;
+  }
+
+  &.total {
+    border-top: 0.5px solid lightgray;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 1.8rem;
+    .payments__result-value {
+      color: var(--main-color);
+    }
+  }
+}
+.payments__actions {
+  margin-inline: 20px;
+  padding-block: 15px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  .payments__action {
+    font-size: 1.6rem;
+    &.checkout {
+      padding: 8px 16px;
+      border: 1px solid var(--main-color);
+      border-radius: 5px;
+      color: white;
+      background-color: var(--main-color);
+      cursor: pointer;
+      &:hover {
+        background-color: white;
+        color: var(--main-color);
+      }
+    }
+    &.back-to-cart{
+      display: flex;
+      align-items: center;
+      color: var(--main-color);
+      font-size: 1.4rem;
+      transform: translateX(2px);
+      transition:transform 0.2s ease-in-out;
+      &:hover {
+        color: #845e14;
+        svg{
+          transform: translateX(-2px);
+        }
+      }
     }
   }
 }

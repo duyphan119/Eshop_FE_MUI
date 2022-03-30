@@ -23,6 +23,14 @@ const ProductsFilter = ({ filters, setFilters }) => {
         color: "Trắng",
         colorCode: "white",
       },
+      {
+        color: "Đen",
+        colorCode: "black",
+      },
+      {
+        color: "Tím",
+        colorCode: "purple",
+      },
     ],
     isShowing: true,
   });

@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import "./notificationcategories.scss";
 
 const NotificationCategories = ({ groups, buyerType }) => {
+  console.log(groups);
   return (
     <div className="notificationcategories">
       <div className="notificationcategories__groups">

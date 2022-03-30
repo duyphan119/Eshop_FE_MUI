@@ -12,7 +12,6 @@ import {
   BsStarHalf,
 } from "react-icons/bs";
 import { useDispatch, useSelector } from "react-redux";
-import { useParams } from "react-router-dom";
 import { apiAddToCart } from "../../api/apiCart";
 import { apiGetProductBySlug } from "../../api/apiProduct";
 import Comments from "../../components/comments/Comments";
@@ -20,33 +19,37 @@ import * as constants from "../../constants";
 import { SocketContext } from "../../context";
 import { convertSizeStringToNumber, separateThousands } from "../../utils";
 import "./productpage.scss";
-const ProductPage = () => {
+const ProductPage = ({ categorySlug }) => {
   const user = useSelector((state) => state.auth.currentUser);
-  const [product, setProduct] = useState();
   const [indexSize, setIndexSize] = useState(0);
   const [indexColor, setIndexColor] = useState(0);
   const [indexImage, setIndexImage] = useState(0);
   const [indexSlide, setIndexSlide] = useState(0);
   const [quantity, setQuantity] = useState(1);
-  const params = useParams();
+  const [product, setProduct] = useState();
   const dispatch = useDispatch();
-  const { productSlug } = params;
   const socket = useContext(SocketContext);
-  console.log(product);
+
+  // useEffect(() => {
+  //   product.productColors[indexColor];
+  // }, [product, indexColor]);
+
+  useEffect(() => {
+    const api = async () => {
+      const data = await apiGetProductBySlug(user, categorySlug, dispatch);
+      setProduct(data);
+    };
+    api();
+  }, [user, categorySlug, dispatch]);
   useEffect(() => {
     product && socket.emit("join-room", product.slug);
   }, [socket, product]);
 
   useEffect(() => {
-    const callApi = async () => {
-      const data = await apiGetProductBySlug(user, productSlug, dispatch);
-      if (data) {
-        document.title = data.name;
-        setProduct(data);
-      }
-    };
-    callApi();
-  }, [productSlug, user, dispatch]);
+    if (product) {
+      document.title = product.name;
+    }
+  }, [product]);
   const handleChangeQuantity = (e, step) => {
     try {
       let amount = product.productColors[indexColor].sizes[indexSize].amount;
@@ -259,7 +262,6 @@ const ProductPage = () => {
                     return [];
                   }
                 })().map((item, index) => {
-                  console.log(index, indexSize);
                   return (
                     <div
                       className={`product-page__main-info-size-detail ${

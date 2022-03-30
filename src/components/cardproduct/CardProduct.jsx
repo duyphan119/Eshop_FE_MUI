@@ -5,26 +5,32 @@ import { BsHeart, BsHeartFill } from "react-icons/bs";
 import { separateThousands } from "../../utils";
 import * as constants from "../../constants";
 import "./cardproduct.scss";
-import { apiAddToWishlist } from "../../api/apiWishlist";
+import { apiAddToWishlist, apiRemoveWishlistItem } from "../../api/apiWishlist";
 const CardProduct = ({ item }) => {
   const dispatch = useDispatch();
   const user = useSelector((state) => state.auth.currentUser);
   const handleAddToWishList = () => {
-    apiAddToWishlist(
-      user,
-      { productSlug: item.slug, userId: user.id },
-      dispatch
-    );
+    if (item.isWished) {
+      apiRemoveWishlistItem(user,
+        { productSlug: item.slug, userId: user.id },
+        dispatch)
+    } else {
+      apiAddToWishlist(
+        user,
+        { productSlug: item.slug, userId: user.id },
+        dispatch
+      );
+    }
   };
   return (
-    <Col xs={3} className="card-product">
+    <>
       <div
         className={`card-product__wish ${item.isWished ? "is-wished" : ""}`}
         onClick={handleAddToWishList}
       >
         {item.isWished ? <BsHeartFill /> : <BsHeart />}
       </div>
-      <Link to={`/product/${item.slug}`} className="card-product__img">
+      <Link to={`/${item.slug}`} className="card-product__img">
         <img
           src={(() => {
             try {
@@ -36,7 +42,7 @@ const CardProduct = ({ item }) => {
           alt=""
         />
       </Link>
-      <Link to={`/product/${item.slug}`} className="card-product__name">
+      <Link to={`/${item.slug}`} className="card-product__name">
         {item.name}
       </Link>
       <div className="card-product__price">
@@ -48,8 +54,7 @@ const CardProduct = ({ item }) => {
             {separateThousands(item.oldPrice)}đ
           </div>
         )}
-      </div>
-    </Col>
+      </div></>
   );
 };
 

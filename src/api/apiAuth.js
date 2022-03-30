@@ -56,8 +56,7 @@ export const apiLogout = async (dispatch) => {
       {
         withCredentials: true,
       },
-      {},
-      { withCredentials: true }
+      {}
     );
     dispatch(login(null));
   } catch (error) {

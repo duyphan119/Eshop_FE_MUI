@@ -7,27 +7,27 @@ import "./header.scss";
 const Header = () => {
   const headerRef = useRef();
   const [headerClassName, setHeaderClassName] = useState("");
-  const [showHeader, setShowHeader] = useState(false);
-  useEffect(() => {
-    const scrollHeader = () => {
-      if (headerRef.current) {
-        const rect = headerRef.current.getBoundingClientRect();
-        if (window.scrollY < rect.height) {
-          setShowHeader(false);
-        } else {
-          setShowHeader(true);
-        }
-      }
-    };
-    window.addEventListener("scroll", scrollHeader);
-    return () => {
-      window.removeEventListener("scroll", scrollHeader);
-    };
-  }, []);
+  // const [showHeader, setShowHeader] = useState(false);
+  // useEffect(() => {
+  //   const scrollHeader = () => {
+  //     if (headerRef.current) {
+  //       const rect = headerRef.current.getBoundingClientRect();
+  //       if (window.scrollY < rect.height) {
+  //         setShowHeader(false);
+  //       } else {
+  //         setShowHeader(true);
+  //       }
+  //     }
+  //   };
+  //   window.addEventListener("scroll", scrollHeader);
+  //   return () => {
+  //     window.removeEventListener("scroll", scrollHeader);
+  //   };
+  // }, []);
 
-  useEffect(() => {
-    setHeaderClassName(showHeader ? "show" : "");
-  }, [showHeader]);
+  // useEffect(() => {
+  //   setHeaderClassName(showHeader ? "show" : "");
+  // }, [showHeader]);
   return (
     <header ref={headerRef} className={headerClassName}>
       <BannerTop />

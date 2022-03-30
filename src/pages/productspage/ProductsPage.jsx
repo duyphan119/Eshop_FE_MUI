@@ -6,21 +6,18 @@ import { BsChevronDown } from "react-icons/bs";
 import { useDispatch, useSelector } from "react-redux";
 import {
   useLocation,
-  useNavigate,
-  useParams,
-  useSearchParams,
+  useNavigate, useSearchParams
 } from "react-router-dom";
-import { apiGetAllBuyerTypes } from "../../api/apiBuyerType";
 import { apiGetCategoryBySlug } from "../../api/apiCategory";
 import { apiGetGroupCategoryBySlug } from "../../api/apiGroupCategory";
 import {
   apiGetProductsByCategorySlug,
-  apiGetTotalPages,
+  apiGetTotalPages
 } from "../../api/apiProduct";
+import BreadCrumb from "../../components/breadcrumb/BreadCrumb";
+import Paginations from "../../components/pagination/Pagination";
 import Products from "../../components/products/Products";
 import ProductsFilter from "../../components/productsfilter/ProductsFilter";
-import ProductsOfBuyerTypePage from "../productsofbuyertypepage/ProductsOfBuyerTypePage";
-import Paginations from "../../components/pagination/Pagination";
 import "./productspage.scss";
 const sortFilters = [
   {
@@ -56,25 +53,23 @@ const sortFilters = [
   },
 ];
 const limitProductsInPage = 2;
-const ProductsPage = () => {
+const ProductsPage = ({ groupCategory, category }) => {
   const products = useSelector((state) => state.product.list);
-  const buyerTypes = useSelector((state) => state.buyerType.list);
   const user = useSelector((state) => state.auth.currentUser);
   const [titleProducts, setTitleProducts] = useState("");
   const navigate = useNavigate();
-  const params = useParams();
   const location = useLocation();
-  const { categorySlug } = params;
   const [queries] = useSearchParams();
+  const p = queries.get("page")
   const [totalPages, setTotalPages] = useState(1);
-  const [currentPage, setCurrentPage] = useState(1);
-  console.log(products);
+  const [currentPage, setCurrentPage] = useState(p ? parseInt(p) : 1);
   const [sortBy, setSortBy] = useState({
     name: queries.get("sortBy") ? queries.get("sortBy") : sortFilters[0].name,
     type: queries.get("sortType")
       ? queries.get("sortType")
       : sortFilters[0].type,
   });
+  const slug = groupCategory ? groupCategory.slug : category.slug;
   const [filters, setFilters] = useState([
     {
       name: "color",
@@ -91,81 +86,86 @@ const ProductsPage = () => {
   ]);
   const dispatch = useDispatch();
   useEffect(() => {
-    apiGetAllBuyerTypes(dispatch);
-  }, [dispatch]);
-
-  useEffect(() => {
     const api = async () => {
       const totalPages = await apiGetTotalPages(
-        categorySlug,
+        slug,
         location.search,
         limitProductsInPage
       );
       setTotalPages(totalPages);
     };
     api();
-  }, [categorySlug, location]);
+  }, [slug, location]);
+
   useEffect(() => {
-    let url = "";
+    let url = `/${slug}`;
     let _filters = [...filters].filter((item) => item.values.length !== 0);
-    if (sortBy.name === "" && sortBy.type === "") {
-      url = `/${categorySlug}`;
-    } else {
-      url = `/${categorySlug}?sortBy=${sortBy.name}&sortType=${sortBy.type}`;
+    let urlSearchParams = {}
+    if (sortBy.name !== "") {
+      urlSearchParams.sortBy = sortBy.name;
+    }
+    if (sortBy.name !== "") {
+      urlSearchParams.sortType = sortBy.type;
     }
     if (_filters.length !== 0) {
       _filters.forEach((filter, index) => {
-        if (index === 0 && url === `/${categorySlug}`) {
-          url += `?${filter.name}=${JSON.stringify(filter.values)}`;
-        } else {
-          url += `&${filter.name}=${JSON.stringify(filter.values)}`;
-        }
+        urlSearchParams[filter.name] = JSON.stringify(filter.values);
       });
     }
+    if (p) {
+      urlSearchParams.page = currentPage
+    }
+    url += "?" + new URLSearchParams(urlSearchParams).toString();
     if (!window.location.href.endsWith(url)) navigate(url);
-  }, [sortBy, categorySlug, filters, navigate]);
+  }, [sortBy, slug, filters, navigate, currentPage, p]);
 
   useEffect(() => {
     const api = async () => {
-      let data = await apiGetGroupCategoryBySlug(categorySlug);
+      let data = await apiGetGroupCategoryBySlug(slug);
       if (!data) {
-        data = await apiGetCategoryBySlug(categorySlug);
+        data = await apiGetCategoryBySlug(slug);
         if (data) {
+          document.title = data.name;
           setTitleProducts(data.name);
         }
       } else {
+        document.title = data.name;
         setTitleProducts(data.name);
       }
     };
     api();
-  }, [categorySlug]);
+  }, [slug]);
+
   useEffect(() => {
-    console.log(buyerTypes);
-    if (
-      buyerTypes.length !== 0 &&
-      !buyerTypes.find((item) => item.slug === categorySlug)
-    ) {
-      let query = "";
-      if (location.search === "") {
-        query += `?num=${limitProductsInPage}&p=${currentPage}`;
-      } else {
-        query += `${location.search}&num=${limitProductsInPage}&p=${currentPage}`;
-      }
-      apiGetProductsByCategorySlug(user, categorySlug, query, dispatch);
+    let query = "";
+    if (location.search === "") {
+      query += `?num=${limitProductsInPage}&p=${currentPage}`;
+    } else {
+      query += `${location.search}&num=${limitProductsInPage}&p=${currentPage}`;
     }
-  }, [user, buyerTypes, categorySlug, location, dispatch, currentPage]);
-
-  if (buyerTypes.find((item) => item.slug === categorySlug)) {
-    return (
-      <ProductsOfBuyerTypePage
-        buyerType={buyerTypes.find((item) => item.slug === categorySlug)}
-      />
-    );
-  }
-
+    apiGetProductsByCategorySlug(user, slug, query, dispatch);
+  }, [user, slug, location, dispatch, currentPage]);
+  console.log(groupCategory)
   return (
     <Container className="products-page__container">
       <Row className="products-page">
+        {groupCategory &&
+          <Col Col xs={12} style={{
+            fontSize:"1.6rem"
+          }}>
+            <BreadCrumb items={
+              [
+                {
+                  name: "Trang chủ",
+                  link: "/",
+                },
+                {
+                  name: groupCategory.buyerType.name,
+                  link: `/${groupCategory.buyerType.slug}`,
+                },
+              ]
+            } />
+          </Col>}
         <Col xs={12} className="products-page__title">
           {titleProducts.toUpperCase()}
         </Col>
@@ -184,12 +184,11 @@ const ProductsPage = () => {
                     {sortFilters.map((item) => {
                       return (
                         <li
-                          className={`products-page__sort-filter-item ${
-                            sortBy.name === item.name &&
+                          className={`products-page__sort-filter-item ${sortBy.name === item.name &&
                             sortBy.type === item.type
-                              ? "active"
-                              : ""
-                          }`}
+                            ? "active"
+                            : ""
+                            }`}
                           key={item.text + item.name}
                           onClick={() =>
                             setSortBy({ name: item.name, type: item.type })
@@ -212,7 +211,7 @@ const ProductsPage = () => {
           />
         </Col>
       </Row>
-    </Container>
+    </Container >
   );
 };
 

@@ -21,9 +21,15 @@ const ProductsOfBuyerTypePage = ({ buyerType }) => {
   const [indexGroup, setIndexGroup] = useState(0);
   const dispatch = useDispatch();
   useEffect(() => {
-    apiGetCategoriesByBuyerTypeSlug(buyerType.slug, dispatch);
-    apiGetGroupCategoriesByBuyerTypeSlug(buyerType.slug, dispatch);
-  }, [buyerType, dispatch]);
+    document.title = buyerType.name
+  }, [buyerType]);
+  useEffect(() => {
+    const api = async () => {
+      apiGetCategoriesByBuyerTypeSlug(buyerType.slug, dispatch);
+      apiGetGroupCategoriesByBuyerTypeSlug(buyerType.slug, dispatch);
+    };
+    api();
+  }, [buyerType.slug, dispatch]);
   useEffect(() => {
     groupCategories.length !== 0 &&
       apiGetProductsByCategorySlug(
@@ -60,11 +66,7 @@ const ProductsOfBuyerTypePage = ({ buyerType }) => {
                       alt=""
                     />
                     <span>
-                      {
-                        category.name.split(
-                          ` ${buyerType.name.toLowerCase()}`
-                        )[0]
-                      }
+                      {category.name.split(` ${buyerType.slug.toLowerCase()}`)[0]}
                     </span>
                   </Link>
                 </Col>
@@ -77,7 +79,7 @@ const ProductsOfBuyerTypePage = ({ buyerType }) => {
         array={groupCategories.map((item) => {
           return {
             ...item,
-            name: item.name.split(` ${buyerType.name.toLowerCase()}`)[0],
+            name: item.name.split(` ${buyerType.slug.toLowerCase()}`)[0],
           };
         })}
         indexClick={indexGroup}

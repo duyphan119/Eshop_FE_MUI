@@ -1,0 +1,56 @@
+.confirm-message {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  .confirm-message__body {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    min-width: 200px;
+    background-color: white;
+    font-size: 1.6rem;
+    .confirm-message__title {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px;
+    }
+    hr{
+       margin: 0;
+    }
+    .confirm-message__content{
+      padding: 10px;
+      flex:1;
+    }
+    .confirm-message__actions{
+      padding: 10px;
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      .confirm-message__action{
+         border:1px solid var(--main-color);
+         background-color: var(--main-color);
+         color:white;
+         margin-left: 8px;
+         padding: 3px 8px;
+         border-radius: 5px;
+         &.no{
+            border:1px solid lightgray;
+            background-color: lightgray;
+            color:black;
+            &:hover{
+               color: lightgray;
+               background-color:black;
+            }
+         }
+         &:hover{
+            color: var(--main-color);
+            background-color:white;
+         }
+      }
+    }
+  }
+}

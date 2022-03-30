@@ -1,28 +1,50 @@
-import Container from "react-bootstrap/esm/Container";
+import { useEffect, useState } from "react";
+import Col from "react-bootstrap/esm/Col";
+import Row from "react-bootstrap/esm/Row";
+import { AiOutlineUser } from "react-icons/ai";
 import { BsBag, BsHeart } from "react-icons/bs";
 import { MdSearch } from "react-icons/md";
-import { AiOutlineUser } from "react-icons/ai";
-import { Link } from "react-router-dom";
-import "./navbar.scss";
-import Row from "react-bootstrap/esm/Row";
-import Col from "react-bootstrap/esm/Col";
 import { useDispatch, useSelector } from "react-redux";
-import { apiLogout } from "../../api/apiAuth";
-import { useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { apiGetAllBuyerTypes } from "../../api/apiBuyerType";
+import { apiLogout } from "../../api/apiAuth";
+import { apiSearch } from "../../api/apiSearch";
 import NotificationCategories from "../notificationcategories/NotificationCategories";
+import ProductsSearch from "../productssearch/ProductsSearch";
+import "./navbar.scss";
 const Navbar = () => {
   const user = useSelector((state) => state.auth.currentUser);
   const buyerTypes = useSelector((state) => state.buyerType.list);
   const cart = useSelector((state) => state.cart.list);
   const wishlist = useSelector((state) => state.wishlist.list);
   const dispatch = useDispatch();
+  const [products, setProducts] = useState([])
+  const [keyword, setKeyword] = useState("")
+  const navigate = useNavigate();
   const handleLogout = () => {
     apiLogout(dispatch);
   };
+  
   useEffect(() => {
     apiGetAllBuyerTypes(dispatch);
   }, [dispatch]);
+  useEffect(() => {
+    const api = async () => {
+      if(keyword === ""){
+        setProducts([]);
+      }else{
+        const data = await apiSearch(user, keyword, "product", dispatch);
+        setProducts(data);
+      }
+    }
+    api();
+  }, [user, keyword, dispatch]);
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    navigate(`/search?query=${keyword}`)
+    setKeyword("")
+  }
   return (
     <Row>
       <Col xs={12} className="my-navbar">
@@ -82,15 +104,19 @@ const Navbar = () => {
               </Link>
             </li>
           </ul>
-          <form className="my-navbar__middle-form">
+          <form className="my-navbar__middle-form" onSubmit={handleSubmit}>
             <input
               type="text"
               className="my-navbar__middle-form-input"
               placeholder="Tìm sản phẩm"
+              required={true}
+              value={keyword}
+              onChange={e => setKeyword(e.target.value)}
             />
             <div className="my-navbar__middle-form-icon">
               <MdSearch />
             </div>
+            <ProductsSearch keyword={keyword} products={products} />
           </form>
         </div>
         <div className="my-navbar__right">
@@ -107,6 +133,8 @@ const Navbar = () => {
                   ) : (
                     <>
                       <Link to={`/account`}>Thông tin cá nhân</Link>
+                      <Link to={`/orders`}>Lịch sử mua hàng</Link>
+                      <Link to={`/wishlist`}>Sản phẩm yêu thích</Link>
                       <div onClick={handleLogout}>Đăng xuất</div>
                     </>
                   )}

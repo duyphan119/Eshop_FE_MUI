@@ -50,6 +50,30 @@ export const apiRemoveWishlistItem = async (user, wishlistId, dispatch) => {
     );
   }
 };
+export const apiRemoveWishlistItemByProductSlug = async (user, productSlug, dispatch) => {
+  try {
+    await configAxios(user, dispatch).delete(`${API_URL}/productSlug/${productSlug}`);
+    dispatch(removeWishlistItem(productSlug));
+    dispatch(
+      showToastMessage({
+        type: "success",
+        text: "Xoá thành công",
+        title: "Thành công",
+        isOpen: true,
+      })
+    );
+  } catch (error) {
+    console.log(error);
+    dispatch(
+      showToastMessage({
+        type: "error",
+        text: "Xoá thất bại",
+        title: "Thất bại",
+        isOpen: true,
+      })
+    );
+  }
+};
 export const apiGetWishListByUser = async (user, dispatch) => {
    try {
       const res = await configAxios(user, dispatch).get(`${API_URL}/user/${user.id}`);

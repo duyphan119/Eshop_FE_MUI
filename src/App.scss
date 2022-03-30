@@ -95,12 +95,21 @@ header {
     width: 100%;
   }
 }
-.stars{
+.stars {
   display: flex;
   align-items: center;
   font-size: 1.6rem;
-  .star{
-    color:var(--main-color);
+  .star {
+    color: var(--main-color);
     margin-right: 1px;
   }
+}
+
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(135, 135, 135, 0.551);
 }

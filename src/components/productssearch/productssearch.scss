@@ -1,0 +1,37 @@
+.productssearch {
+   position: absolute;
+   top: 100%;
+   left: 0;
+   width: 100%;
+   background-color: white;
+   padding: 2px 4px;
+   z-index:10;
+   .productssearch__list {
+      .productssearch__item {
+         display: flex;
+         align-items: center;
+         font-size: 1.2rem;
+         padding-block:4px;
+         .productssearch__item-img {
+            width: 50px;
+            height: 50px;
+            display: block;
+            img {
+               width: 50px;
+               height: 50px;
+               object-fit: cover;
+            }
+         }
+         .productssearch__item-info {
+            padding-inline:4px;
+            .productssearch__item-info-name {
+               line-height: 1.2rem;
+               display: block;
+            }
+            .productssearch__item-info-price {
+               line-height: 1.2rem;
+            }
+         }
+      }
+   }
+}
