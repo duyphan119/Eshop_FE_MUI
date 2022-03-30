@@ -10,7 +10,7 @@ router.get(
   productController.getByCategorySlug
 );
 router.get("/:productId", productController.getById);
-router.get("/", productController.getAll);
+router.get("/", getUser, productController.getAll);
 router.post("/", productController.create);
 router.put("/:productId", productController.update);
 router.delete("/:productId", productController.delete);

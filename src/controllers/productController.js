@@ -13,7 +13,7 @@ const productController = {
     res.status(response.status).json(response.data);
   },
   getAll: async (req, res) => {
-    const response = await productService.getAll(req.query);
+    const response = await productService.getAll(req.user, req.query);
     res.status(response.status).json(response.data);
   },
   getById: async (req, res) => {

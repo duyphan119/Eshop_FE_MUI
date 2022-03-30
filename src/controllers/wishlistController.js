@@ -13,5 +13,8 @@ const wishlistController = {
     const response = await wishlistService.deleteById(req.params);
     res.status(response.status).json(response.data);},
   getById: async (req, res) => {},
+  deleteByProductSlug: async (req, res) => {
+    const response = await wishlistService.deleteByProductSlug(req.user, req.params);
+    res.status(response.status).json(response.data);},
 };
 module.exports = wishlistController;

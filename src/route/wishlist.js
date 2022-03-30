@@ -7,6 +7,7 @@ router.get("/user/:userId", verifyToken, wishlistController.getByUser);
 router.get("/:wishlistId", wishlistController.getById);
 router.post("/", verifyToken, wishlistController.create);
 router.put("/:wishlistId", wishlistController.update);
+router.delete("/productSlug/:productSlug", verifyToken, wishlistController.deleteByProductSlug);
 router.delete("/:wishlistId", verifyToken, wishlistController.delete);
 
 module.exports = router;

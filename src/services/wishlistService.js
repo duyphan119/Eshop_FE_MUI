@@ -72,4 +72,25 @@ const deleteById = async (params) => {
     };
   }
 };
-module.exports = { create, getByUser, deleteById };
+const deleteByProductSlug = async (user, params) => {
+  try {
+    const { productSlug } = params;
+    await db.WishListItem.destroy({
+      where: {
+        productSlug: productSlug,
+        userId: user.id
+      },
+    });
+    return {
+      status: 200,
+      data: "This item is deleted",
+    };
+  } catch (error) {
+    console.log(error);
+    return {
+      status: 500,
+      data: error,
+    };
+  }
+};
+module.exports = { create, getByUser, deleteById, deleteByProductSlug };

@@ -67,6 +67,15 @@ const updateById = async (params, body) => {
 const getAll = async (query) => {
   try {
     const groupCategories = await db.GroupCategory.findAll({ raw: true });
+    for (let i = 0; i < groupCategories.length; i++) {
+      const buyerType = await db.BuyerType.findOne({
+        where: {
+          id: groupCategories[i].buyerTypeId
+        },
+        raw: true
+      })
+      groupCategories[i].buyerType = buyerType;
+    }
     return { status: 200, data: groupCategories };
   } catch (error) {
     console.log(error);

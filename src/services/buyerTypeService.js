@@ -1,7 +1,7 @@
-import db from "../models";
-import slugify from "slugify";
 import { QueryTypes } from "@sequelize/core";
+import slugify from "slugify";
 import { sequelize } from "../config/connectDB";
+import db from "../models";
 const create = async (req, res) => {
   try {
     const { name, description } = req.body;
@@ -22,32 +22,30 @@ const create = async (req, res) => {
 const getAll = async (query) => {
   const { all } = query;
   try {
-    let buyerTypes = await db.BuyerType.findAll({raw:true});
-    if (all) {
-      for (let i = 0; i < buyerTypes.length; i++) {
-        let groups = await sequelize.query(
-          `select g.id, g.name, g.slug, g.description, g.createdAt, g.updatedAt, g.buyerTypeId
+    let buyerTypes = await db.BuyerType.findAll({ raw: true });
+    for (let i = 0; i < buyerTypes.length; i++) {
+      let groups = await sequelize.query(
+        `select g.*
            from groupcategories g, buyertypes b where   g.buyerTypeId = '${buyerTypes[i].id}' 
            and g.buyerTypeId=b.id`,
-          { type: QueryTypes.SELECT, raw: true }
-        );
-        for (let j = 0; j < groups.length; j++) {
-          let categories = await sequelize.query(
-            `select c.id, c.name, c.slug, c.description, c.createdAt, c.updatedAt, c.groupCategoryId
+        { type: QueryTypes.SELECT, raw: true }
+      );
+      for (let j = 0; j < groups.length; j++) {
+        let categories = await sequelize.query(
+          `select c.*
              from groupcategories g, categories c  where  c.groupCategoryId = '${groups[j].id}' 
              and c.groupCategoryId=g.id`,
-            { type: QueryTypes.SELECT, raw: true}
-          );
-          groups[j] = {
-            ...groups[j],
-            categories,
-          };
-        }
-        buyerTypes[i] = {
-          ...buyerTypes[i],
-          groups: groups,
+          { type: QueryTypes.SELECT, raw: true }
+        );
+        groups[j] = {
+          ...groups[j],
+          categories,
         };
       }
+      buyerTypes[i] = {
+        ...buyerTypes[i],
+        groups: groups,
+      };
     }
     return { status: 200, data: buyerTypes };
   } catch (error) {
@@ -108,4 +106,4 @@ const deleteById = async (params) => {
     return { status: 500, data: error };
   }
 };
-module.exports = {create, getAll, getById, getBySlug, updateById, deleteById};
+module.exports = { create, getAll, getById, getBySlug, updateById, deleteById };
