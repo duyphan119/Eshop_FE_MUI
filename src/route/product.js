@@ -11,6 +11,7 @@ router.get(
 );
 router.get("/pages", productController.getTotalPages);
 router.get("/collection/:collectionId", getUser, productController.getByCollectionId);
+router.get("/statistic/:statisticsType", getUser, productController.getProductByStatistics);
 router.get("/:productId", productController.getById);
 router.get("/", getUser, productController.getAll);
 router.post("/", productController.create);

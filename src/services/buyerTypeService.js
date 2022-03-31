@@ -4,9 +4,9 @@ import { sequelize } from "../config/connectDB";
 import db from "../models";
 const create = async (req, res) => {
   try {
-    const { name, description } = req.body;
+    const { name, description, shortName } = req.body;
     const id = (new Date().getTime() * Math.random()) / Math.random();
-    const slug = slugify(name);
+    const slug = slugify(shortName);
     const savedBuyerType = await db.BuyerType.create({
       id,
       name,
@@ -80,8 +80,8 @@ const getBySlug = async (params) => {
 const updateById = async (params, body) => {
   try {
     const { buyerTypeId } = params;
-    const { name, description } = body;
-    const slug = slugify(name);
+    const { name, description, shortName } = body;
+    const slug = slugify(shortName);
     await db.BuyerType.update(
       {
         name,

@@ -22,6 +22,7 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
       },
       name: DataTypes.STRING,
+      shortName: DataTypes.STRING,
       description: DataTypes.STRING,
       slug: DataTypes.STRING,
     },

@@ -17,6 +17,7 @@ module.exports = (sequelize, DataTypes) => {
       });
     }
   }
+
   OrderItem.init(
     {
       id: {

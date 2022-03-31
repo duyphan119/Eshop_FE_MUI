@@ -15,9 +15,6 @@ module.exports = (sequelize, DataTypes) => {
       Product.belongsTo(models.Category, {
         foreignKey: "categoryId",
       });
-      Product.belongsTo(models.CollectionProduct, {
-        foreignKey: "collectionId",
-      });
     }
   }
   Product.init(
@@ -35,7 +32,6 @@ module.exports = (sequelize, DataTypes) => {
       colorCode: DataTypes.STRING,
       slug: DataTypes.STRING,
       description: DataTypes.TEXT,
-      collectionId: DataTypes.STRING,
     },
     {
       sequelize,

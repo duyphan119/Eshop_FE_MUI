@@ -9,11 +9,38 @@ const getCodeDefaultByType = async (params) => {
       },
       raw: true,
     });
-    return code;
+    return {
+      status: 200,
+      data: code
+    };
   } catch (error) {
     console.log(error);
-    return null;
+    return {
+      status: 500,
+      data: error
+    };
+  }
+};
+const getCodeById = async (params) => {
+  try {
+    const { codeId } = params;
+    const code = await db.Code.findOne({
+      where: {
+        id: codeId,
+      },
+      raw: true,
+    });
+    return {
+      status: 200,
+      data: code
+    };
+  } catch (error) {
+    console.log(error);
+    return {
+      status: 500,
+      data: error
+    };
   }
 };
 
-module.exports = { getCodeDefaultByType };
+module.exports = { getCodeDefaultByType, getCodeById };

@@ -36,7 +36,7 @@ const create = async (body) => {
       street,
       paymentMethod,
       deliveryPrice,
-      status: defaultCode.id,
+      status: defaultCode.data.id,
       totalPrice,
     });
     for (let i = 0; i < cart.length; i++) {
@@ -78,6 +78,10 @@ const getByUser = async (params) => {
       where: { userId: userId },
       raw: true,
     });
+    for(let i=0;i<orders.length;i++){
+      const code = await codeService.getCodeById({codeId: orders[i].status});
+      orders[i].code = code.data
+    }
     return { status: 200, data: orders };
   } catch (error) {
     console.log(error);

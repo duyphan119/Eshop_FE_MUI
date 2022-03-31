@@ -36,6 +36,10 @@ const productController = {
     const response = await productService.getByCollectionId(req.user, req.params, req.query);
     res.status(response.status).json(response.data);
   },
+  getProductByStatistics: async (req, res) => {
+    const response = await productService.getProductByStatistics(req.user, req.params);
+    res.status(response.status).json(response.data);
+  },
 };
 
 module.exports = productController;

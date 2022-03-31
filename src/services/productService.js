@@ -1,6 +1,7 @@
 import sizeService from "./sizeService";
 import imagesProductService from "./imagesProductService";
 import commentService from "./commentService";
+import categoryService from "./categoryService";
 import { QueryTypes } from "@sequelize/core";
 import db, { sequelize } from "../models";
 import slugify from "slugify";
@@ -23,6 +24,7 @@ const getProductsAllFields = async (user, products) => {
     delete products[i].color;
     delete products[i].colorCode;
     products[i].productColors = [];
+
     if (index === -1) {
       // Thêm
       let comments = await commentService.getByProductSlug({
@@ -39,6 +41,9 @@ const getProductsAllFields = async (user, products) => {
         });
         products[i].isWished = checkWishlist.length !== 0;
       }
+      let category = (await categoryService.getById({ categoryId: products[i].categoryId })).data;
+      delete products[i].categoryId;
+      products[i].category = category;
       newProducts.push(products[i]);
     } else {
       // Gộm
@@ -137,15 +142,44 @@ const getById = async (params) => {
     };
   }
 };
-
+const getProductByStatistics = async (user, params) => {
+  try {
+    const { statisticsType } = params;
+    let queryString = "";
+    let newProducts = [];
+    if (statisticsType === "best-seller") {
+      queryString += `
+        select p.* from
+        orders o, orderitems oi, sizes s, products p
+        where  o.id = oi.orderId and s.id = oi.sizeId and p.id = s.productId
+        group by p.slug
+      `
+    }
+    let products = await sequelize.query(queryString, {
+      type: QueryTypes.SELECT,
+      raw: true,
+    });
+    newProducts = await getProductsAllFields(user, products);
+    return {
+      status: 200,
+      data: newProducts,
+    };
+  } catch (error) {
+    console.log(error)
+    return {
+      status: 500,
+      data: error,
+    };
+  }
+}
 const getByCollectionId = async (user, params, query) => {
   try {
     const { collectionId } = params;
     const { sortBy, sortType, color, size, newPrice } = query;
     const queryString = `select p.*
     from products p, (select DISTINCT p.slug
-    from products p, sizes s
-    where s.productId = p.id and p.collectionId = '${collectionId}'
+    from products p, sizes s, collectionproductitems cpi
+    where s.productId = p.id and cpi.collectionId = '${collectionId}' and cpi.productSlug = p.slug
     ${(() => {
         let filterString = "";
         if (color) {
@@ -218,6 +252,7 @@ const getByCollectionId = async (user, params, query) => {
         : "order by p.createdAt desc"
       } ) x
     where p.slug = x.slug`;
+    console.log(queryString)
     let products = await sequelize.query(queryString, {
       type: QueryTypes.SELECT,
       raw: true,
@@ -480,4 +515,5 @@ module.exports = {
   getByCategorySlug,
   create,
   getByCollectionId,
+  getProductByStatistics,
 };

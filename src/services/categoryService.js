@@ -39,7 +39,14 @@ const getBySlug = async (params) => {
 const getById = async (params) => {
   try {
     const { categoryId } = params;
-    const category = await db.Category.findByPk(categoryId);
+    const category = await db.Category.findOne({
+      where: {
+        id: categoryId
+      },
+      raw: true
+    });
+    const group = await groupCategoryService.getById({ groupCategoryId: category.groupCategoryId })
+    category.group = group.data;
     return { status: 200, data: category };
   } catch (error) {
     console.log(error);
