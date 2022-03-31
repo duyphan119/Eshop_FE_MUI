@@ -57,7 +57,9 @@ const OrdersPage = () => {
                   </div>
                   <div className="orders-page__item-child">{separateThousands(order.deliveryPrice)}đ</div>
                   <div className="orders-page__item-child flex-3">{separateThousands(order.totalPrice)}đ</div>
-                  <div className="orders-page__item-child">Đang xử lý</div>
+                  <div className="orders-page__item-child">
+                    {order.code.valueVi}
+                  </div>
                   <div className="orders-page__item-child action">
                     <GoTrashcan
                       onClick={() => {

@@ -129,7 +129,6 @@ const ProductsPage = ({ groupCategory, category, collectionProduct }) => {
   //   }
 
   // }, [collectionSlug, dispatch, location.search, user])
-
   if (products && (currentPage - 1) * limitProductsInPage > products.length) {
     return <NotFoundPage />
   }
@@ -224,7 +223,7 @@ const ProductsPage = ({ groupCategory, category, collectionProduct }) => {
               </div>
             </div>
           </Container>
-          <Products products={[...products].splice((currentPage - 1) * limitProductsInPage, limitProductsInPage)} />
+          <Products products={[...products].splice((currentPage - 1) * limitProductsInPage, limitProductsInPage)}/>
           <Paginations
             totalPages={totalPages}
             currentPage={currentPage}

@@ -17,7 +17,7 @@ const Navbar = () => {
   const user = useSelector((state) => state.auth.currentUser);
   const buyerTypes = useSelector((state) => state.buyerType.list);
   const cart = useSelector((state) => state.cart.list);
-  const collectionProducts = useSelector((state) => state.collectionProduct.list);
+  // const collectionProducts = useSelector((state) => state.collectionProduct.list);
   const wishlist = useSelector((state) => state.wishlist.list);
   const dispatch = useDispatch();
   const [products, setProducts] = useState([])
@@ -76,7 +76,7 @@ const Navbar = () => {
                     to={`/${item.slug}`}
                     className="my-navbar__middle-category-link"
                   >
-                    {item.name.toUpperCase()}
+                    {item.shortName.toUpperCase()}
                   </Link>
                   <NotificationCategories
                     groups={item.groups}

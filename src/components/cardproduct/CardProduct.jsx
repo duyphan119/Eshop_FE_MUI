@@ -34,7 +34,7 @@ const CardProduct = ({ item }) => {
         <img
           src={(() => {
             try {
-              return `${constants.SERVER_URL}${item.productColors[0].images[0].image}`;
+              return `${item.productColors[0].images[0].image}`;
             } catch (error) {
               return constants.IMAGE_IS_NOT_AVAILABLE_URL;
             }

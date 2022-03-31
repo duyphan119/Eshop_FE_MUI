@@ -19,6 +19,7 @@
     display: flex;
     overflow: hidden;
     margin-top: 16px;
+    min-width: 100%;
     position: relative;
     .product-slider__prev,
     .product-slider__next {
@@ -55,7 +56,9 @@
       display: flex;
       flex-wrap: nowrap;
       transition: transform 0.3s ease;
+      min-width: 100%;
       .product-slider__item {
+        position: relative;
         .product-slider__item-img {
           width: 100%;
           display: block;
@@ -98,7 +101,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    button {
+    a {
       background-color: var(--main-color);
       color: white;
       border-radius: 5px;

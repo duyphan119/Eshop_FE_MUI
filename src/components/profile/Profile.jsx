@@ -1,23 +1,18 @@
 import React from "react";
 import Col from "react-bootstrap/esm/Col";
-import * as constants from "../../constants";
 import { formatDate } from "../../utils";
+import * as constants from "../../constants"
 import "./profile.scss";
-const Profile = ({user}) => {
+const Profile = ({ user }) => {
   return (
     <Col xs={3} className="personal-info__profile">
       <img
-        src={`${
-          user.avatar.includes("http")
-            ? user.avatar
-            : `${constants.SERVER_URL}${user.avatar}`
-        }`}
+        src={user.avatar === null ? user.avatar : constants.IMAGE_IS_NOT_AVAILABLE_URL}
         alt=""
       />
       <div className="personal-info__name">
-        {`${user.firstName ? user.firstName : ""} ${
-          user.lastName ? user.lastName : ""
-        }`}
+        {`${user.firstName ? user.firstName : ""} ${user.lastName ? user.lastName : ""
+          }`}
       </div>
       <div className="personal-info__email">{user.email}</div>
       <ul>

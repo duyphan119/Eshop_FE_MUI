@@ -54,10 +54,10 @@ const ProductsFilter = ({ filters, setFilters }) => {
   });
   const handleMouseEnter = (target, _color) => {
     color.current = target;
-    target.style.border = "1px solid " + _color;
+    target.style.border = "2px solid " + _color;
   };
   const handleMouseLeave = () => {
-    color.current.style.border = "1px solid rgb(245, 245, 245)";
+    color.current.style.border = "2px solid rgb(245, 245, 245)";
   };
   const handleFilter = (name, value) => {
     let _filters = [...filters];
@@ -74,20 +74,27 @@ const ProductsFilter = ({ filters, setFilters }) => {
   };
   const showColors = () => {
     return menuColors.colors.map((item) => {
+      const indexFilter = filters
+        .find((it) => it.name === "color")
+        .values.findIndex((x) => x === item.color)
       return (
         <div
-          className={`products-filter__menu-color products-filter__menu-item ${
-            filters
-              .find((it) => it.name === "color")
-              .values.findIndex((x) => x === item.color) !== -1
-              ? "active"
-              : ""
-          }`}
+          className={`products-filter__menu-color products-filter__menu-item ${indexFilter !== -1
+            ? "active"
+            : ""
+            }`}
           key={item.color + item.colorCode}
           ref={color}
           onMouseEnter={(e) => handleMouseEnter(e.target, item.colorCode)}
           onMouseLeave={handleMouseLeave}
-          onClick={() => handleFilter("color", item.color)}
+          onClick={() => {
+            if(indexFilter !== -1){
+              color.current.style.color = "rgb(150, 150, 150)";
+            }else{
+              color.current.style.back = item.colorCode;
+            }
+            handleFilter("color", item.color)
+          }}
         >
           <span
             style={{
@@ -104,13 +111,12 @@ const ProductsFilter = ({ filters, setFilters }) => {
     return menuSizes.sizes.map((item) => {
       return (
         <div
-          className={`products-filter__menu-size products-filter__menu-item ${
-            filters
-              .find((it) => it.name === "size")
-              .values.findIndex((x) => x === item) !== -1
-              ? "active"
-              : ""
-          }`}
+          className={`products-filter__menu-size products-filter__menu-item ${filters
+            .find((it) => it.name === "size")
+            .values.findIndex((x) => x === item) !== -1
+            ? "active"
+            : ""
+            }`}
           key={item}
           onClick={() => handleFilter("size", item)}
         >
@@ -119,6 +125,7 @@ const ProductsFilter = ({ filters, setFilters }) => {
       );
     });
   };
+
   const showRangePrices = () => {
     return menuRangePrices.rangePrices.map((item, index) => {
       return (
@@ -141,13 +148,14 @@ const ProductsFilter = ({ filters, setFilters }) => {
       <div className="products-filter__menu">
         <div
           className="products-filter__menu-title"
-          onClick={() =>
+          onClick={() => {
             setMenuColors((prev) => {
               return {
                 ...prev,
                 isShowing: !prev.isShowing,
               };
             })
+          }
           }
         >
           <div className="products-filter__menu-text">Màu sắc</div>
@@ -164,14 +172,14 @@ const ProductsFilter = ({ filters, setFilters }) => {
       <div className="products-filter__menu">
         <div
           className="products-filter__menu-title"
-          onClick={() =>
+          onClick={() => {
             setMenuSizes((prev) => {
               return {
                 ...prev,
                 isShowing: !prev.isShowing,
               };
             })
-          }
+          }}
         >
           <div className="products-filter__menu-text">Kích thước</div>
           <div className="products-filter__menu-append">
@@ -187,13 +195,15 @@ const ProductsFilter = ({ filters, setFilters }) => {
       <div className="products-filter__menu">
         <div
           className="products-filter__menu-title"
-          onClick={() =>
+          onClick={(e) => {
             setMenuRangePrices((prev) => {
               return {
                 ...prev,
                 isShowing: !prev.isShowing,
               };
             })
+          }
+
           }
         >
           <div className="products-filter__menu-text">Khoảng giá (VNĐ)</div>

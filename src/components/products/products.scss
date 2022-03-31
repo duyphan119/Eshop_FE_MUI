@@ -19,3 +19,18 @@
     position: relative;
   }
 }
+.products__load-more {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  button {
+    padding: 6px 16px;
+    background-color: var(--main-color);
+    color: white;
+    border: 1px solid var(--main-color);
+    border-radius: 5px;
+    font-size: 1.6rem;
+    text-transform: capitalize;
+    margin-block:10px;
+  }
+}

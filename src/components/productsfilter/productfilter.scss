@@ -11,14 +11,14 @@
       color: rgb(150, 150, 150);
       .products-filter__menu-item {
         background-color: rgb(245, 245, 245);
-        border: 1px solid rgb(245, 245, 245);
+        border: 2px solid rgb(245, 245, 245);
         cursor: pointer;
         margin: 3px;
         border-radius: 5px;
-        padding: 6px;
+        padding: 6px 9px;
         position: relative;
-        &.active{
-          text-decoration: underline;
+        &.active {
+          border: 2px solid var(--main-color) !important;
         }
         &.products-filter__menu-color {
           span {
@@ -52,7 +52,7 @@
           align-items: center;
           display: flex;
           &:hover {
-            border: 0.5px solid var(--main-color);
+            border: 2px solid var(--main-color);
             background-color: unset;
           }
         }

@@ -15,7 +15,7 @@ const NotificationCategories = ({ groups, buyerType }) => {
                 to={`/${item.slug}`}
                 className="notificationcategories__group-name"
               >
-                {item.name.toUpperCase().split(` ${buyerType.name.toUpperCase()}`)[0]}
+                {item.name.toUpperCase().split(` ${buyerType.shortName.toUpperCase()}`)[0]}
               </Link>
               {item.categories.map((category) => {
                 return (
@@ -24,7 +24,7 @@ const NotificationCategories = ({ groups, buyerType }) => {
                     key={category.id + category.name}
                     className="notificationcategories__group-item"
                   >
-                    {category.name.split(` ${buyerType.name.toLowerCase()}`)[0]}
+                    {category.name.split(` ${buyerType.shortName.toLowerCase()}`)[0]}
                   </Link>
                 );
               })}

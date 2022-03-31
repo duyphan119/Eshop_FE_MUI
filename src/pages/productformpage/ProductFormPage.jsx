@@ -28,12 +28,14 @@ const ProductFormPage = () => {
       newPrice: 0,
     },
     onSubmit: async (values) => {
-      const formData = new FormData();
+      const uploadedImages = [];
+      console.log(images);
       for (let i = 0; i < images.length; i++) {
-        formData.append("images", images[i]);
+        const formData = new FormData();
+        formData.append("image", images[i]);
+        const uploadedImage = await apiUploadImages(formData);
+        uploadedImages.push({ image: uploadedImage.data.image.url })
       }
-      const uploadedImages = await apiUploadImages(formData);
-      // console.log(uploadedImages);
       apiCreateProduct({
         ...values,
         sizes: sizes.list,
@@ -41,6 +43,7 @@ const ProductFormPage = () => {
       }, dispatch);
     },
   });
+  console.log(formik.values);
   const handleAddSize = () => {
     let arr = [...sizes.list];
     let index = arr.findIndex((item) => item.size === sizes.size);

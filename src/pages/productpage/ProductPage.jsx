@@ -32,7 +32,6 @@ const ProductPage = () => {
   const { productSlug } = params;
   const dispatch = useDispatch();
   const socket = useContext(SocketContext);
-
   useEffect(() => {
     const api = async () => {
       const data = await apiGetProductBySlug(user, productSlug, dispatch);
@@ -258,10 +257,10 @@ const ProductPage = () => {
                   return (
                     <div
                       className={`product-page__main-info-size-detail ${item.amount === 0
-                          ? "out-of-stock"
-                          : index === indexSize
-                            ? "active"
-                            : ""
+                        ? "out-of-stock"
+                        : index === indexSize
+                          ? "active"
+                          : ""
                         }`}
                       key={item.id}
                       onClick={() => setIndexSize(index)}

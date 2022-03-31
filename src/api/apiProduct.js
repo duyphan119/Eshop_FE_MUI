@@ -21,6 +21,16 @@ export const apiGetProductsByCategorySlug = async (
   }
 };
 
+export const apiGetProductsByStatistics = async (user, statisticsType, dispatch) => {
+  try {
+    let queryString = `${API_URL}/statistic/${statisticsType}`;
+    const res = await configAxios(user, dispatch).get(queryString);
+    dispatch(getProducts(res.data));
+  } catch (error) {
+    console.log(error);
+  }
+}
+
 export const apiGetProductsByCollectionId = async (user,
   collectionId,
   query,
@@ -29,6 +39,17 @@ export const apiGetProductsByCollectionId = async (user,
     let queryString = `${API_URL}/collection/${collectionId}${query}`;
     const res = await configAxios(user, dispatch).get(queryString);
     dispatch(getProducts(res.data));
+  } catch (error) {
+    console.log(error);
+  }
+}
+export const apiGetProductsByCollectionIdNotUpdateStore = async (user,
+  collectionId,
+  dispatch) => {
+  try {
+    let queryString = `${API_URL}/collection/${collectionId}`;
+    const res = await configAxios(user, dispatch).get(queryString);
+    return res.data;
   } catch (error) {
     console.log(error);
   }

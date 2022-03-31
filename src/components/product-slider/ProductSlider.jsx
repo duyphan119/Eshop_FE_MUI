@@ -1,90 +1,45 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Col from "react-bootstrap/esm/Col";
 import Container from "react-bootstrap/esm/Container";
 import Row from "react-bootstrap/esm/Row";
 import { IoCaretBackSharp, IoCaretForwardSharp } from "react-icons/io5";
+import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
+import { apiGetProductsByCollectionIdNotUpdateStore } from "../../api/apiProduct";
+import Products from "../../components/products/Products";
+import CardProduct from "../cardproduct/CardProduct";
 import "./productslider.scss";
-const products = [
-  {
-    id: Math.random(),
-    name: "Áo Polo Nữ Cafe Phối Nẹp Siêu Nhẹ Siêu Mát",
-    img: "https://bizweb.dktcdn.net/thumb/large/100/438/408/products/qjn4014-tru-apn3700-gre-3.jpg?v=1641958600000",
-    oldPrice: "329.000đ",
-    newPrice: "299.000đ",
-  },
-  {
-    id: Math.random(),
-    name: "Áo Polo Nữ Cafe Phối Nẹp Siêu Nhẹ Siêu Mát",
-    img: "https://bizweb.dktcdn.net/thumb/large/100/438/408/products/qjn4014-tru-apn3700-gre-3.jpg?v=1641958600000",
-    oldPrice: "329.000đ",
-    newPrice: "299.000đ",
-  },
-  {
-    id: Math.random(),
-    name: "Áo Polo Nữ Cafe Phối Nẹp Siêu Nhẹ Siêu Mát",
-    img: "https://bizweb.dktcdn.net/thumb/large/100/438/408/products/apn3340-vag-qjn3102-xah-3.jpg?v=1644283529000",
-    oldPrice: "329.000đ",
-    newPrice: "299.000đ",
-  },
-  {
-    id: Math.random(),
-    name: "Áo Polo Nữ Cafe Phối Nẹp Siêu Nhẹ Siêu Mát",
-    img: "https://bizweb.dktcdn.net/thumb/large/100/438/408/products/qjn4014-tru-apn3700-gre-3.jpg?v=1641958600000",
-    oldPrice: "329.000đ",
-    newPrice: "299.000đ",
-  },
-  {
-    id: Math.random(),
-    name: "Áo Polo Nữ Tay Ngắn Pique Mắt Chim Phối Bo Thoáng Khí",
-    img: "https://bizweb.dktcdn.net/thumb/large/100/438/408/products/qjn4014-tru-apn3700-gre-3.jpg?v=1641958600000",
-    oldPrice: "",
-    newPrice: "289.000đ",
-  },
-  {
-    id: Math.random(),
-    name: "Áo Polo Nữ Cafe Phối Nẹp Siêu Nhẹ Siêu Mát",
-    img: "https://bizweb.dktcdn.net/thumb/large/100/438/408/products/qjn4014-tru-apn3700-gre-3.jpg?v=1641958600000",
-    oldPrice: "329.000đ",
-    newPrice: "299.000đ",
-  },
-  {
-    id: Math.random(),
-    name: "Áo Polo Nữ Cafe Phối Nẹp Siêu Nhẹ Siêu Mát",
-    img: "https://bizweb.dktcdn.net/thumb/large/100/438/408/products/qjn4014-tru-apn3700-gre-3.jpg?v=1641958600000",
-    oldPrice: "329.000đ",
-    newPrice: "299.000đ",
-  },
-  {
-    id: Math.random(),
-    name: "Áo Polo Nữ Cafe Phối Nẹp Siêu Nhẹ Siêu Mát",
-    img: "https://bizweb.dktcdn.net/thumb/large/100/438/408/products/qjn4014-tru-apn3700-gre-3.jpg?v=1641958600000",
-    oldPrice: "329.000đ",
-    newPrice: "299.000đ",
-  },
-  {
-    id: Math.random(),
-    name: "Áo Polo Nữ Cafe Phối Nẹp Siêu Nhẹ Siêu Mát",
-    img: "https://bizweb.dktcdn.net/thumb/large/100/438/408/products/qjn4014-tru-apn3700-gre-3.jpg?v=1641958600000",
-    oldPrice: "329.000đ",
-    newPrice: "299.000đ",
-  },
-];
+const maxProductsInSlider = 6;
 const ProductSlider = () => {
+
   const [indexSlider, setIndexSlider] = useState(0);
+  const [products, setProducts] = useState([]);
+  const collectionProducts = useSelector((state) => state.collectionProduct.list);
+  const user = useSelector((state) => state.auth.currentUser);
+  const dispatch = useDispatch();
   const handleChangeSlide = (step) => {
     if (indexSlider + step < 0) {
-      setIndexSlider(products.length - 6 < 0 ? 0 : products.length - 6);
-    } else if (indexSlider + step >= products.length - 6) {
+      setIndexSlider(products.length - maxProductsInSlider < 0 ? 0 : products.length - maxProductsInSlider);
+    } else if (indexSlider + step >= products.length - maxProductsInSlider) {
       setIndexSlider(0);
     } else {
       setIndexSlider(indexSlider + step);
     }
   };
+  useEffect(() => {
+    const api = async () => {
+      if (collectionProducts.length !== 0) {
+        const data = await apiGetProductsByCollectionIdNotUpdateStore(user, collectionProducts[0].id, dispatch)
+        console.log(data);
+        setProducts(data)
+      }
+    }
+    api();
+  }, [user, collectionProducts, dispatch])
   return (
     <div className="product-slider">
       <Container>
-         <div className="product-slider__title">
+        <div className="product-slider__title">
           EVERY WEAR
         </div>
         <a
@@ -97,47 +52,37 @@ const ProductSlider = () => {
           />
         </a>
         <div className="product-slider__wrapper">
-          <div
-            className="product-slider__prev"
-            onClick={() => handleChangeSlide(-1)}
-          >
-            <IoCaretBackSharp />
-          </div>
+          {products.length > maxProductsInSlider &&
+            <div
+              className="product-slider__prev"
+              onClick={() => handleChangeSlide(-1)}
+            >
+              <IoCaretBackSharp />
+            </div>
+          }
           <Row
             className="product-slider__list"
             style={{
-              transform: `translateX(calc(-100% * ${indexSlider} / 6))`,
+              transform: `translateX(calc(-100% * ${indexSlider} / ${maxProductsInSlider}))`,
             }}
           >
             {products.map((item, index) => (
-              <Col xs={2} className="product-slider__item" key={item.id}>
-                <Link to={`/`} className="product-slider__item-img">
-                  <img src={item.img} alt="" />
-                </Link>
-                <Link to={`/`} className="product-slider__item-name">
-                  {item.name}
-                </Link>
-                <div className="product-slider__item-price">
-                  <div className="product-slider__item-price-new">
-                    {item.newPrice}
-                  </div>
-                  <div className="product-slider__item-old">
-                    {item.oldPrice}
-                  </div>
-                </div>
+              <Col xs={12 / maxProductsInSlider} className="product-slider__item" key={item.id}>
+                <CardProduct item={item} key={item.id} />
               </Col>
             ))}
           </Row>
-          <div
+          {products.length > maxProductsInSlider && <div
             className="product-slider__next"
             onClick={() => handleChangeSlide(1)}
           >
             <IoCaretForwardSharp />
-          </div>
+          </div>}
         </div>
         <div className="product-slider__view-all">
-          <button>Xem tất cả</button>
+          <Link to={`/${collectionProducts.length === 0 ? "" : collectionProducts[0].slug}`}>Xem tất cả</Link>
         </div>
+
       </Container>
     </div>
   );
