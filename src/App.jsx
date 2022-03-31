@@ -16,12 +16,11 @@ const App = () => {
       apiGetCartByUser(user, dispatch);
     }
   }, [user, dispatch]);
-
   return (
     <SocketContext.Provider value={socket}>
       <ScrollToTop smooth color="#6f00ff" />
       <Header />
-      <Pages/>
+      <Pages />
       <Footer />
       <ListToastMessage />
     </SocketContext.Provider>

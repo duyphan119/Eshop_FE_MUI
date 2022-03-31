@@ -2,7 +2,13 @@
    text-align: center;
    .breadcrumb__item {
       display: inline-block;
+      span {
+         margin-inline: 5px;
+      }
       .breadcrumb__item-link {
+         &:hover {
+            color: var(--main-color);
+         }
       }
    }
 }

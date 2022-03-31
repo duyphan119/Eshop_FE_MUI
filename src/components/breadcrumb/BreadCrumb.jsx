@@ -2,8 +2,6 @@ import React from 'react'
 import { Link } from 'react-router-dom'
 import "./breadcrumb.scss";
 
-
-
 const BreadCrumb = ({ items }) => {
    return (
       <ul className='breadcrumb__list'>

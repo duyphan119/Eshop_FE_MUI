@@ -12,10 +12,12 @@ import { apiSearch } from "../../api/apiSearch";
 import NotificationCategories from "../notificationcategories/NotificationCategories";
 import ProductsSearch from "../productssearch/ProductsSearch";
 import "./navbar.scss";
+import { apiGetAllCollectionProducts } from "../../api/apiCollectionProduct";
 const Navbar = () => {
   const user = useSelector((state) => state.auth.currentUser);
   const buyerTypes = useSelector((state) => state.buyerType.list);
   const cart = useSelector((state) => state.cart.list);
+  const collectionProducts = useSelector((state) => state.collectionProduct.list);
   const wishlist = useSelector((state) => state.wishlist.list);
   const dispatch = useDispatch();
   const [products, setProducts] = useState([])
@@ -27,6 +29,7 @@ const Navbar = () => {
   
   useEffect(() => {
     apiGetAllBuyerTypes(dispatch);
+    apiGetAllCollectionProducts(dispatch);
   }, [dispatch]);
   useEffect(() => {
     const api = async () => {
@@ -84,7 +87,7 @@ const Navbar = () => {
             })}
 
             <li className="my-navbar__middle-category">
-              <Link to={`/`} className="my-navbar__middle-category-link">
+              <Link to={`/ao-polo-yody`} className="my-navbar__middle-category-link">
                 POLO YODY
               </Link>
             </li>

@@ -13,15 +13,27 @@ export const apiGetProductsByCategorySlug = async (
   dispatch
 ) => {
   try {
-    let queryString = `${API_URL}/category-slug/${categorySlug}${
-      query === "" ? "?all=true" : query + "&all=true"
-    }`;
+    let queryString = `${API_URL}/category-slug/${categorySlug}${query}`;
     const res = await configAxios(user, dispatch).get(queryString);
     dispatch(getProducts(res.data));
   } catch (error) {
     console.log(error);
   }
 };
+
+export const apiGetProductsByCollectionId = async (user,
+  collectionId,
+  query,
+  dispatch) => {
+  try {
+    let queryString = `${API_URL}/collection/${collectionId}${query}`;
+    const res = await configAxios(user, dispatch).get(queryString);
+    dispatch(getProducts(res.data));
+  } catch (error) {
+    console.log(error);
+  }
+}
+
 export const apiGetProductBySlug = async (user, slug, dispatch) => {
   try {
     const res = await configAxios(user, dispatch).get(`${API_URL}/slug/${slug}?all=true`);
@@ -68,13 +80,11 @@ export const apiCreateProduct = async (data, dispatch) => {
     );
   }
 };
-export const apiGetTotalPages = async (categorySlug, query, limit) => {
+export const apiGetTotalPages = async (query, limit) => {
   try {
-    let queryString = `${API_URL}/category-slug/${categorySlug}${
-      query === "" ? "?all=true" : query + "&all=true"
-    }`;
+    let queryString = `${API_URL}/pages${query === "" ? "?limit=" + limit : query + "&limit=" + limit}`;
     const res = await axios.get(queryString);
-    return Math.round(res.data.length / limit);
+    return res.data.length;
   } catch (error) {
     console.log(error);
   }

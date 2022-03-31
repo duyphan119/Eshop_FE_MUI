@@ -12,6 +12,7 @@ import {
   BsStarHalf,
 } from "react-icons/bs";
 import { useDispatch, useSelector } from "react-redux";
+import { useParams } from "react-router-dom";
 import { apiAddToCart } from "../../api/apiCart";
 import { apiGetProductBySlug } from "../../api/apiProduct";
 import Comments from "../../components/comments/Comments";
@@ -19,7 +20,7 @@ import * as constants from "../../constants";
 import { SocketContext } from "../../context";
 import { convertSizeStringToNumber, separateThousands } from "../../utils";
 import "./productpage.scss";
-const ProductPage = ({ categorySlug }) => {
+const ProductPage = () => {
   const user = useSelector((state) => state.auth.currentUser);
   const [indexSize, setIndexSize] = useState(0);
   const [indexColor, setIndexColor] = useState(0);
@@ -27,20 +28,18 @@ const ProductPage = ({ categorySlug }) => {
   const [indexSlide, setIndexSlide] = useState(0);
   const [quantity, setQuantity] = useState(1);
   const [product, setProduct] = useState();
+  const params = useParams();
+  const { productSlug } = params;
   const dispatch = useDispatch();
   const socket = useContext(SocketContext);
 
-  // useEffect(() => {
-  //   product.productColors[indexColor];
-  // }, [product, indexColor]);
-
   useEffect(() => {
     const api = async () => {
-      const data = await apiGetProductBySlug(user, categorySlug, dispatch);
+      const data = await apiGetProductBySlug(user, productSlug, dispatch);
       setProduct(data);
     };
     api();
-  }, [user, categorySlug, dispatch]);
+  }, [user, productSlug, dispatch]);
   useEffect(() => {
     product && socket.emit("join-room", product.slug);
   }, [socket, product]);
@@ -62,7 +61,7 @@ const ProductPage = ({ categorySlug }) => {
         }
         setQuantity(newQuantity);
       }
-    } catch (error) {}
+    } catch (error) { }
   };
   const handleAddToCart = () => {
     apiAddToCart(
@@ -92,19 +91,17 @@ const ProductPage = ({ categorySlug }) => {
               xs={2}
               className="product-page__main-slider"
               style={{
-                padding: `${
-                  product.productColors[indexColor].images.length < 5 &&
+                padding: `${product.productColors[indexColor].images.length < 5 &&
                   "0 10px"
-                }`,
+                  }`,
               }}
             >
               <div
                 className="product-page__main-slider-prev-btn"
                 style={{
-                  display: `${
-                    product.productColors[indexColor].images.length < 5 &&
+                  display: `${product.productColors[indexColor].images.length < 5 &&
                     "none"
-                  }`,
+                    }`,
                 }}
                 onClick={() => handleChangeSlide(-1)}
               >
@@ -113,21 +110,19 @@ const ProductPage = ({ categorySlug }) => {
               <div
                 className="product-page__main-slider-wrapper"
                 style={{
-                  transform: `translateY(-${
-                    indexSlide >= 0 &&
+                  transform: `translateY(-${indexSlide >= 0 &&
                     indexSlide <
-                      product.productColors[indexColor].images.length * 3 - 4 &&
+                    product.productColors[indexColor].images.length * 3 - 4 &&
                     indexSlide * 134
-                  }px)`,
+                    }px)`,
                 }}
               >
                 <div className="product-page__main-slider-list">
                   {product.productColors[indexColor].images.map(
                     (item, index) => (
                       <div
-                        className={`product-page__main-slider-item ${
-                          index === indexImage ? "active" : ""
-                        }`}
+                        className={`product-page__main-slider-item ${index === indexImage ? "active" : ""
+                          }`}
                         key={item.id}
                         onClick={() => setIndexImage(index)}
                       >
@@ -150,10 +145,9 @@ const ProductPage = ({ categorySlug }) => {
                 className="product-page__main-slider-next-btn"
                 onClick={() => handleChangeSlide(1)}
                 style={{
-                  display: `${
-                    product.productColors[indexColor].images.length < 5 &&
+                  display: `${product.productColors[indexColor].images.length < 5 &&
                     "none"
-                  }`,
+                    }`,
                 }}
               >
                 <BsChevronDown />
@@ -211,9 +205,8 @@ const ProductPage = ({ categorySlug }) => {
                 {product.productColors.map((item, index) => {
                   return (
                     <div
-                      className={`product-page__main-info-color-detail ${
-                        index === indexColor ? "active" : ""
-                      }`}
+                      className={`product-page__main-info-color-detail ${index === indexColor ? "active" : ""
+                        }`}
                       key={item.color}
                       onClick={() => setIndexColor(index)}
                     >
@@ -264,13 +257,12 @@ const ProductPage = ({ categorySlug }) => {
                 })().map((item, index) => {
                   return (
                     <div
-                      className={`product-page__main-info-size-detail ${
-                        item.amount === 0
+                      className={`product-page__main-info-size-detail ${item.amount === 0
                           ? "out-of-stock"
                           : index === indexSize
-                          ? "active"
-                          : ""
-                      }`}
+                            ? "active"
+                            : ""
+                        }`}
                       key={item.id}
                       onClick={() => setIndexSize(index)}
                     >

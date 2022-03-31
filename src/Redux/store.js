@@ -8,6 +8,7 @@ import productSlice from "./productSlice";
 import toastSlice from "./toastSlice";
 import wishlistSlice from "./wishlistSlice";
 import orderSlice from "./orderSlice";
+import collectionProductSlice from "./collectionProductSlice";
 const store = configureStore({
   reducer: {
     category: categorySlice,
@@ -18,6 +19,7 @@ const store = configureStore({
     cart: cartSlice,
     groupCategory: groupCategorySlice,
     wishlist: wishlistSlice,
+    collectionProduct: collectionProductSlice,
     order: orderSlice,
   },
 });
