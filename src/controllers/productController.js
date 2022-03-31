@@ -28,8 +28,12 @@ const productController = {
     const response = await productService.deleteById(req.params);
     res.status(response.status).json(response.data);
   },
-  getTotalPage: async (req, res) => {
+  getTotalPages: async (req, res) => {
     const response = await productService.getTotalPages(req.query);
+    res.status(response.status).json(response.data);
+  },
+  getByCollectionId: async (req, res) => {
+    const response = await productService.getByCollectionId(req.user, req.params, req.query);
     res.status(response.status).json(response.data);
   },
 };

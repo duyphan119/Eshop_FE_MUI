@@ -2,6 +2,7 @@ import db from "../models";
 import slugify from "slugify";
 import { QueryTypes } from "@sequelize/core";
 import { sequelize } from "../config/connectDB";
+import groupCategoryService from "./groupCategoryService";
 const getByBuyerTypeSlug = async (params) => {
   const { buyerTypeSlug } = params;
   try {
@@ -11,6 +12,10 @@ const getByBuyerTypeSlug = async (params) => {
            and g.buyerTypeId = b.id order by createdAt desc`,
       { type: QueryTypes.SELECT, raw: true }
     );
+    for (let i = 0; i < categories.length; i++) {
+      const group = await groupCategoryService.getById({ groupCategoryId: categories[i].groupCategoryId })
+      categories[i].group = group.data;
+    }
     return { status: 200, data: categories };
   } catch (error) {
     console.log(error);
@@ -23,7 +28,7 @@ const getBySlug = async (params) => {
     const category = await db.Category.findOne({
       where: {
         slug: categorySlug,
-      },raw: true
+      }, raw: true
     });
     return { status: 200, data: category };
   } catch (error) {
@@ -43,7 +48,11 @@ const getById = async (params) => {
 };
 const getAll = async (query) => {
   try {
-    const categories = await db.Category.findAll({raw:true});
+    const categories = await db.Category.findAll({ raw: true });
+    for (let i = 0; i < categories.length; i++) {
+      const group = await groupCategoryService.getById({ groupCategoryId: categories[i].groupCategoryId })
+      categories[i].group = group.data;
+    }
     return { status: 200, data: categories };
   } catch (error) {
     console.log(error);

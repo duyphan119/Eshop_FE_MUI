@@ -11,6 +11,7 @@ import cartRouter from "./cart";
 import commentRouter from "./comment";
 import wishlistRouter from "./wishlist";
 import orderRouter from "./order";
+import collectionProductRouter from "./collectionProduct";
 
 const configRoute = (app) => {
   app.use("/v1/api/auth", authRouter);
@@ -25,6 +26,7 @@ const configRoute = (app) => {
   app.use("/v1/api/cart", cartRouter);
   app.use("/v1/api/wishlist", wishlistRouter);
   app.use("/v1/api/comment", commentRouter);
+  app.use("/v1/api/collection-product", collectionProductRouter);
   app.use("/v1/api/order", orderRouter);
 };
 module.exports = configRoute;

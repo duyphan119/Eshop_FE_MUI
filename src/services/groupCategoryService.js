@@ -11,6 +11,15 @@ const getByBuyerTypeSlug = async (params) => {
            g.buyerTypeId = b.id order by createdAt desc`,
       { type: QueryTypes.SELECT }
     );
+    for (let i = 0; i < groupCategories.length; i++) {
+      const buyerType = await db.BuyerType.findOne({
+        where: {
+          id: groupCategories[i].buyerTypeId
+        },
+        raw: true
+      })
+      groupCategories[i].buyerType = buyerType;
+    }
     return { status: 200, data: groupCategories };
   } catch (error) {
     console.log(error);
@@ -85,7 +94,19 @@ const getAll = async (query) => {
 const getById = async (params) => {
   try {
     const { groupCategoryId } = params;
-    const groupCategory = await db.GroupCategory.findByPk(groupCategoryId);
+    const groupCategory = await db.GroupCategory.findOne({
+      where: {
+        id: groupCategoryId
+      },
+      raw: true
+    });
+    const buyerType = await db.BuyerType.findOne({
+      where: {
+        id: groupCategory.buyerTypeId
+      },
+      raw: true
+    })
+    groupCategory.buyerType = buyerType;
     return { status: 200, data: groupCategory };
   } catch (error) {
     console.log(error);

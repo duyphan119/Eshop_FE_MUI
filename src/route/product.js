@@ -9,6 +9,8 @@ router.get(
   getUser,
   productController.getByCategorySlug
 );
+router.get("/pages", productController.getTotalPages);
+router.get("/collection/:collectionId", getUser, productController.getByCollectionId);
 router.get("/:productId", productController.getById);
 router.get("/", getUser, productController.getAll);
 router.post("/", productController.create);

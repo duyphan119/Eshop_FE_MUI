@@ -137,6 +137,111 @@ const getById = async (params) => {
     };
   }
 };
+
+const getByCollectionId = async (user, params, query) => {
+  try {
+    const { collectionId } = params;
+    const { sortBy, sortType, color, size, newPrice } = query;
+    const queryString = `select p.*
+    from products p, (select DISTINCT p.slug
+    from products p, sizes s
+    where s.productId = p.id and p.collectionId = '${collectionId}'
+    ${(() => {
+        let filterString = "";
+        if (color) {
+          filterString += " and (";
+          let colorFilters = JSON.parse(color);
+          if (colorFilters.length === 0) {
+            return "";
+          }
+          colorFilters.forEach((colorFilter, index) => {
+            filterString += `${index !== 0 ? " or " : ""
+              } p.color = '${colorFilter}'`;
+          });
+          filterString += ")";
+        }
+        return filterString;
+      })()} 
+    ${(() => {
+        let filterString = "";
+        if (size) {
+          filterString += " and (";
+          let sizeFilters = JSON.parse(size);
+          if (sizeFilters.length === 0) {
+            return "";
+          }
+          sizeFilters.forEach((sizeFilter, index) => {
+            filterString += `${index !== 0 ? " or " : ""
+              } s.size = '${sizeFilter}'`;
+          });
+          filterString += ")";
+        }
+        return filterString;
+      })()} 
+    ${(() => {
+        let filterString = "";
+        if (newPrice) {
+          filterString += " and (";
+          let newPriceFilters = JSON.parse(newPrice);
+          if (newPriceFilters.length === 0) {
+            return "";
+          }
+          newPriceFilters.forEach((newPriceFilter, index) => {
+            let split = newPriceFilter.split(";");
+            if (newPriceFilter[0] === ";") {
+              let max = parseInt(split[1]);
+              if (!isNaN(max)) {
+                filterString += `${index !== 0 ? " or " : ""
+                  } p.newPrice <= ${max}`;
+              }
+            } else if (newPriceFilter[newPriceFilter.length - 1] === ";") {
+              let min = parseInt(split[0]);
+              if (!isNaN(min)) {
+                filterString += `${index !== 0 ? " or " : ""
+                  } p.newPrice >= ${min}`;
+              }
+            } else {
+              let min = parseInt(split[0]);
+              let max = parseInt(split[1]);
+              if (!isNaN(min) && !isNaN(max)) {
+                filterString += `${index !== 0 ? " or " : ""
+                  } (p.newPrice >= ${min} and p.newPrice <= ${max})`;
+              }
+            }
+          });
+          filterString += ")";
+        }
+        return filterString;
+      })()} 
+    ${sortBy && sortType
+        ? `order by p.${sortBy} ${sortType}`
+        : "order by p.createdAt desc"
+      } ) x
+    where p.slug = x.slug`;
+    let products = await sequelize.query(queryString, {
+      type: QueryTypes.SELECT,
+      raw: true,
+    });
+    if (products.length === 0) {
+      return {
+        status: 200,
+        data: products,
+      };
+    }
+    const newProducts = await getProductsAllFields(user, products);
+    return {
+      status: 200,
+      data: newProducts,
+    };
+  } catch (error) {
+    console.log(error);
+    return {
+      status: 500,
+      data: error,
+    };
+  }
+}
+
 const getAll = async (user, query) => {
   try {
     const { p, limit, q } = query;
@@ -202,7 +307,7 @@ const getBySlug = async (user, params, query) => {
 const getByCategorySlug = async (user, params, query) => {
   try {
     const { categorySlug } = params;
-    const { all, sortBy, sortType, color, size, newPrice, p, num } = query;
+    const { sortBy, sortType, color, size, newPrice } = query;
     const queryString = `select p.*
     from products p, (select DISTINCT p.slug
     from products p, categories c, groupcategories g, buyertypes b, sizes s
@@ -278,13 +383,13 @@ const getByCategorySlug = async (user, params, query) => {
     ${sortBy && sortType
         ? `order by p.${sortBy} ${sortType}`
         : "order by p.createdAt desc"
-      }  ${num ? `limit ${num}` : ""}  ${p ? `offset ${(p - 1) * num}` : ""} ) x
+      } ) x
     where p.slug = x.slug`;
     let products = await sequelize.query(queryString, {
       type: QueryTypes.SELECT,
       raw: true,
     });
-    if (!all || products.length === 0) {
+    if (products.length === 0) {
       return {
         status: 200,
         data: products,
@@ -374,4 +479,5 @@ module.exports = {
   getBySlug,
   getByCategorySlug,
   create,
+  getByCollectionId,
 };
