@@ -9,7 +9,10 @@ const productSlice = createSlice({
     getProducts: (state, action) => {
       state.list = [...action.payload];
     },
+    getSortedProducts: (state, action) => {
+      console.log(action.payload);
+    },
   },
 });
-export const { getProducts } = productSlice.actions;
+export const { getProducts, getSortedProducts } = productSlice.actions;
 export default productSlice.reducer;

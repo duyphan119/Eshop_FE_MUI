@@ -1,0 +1,32 @@
+.swiper-button-prev,
+.swiper-button-next {
+   background-color: rgba(177, 177, 177, 0.675);
+   cursor: pointer;
+   outline: none;
+   &:hover {
+      opacity: 0.8;
+   }
+}
+
+.swiper-button-prev {
+   left: 2px;
+}
+.swiper-button-next {
+   right: 2px;
+}
+
+.swiper-button-prev::after,
+.swiper-button-next::after {
+   color: rgb(39, 39, 39);
+   font-size: 16px;
+}
+
+.swiper-pagination-bullet {
+   background-color: white;
+   border: 1px solid white;
+   opacity: 1;
+   &.swiper-pagination-bullet-active {
+      background-color: var(--main-color);
+      margin:0 6px;
+   }
+}

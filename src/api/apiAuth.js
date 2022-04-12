@@ -1,7 +1,7 @@
 import axios from "axios";
 import { login } from "../redux/authSlice";
 import * as constants from "../constants";
-const API_URL = `${constants.SERVER_URL}/v1/api/auth`;
+const API_URL = `http://localhost:8080/v1/api/auth`;
 export const apiLogin = async (user, dispatch, navigate) => {
   try {
     const res = await axios.post(`${API_URL}/login`, user, {
@@ -51,13 +51,7 @@ export const apiOAuthLogin = async (dispatch, navigate) => {
 };
 export const apiLogout = async (dispatch) => {
   try {
-    await axios.post(
-      `${API_URL}/logout`,
-      {
-        withCredentials: true,
-      },
-      {}
-    );
+    await axios.post(`${API_URL}/logout`, {}, { withCredentials: true });
     dispatch(login(null));
   } catch (error) {
     console.log(error);

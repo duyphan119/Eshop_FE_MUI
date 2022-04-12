@@ -12,7 +12,9 @@ const cartSlice = createSlice({
     },
     addToCart: (state, action) => {
       const newItem = action.payload;
-      let index = state.list.findIndex((item) => item.sizeId === newItem.sizeId);
+      let index = state.list.findIndex(
+        (item) => item.sizeId === newItem.sizeId
+      );
       if (index !== -1) {
         state.list[index] = newItem;
       } else {
@@ -22,7 +24,9 @@ const cartSlice = createSlice({
     },
     updateCart: (state, action) => {
       const newItem = action.payload;
-      let index = state.list.findIndex((item) => item.sizeId === newItem.sizeId);
+      let index = state.list.findIndex(
+        (item) => item.Product_Color_Size.id === newItem.Product_Color_Size.id
+      );
       if (index !== -1) {
         state.list[index] = newItem;
       }

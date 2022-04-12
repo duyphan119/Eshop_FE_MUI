@@ -13,7 +13,7 @@ import Products from "../../components/products/Products";
 import Services from "../../components/services/Services";
 import * as constants from "../../constants";
 import "./productsofbuyertypepage.scss";
-const ProductsOfBuyerTypePage = ({ buyerType }) => {
+const ProductsOfBuyerTypePage = ({ genderCategory }) => {
   const products = useSelector((state) => state.product.list);
   const user = useSelector((state) => state.auth.currentUser);
   const categories = useSelector((state) => state.category.list);
@@ -21,15 +21,15 @@ const ProductsOfBuyerTypePage = ({ buyerType }) => {
   const [indexGroup, setIndexGroup] = useState(0);
   const dispatch = useDispatch();
   useEffect(() => {
-    document.title = buyerType.name
-  }, [buyerType]);
+    document.title = genderCategory.full_name;
+  }, [genderCategory]);
   useEffect(() => {
     const api = async () => {
-      apiGetCategoriesByBuyerTypeSlug(buyerType.slug, dispatch);
-      apiGetGroupCategoriesByBuyerTypeSlug(buyerType.slug, dispatch);
+      apiGetCategoriesByBuyerTypeSlug(genderCategory.slug, dispatch);
+      apiGetGroupCategoriesByBuyerTypeSlug(genderCategory.slug, dispatch);
     };
     api();
-  }, [buyerType.slug, dispatch]);
+  }, [genderCategory.slug, dispatch]);
   useEffect(() => {
     groupCategories.length !== 0 &&
       apiGetProductsByCategorySlug(
@@ -66,7 +66,11 @@ const ProductsOfBuyerTypePage = ({ buyerType }) => {
                       alt=""
                     />
                     <span>
-                      {category.name.split(` ${buyerType.slug.toLowerCase()}`)[0]}
+                      {
+                        category.name.split(
+                          ` ${genderCategory.slug.toLowerCase()}`
+                        )[0]
+                      }
                     </span>
                   </Link>
                 </Col>
@@ -79,7 +83,7 @@ const ProductsOfBuyerTypePage = ({ buyerType }) => {
         array={groupCategories.map((item) => {
           return {
             ...item,
-            name: item.name.split(` ${buyerType.slug.toLowerCase()}`)[0],
+            name: item.name.split(` ${genderCategory.slug.toLowerCase()}`)[0],
           };
         })}
         indexClick={indexGroup}

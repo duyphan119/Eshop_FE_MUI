@@ -8,7 +8,6 @@ import { GoTrashcan } from "react-icons/go";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import { apiRemoveCartItem, apiUpdateCart } from "../../api/apiCart";
-import * as constants from "../../constants";
 import { separateThousands } from "../../utils";
 import "./cartpage.scss";
 const CartPage = () => {
@@ -18,33 +17,43 @@ const CartPage = () => {
   const navigate = useNavigate();
   const handleChangeQuantity = (item, step) => {
     const newQuantity = item.quantity + step;
-    if (newQuantity >= 0 && newQuantity <= item.size.amount) {
-      apiUpdateCart(user, { ...item, quantity: newQuantity }, dispatch);
+    if (newQuantity >= 0 && newQuantity <= item.Product_Color_Size.amount) {
+      apiUpdateCart(
+        user,
+        {
+          ...item,
+          product_color_size_id: item.Product_Color_Size.id,
+          quantity: newQuantity,
+        },
+        dispatch
+      );
     }
   };
   const onChangeQuantity = (item, target) => {
     let newQuantity = parseInt(target.value);
     if (isNaN(newQuantity)) newQuantity = 0;
-    if (newQuantity > item.size.amount) newQuantity = item.size.amount;
+    if (newQuantity > item.size.amount)
+      newQuantity = item.Product_Color_Size.amount;
     apiUpdateCart(user, { ...item, quantity: newQuantity }, dispatch);
   };
   const handleRemoveItem = (id) => {
     apiRemoveCartItem(user, id, dispatch);
   };
-  const getTotalPrice = () =>{
+  const getTotalPrice = () => {
     let result = 0;
-    cart.forEach(item=>{
-      result += (item.quantity * item.product.newPrice);
-    })
+    cart.forEach((item) => {
+      result +=
+        item.quantity * item.Product_Color_Size.Product_Color.Product.price;
+    });
     return result;
-  }
-  useEffect(()=>{
+  };
+  useEffect(() => {
     document.title = "Giỏ hàng";
-  },[])
+  }, []);
 
   const handleCheckout = () => {
     navigate("/payment");
-  }
+  };
 
   return (
     <div className="cart-page">
@@ -98,25 +107,27 @@ const CartPage = () => {
                     <div className="cart-page__main-cart-items" key={item.id}>
                       <div className="cart-page__main-cart-item-product">
                         <img
-                          src={(() => {
-                            try {
-                              return `${constants.SERVER_URL}${item.product.images[0].image}`;
-                            } catch (error) {
-                              return constants.IMAGE_IS_NOT_AVAILABLE_URL;
-                            }
-                          })()}
+                          src={
+                            item.Product_Color_Size.Product_Color.Product_Color_Images.find(
+                              (item) => item.is_thumbnail
+                            ).url
+                          }
                           alt=""
                         />
                         <div className="cart-page__main-cart-item-product-infos-and-actions">
                           <div className="cart-page__main-cart-item-product-infos">
                             <Link
-                              to={`/product/${item.product.slug}`}
+                              to={`/product/${item.Product_Color_Size.Product_Color.Product.slug}`}
                               className="cart-page__main-cart-item-product-info-name"
                             >
-                              {item.product.name}
+                              {
+                                item.Product_Color_Size.Product_Color.Product
+                                  .name
+                              }
                             </Link>
                             <span className="cart-page__main-cart-item-product-info-color-and-size">
-                              {item.product.color} / {item.size.size}
+                              {item.Product_Color_Size.Product_Color.color} /{" "}
+                              {item.Product_Color_Size.size_text}
                             </span>
                           </div>
                           <div className="cart-page__main-cart-item-product-actions">
@@ -134,7 +145,10 @@ const CartPage = () => {
                         </div>
                       </div>
                       <div className="cart-page__main-cart-item-price">
-                        {separateThousands(item.product.newPrice)}đ
+                        {separateThousands(
+                          item.Product_Color_Size.Product_Color.Product.price
+                        )}
+                        đ
                       </div>
                       <div className="cart-page__main-cart-item-quantity">
                         <div className="cart-page__main-cart-item-quantity-container">
@@ -161,7 +175,11 @@ const CartPage = () => {
                         </div>
                       </div>
                       <div className="cart-page__main-cart-item-total-price">
-                      {separateThousands(item.product.newPrice * item.quantity)}đ
+                        {separateThousands(
+                          item.Product_Color_Size.Product_Color.Product.price *
+                            item.quantity
+                        )}
+                        đ
                       </div>
                     </div>
                   );
@@ -185,9 +203,14 @@ const CartPage = () => {
                   </div>
                   <div className="cart-page__total-price">
                     <div className="cart-page__total-price-key">Tổng cộng:</div>
-                    <div className="cart-page__total-price-value">{separateThousands(getTotalPrice())}đ</div>
+                    <div className="cart-page__total-price-value">
+                      {separateThousands(getTotalPrice())}đ
+                    </div>
                   </div>
-                  <button className="cart-page__btn-check-out" onClick={handleCheckout}>
+                  <button
+                    className="cart-page__btn-check-out"
+                    onClick={handleCheckout}
+                  >
                     Thanh toán ({cart.length})
                   </button>
                   <p>Dùng mã giảm giá của YODY trong bước tiếp theo</p>

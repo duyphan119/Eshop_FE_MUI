@@ -9,7 +9,7 @@ const Footer = () => {
     <footer className="footer">
       <Container>
         <Row>
-          <Col xs={4}>
+          <Col lg={4} sm={12}>
             <div className="footer__slogan">
               “Đặt sự hài lòng của khách hàng là ưu tiên số 1 trong mọi suy nghĩ
               hành động của mình” là sứ mệnh, là triết lý, chiến lược.. luôn
@@ -97,9 +97,7 @@ const Footer = () => {
               </a>
             </div>
           </Col>
-          <Col xs={2} style={{
-             paddingLeft:"50px"
-          }}>
+          <Col lg={2} sm={12} className="pleft-5">
             <div className="footer__title">VỀ YODY</div>
             <div className="footer__pages">
               <Link to={`/`} className="footer__page">
@@ -119,7 +117,7 @@ const Footer = () => {
               </Link>
             </div>
           </Col>
-          <Col xs={2}>
+          <Col lg={2} sm={12}>
             <div className="footer__title">HỖ TRỢ KHÁCH HÀNG</div>
             <div className="footer__supports">
               <Link to={`/`} className="footer__support">
@@ -142,7 +140,7 @@ const Footer = () => {
               </Link>
             </div>
           </Col>
-          <Col xs={4}>
+          <Col lg={4} sm={12}>
             <div className="footer__contacts">
               <div className="footer__address">
                 <img

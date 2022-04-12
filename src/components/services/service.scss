@@ -1,19 +1,29 @@
-.services{
-   .service{
+@import "../../App.scss";
+.container {
+   &.services-container{
+      @include mobile {
+         display: none;
+      }
+   }
+}
+.services {
+   .service {
+      @include mobile {
+         display: none;
+      }
       padding: 20px 0;
-      .service__link{
+      .service__link {
          display: flex;
          align-items: center;
          font-size: 1.3rem;
-         .service__info{
+         .service__info {
             margin-left: 10px;
-            .service__title{
+            .service__title {
                font-size: 1.4rem;
             }
-            .service__detail{
-               
-               span{
-                  color:var(--main-color);
+            .service__detail {
+               span {
+                  color: var(--main-color);
                }
             }
          }

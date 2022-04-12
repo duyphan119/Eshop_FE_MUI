@@ -1,3 +1,4 @@
+@import "../../App.scss";
 .product-page {
   background-color: #f8f8f8;
   padding: 30px 0;
@@ -5,13 +6,22 @@
     background-color: white;
     .product-page__main {
       padding: 5px 0;
+      @include mobile {
+        flex-direction: column;
+      }
       .product-page__main-info-product-image {
         display: flex;
+        @include mobile {
+          width: 100%;
+        }
         .product-page__main-slider {
           padding: 30px 10px;
           height: 720px;
           position: relative;
           overflow: hidden;
+          @include mobile {
+            flex: 1;
+          }
 
           .product-page__main-slider-prev-btn,
           .product-page__main-slider-next-btn {
@@ -49,8 +59,8 @@
                   object-fit: cover;
                   object-position: center;
                 }
-                &.active{
-                  img{
+                &.active {
+                  img {
                     border: 1px solid var(--main-color);
                   }
                 }
@@ -59,6 +69,10 @@
           }
         }
         .product-page__main-image {
+          position: relative;
+          @include mobile {
+            flex: 5;
+          }
           img {
             width: 100%;
             height: 720px;
@@ -69,6 +83,9 @@
       .product-page__main-info {
         font-size: 1.6rem;
         padding: 0 20px;
+        @include mobile {
+          width: 100%;
+        }
         .product-page__main-info-name {
           font-weight: bold;
         }
@@ -194,6 +211,13 @@
           display: flex;
           justify-content: space-between;
           margin: 20px 0;
+          @include mobile {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            margin: 0;
+          }
           .product-page__main-info-action {
             display: flex;
             align-items: center;
@@ -204,6 +228,10 @@
             color: white;
             background-color: var(--main-color);
             width: calc(50% - 6px);
+            @include mobile {
+              flex: 2;
+              border-radius: unset;
+            }
             &.product-page__main-info-action-add-to-cart {
               color: var(--main-color);
               background-color: #feeeea;
@@ -214,6 +242,9 @@
               &:hover {
                 background-color: var(--main-color);
                 color: white;
+              }
+              @include mobile {
+                flex: 6;
               }
             }
           }

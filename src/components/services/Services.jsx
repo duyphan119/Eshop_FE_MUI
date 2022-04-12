@@ -36,11 +36,11 @@ const services = [
 ];
 const Services = () => {
   return (
-    <Container>
+    <Container className="services-container">
       <Row className="services">
         {services.map((item, index) => {
           return (
-            <Col xs lg={3} md={6} sm={6} className="service" key={index}>
+            <Col lg={3} md={6} className="service" key={index}>
               <a href={item.to} className="service__link">
                 <img src={item.iconSrc} alt="" />
                 <div className="service__info">

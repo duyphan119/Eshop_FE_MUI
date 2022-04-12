@@ -9,12 +9,13 @@ import { apiAddNewComment } from "../../api/apiComment";
 import "./comments.scss";
 import { apiGetProductBySlug } from "../../api/apiProduct";
 import { useDispatch } from "react-redux";
+import { Link } from "react-router-dom";
 const Comments = ({ product, setProduct, user, socket }) => {
   const [message, setMessage] = useState(
     (() => {
       let comment;
-      if(user){
-        comment = product.comments.find((item) => item.user.id === user.id);
+      if (user) {
+        comment = product.Comments.find((item) => item.User.id === user.id);
       }
       return comment ? comment : { content: "", rate: 0 };
     })()
@@ -31,7 +32,9 @@ const Comments = ({ product, setProduct, user, socket }) => {
       replyTo: null,
     };
     apiAddNewComment(newMessage);
-    setProduct(await apiGetProductBySlug(user, newMessage.productSlug, dispatch));
+    setProduct(
+      await apiGetProductBySlug(user, newMessage.productSlug, dispatch)
+    );
     socket.emit("send-message", {
       ...newMessage,
       roomId: newMessage.productSlug,
@@ -46,6 +49,15 @@ const Comments = ({ product, setProduct, user, socket }) => {
     myRating.current = item;
     setMessage({ ...message, rate: item });
   };
+  if (!user) {
+    return (
+      <Row className="comments__login">
+        <Col xs={12}>
+          <Link to="/login">Đăng nhập để viết đánh giá</Link>
+        </Col>
+      </Row>
+    );
+  }
   return (
     <>
       <Row className="comments__title">
@@ -54,10 +66,10 @@ const Comments = ({ product, setProduct, user, socket }) => {
       <Row className="comments__rating">
         <Col xs={2} className="comments__rating-left">
           <div className="comments__rating-average">
-            {product.comments.length === 0
+            {product.Comments.length === 0
               ? 0
-              : product.comments.reduce((prev, curr) => {
-                  return prev + curr.rate / product.comments.length;
+              : product.Comments.reduce((prev, curr) => {
+                  return prev + curr.rate / product.Comments.length;
                 }, 0)}
             /5
           </div>
@@ -79,7 +91,7 @@ const Comments = ({ product, setProduct, user, socket }) => {
             </div>
           </div>
           <div className="comments__rating-count">
-            {product.comments.length} lượt đánh giá
+            {product.Comments.length} lượt đánh giá
           </div>
         </Col>
         <Col xs={10} className="comments__rating-right">
@@ -107,7 +119,9 @@ const Comments = ({ product, setProduct, user, socket }) => {
       </Row>
       <Row>
         <Col xs={12} className="comments__rating-user-rate">
-          <div className="comments__rating-user-rate">Đánh giá của bạn</div>
+          <div className="comments__rating-user-rate-title">
+            Đánh giá của bạn
+          </div>
           <div className="stars">
             {[1, 2, 3, 4, 5].map((item, index) => {
               return (
@@ -131,16 +145,7 @@ const Comments = ({ product, setProduct, user, socket }) => {
         <Col xs={12}>
           <form className="comments__main-box" onSubmit={handleSubmit}>
             <div className="comments__main-box-top">
-              <img
-                src={(() => {
-                  try {
-                    return `${constants.SERVER_URL}${user.avatar}`;
-                  } catch (err) {
-                    return constants.IMAGE_IS_NOT_AVAILABLE_URL;
-                  }
-                })()}
-                alt=""
-              />
+              <img src={user.avatar} alt="" />
               <textarea
                 rows={3}
                 placeholder="Viết đánh giá của bạn"
@@ -155,19 +160,16 @@ const Comments = ({ product, setProduct, user, socket }) => {
             </div>
           </form>
         </Col>
-        {product.comments.map((comment) => (
+        {product.Comments.map((comment) => (
           <Col xs={12} key={comment.id}>
             <div className="comments__main-user">
               <div className="comments__main-user-top">
                 <div className="comments__main-user-avatar">
-                  <img
-                    src={constants.SERVER_URL + comment.user.avatar}
-                    alt=""
-                  />
+                  <img src={comment.User.avatar} alt="" />
                 </div>
                 <div className="comments__main-user-info">
                   <div className="comments__main-user-info-top">
-                    {`${comment.user.firstName} ${comment.user.lastName}`}
+                    {`${comment.User.first_name} ${comment.User.last_name}`}
                     &nbsp;
                     <span>{moment(comment.createdAt).fromNow()}</span>
                   </div>

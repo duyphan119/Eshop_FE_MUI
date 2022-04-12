@@ -6,6 +6,17 @@ import { showToastMessage } from "../redux/toastSlice";
 import { apiCreateImageProduct } from "./apiImagesProduct";
 import { apiCreateSize } from "./apiSize";
 const API_URL = `${constants.SERVER_URL}/v1/api/product`;
+export const apiSearch = async (user, keyword, dispatch) => {
+  try {
+    const res = await configAxios(user, dispatch).get(
+      `${API_URL}/search?q=${keyword}`
+    );
+    return res.data;
+  } catch (error) {
+    console.log(error);
+    return [];
+  }
+};
 export const apiGetProductsByCategorySlug = async (
   user,
   categorySlug,
@@ -20,8 +31,25 @@ export const apiGetProductsByCategorySlug = async (
     console.log(error);
   }
 };
-
-export const apiGetProductsByStatistics = async (user, statisticsType, dispatch) => {
+export const apiGetProductsByGroupCategorySlug = async (
+  user,
+  groupCategorySlug,
+  query,
+  dispatch
+) => {
+  try {
+    let queryString = `${API_URL}/group-category-slug/${groupCategorySlug}${query}`;
+    const res = await configAxios(user, dispatch).get(queryString);
+    dispatch(getProducts(res.data));
+  } catch (error) {
+    console.log(error);
+  }
+};
+export const apiGetProductsByStatistics = async (
+  user,
+  statisticsType,
+  dispatch
+) => {
   try {
     let queryString = `${API_URL}/statistic/${statisticsType}`;
     const res = await configAxios(user, dispatch).get(queryString);
@@ -29,23 +57,27 @@ export const apiGetProductsByStatistics = async (user, statisticsType, dispatch)
   } catch (error) {
     console.log(error);
   }
-}
+};
 
-export const apiGetProductsByCollectionId = async (user,
+export const apiGetProductsByCollectionId = async (
+  user,
   collectionId,
   query,
-  dispatch) => {
+  dispatch
+) => {
   try {
-    let queryString = `${API_URL}/collection/${collectionId}${query}`;
+    let queryString = `${API_URL}/collection/${collectionId}`;
     const res = await configAxios(user, dispatch).get(queryString);
     dispatch(getProducts(res.data));
   } catch (error) {
     console.log(error);
   }
-}
-export const apiGetProductsByCollectionIdNotUpdateStore = async (user,
+};
+export const apiGetProductsByCollectionIdNotUpdateStore = async (
+  user,
   collectionId,
-  dispatch) => {
+  dispatch
+) => {
   try {
     let queryString = `${API_URL}/collection/${collectionId}`;
     const res = await configAxios(user, dispatch).get(queryString);
@@ -53,11 +85,13 @@ export const apiGetProductsByCollectionIdNotUpdateStore = async (user,
   } catch (error) {
     console.log(error);
   }
-}
+};
 
 export const apiGetProductBySlug = async (user, slug, dispatch) => {
   try {
-    const res = await configAxios(user, dispatch).get(`${API_URL}/slug/${slug}?all=true`);
+    const res = await configAxios(user, dispatch).get(
+      `${API_URL}/slug/${slug}?all=true`
+    );
     return res.data;
   } catch (error) {
     console.log(error);
@@ -103,7 +137,9 @@ export const apiCreateProduct = async (data, dispatch) => {
 };
 export const apiGetTotalPages = async (query, limit) => {
   try {
-    let queryString = `${API_URL}/pages${query === "" ? "?limit=" + limit : query + "&limit=" + limit}`;
+    let queryString = `${API_URL}/pages${
+      query === "" ? "?limit=" + limit : query + "&limit=" + limit
+    }`;
     const res = await axios.get(queryString);
     return res.data.length;
   } catch (error) {

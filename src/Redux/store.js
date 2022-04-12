@@ -9,6 +9,7 @@ import toastSlice from "./toastSlice";
 import wishlistSlice from "./wishlistSlice";
 import orderSlice from "./orderSlice";
 import collectionProductSlice from "./collectionProductSlice";
+import genderCategorySlice from "./genderCategorySlice";
 const store = configureStore({
   reducer: {
     category: categorySlice,
@@ -21,6 +22,7 @@ const store = configureStore({
     wishlist: wishlistSlice,
     collectionProduct: collectionProductSlice,
     order: orderSlice,
+    genderCategory: genderCategorySlice,
   },
 });
 

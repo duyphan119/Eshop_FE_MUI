@@ -29,7 +29,7 @@ const Products = ({ products, hasLoadMore, numPerLoadMode, col }) => {
       <Row className="products">
         {products.length !== 0 ? (
           [...products].splice(0, hasLoadMore ? productsPerLoadMore: products.length).map((item, index) => {
-            return <Col xs={col ? col : 3} className="card-product" key={index}>
+            return <Col lg={col ? col : 3} sm={6} md={col ? col : 3} className="card-product" key={index}>
               <CardProduct item={item} key={item.id} />
             </Col>
           })

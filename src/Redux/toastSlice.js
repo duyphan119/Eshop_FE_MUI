@@ -1,18 +1,19 @@
 import { createSlice } from "@reduxjs/toolkit";
 const initialState = {
-  toastMessages: [],
+  toastMessage: {
+    type: "success",
+    isOpen: false,
+    text: ""
+  },
 };
 const toastSlice = createSlice({
   name: "toast",
   initialState: initialState,
   reducers: {
     showToastMessage: (state, action) => {
-      state.toastMessages.push(action.payload);
-    },
-    hideToastMessage: (state) => {
-      state.toastMessages.shift();
+      state.toastMessage = action.payload ;
     },
   },
 });
-export const { showToastMessage, hideToastMessage } = toastSlice.actions;
+export const { showToastMessage } = toastSlice.actions;
 export default toastSlice.reducer;

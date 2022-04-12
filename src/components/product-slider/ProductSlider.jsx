@@ -1,36 +1,22 @@
 import React, { useEffect, useState } from "react";
-import Col from "react-bootstrap/esm/Col";
 import Container from "react-bootstrap/esm/Container";
 import Row from "react-bootstrap/esm/Row";
-import { IoCaretBackSharp, IoCaretForwardSharp } from "react-icons/io5";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { apiGetProductsByCollectionIdNotUpdateStore } from "../../api/apiProduct";
-import Products from "../../components/products/Products";
 import CardProduct from "../cardproduct/CardProduct";
+import Slider from "../slider/Slider";
 import "./productslider.scss";
-const maxProductsInSlider = 6;
 const ProductSlider = () => {
 
-  const [indexSlider, setIndexSlider] = useState(0);
   const [products, setProducts] = useState([]);
   const collectionProducts = useSelector((state) => state.collectionProduct.list);
   const user = useSelector((state) => state.auth.currentUser);
   const dispatch = useDispatch();
-  const handleChangeSlide = (step) => {
-    if (indexSlider + step < 0) {
-      setIndexSlider(products.length - maxProductsInSlider < 0 ? 0 : products.length - maxProductsInSlider);
-    } else if (indexSlider + step >= products.length - maxProductsInSlider) {
-      setIndexSlider(0);
-    } else {
-      setIndexSlider(indexSlider + step);
-    }
-  };
   useEffect(() => {
     const api = async () => {
       if (collectionProducts.length !== 0) {
         const data = await apiGetProductsByCollectionIdNotUpdateStore(user, collectionProducts[0].id, dispatch)
-        console.log(data);
         setProducts(data)
       }
     }
@@ -51,40 +37,37 @@ const ProductSlider = () => {
             alt=""
           />
         </a>
-        <div className="product-slider__wrapper">
-          {products.length > maxProductsInSlider &&
-            <div
-              className="product-slider__prev"
-              onClick={() => handleChangeSlide(-1)}
-            >
-              <IoCaretBackSharp />
-            </div>
-          }
-          <Row
-            className="product-slider__list"
-            style={{
-              transform: `translateX(calc(-100% * ${indexSlider} / ${maxProductsInSlider}))`,
-            }}
-          >
+        <Row style={{
+          marginBlock: "8px"
+        }}>
+          <Slider spaceItems={8} breakpoints={{
+            0: {
+              slidesPerView: 2,
+            },
+            560: {
+              slidesPerView: 3,
+            },
+            1000: {
+              slidesPerView: 4,
+            },
+            1130: {
+              slidesPerView: 5,
+            },
+            1280: {
+              slidesPerView: 6,
+            }
+          }}>
             {products.map((item, index) => (
-              <Col xs={12 / maxProductsInSlider} className="product-slider__item" key={item.id}>
-                <CardProduct item={item} key={item.id} />
-              </Col>
+              <CardProduct item={item} key={index} />
             ))}
-          </Row>
-          {products.length > maxProductsInSlider && <div
-            className="product-slider__next"
-            onClick={() => handleChangeSlide(1)}
-          >
-            <IoCaretForwardSharp />
-          </div>}
-        </div>
+          </Slider>
+        </Row>
         <div className="product-slider__view-all">
           <Link to={`/${collectionProducts.length === 0 ? "" : collectionProducts[0].slug}`}>Xem tất cả</Link>
         </div>
 
       </Container>
-    </div>
+    </div >
   );
 };
 

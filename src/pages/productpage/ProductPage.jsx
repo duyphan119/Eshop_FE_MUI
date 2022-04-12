@@ -16,9 +16,8 @@ import { useParams } from "react-router-dom";
 import { apiAddToCart } from "../../api/apiCart";
 import { apiGetProductBySlug } from "../../api/apiProduct";
 import Comments from "../../components/comments/Comments";
-import * as constants from "../../constants";
 import { SocketContext } from "../../context";
-import { convertSizeStringToNumber, separateThousands } from "../../utils";
+import { separateThousands } from "../../utils";
 import "./productpage.scss";
 const ProductPage = () => {
   const user = useSelector((state) => state.auth.currentUser);
@@ -35,22 +34,24 @@ const ProductPage = () => {
   useEffect(() => {
     const api = async () => {
       const data = await apiGetProductBySlug(user, productSlug, dispatch);
-      setProduct(data);
+      if (data) {
+        setProduct(data);
+      }
     };
     api();
   }, [user, productSlug, dispatch]);
-  useEffect(() => {
-    product && socket.emit("join-room", product.slug);
-  }, [socket, product]);
 
   useEffect(() => {
     if (product) {
       document.title = product.name;
     }
   }, [product]);
+
   const handleChangeQuantity = (e, step) => {
     try {
-      let amount = product.productColors[indexColor].sizes[indexSize].amount;
+      let amount =
+        product.Product_Colors[indexColor].Product_Color_Sizes[indexSize]
+          .amount;
       let newQuantity = e ? parseInt(e.target.value) : quantity + step;
       if (!isNaN(newQuantity)) {
         if (newQuantity < 1) {
@@ -60,12 +61,19 @@ const ProductPage = () => {
         }
         setQuantity(newQuantity);
       }
-    } catch (error) { }
+    } catch (error) {}
   };
   const handleAddToCart = () => {
     apiAddToCart(
       user,
-      { size: product.productColors[indexColor].sizes[indexSize], quantity },
+      {
+        product_color_size_id:
+          product.Product_Colors[indexColor].Product_Color_Sizes[indexSize].id,
+        amount:
+          product.Product_Colors[indexColor].Product_Color_Sizes[indexSize]
+            .amount,
+        quantity,
+      },
       dispatch
     );
   };
@@ -73,7 +81,8 @@ const ProductPage = () => {
     let newIndex = indexSlide + step;
     if (
       newIndex >= 0 &&
-      newIndex < product.productColors[indexColor].images.length * 3
+      newIndex <
+        product.Product_Colors[indexColor].Product_Color_Images.length - 4
     ) {
       setIndexSlide(newIndex);
     }
@@ -90,17 +99,19 @@ const ProductPage = () => {
               xs={2}
               className="product-page__main-slider"
               style={{
-                padding: `${product.productColors[indexColor].images.length < 5 &&
-                  "0 10px"
-                  }`,
+                padding: `${
+                  product.Product_Colors[indexColor].Product_Color_Images
+                    .length < 5 && "0 10px"
+                }`,
               }}
             >
               <div
                 className="product-page__main-slider-prev-btn"
                 style={{
-                  display: `${product.productColors[indexColor].images.length < 5 &&
-                    "none"
-                    }`,
+                  display: `${
+                    product.Product_Colors[indexColor].Product_Color_Images
+                      .length < 5 && "none"
+                  }`,
                 }}
                 onClick={() => handleChangeSlide(-1)}
               >
@@ -109,32 +120,27 @@ const ProductPage = () => {
               <div
                 className="product-page__main-slider-wrapper"
                 style={{
-                  transform: `translateY(-${indexSlide >= 0 &&
+                  transform: `translateY(-${
+                    indexSlide >= 0 &&
                     indexSlide <
-                    product.productColors[indexColor].images.length * 3 - 4 &&
+                      product.Product_Colors[indexColor].Product_Color_Images
+                        .length *
+                        3 -
+                        4 &&
                     indexSlide * 134
-                    }px)`,
+                  }px)`,
                 }}
               >
                 <div className="product-page__main-slider-list">
-                  {product.productColors[indexColor].images.map(
+                  {product.Product_Colors[indexColor].Product_Color_Images.map(
                     (item, index) => (
                       <div
-                        className={`product-page__main-slider-item ${index === indexImage ? "active" : ""
-                          }`}
+                        className="product-page__main-slider-item"
                         key={item.id}
                         onClick={() => setIndexImage(index)}
+                        onMouseEnter={() => setIndexImage(index)}
                       >
-                        <img
-                          src={(() => {
-                            try {
-                              return `${constants.SERVER_URL}${item.image}`;
-                            } catch (error) {
-                              return constants.IMAGE_IS_NOT_AVAILABLE_URL;
-                            }
-                          })()}
-                          alt=""
-                        />
+                        <img src={item.url} alt="" />
                       </div>
                     )
                   )}
@@ -144,9 +150,10 @@ const ProductPage = () => {
                 className="product-page__main-slider-next-btn"
                 onClick={() => handleChangeSlide(1)}
                 style={{
-                  display: `${product.productColors[indexColor].images.length < 5 &&
-                    "none"
-                    }`,
+                  display: `${
+                    product.Product_Colors[indexColor].Product_Color_Images
+                      .length < 5 && "none"
+                  }`,
                 }}
               >
                 <BsChevronDown />
@@ -154,23 +161,24 @@ const ProductPage = () => {
             </Col>
             <Col xs={10} className="product-page__main-image">
               <img
-                src={(() => {
-                  try {
-                    return `${constants.SERVER_URL}${product.productColors[indexColor].images[indexImage].image}`;
-                  } catch (error) {
-                    return constants.IMAGE_IS_NOT_AVAILABLE_URL;
-                  }
-                })()}
+                src={
+                  product.Product_Colors[indexColor].Product_Color_Images[
+                    indexImage
+                  ].url
+                }
                 alt=""
+                className="image-need-zoom"
               />
+              <div className="cursor-zoom-image"></div>
+              <div className="zoom-image-result"></div>
             </Col>
           </Col>
           <Col xs={6} className="product-page__main-info">
             <div className="product-page__main-info-name">{product.name}</div>
             <div className="product-page__main-info-stars stars">
               {(() => {
-                const n = product.comments.length;
-                const rating = product.comments.reduce(
+                const n = product.Comments.length;
+                const rating = product.Comments.reduce(
                   (prev, cur) => prev + cur.rate / n,
                   0
                 );
@@ -193,30 +201,25 @@ const ProductPage = () => {
               })()}
             </div>
             <div className="product-page__main-info-price">
-              {separateThousands(product.newPrice)}đ
+              {separateThousands(product.price)}đ
             </div>
             <hr className="product-page__main-info-separate" />
             <div className="product-page__main-info-color">
               <div className="product-page__main-info-color-text">
-                Màu sắc: {product.productColors[indexColor].color}
+                Màu sắc: {product.Product_Colors[indexColor].color}
               </div>
               <div className="product-page__main-info-color-details">
-                {product.productColors.map((item, index) => {
+                {product.Product_Colors.map((item, index) => {
                   return (
                     <div
-                      className={`product-page__main-info-color-detail ${index === indexColor ? "active" : ""
-                        }`}
+                      className={`product-page__main-info-color-detail ${
+                        index === indexColor ? "active" : ""
+                      }`}
                       key={item.color}
                       onClick={() => setIndexColor(index)}
                     >
                       <img
-                        src={(() => {
-                          try {
-                            return `${constants.SERVER_URL}${item.images[indexImage].image}`;
-                          } catch (error) {
-                            return constants.IMAGE_IS_NOT_AVAILABLE_URL;
-                          }
-                        })()}
+                        src={item.Product_Color_Images[indexImage].url}
                         alt=""
                       />
                     </div>
@@ -229,43 +232,33 @@ const ProductPage = () => {
                 Kích thước:{" "}
                 {(() => {
                   try {
-                    product.productColors[indexColor].sizes.sort(
-                      (a, b) =>
-                        convertSizeStringToNumber(a.size) -
-                        convertSizeStringToNumber(b.size)
+                    product.Product_Colors[indexColor].Product_Color_Sizes.sort(
+                      (a, b) => a.size_value - b.size_value
                     );
-                    return product.productColors[indexColor].sizes[indexSize]
-                      .size;
+                    return product.Product_Colors[indexColor]
+                      .Product_Color_Sizes[indexSize].size_text;
                   } catch (error) {
                     return "M";
                   }
                 })()}
               </div>
               <div className="product-page__main-info-size-details">
-                {(() => {
-                  try {
-                    product.productColors[indexColor].sizes.sort(
-                      (a, b) =>
-                        convertSizeStringToNumber(a.size) -
-                        convertSizeStringToNumber(b.size)
-                    );
-                    return product.productColors[indexColor].sizes;
-                  } catch (error) {
-                    return [];
-                  }
-                })().map((item, index) => {
+                {product.Product_Colors[indexColor].Product_Color_Sizes.sort(
+                  (a, b) => a.size_value - b.size_value
+                ).map((item, index) => {
                   return (
                     <div
-                      className={`product-page__main-info-size-detail ${item.amount === 0
-                        ? "out-of-stock"
-                        : index === indexSize
+                      className={`product-page__main-info-size-detail ${
+                        item.amount === 0
+                          ? "out-of-stock"
+                          : index === indexSize
                           ? "active"
                           : ""
-                        }`}
+                      }`}
                       key={item.id}
                       onClick={() => setIndexSize(index)}
                     >
-                      {item.size}
+                      {item.size_text}
                     </div>
                   );
                 })}

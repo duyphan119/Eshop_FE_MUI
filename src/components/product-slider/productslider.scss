@@ -15,84 +15,41 @@
       width: 100%;
     }
   }
-  .product-slider__wrapper {
-    display: flex;
-    overflow: hidden;
-    margin-top: 16px;
-    min-width: 100%;
-    position: relative;
-    .product-slider__prev,
-    .product-slider__next {
-      z-index: 1;
-      position: absolute;
-      top: 40%;
-      background-color: rgba(206, 206, 206, 0.567);
-      width: 28px;
-      height: 58px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.6rem;
-      cursor: pointer;
-    }
 
-    .product-slider__prev {
-      left: 0;
-      transform: translateX(-100%);
+  .product-slider__item {
+    position: relative;
+    .product-slider__item-img {
+      width: 100%;
+      display: block;
+      img {
+        width: 100%;
+      }
     }
-    .product-slider__next {
-      right: 0;
-      transform: translateX(100%);
+    .product-slider__item-name {
+      font-size: 1.4rem;
+      font-weight: 600;
+      margin-top: 4px;
+      display: block;
+    }
+    .product-slider__item-price {
+      display: flex;
+      font-weight: 600;
+      .product-slider__item-price-new {
+        font-size: 1.4rem;
+        color: var(--main-color);
+      }
+      .product-slider__item-old {
+        font-size: 1.4rem;
+        margin-left: 10px;
+        color: gray;
+        text-decoration: line-through;
+      }
     }
     &:hover {
-      .product-slider__prev {
-        transform: translateX(0);
-      }
-      .product-slider__next {
-        transform: translateX(0);
-      }
-    }
-    .product-slider__list {
-      display: flex;
-      flex-wrap: nowrap;
-      transition: transform 0.3s ease;
-      min-width: 100%;
-      .product-slider__item {
-        position: relative;
-        .product-slider__item-img {
-          width: 100%;
-          display: block;
-          img {
-            width: 100%;
-          }
-        }
-        .product-slider__item-name {
-          font-size: 1.4rem;
-          font-weight: 600;
-          margin-top: 4px;
-          display: block;
-        }
-        .product-slider__item-price {
-          display: flex;
-          font-weight: 600;
-          .product-slider__item-price-new {
-            font-size: 1.4rem;
-            color: var(--main-color);
-          }
-          .product-slider__item-old {
-            font-size: 1.4rem;
-            margin-left: 10px;
-            color: gray;
-            text-decoration: line-through;
-          }
-        }
-        &:hover {
-          .product-slider__item-img {
-            overflow: hidden;
-            img {
-              transform: scale(1.1);
-            }
-          }
+      .product-slider__item-img {
+        overflow: hidden;
+        img {
+          transform: scale(1.1);
         }
       }
     }

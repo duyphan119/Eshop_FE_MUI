@@ -6,48 +6,51 @@ import { BsBag, BsHeart } from "react-icons/bs";
 import { MdSearch } from "react-icons/md";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
-import { apiGetAllBuyerTypes } from "../../api/apiBuyerType";
 import { apiLogout } from "../../api/apiAuth";
-import { apiSearch } from "../../api/apiSearch";
 import NotificationCategories from "../notificationcategories/NotificationCategories";
 import ProductsSearch from "../productssearch/ProductsSearch";
 import "./navbar.scss";
 import { apiGetAllCollectionProducts } from "../../api/apiCollectionProduct";
+import { apiGetAllGenderCategories } from "../../api/apiGenderCategory";
+import { apiGetCartByUser } from "../../api/apiCart";
+import { apiSearch } from "../../api/apiProduct";
 const Navbar = () => {
   const user = useSelector((state) => state.auth.currentUser);
-  const buyerTypes = useSelector((state) => state.buyerType.list);
+  const genderCategories = useSelector((state) => state.genderCategory.list);
   const cart = useSelector((state) => state.cart.list);
   // const collectionProducts = useSelector((state) => state.collectionProduct.list);
   const wishlist = useSelector((state) => state.wishlist.list);
   const dispatch = useDispatch();
-  const [products, setProducts] = useState([])
-  const [keyword, setKeyword] = useState("")
+  const [products, setProducts] = useState([]);
+  const [keyword, setKeyword] = useState("");
   const navigate = useNavigate();
   const handleLogout = () => {
     apiLogout(dispatch);
   };
-  
   useEffect(() => {
-    apiGetAllBuyerTypes(dispatch);
-    apiGetAllCollectionProducts(dispatch);
+    apiGetCartByUser(user, dispatch);
+  }, [user, dispatch]);
+  useEffect(() => {
+    // apiGetAllCollectionProducts(dispatch);
+    apiGetAllGenderCategories(dispatch);
   }, [dispatch]);
   useEffect(() => {
     const api = async () => {
-      if(keyword === ""){
+      if (keyword === "") {
         setProducts([]);
-      }else{
-        const data = await apiSearch(user, keyword, "product", dispatch);
+      } else {
+        const data = await apiSearch(user, keyword, dispatch);
         setProducts(data);
       }
-    }
+    };
     api();
   }, [user, keyword, dispatch]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    navigate(`/search?query=${keyword}`)
-    setKeyword("")
-  }
+    navigate(`/search?query=${keyword}`);
+    setKeyword("");
+  };
   return (
     <Row>
       <Col xs={12} className="my-navbar">
@@ -66,7 +69,7 @@ const Navbar = () => {
                 SALE UP TO 66%
               </Link>
             </li>
-            {buyerTypes.map((item) => {
+            {genderCategories.map((item) => {
               return (
                 <li
                   className="my-navbar__middle-category has-child"
@@ -76,18 +79,18 @@ const Navbar = () => {
                     to={`/${item.slug}`}
                     className="my-navbar__middle-category-link"
                   >
-                    {item.shortName.toUpperCase()}
+                    {item.short_name.toUpperCase()}
                   </Link>
-                  <NotificationCategories
-                    groups={item.groups}
-                    buyerType={item}
-                  />
+                  <NotificationCategories groups={item.Group_Categories} />
                 </li>
               );
             })}
 
             <li className="my-navbar__middle-category">
-              <Link to={`/ao-polo-yody`} className="my-navbar__middle-category-link">
+              <Link
+                to={`/ao-polo-yody`}
+                className="my-navbar__middle-category-link"
+              >
                 POLO YODY
               </Link>
             </li>
@@ -114,7 +117,7 @@ const Navbar = () => {
               placeholder="Tìm sản phẩm"
               required={true}
               value={keyword}
-              onChange={e => setKeyword(e.target.value)}
+              onChange={(e) => setKeyword(e.target.value)}
             />
             <div className="my-navbar__middle-form-icon">
               <MdSearch />

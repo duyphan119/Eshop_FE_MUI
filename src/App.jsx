@@ -1,29 +1,30 @@
-import { useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import React from "react";
+import { useSelector } from "react-redux";
 import ScrollToTop from "react-scroll-to-top";
-import { apiGetCartByUser } from "./api/apiCart";
 import "./App.scss";
-import Footer from "./components/footer/Footer";
-import Header from "./components/header/Header";
-import ListToastMessage from "./components/toastmessage/ListToastMessage";
 import { socket, SocketContext } from "./context";
-import Pages from "./routes/Pages";
+import routes from "./routes";
+import Loading from "./components/loading/Loading";
+const Footer = React.lazy(() => import("./components/footer/Footer"));
+const Header = React.lazy(() => import("./components/header/Header"));
+const ToastMessage = React.lazy(() =>
+  import("./components/toastmessage/ToastMessage")
+);
 const App = () => {
-  const user = useSelector((state) => state.auth.currentUser);
-  const dispatch = useDispatch();
-  useEffect(() => {
-    if (user) {
-      apiGetCartByUser(user, dispatch);
-    }
-  }, [user, dispatch]);
+  const genderCategories = useSelector((state) => state.genderCategory.list);
+  const collectionProducts = useSelector(
+    (state) => state.collectionProduct.list
+  );
   return (
-    <SocketContext.Provider value={socket}>
-      <ScrollToTop smooth color="#6f00ff" />
-      <Header />
-      <Pages />
-      <Footer />
-      <ListToastMessage />
-    </SocketContext.Provider>
+    <React.Suspense fallback={<Loading />}>
+      <SocketContext.Provider value={socket}>
+        <ScrollToTop smooth color="#6f00ff" />
+        <Header />
+        {routes(genderCategories, collectionProducts)}
+        <Footer />
+        <ToastMessage />
+      </SocketContext.Provider>
+    </React.Suspense>
   );
 };
 

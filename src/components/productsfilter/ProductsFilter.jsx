@@ -76,24 +76,23 @@ const ProductsFilter = ({ filters, setFilters }) => {
     return menuColors.colors.map((item) => {
       const indexFilter = filters
         .find((it) => it.name === "color")
-        .values.findIndex((x) => x === item.color)
+        .values.findIndex((x) => x === item.color);
       return (
         <div
-          className={`products-filter__menu-color products-filter__menu-item ${indexFilter !== -1
-            ? "active"
-            : ""
-            }`}
+          className={`products-filter__menu-color products-filter__menu-item ${
+            indexFilter !== -1 ? "active" : ""
+          }`}
           key={item.color + item.colorCode}
           ref={color}
           onMouseEnter={(e) => handleMouseEnter(e.target, item.colorCode)}
           onMouseLeave={handleMouseLeave}
           onClick={() => {
-            if(indexFilter !== -1){
+            if (indexFilter !== -1) {
               color.current.style.color = "rgb(150, 150, 150)";
-            }else{
+            } else {
               color.current.style.back = item.colorCode;
             }
-            handleFilter("color", item.color)
+            handleFilter("color", item.color);
           }}
         >
           <span
@@ -111,12 +110,13 @@ const ProductsFilter = ({ filters, setFilters }) => {
     return menuSizes.sizes.map((item) => {
       return (
         <div
-          className={`products-filter__menu-size products-filter__menu-item ${filters
-            .find((it) => it.name === "size")
-            .values.findIndex((x) => x === item) !== -1
-            ? "active"
-            : ""
-            }`}
+          className={`products-filter__menu-size products-filter__menu-item ${
+            filters
+              .find((it) => it.name === "size")
+              .values.findIndex((x) => x === item) !== -1
+              ? "active"
+              : ""
+          }`}
           key={item}
           onClick={() => handleFilter("size", item)}
         >
@@ -136,7 +136,7 @@ const ProductsFilter = ({ filters, setFilters }) => {
           <CheckBox
             fields={{ name: "rangePrices", id: "rangePrices" + index }}
             label={item.text}
-            onChange={() => handleFilter("newPrice", item.value)}
+            onChange={() => handleFilter("price", item.value)}
           />
         </div>
       );
@@ -154,9 +154,8 @@ const ProductsFilter = ({ filters, setFilters }) => {
                 ...prev,
                 isShowing: !prev.isShowing,
               };
-            })
-          }
-          }
+            });
+          }}
         >
           <div className="products-filter__menu-text">Màu sắc</div>
           <div className="products-filter__menu-append">
@@ -178,7 +177,7 @@ const ProductsFilter = ({ filters, setFilters }) => {
                 ...prev,
                 isShowing: !prev.isShowing,
               };
-            })
+            });
           }}
         >
           <div className="products-filter__menu-text">Kích thước</div>
@@ -201,10 +200,8 @@ const ProductsFilter = ({ filters, setFilters }) => {
                 ...prev,
                 isShowing: !prev.isShowing,
               };
-            })
-          }
-
-          }
+            });
+          }}
         >
           <div className="products-filter__menu-text">Khoảng giá (VNĐ)</div>
           <div className="products-filter__menu-append">

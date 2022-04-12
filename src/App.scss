@@ -4,6 +4,7 @@
 }
 html {
   font-size: 62.5%;
+  overflow-x: hidden;
 }
 * {
   box-sizing: border-box;
@@ -112,4 +113,28 @@ header {
   right: 0;
   bottom: 0;
   background-color: rgba(135, 135, 135, 0.551);
+}
+.cursor-zoom-image {
+  position: absolute;
+  width: 100px;
+  height: 100px;
+  border: 1px solid var(--main-color);
+  background-color: rgba(195, 194, 193, 0.542);
+  display: none;
+  @include mobile {
+    display: none !important;
+  }
+}
+.zoom-image-result {
+  position: absolute;
+  top: 0;
+  left: 101%;
+  width: 340px;
+  height: 340px;
+  border: 1px solid var(--main-color);
+  z-index: 1;
+  display: none;
+  @include mobile {
+    display: none !important;
+  }
 }

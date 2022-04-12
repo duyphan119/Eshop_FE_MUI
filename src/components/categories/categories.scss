@@ -1,20 +1,61 @@
+@import "../../App.scss";
 .categories {
   display: flex;
   align-items: center;
   justify-content: center;
-  margin:10px 0;
+  margin: 10px 0;
+  @include mobile {
+    display: none;
+  }
   .category {
-     padding: 8px 24px;
-     font-size: 1.6rem;
-     background-color: unset;
-     margin:0 10px;
-     border: 1px solid lightgray;
-     border-radius: 5px;
+    padding: 8px 24px;
+    font-size: 1.6rem;
+    background-color: unset;
+    margin: 0 10px;
+    border: 1px solid lightgray;
+    border-radius: 5px;
     &:hover,
     &.active {
       border: 1px solid var(--main-color);
       background-color: var(--main-color);
-      color:white;
+      color: white;
+    }
+  }
+}
+.categories__mobile {
+  display: none;
+  @include mobile {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.6rem;
+  }
+  .categories__mobile-text {
+    border: 1px solid black;
+    width: 200px;
+    border-radius: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 5px;
+    position: relative;
+    input[type="checkbox"]:checked {
+      border-radius: unset;
+      & + .categories__mobile-others {
+        display: block;
+      }
+    }
+    .categories__mobile-others {
+      display: none;
+      position: absolute;
+      top: 100%;
+      left: 0;
+      width: 100%;
+      border: 1px solid black;
+      padding: 5px;
+      .categories__mobile-other {
+        padding: 5px;
+      }
     }
   }
 }

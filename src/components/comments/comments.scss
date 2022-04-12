@@ -1,13 +1,35 @@
-.comments__title{
-  font-size: 4rem;
+@import "../../App.scss";
+.comments__login {
+  text-align: center;
+  font-size: 1.6rem;
   margin: 20px 0;
+  a {
+    background-color: var(--main-color);
+    padding: 8px 20px;
+    color: white;
+    border-radius: 5px;
+  }
+}
+.comments__title {
+  font-size: 3rem;
+  margin: 20px 0;
+  @include mobile {
+    text-align: center;
+    font-size: 3rem;
+  }
 }
 .comments__rating {
   align-items: center;
+  @include mobile {
+    flex-direction: column;
+  }
   .comments__rating-left {
     display: flex;
     flex-direction: column;
     align-items: center;
+    @include mobile {
+      width: 100%;
+    }
     .comments__rating-average {
       font-size: 4rem;
       line-height: 3.6rem;
@@ -17,6 +39,12 @@
     }
   }
   .comments__rating-right {
+    @include mobile {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
     .comments__rating-percents {
       .comments__rating-percent {
         display: flex;
@@ -42,9 +70,12 @@
   align-items: center;
   justify-content: center;
   flex-direction: column;
-  .comments__rating-user-rate {
+  .comments__rating-user-rate-title {
     font-size: 2.4rem;
     line-height: 2.2rem;
+    @include mobile {
+      margin-top: 20px;
+    }
   }
   .stars {
     font-size: 2.8rem;

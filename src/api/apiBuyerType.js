@@ -13,7 +13,7 @@ export const apiGetAllBuyerTypes = async (dispatch, all) => {
 export const apiGetBuyerTypeBySlug = async (slug) => {
   try {
     const res = await axios.get(`${API_URL}/slug/${slug}`);
-    return res.data
+    return res.data;
   } catch (error) {
     console.log(error);
   }
