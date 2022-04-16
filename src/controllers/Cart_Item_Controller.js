@@ -4,6 +4,7 @@ const {
   create,
   update,
   _delete,
+  mergeCart,
 } = require("../services/Cart_Item_Service");
 
 const Cart_Item_Controller = {
@@ -16,7 +17,11 @@ const Cart_Item_Controller = {
     res.status(status).json(data);
   },
   create: async (req, res) => {
-    const { status, data } = await create(req.user, req.body);
+    const { status, data } = await create(req.user, req.body, req.query);
+    res.status(status).json(data);
+  },
+  mergeCart: async (req, res) => {
+    const { status, data } = await mergeCart(req.user, req.body);
     res.status(status).json(data);
   },
   update: async (req, res) => {

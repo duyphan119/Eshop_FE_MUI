@@ -16,26 +16,26 @@ const login = async (body, res) => {
       return { status: 500, data: "Email or password can be incorrect" };
     }
     // Check password
-    const decoded = bcrypt.compareSync(password, checkedUser.hash);
+    const decoded = bcrypt.compareSync(password, checkedUser.password);
     if (!decoded) {
       return { status: 500, data: "Email or password can be incorrect" };
     }
     // Create access token
-    const accessToken = createAccessToken({
+    const access_token = createAccessToken({
       id: checkedUser.id,
-      isAdmin: checkedUser.isAdmin,
+      is_admin: checkedUser.is_admin,
     });
     // Create refresh token
     createRefreshToken(
       {
         id: checkedUser.id,
-        isAdmin: checkedUser.isAdmin,
+        is_admin: checkedUser.is_admin,
       },
       res
     );
     // Remove hash in response
     const { hash, ...others } = checkedUser;
-    return { status: 200, data: { ...others, accessToken } };
+    return { status: 200, data: { ...others, access_token } };
   } catch (error) {
     console.log(error);
     return { status: 500, data: error };
@@ -52,7 +52,7 @@ const register = async (body) => {
       gender,
       birthday,
       phoneNumber,
-      isAdmin,
+      is_admin,
     } = body;
     // Check email
     const checkedUser = await db.User.findOne({
@@ -60,7 +60,6 @@ const register = async (body) => {
       raw: true,
     });
     if (checkedUser) {
-      console.log("ngu");
       return { status: 500, data: "Email was available" };
     }
     // Hash password
@@ -80,7 +79,7 @@ const register = async (body) => {
       gender,
       birthday,
       phoneNumber,
-      isAdmin: isAdmin ? isAdmin : false,
+      is_admin: is_admin ? is_admin : false,
     });
     return { status: 200, data: "Your account is registered" };
   } catch (error) {
@@ -90,7 +89,7 @@ const register = async (body) => {
 };
 const refreshToken = async (cookies) => {
   try {
-    const token = cookies.refreshToken;
+    const token = cookies.refresh_token;
     // Check cookie
     if (!token) {
       return { status: 401, data: "Token is invalid" };
@@ -101,11 +100,11 @@ const refreshToken = async (cookies) => {
       return { status: 401, data: "Token is expired" };
     }
     // Create new access token
-    const accessToken = createAccessToken({
+    const access_token = createAccessToken({
       id: user.id,
-      isAdmin: user.isAdmin,
+      is_admin: user.is_admin,
     });
-    return { status: 200, data: { accessToken } };
+    return { status: 200, data: { access_token } };
   } catch (error) {
     console.log(error);
     return { status: 500, data: error };
@@ -132,7 +131,7 @@ const oauthSuccess = async (reqUser, res) => {
             lastName: user.last_name,
             avatar: user.picture.data.url,
             gender: user.gender === "male" ? true : false,
-            isAdmin: false,
+            is_admin: false,
             birthday: user.birthday,
             email: user.email,
             id,
@@ -143,7 +142,7 @@ const oauthSuccess = async (reqUser, res) => {
             lastName: user.family_name,
             avatar: user.picture,
             gender: user.gender === "male" ? true : false,
-            isAdmin: false,
+            is_admin: false,
             birthday: user.birthday,
             email: user.email,
             id,
@@ -151,35 +150,35 @@ const oauthSuccess = async (reqUser, res) => {
         }
 
         // Create access token
-        const accessToken = createAccessToken({
+        const access_token = createAccessToken({
           id: newUser.id,
-          isAdmin: newUser.isAdmin,
+          is_admin: newUser.is_admin,
         });
         // Create refresh token
         createRefreshToken(
           {
             id: newUser.id,
-            isAdmin: newUser.isAdmin,
+            is_admin: newUser.is_admin,
           },
           res
         );
-        return { status: 200, data: { ...newUser.dataValues, accessToken } };
+        return { status: 200, data: { ...newUser.dataValues, access_token } };
       } else {
         // Create access token
         const accessToken = createAccessToken({
           id: resUser.id,
-          isAdmin: resUser.isAdmin,
+          is_admin: resUser.is_admin,
         });
         // Create refresh token
         createRefreshToken(
           {
             id: resUser.id,
-            isAdmin: resUser.isAdmin,
+            is_admin: resUser.is_admin,
           },
           res
         );
 
-        return { status: 200, data: { ...resUser, accessToken } };
+        return { status: 200, data: { ...resUser, access_token } };
       }
     }
     return { status: 500, data: "Fail" };
@@ -223,11 +222,12 @@ const createRefreshToken = (obj, res) => {
     expiresIn: 30 * 24 * 60 * 60 * 1000,
   });
   // Set refresh token to cookie
-  res.cookie("refreshToken", refreshToken, {
+  res.cookie("refresh_token", refreshToken, {
     httpOnly: true,
-    secure: true,
-    sameSite: "none",
+    secure: false,
+    sameSite: "strict",
     path: "/",
+    maxAge: 30 * 24 * 60 * 60 * 1000,
   });
 };
 

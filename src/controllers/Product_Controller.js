@@ -8,9 +8,10 @@ const {
   getByGenderCategorySlug,
   getByGroupCategorySlug,
   getByCategorySlug,
+  getByCollectionId,
 } = require("../services/Product_Service");
 
-const Gender_Category_Controller = {
+const Product_Controller = {
   getAll: async (req, res) => {
     const { status, data } = await getAll();
     res.status(status).json(data);
@@ -21,6 +22,7 @@ const Gender_Category_Controller = {
   },
   getByGenderCategorySlug: async (req, res) => {
     const { status, data } = await getByGenderCategorySlug(
+      req.query,
       req.params.gender_category_slug
     );
     res.status(status).json(data);
@@ -43,6 +45,13 @@ const Gender_Category_Controller = {
     const { status, data } = await getBySlug(req.params.product_slug);
     res.status(status).json(data);
   },
+  getByCollectionId: async (req, res) => {
+    const { status, data } = await getByCollectionId(
+      req.params.collection_id,
+      req.query
+    );
+    res.status(status).json(data);
+  },
   create: async (req, res) => {
     const { status, data } = await create(req.body);
     res.status(status).json(data);
@@ -56,4 +65,4 @@ const Gender_Category_Controller = {
     res.status(status).json(data);
   },
 };
-module.exports = Gender_Category_Controller;
+module.exports = Product_Controller;

@@ -11,15 +11,23 @@ module.exports = (sequelize, DataTypes) => {
       // define association here
       Product.hasMany(models.Product_Color, {
         foreignKey: "product_id",
+        as: "product_colors",
       });
       Product.hasMany(models.Comment, {
         foreignKey: "product_id",
+        as: "comments",
       });
       Product.hasMany(models.Product_Sale, {
         foreignKey: "product_id",
+        as: "product_sales",
       });
       Product.belongsTo(models.Category, {
         foreignKey: "category_id",
+        as: "category",
+      });
+      Product.hasMany(models.Collection_Item, {
+        foreignKey: "collection_id",
+        as: "collection_items",
       });
     }
   }

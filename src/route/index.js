@@ -8,6 +8,8 @@ const Product_Color_Router = require("./Product_Color_Router");
 const Product_Color_Image_Router = require("./Product_Color_Image_Router");
 const Product_Color_Size_Router = require("./Product_Color_Size_Router");
 const Cart_Item_Router = require("./Cart_Item_Router");
+const Collection_Router = require("./Collection_Router");
+const Collection_Item_Router = require("./Collection_Item_Router");
 
 const configRoute = (app) => {
   app.use("/v1/api/gender-category", Gender_Category_Router);
@@ -24,7 +26,7 @@ const configRoute = (app) => {
   app.use("/v1/api/cart", Cart_Item_Router);
   // app.use("/v1/api/wishlist", wishlistRouter);
   app.use("/v1/api/comment", Comment_Router);
-  // app.use("/v1/api/collection-product", collectionProductRouter);
-  // app.use("/v1/api/order", orderRouter);
+  app.use("/v1/api/collection", Collection_Router);
+  app.use("/v1/api/collection-item", Collection_Item_Router);
 };
 module.exports = configRoute;

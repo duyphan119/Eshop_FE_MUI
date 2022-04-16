@@ -4,13 +4,11 @@ const getUser = (req, res, next) => {
     const reqHeader = req.headers["authorization"];
     if (reqHeader) {
       const token = reqHeader.split(" ")[1];
-      console.log(token);
       if (token) {
         const user = jwt.verify(token, process.env.ACCESS_TOKEN);
         if (user) {
           req.user = user;
         }
-        console.log(user);
       }
     }
   } catch (error) {

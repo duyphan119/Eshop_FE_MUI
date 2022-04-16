@@ -11,12 +11,15 @@ module.exports = (sequelize, DataTypes) => {
       // define association here
       Order.belongsTo(models.User, {
         foreignKey: "user_id",
+        as: "user",
       });
       Order.belongsTo(models.Code, {
         foreignKey: "code_id",
+        as: "code",
       });
       // Order.hasMany(models.Order_Item, {
       //   foreignKey: "order_id",
+      //   as:"order_item"
       // });
     }
   }

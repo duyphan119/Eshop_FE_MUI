@@ -6,14 +6,18 @@ const common_include = {
   include: [
     {
       model: db.Product_Color,
-      include: [{ model: db.Product }, { model: db.Product_Color_Image }],
+      as: "product_color",
+      include: [
+        { model: db.Product, as: "product" },
+        { model: db.Product_Color_Image, as: "product_color_images" },
+      ],
     },
   ],
 };
 const getById = async (id) => {
   return new Promise(async (resolve, reject) => {
     try {
-      const product_color_size = await db.Product_Color_Size.findOne({
+      const product_color_size = await db.product_color_size.findOne({
         ...common_include,
         where: { id },
       });
@@ -27,7 +31,7 @@ const getById = async (id) => {
 const create = async (body) => {
   return new Promise(async (resolve, reject) => {
     try {
-      const product_color_size = await db.Product_Color_Size.create(body);
+      const product_color_size = await db.product_color_size.create(body);
       resolve({ status: 200, data: product_color_size });
     } catch (error) {
       console.log(error);
@@ -39,7 +43,7 @@ const update = async (body) => {
   return new Promise(async (resolve, reject) => {
     try {
       const { id } = body;
-      const existing_product_color_size = await db.Product_Color_Size.findOne({
+      const existing_product_color_size = await db.product_color_size.findOne({
         ...common_include,
         where: { id },
       });
@@ -57,7 +61,7 @@ const update = async (body) => {
 const _delete = async (id) => {
   return new Promise(async (resolve, reject) => {
     try {
-      await db.Product_Color_Size.destroy({
+      await db.product_color_size.destroy({
         where: { id },
       });
       resolve({ status: 200, data: "Deleted" });

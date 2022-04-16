@@ -6,7 +6,11 @@ const common_include = {
   include: [
     {
       model: db.Product_Color,
-      include: [{ model: db.Product }, { model: db.Product_Color_Size }],
+      as: "product_color",
+      include: [
+        { model: db.Product, as: "product" },
+        { model: db.Product_Color_Size, as: "product_color_sizes" },
+      ],
     },
   ],
 };
@@ -70,4 +74,4 @@ const _delete = async (id) => {
   });
 };
 
-module.exports = { create };
+module.exports = { create, getById, _delete, update };

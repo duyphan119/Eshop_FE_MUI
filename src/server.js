@@ -22,6 +22,7 @@ const io = new Server(httpServer, {
 const port = process.env.PORT || 5000;
 
 socketIO(io);
+app.use(cookieParser());
 
 //Config app
 app.use(
@@ -31,7 +32,6 @@ app.use(
     credentials: true,
   })
 );
-app.use(cookieParser());
 // app.use(
 //   cookieSession({
 //     name: "session",

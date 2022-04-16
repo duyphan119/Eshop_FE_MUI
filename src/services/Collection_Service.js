@@ -5,18 +5,52 @@ const common_include = {
   nest: true,
   include: [
     {
-      model: db.Group_Category,
-      as: "group_category",
-      include: [{ model: db.Gender_Category, as: "gender_category" }],
+      model: db.Collection_Item,
+      as: "collection_items",
+      include: [
+        {
+          model: db.Product,
+          as: "product",
+          include: [
+            {
+              model: db.Product_Color,
+              as: "product_colors",
+              include: [
+                { model: db.Product_Color_Size, as: "product_color_size" },
+                { model: db.Product_Color_Image, as: "product_color_image" },
+              ],
+            },
+            {
+              model: db.Category,
+              as: "category",
+              include: [
+                {
+                  model: db.Group_Category,
+                  as: "group_category",
+                  include: [
+                    { model: db.Gender_Category, as: "gender_category" },
+                  ],
+                },
+              ],
+            },
+            {
+              model: db.Comment,
+              as: "comments",
+              include: [{ model: db.User, as: "user" }],
+            },
+          ],
+        },
+      ],
     },
   ],
 };
 
-const getAll = async () => {
+const getAll = async (query) => {
   return new Promise(async (resolve, reject) => {
     try {
-      const categories = await db.Category.findAll(common_include);
-      resolve({ status: 200, data: categories });
+      const { is_main } = query;
+      const collections = await db.Collection.findAll(common_include);
+      resolve({ status: 200, data: collections });
     } catch (error) {
       console.log(error);
       resolve({ status: 500, data: error.response.data });
@@ -26,13 +60,13 @@ const getAll = async () => {
 const getById = async (id) => {
   return new Promise(async (resolve, reject) => {
     try {
-      const category = await db.Category.findOne({
+      const collection = await db.Collection.findOne({
         ...common_include,
         where: {
           id,
         },
       });
-      resolve({ status: 200, data: category });
+      resolve({ status: 200, data: collection });
     } catch (error) {
       console.log(error);
       resolve({ status: 500, data: error.response.data });
@@ -42,13 +76,13 @@ const getById = async (id) => {
 const getBySlug = async (slug) => {
   return new Promise(async (resolve, reject) => {
     try {
-      const category = await db.Category.findOne({
+      const collection = await db.Collection.findOne({
         ...common_include,
         where: {
           slug,
         },
       });
-      resolve({ status: 200, data: category });
+      resolve({ status: 200, data: collection });
     } catch (error) {
       console.log(error);
       resolve({ status: 500, data: error.response.data });
@@ -58,13 +92,13 @@ const getBySlug = async (slug) => {
 const create = async (body) => {
   return new Promise(async (resolve, reject) => {
     try {
-      const { full_name } = body;
-      const slug = slugify(full_name.toLowerCase());
-      const new_gender_category = await db.Category.create({
+      const { short_name } = body;
+      const slug = slugify(short_name.toLowerCase());
+      const new_collection = await db.Collection.create({
         ...body,
         slug,
       });
-      resolve({ status: 200, data: new_gender_category });
+      resolve({ status: 200, data: new_collection });
     } catch (error) {
       console.log(error);
       resolve({ status: 500, data: error.response.data });
@@ -77,19 +111,19 @@ const update = async (body) => {
     try {
       const { id, short_name } = body;
       const slug = slugify(short_name.toLowerCase());
-      const existing_category = await db.Category.findOne({
+      const existing_collection = await db.Collection.findOne({
         ...common_include,
         where: {
           id,
         },
       });
 
-      existing_category = {
-        ...existing_category,
+      existing_collection = {
+        ...existing_collection,
         ...body,
         slug,
       };
-      resolve({ status: 200, data: existing_category });
+      resolve({ status: 200, data: existing_collection });
     } catch (error) {
       console.log(error);
       resolve({ status: 500, data: error.response.data });
@@ -100,7 +134,7 @@ const update = async (body) => {
 const _delete = async (id) => {
   return new Promise(async (resolve, reject) => {
     try {
-      await db.Category.destroy({
+      await db.Collection.destroy({
         where: {
           id,
         },
