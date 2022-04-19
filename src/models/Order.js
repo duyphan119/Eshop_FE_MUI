@@ -17,10 +17,10 @@ module.exports = (sequelize, DataTypes) => {
         foreignKey: "code_id",
         as: "code",
       });
-      // Order.hasMany(models.Order_Item, {
-      //   foreignKey: "order_id",
-      //   as:"order_item"
-      // });
+      Order.hasMany(models.Order_Item, {
+        foreignKey: "order_id",
+        as: "order_items",
+      });
     }
   }
   Order.init(
@@ -32,6 +32,14 @@ module.exports = (sequelize, DataTypes) => {
       },
       user_id: DataTypes.INTEGER,
       code_id: DataTypes.INTEGER,
+      total: DataTypes.INTEGER,
+      city: DataTypes.STRING, //Thành phố
+      district: DataTypes.STRING, //Quận, huyện
+      ward: DataTypes.STRING, //Phường
+      street: DataTypes.STRING, //Tên đường
+      address_no: DataTypes.STRING, //Số nhà
+      delivery_price: DataTypes.STRING, //Tiền ship
+      checkout_method: DataTypes.INTEGER,
     },
     {
       sequelize,

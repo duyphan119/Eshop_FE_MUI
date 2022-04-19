@@ -9,11 +9,16 @@ const {
   getByGroupCategorySlug,
   getByCategorySlug,
   getByCollectionId,
+  getByStatistics,
 } = require("../services/Product_Service");
 
 const Product_Controller = {
   getAll: async (req, res) => {
     const { status, data } = await getAll();
+    res.status(status).json(data);
+  },
+  getByStatistics: async (req, res) => {
+    const { status, data } = await getByStatistics(req.user, req.query);
     res.status(status).json(data);
   },
   search: async (req, res) => {

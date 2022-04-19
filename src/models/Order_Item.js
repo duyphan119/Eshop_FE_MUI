@@ -16,9 +16,17 @@ module.exports = (sequelize, DataTypes) => {
       //   foreignKey: "product_color_id",
       // });
 
-      models.Product_Color.belongsToMany(models.Order, {
-        through: Order_Item,
+      Order_Item.belongsTo(models.Order, {
+        foreignKey: "order_id",
+        as: "order",
       });
+      Order_Item.belongsTo(models.Product_Color_Size, {
+        foreignKey: "product_color_size_id",
+        as: "product_color_size",
+      });
+      // models.Product_Color.belongsToMany(models.Order, {
+      //   through: Order_Item,
+      // });
     }
   }
   Order_Item.init(
@@ -30,7 +38,7 @@ module.exports = (sequelize, DataTypes) => {
       },
       order_id: DataTypes.INTEGER,
       quantity: DataTypes.INTEGER,
-      product_color_id: DataTypes.INTEGER,
+      product_color_size_id: DataTypes.INTEGER,
     },
     {
       sequelize,

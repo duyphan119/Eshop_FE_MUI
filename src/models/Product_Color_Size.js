@@ -17,6 +17,10 @@ module.exports = (sequelize, DataTypes) => {
         foreignKey: "product_color_size_id",
         as: "cart_items",
       });
+      Product_Color_Size.hasMany(models.Order_Item, {
+        foreignKey: "product_color_size_id",
+        as: "order_items",
+      });
     }
   }
   Product_Color_Size.init(

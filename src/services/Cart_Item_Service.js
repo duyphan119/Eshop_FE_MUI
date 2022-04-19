@@ -34,7 +34,7 @@ const common_include = {
             },
             {
               model: db.Product_Color_Image,
-              as: "product_color_image",
+              as: "product_color_images",
             },
           ],
         },
@@ -55,7 +55,7 @@ const getByUser = async (user_id) => {
       resolve({ status: 200, data: cart_items });
     } catch (error) {
       console.log(error);
-      resolve({ status: 500, data: error.response.data });
+      resolve({ status: 500, data: error });
     }
   });
 };

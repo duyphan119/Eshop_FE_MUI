@@ -4,6 +4,7 @@ const { getUser } = require("../middleware/Auth_Middleware");
 const router = require("express").Router();
 
 router.get("/slug/:product_slug", getUser, Product_Controller.getBySlug);
+router.get("/statistics", getUser, Product_Controller.getByStatistics);
 router.get(
   "/gender-category-slug/:gender_category_slug",
   getUser,

@@ -1,6 +1,6 @@
 const db = require("../models");
 const slugify = require("slugify");
-const { Op } = require("sequelize");
+const { Op, QueryTypes } = require("sequelize");
 const common_include = {
   raw: false,
   include: [
@@ -28,6 +28,10 @@ const common_include = {
       as: "comments",
       include: [{ model: db.User, as: "user" }],
     },
+    {
+      model: db.Product_User,
+      as: "product_users",
+    },
   ],
   nest: true,
 };
@@ -35,7 +39,6 @@ const common_include = {
 const createFilter = (query) => {
   let { color, size, price, sortBy, sortType } = query;
   let newInclude = { ...common_include };
-  let splitItem;
   color = color ? JSON.parse(color) : [];
   size = size ? JSON.parse(size) : [];
   price = price ? JSON.parse(price) : [];
@@ -53,29 +56,10 @@ const createFilter = (query) => {
           },
         },
         {
-          [Op.or]: price.map((item) => {
-            splitItem = item.split(";");
-            if (item[0] === ";") {
-              return {
-                price: {
-                  [Op.gte]: parseInt(splitItem[1]),
-                },
-              };
-            }
-            if (item[item.length - 1] === ";") {
-              return {
-                price: {
-                  [Op.lte]: parseInt(splitItem[0]),
-                },
-              };
-            }
-            return {
-              price: {
-                [Op.gte]: parseInt(splitItem[0]),
-                [Op.lte]: parseInt(splitItem[1]),
-              },
-            };
-          }),
+          price: {
+            [Op.gte]: price[0],
+            [Op.lte]: price[1],
+          },
         },
       ],
     };
@@ -95,10 +79,63 @@ const getAll = async () => {
       resolve({ status: 200, data: products });
     } catch (error) {
       console.log(error);
-      resolve({ status: 500, data: error.response.data });
+      resolve({ status: 500, data: error });
     }
   });
 };
+
+const getByStatistics = async (user, query) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const products = await db.Product.findAll({
+        include: [
+          {
+            model: db.Product_Color,
+            as: "product_colors",
+            include: [
+              {
+                model: db.Product_Color_Size,
+                as: "product_color_sizes",
+                include: [
+                  {
+                    model: db.Order_Item,
+                    as: "order_items",
+                  },
+                ],
+              },
+              {
+                model: db.Product_Color_Image,
+                as: "product_color_images",
+              },
+            ],
+          },
+        ],
+        group: "product.id",
+        order: [
+          [
+            db.sequelize.fn(
+              "sum",
+              db.sequelize.col(
+                "product_colors.product_color_sizes.order_items.quantity"
+              )
+            ),
+            "DESC",
+          ],
+        ],
+        where: {
+          "$product_colors.product_color_sizes.order_items.id$": {
+            [Op.not]: null,
+          },
+        },
+      });
+      resolve({ status: 200, data: products });
+    } catch (error) {
+      console.log(error);
+      resolve({ status: 500, data: error });
+    }
+  });
+};
+
 const search = async (q) => {
   return new Promise(async (resolve, reject) => {
     try {
@@ -157,10 +194,11 @@ const getByCollectionId = async (collection_id, query) => {
       const option = { ...createFilter(query) };
       option.include.push({
         model: db.Collection_Item,
-        as: "collection_item",
+        as: "collection_items",
         include: [
           {
             model: db.Collection,
+            as: "collection",
             where: {
               id: collection_id,
             },
@@ -174,7 +212,7 @@ const getByCollectionId = async (collection_id, query) => {
       resolve({ status: 200, data: products });
     } catch (error) {
       console.log(error);
-      resolve({ status: 500, data: error.response.data });
+      resolve({ status: 500, data: error });
     }
   });
 };
@@ -202,23 +240,27 @@ const getBySlug = async (slug) => {
         include: [
           {
             model: db.Product_Color,
+            as: "product_colors",
             include: [
-              { model: db.Product_Color_Size },
-              { model: db.Product_Color_Image },
+              { model: db.Product_Color_Size, as: "product_color_sizes" },
+              { model: db.Product_Color_Image, as: "product_color_images" },
             ],
           },
           {
             model: db.Category,
+            as: "category",
             include: [
               {
                 model: db.Group_Category,
-                include: [{ model: db.Gender_Category }],
+                as: "group_category",
+                include: [{ model: db.Gender_Category, as: "gender_category" }],
               },
             ],
           },
           {
             model: db.Comment,
-            include: [{ model: db.User }],
+            as: "comments",
+            include: [{ model: db.User, as: "user" }],
           },
         ],
         nest: true,
@@ -298,4 +340,5 @@ module.exports = {
   create,
   update,
   _delete,
+  getByStatistics,
 };

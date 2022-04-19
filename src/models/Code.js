@@ -23,7 +23,7 @@ module.exports = (sequelize, DataTypes) => {
         primaryKey: true,
       },
       type: DataTypes.STRING,
-      key: DataTypes.STRING,
+      code_key: DataTypes.STRING,
       value: DataTypes.STRING,
       value_vi: DataTypes.STRING,
       is_default: DataTypes.BOOLEAN,

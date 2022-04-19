@@ -16,8 +16,8 @@ const common_include = {
               model: db.Product_Color,
               as: "product_colors",
               include: [
-                { model: db.Product_Color_Size, as: "product_color_size" },
-                { model: db.Product_Color_Image, as: "product_color_image" },
+                { model: db.Product_Color_Size, as: "product_color_sizes" },
+                { model: db.Product_Color_Image, as: "product_color_images" },
               ],
             },
             {
