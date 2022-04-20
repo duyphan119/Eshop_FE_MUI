@@ -12,6 +12,7 @@ const Collection_Router = require("./Collection_Router");
 const Collection_Item_Router = require("./Collection_Item_Router");
 const Order_Router = require("./Order_Router");
 const Product_User_Router = require("./Product_User_Router");
+const Upload_Router = require("./Upload_Router");
 
 const configRoute = (app) => {
   app.use("/v1/api/gender-category", Gender_Category_Router);
@@ -24,7 +25,7 @@ const configRoute = (app) => {
   app.use("/v1/api/product-color-size", Product_Color_Size_Router);
   // app.use("/v1/api/images-product", imagesProductRouter);
   app.use("/v1/api/product", Product_Router);
-  // app.use("/v1/api/file", fileRouter);
+  app.use("/v1/api/upload", Upload_Router);
   app.use("/v1/api/cart", Cart_Item_Router);
   app.use("/v1/api/product-user", Product_User_Router);
   app.use("/v1/api/comment", Comment_Router);
