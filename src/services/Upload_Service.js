@@ -18,7 +18,7 @@ const upload = async (files) => {
         result.push(data);
       });
 
-      result.push("data.secure_url");
+      result.push(data.secure_url);
       resolve({ status: 200, data: result });
     } catch (error) {
       console.log(error);
