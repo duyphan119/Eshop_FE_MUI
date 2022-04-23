@@ -2,7 +2,7 @@ const {
   getById,
   create,
   update,
-  _delete,
+  deleteProduct,
   getByUser,
 } = require("../services/Product_User_Service");
 
@@ -23,8 +23,11 @@ const Product_User_Controller = {
     const { status, data } = await update(req.body);
     res.status(status).json(data);
   },
-  _delete: async (req, res) => {
-    const { status, data } = await _delete(req.params.id);
+  deleteProduct: async (req, res) => {
+    const { status, data } = await deleteProduct(
+      req.user,
+      req.params.product_id
+    );
     res.status(status).json(data);
   },
 };

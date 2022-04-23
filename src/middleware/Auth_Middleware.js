@@ -12,13 +12,13 @@ const getUser = (req, res, next) => {
       }
     }
   } catch (error) {
-    console.log(error);
+    // console.log(error);
   }
   next();
 };
 const verifyToken = (req, res, next) => {
   getUser(req, res, () => {
-    if (req.user) {
+    if (req && req.user) {
       next();
     } else {
       return res.status(401).json("Not authorization");
@@ -36,7 +36,7 @@ const verifyTokenAndUser = (req, res, next) => {
   });
 };
 
-const verifyTokenAndAdmin = (req, res, next) => {
+const verifyTokenUserAndAdmin = (req, res, next) => {
   verifyToken(req, res, () => {
     if (req.params.user_id === req.user.id && req.user.is_admin) {
       next();
@@ -58,6 +58,6 @@ module.exports = {
   getUser,
   verifyToken,
   verifyTokenAndUser,
-  verifyTokenAndAdmin,
+  verifyTokenUserAndAdmin,
   verifyAdmin,
 };

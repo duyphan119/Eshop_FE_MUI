@@ -40,11 +40,11 @@ const common_include = {
 const create = async (user, body) => {
   return new Promise(async (resolve, reject) => {
     try {
-      const product_color = await db.Product_User.create({
+      const product_user = await db.Product_User.create({
         ...body,
         user_id: user.id,
       });
-      resolve({ status: 200, data: product_color });
+      resolve({ status: 200, data: product_user });
     } catch (error) {
       console.log(error);
       resolve({ status: 500, data: error.response.data });
@@ -72,7 +72,6 @@ const getByUser = async (user, query) => {
         ...common_include,
         where: { user_id: user.id },
       });
-      console.log(product_users);
       resolve({ status: 200, data: product_users });
     } catch (error) {
       console.log(error);
@@ -112,5 +111,18 @@ const _delete = async (id) => {
     }
   });
 };
+const deleteProduct = async (user, product_id) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      await db.Product_User.destroy({
+        where: { product_id, user_id: user.id },
+      });
+      resolve({ status: 200, data: "Deleted" });
+    } catch (error) {
+      console.log(error);
+      resolve({ status: 500, data: error.response.data });
+    }
+  });
+};
 
-module.exports = { getById, create, update, _delete, getByUser };
+module.exports = { getById, create, update, _delete, getByUser, deleteProduct };

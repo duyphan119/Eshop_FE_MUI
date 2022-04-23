@@ -8,10 +8,28 @@ const common_include = {
     { model: db.Product_Color_Image, as: "product_color_images" },
   ],
 };
-const create = async (body) => {
+const create = async (body, query) => {
   return new Promise(async (resolve, reject) => {
     try {
-      const product_color = await db.Product_Color.create(body);
+      const { product_id, color, color_code } = body;
+      const { many } = query;
+      if (many) {
+        const product_colors = await db.Product_Color.bulkCreate(
+          body.map((item) => {
+            return {
+              product_id: item.product_id,
+              color: item.color,
+              color_code: item.color_code,
+            };
+          })
+        );
+        resolve({ status: 200, data: product_colors });
+      }
+      const product_color = await db.Product_Color.create({
+        product_id,
+        color,
+        color_code,
+      });
       resolve({ status: 200, data: product_color });
     } catch (error) {
       console.log(error);

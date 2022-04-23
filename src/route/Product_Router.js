@@ -1,6 +1,5 @@
 const Product_Controller = require("../controllers/Product_Controller");
 const { getUser } = require("../middleware/Auth_Middleware");
-
 const router = require("express").Router();
 
 router.get("/slug/:product_slug", getUser, Product_Controller.getBySlug);

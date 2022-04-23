@@ -7,6 +7,10 @@ router.get("/user", getUser, Product_User_Controller.getByUser);
 router.get("/:id", Product_User_Controller.getById);
 router.post("/", verifyToken, Product_User_Controller.create);
 router.put("/", Product_User_Controller.update);
-router.delete("/:id", verifyToken, Product_User_Controller._delete);
+router.delete(
+  "/product/:product_id",
+  verifyToken,
+  Product_User_Controller.deleteProduct
+);
 
 module.exports = router;

@@ -22,7 +22,7 @@ const Product_Controller = {
     res.status(status).json(data);
   },
   search: async (req, res) => {
-    const { status, data } = await search(req.query.q);
+    const { status, data } = await search(req.query);
     res.status(status).json(data);
   },
   getByGenderCategorySlug: async (req, res) => {

@@ -13,12 +13,17 @@ const upload = async (files) => {
   return new Promise(async (resolve, reject) => {
     try {
       const result = [];
-      files.forEach(async (file) => {
-        const data = await uploadOne(file.path);
-        result.push(data);
-      });
 
-      result.push(data.secure_url);
+      for (const file of files) {
+        const data = await uploadOne(file.path);
+        result.push(data.secure_url);
+        // // You aren't doing anything with data so no need for the return value
+        // await uploadToRemoteBucket(file.path);
+
+        // // Delete the file like normal
+        // await unlinkAsync(file.path);
+      }
+
       resolve({ status: 200, data: result });
     } catch (error) {
       console.log(error);

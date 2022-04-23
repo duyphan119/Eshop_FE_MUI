@@ -11,7 +11,7 @@ const Product_Color_Image_Controller = {
     res.status(status).json(data);
   },
   create: async (req, res) => {
-    const { status, data } = await create(req.body);
+    const { status, data } = await create(req.body, req.query);
     res.status(status).json(data);
   },
   update: async (req, res) => {

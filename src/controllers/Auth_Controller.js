@@ -7,7 +7,6 @@ const {
 } = require("../services/Auth_Service");
 const authController = {
   login: async (req, res) => {
-    console.log(req.body);
     const response = await login(req.body, res);
     res.status(response.status).json(response.data);
   },

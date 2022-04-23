@@ -28,10 +28,27 @@ const getById = async (id) => {
     }
   });
 };
-const create = async (body) => {
+const create = async (body, query) => {
   return new Promise(async (resolve, reject) => {
     try {
-      const product_color_image = await db.Product_Color_Image.create(body);
+      const { product_color_id, url } = body;
+      const { many } = query;
+      if (many) {
+        const product_color_images = await db.Product_Color_Image.bulkCreate(
+          body.map((item) => {
+            return {
+              product_color_id: item.product_color_id,
+              url: item.url,
+            };
+          })
+        );
+        resolve({ status: 200, data: product_color_images });
+      }
+      const product_color_image = await db.Product_Color_Image.create({
+        product_color_id,
+        url,
+        is_thumbnail,
+      });
       resolve({ status: 200, data: product_color_image });
     } catch (error) {
       console.log(error);
