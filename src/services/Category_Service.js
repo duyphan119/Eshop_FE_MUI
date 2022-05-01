@@ -7,7 +7,14 @@ const common_include = {
     {
       model: db.Group_Category,
       as: "group_category",
-      include: [{ model: db.Gender_Category, as: "gender_category" }],
+      attributes: { exclude: ["createdAt", "updatedAy"] },
+      include: [
+        {
+          model: db.Gender_Category,
+          as: "gender_category",
+          attributes: { exclude: ["createdAt", "updatedAy"] },
+        },
+      ],
     },
   ],
 };

@@ -15,19 +15,21 @@ const common_include = {
 const create = async (body) => {
   return new Promise(async (resolve, reject) => {
     try {
-      const { content, rate, reply_to, product_id, user_id } = body;
-      const new_comment = await db.Comment.create(
-        {
-          content,
-          rate,
-          reply_to,
-          product_id,
-          user_id,
-        },
-        common_include
-      );
+      const { content, rate, product_id, user_id } = body;
+      const new_comment = await db.Comment.create({
+        content,
+        rate,
+        reply_to,
+        product_id,
+        user_id,
+      });
 
-      resolve({ status: 200, data: new_comment });
+      const res_comment = await db.Comment.findOne({
+        where: { id: new_comment.id },
+        ...common_include,
+      });
+
+      resolve({ status: 200, data: res_comment });
     } catch (error) {
       console.log(error);
       resolve({ status: 500, data: error.response.data });
@@ -37,18 +39,24 @@ const create = async (body) => {
 const update = async (body) => {
   return new Promise(async (resolve, reject) => {
     try {
-      const { id } = body;
-      const existing_comment = await db.Comment.findOne({
+      const { id, content, rate, product_id, user_id } = body;
+      console.log(body);
+      await db.Comment.update(
+        { content, rate, product_id, user_id, updatedAt: new Date() },
+        {
+          where: {
+            id,
+          },
+        }
+      );
+      const res_comment = await db.Comment.findOne({
+        where: { id: id },
         ...common_include,
-        where: {
-          id,
-        },
       });
-      existing_comment = { ...existing_comment, ...body };
-      resolve({ status: 200, data: existing_comment });
+      resolve({ status: 200, data: res_comment });
     } catch (error) {
-      console.log(error);
-      resolve({ status: 500, data: error.response.data });
+      // console.log(error);
+      resolve({ status: 500, data: error });
     }
   });
 };

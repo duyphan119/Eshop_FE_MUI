@@ -32,18 +32,18 @@ app.use(
     credentials: true,
   })
 );
-// app.use(
-//   cookieSession({
-//     name: "session",
-//     keys: ["duyphan"],
-//     maxAge: 30 * 24 * 60 * 60 * 1000,
-//   })
-// );
+app.use(
+  cookieSession({
+    name: "session",
+    keys: ["duyphan"],
+    maxAge: 30 * 24 * 60 * 60 * 1000,
+  })
+);
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-// app.use(passport.initialize());
-// app.use(passport.session());
+app.use(passport.initialize());
+app.use(passport.session());
 app.use(express.static(path.join(__dirname, "/public")));
 // Config route
 configRoute(app);

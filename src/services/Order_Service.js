@@ -67,7 +67,7 @@ const create = async (user, body, query) => {
         delivery_price,
         checkout_method,
         code_id: 1,
-        user_id: 2,
+        user_id: user.id,
         total,
       };
       const new_order = await db.Order.create(option);

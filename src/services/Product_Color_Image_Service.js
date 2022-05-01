@@ -47,7 +47,6 @@ const create = async (body, query) => {
       const product_color_image = await db.Product_Color_Image.create({
         product_color_id,
         url,
-        is_thumbnail,
       });
       resolve({ status: 200, data: product_color_image });
     } catch (error) {

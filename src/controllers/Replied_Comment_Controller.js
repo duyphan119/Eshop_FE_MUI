@@ -1,6 +1,6 @@
-const { create, update } = require("../services/Comment_Service");
+const { create, update } = require("../services/Replied_Comment_Service");
 
-const Comment_Controller = {
+const Replied_Comment_Controller = {
   create: async (req, res) => {
     const { status, data } = await create(req.body);
     res.status(status).json(data);
@@ -10,4 +10,4 @@ const Comment_Controller = {
     res.status(status).json(data);
   },
 };
-module.exports = Comment_Controller;
+module.exports = Replied_Comment_Controller;

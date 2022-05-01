@@ -23,7 +23,6 @@ module.exports = (sequelize, DataTypes) => {
         primaryKey: true,
       },
       percent: DataTypes.INTEGER,
-      value: DataTypes.INTEGER,
       finish: DataTypes.DATE,
       product_id: DataTypes.INTEGER,
     },

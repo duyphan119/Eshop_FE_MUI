@@ -13,6 +13,10 @@ module.exports = (sequelize, DataTypes) => {
         foreignKey: "user_id",
         as: "comments",
       });
+      User.hasMany(models.Replied_Comment, {
+        foreignKey: "user_id",
+        as: "replied_comments",
+      });
       User.hasMany(models.Order, {
         foreignKey: "user_id",
         as: "orders",

@@ -43,17 +43,8 @@ const login = async (body, res) => {
 };
 const register = async (body) => {
   try {
-    const {
-      email,
-      password,
-      firstName,
-      lastName,
-      avatar,
-      gender,
-      birthday,
-      phoneNumber,
-      is_admin,
-    } = body;
+    const { email, password } = body;
+    console.log(body);
     // Check email
     const checkedUser = await db.User.findOne({
       where: { email: email },
@@ -62,24 +53,20 @@ const register = async (body) => {
     if (checkedUser) {
       return { status: 500, data: "Email was available" };
     }
+    // Không hiểu tại sao id tự động tăng mà khi thêm vào database thì bị lỗi, bắt buộc id phải có giá trị.
+    // Vì vậy nên phải tìm data cuối cùng rồi lấy id + 1
+    // Các model khác không truyền giá trị cho id thì id sẽ tự động tăng. Còn riêng model User thì lạ lắm
+    const id = await db.User.findAll({
+      order: [["id", "desc"]],
+      limit: 1,
+    });
     // Hash password
     const salt = bcrypt.genSaltSync(10);
     const hash = bcrypt.hashSync(password, salt);
-    const id = (
-      (new Date().getTime() * Math.random()) /
-      Math.random()
-    ).toString();
     await db.User.create({
-      id,
-      email,
-      hash,
-      firstName,
-      lastName,
-      avatar,
-      gender,
-      birthday,
-      phoneNumber,
-      is_admin: is_admin ? is_admin : false,
+      ...body,
+      password: hash,
+      id: id.length === 0 ? 1 : id[0].id + 1,
     });
     return { status: 200, data: "Your account is registered" };
   } catch (error) {
@@ -120,32 +107,32 @@ const oauthSuccess = async (reqUser, res) => {
         raw: true,
       });
       if (!resUser) {
-        const id = (
-          (new Date().getTime() * Math.random()) /
-          Math.random()
-        ).toString();
+        const id = await db.User.findAll({
+          order: [["id", "desc"]],
+          limit: 1,
+        });
         let newUser;
-        if (user.provider === "facebook") {
+        if (reqUser.provider === "facebook") {
           newUser = await db.User.create({
-            firstName: user.first_name,
-            lastName: user.last_name,
+            first_name: user.first_name,
+            last_name: user.last_name,
             avatar: user.picture.data.url,
             gender: user.gender === "male" ? true : false,
             is_admin: false,
             birthday: user.birthday,
             email: user.email,
-            id,
+            id: id.length === 0 ? 1 : id[0].id + 1,
           });
-        } else if (user.provider === "google") {
+        } else if (reqUser.provider === "google") {
           newUser = await db.User.create({
-            firstName: user.given_name,
-            lastName: user.family_name,
+            first_name: user.given_name,
+            last_name: user.family_name,
             avatar: user.picture,
             gender: user.gender === "male" ? true : false,
             is_admin: false,
             birthday: user.birthday,
             email: user.email,
-            id,
+            id: id.length === 0 ? 1 : id[0].id + 1,
           });
         }
 
@@ -165,7 +152,7 @@ const oauthSuccess = async (reqUser, res) => {
         return { status: 200, data: { ...newUser.dataValues, access_token } };
       } else {
         // Create access token
-        const accessToken = createAccessToken({
+        const access_token = createAccessToken({
           id: resUser.id,
           is_admin: resUser.is_admin,
         });
@@ -177,7 +164,6 @@ const oauthSuccess = async (reqUser, res) => {
           },
           res
         );
-
         return { status: 200, data: { ...resUser, access_token } };
       }
     }

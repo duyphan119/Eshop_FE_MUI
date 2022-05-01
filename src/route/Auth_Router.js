@@ -2,6 +2,7 @@ const express = require("express");
 const Auth_Controller = require("../controllers/Auth_Controller");
 const passport = require("passport");
 require("../config/configPassport");
+require("dotenv").config();
 const router = express.Router();
 
 router.post("/login", Auth_Controller.login);
@@ -34,14 +35,15 @@ router.get("/login/failed", (req, res) => {
   res.status(200).json();
 });
 router.get("/logout", (req, res) => {
-  req.logOut();
+  req.session = null;
+  res.clearCookie("refresh_token");
   res.status(200).json();
 });
 router.get(
   "/facebook/callback",
   passport.authenticate("facebook", {
     failureRedirect: "/login/failed",
-    successRedirect: "http://localhost:3000/oauth/success",
+    successRedirect: `${process.env.CLIENT_URL}/oauth/success`,
   }),
   function (req, res) {
     // Successful authentication, redirect home.
@@ -52,7 +54,7 @@ router.get(
   "/google/callback",
   passport.authenticate("google", {
     failureRedirect: "/login/failed",
-    successRedirect: "http://localhost:3000/oauth/success",
+    successRedirect: `${process.env.CLIENT_URL}/oauth/success`,
   }),
   function (req, res) {
     // Successful authentication, redirect home.
