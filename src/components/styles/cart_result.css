@@ -1,0 +1,22 @@
+.cart-result-container {
+  background-color: #fff;
+  padding-inline: 8px;
+}
+.cart-result-item {
+  display: flex;
+  justify-content: space-between;
+}
+.cart-result-item-left,
+.cart-result-item-right {
+  flex: 1;
+  margin-top: 10px;
+  font-size: 14px;
+}
+.cart-result-item-right {
+  text-align: right;
+}
+.cart-result-last-item-left,
+.cart-result-last-item-right {
+  font-weight: 600;
+  font-size: 16px;
+}

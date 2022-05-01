@@ -1,0 +1,132 @@
+.label-header-right {
+  display: flex;
+  margin-right: 12px;
+  cursor: pointer;
+  position: relative;
+  height: 100%;
+  align-items: center;
+  color: #fff;
+}
+
+.header-form-search {
+  background-color: #fff;
+  display: flex;
+  align-items: center;
+  padding: 4px 0 4px 4px;
+  position: relative;
+}
+.header-form-search input {
+  border: none;
+  outline: none;
+}
+.header-form-search button {
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  background-color: transparent;
+  outline: none;
+  cursor: pointer;
+}
+.header-form-search button svg {
+  width: 16px !important;
+  height: 16px !important;
+}
+.header-search {
+  margin-right: 12px;
+  cursor: pointer;
+  text-decoration: none;
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+.header-account-link,
+.header-favorite-link {
+  margin-right: 12px;
+  cursor: pointer;
+  text-decoration: none;
+  padding-top: 2px;
+  position: relative;
+  display: flex;
+  align-items: center;
+  height: 100%;
+  color: #fff;
+}
+
+.header-cart-link {
+  cursor: pointer;
+  text-decoration: none;
+  padding-top: 2px;
+  color: #fff;
+  position: relative;
+  display: flex;
+  align-items: center;
+  height: 100%;
+}
+
+.header-search-result {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 100%;
+  background-color: #fff;
+  list-style: none;
+  margin: 0;
+  display: none;
+  padding: 5px 5px 0 5px;
+  box-shadow: 0 0 1px 0 #a3a3a3;
+}
+
+.header-search-result-link {
+  display: flex;
+  text-decoration: none;
+  color: inherit;
+}
+.header-search-result-view-all {
+  display: flex;
+  justify-content: center;
+  position: relative;
+}
+.header-search-result-view-all::before {
+  content: "";
+  position: absolute;
+  top: -0.5px;
+  left: -5px;
+  width: calc(100% + 10px);
+  height: 0.5px;
+  background-color: #d4d4d4;
+}
+.header-search-result li {
+  margin-top: 5px;
+}
+.header-search-result li:first-child {
+  margin-top: 0;
+}
+.header-search-result-link img {
+  width: 40px;
+  height: 55px;
+  object-fit: cover;
+}
+.header-search-result-link div {
+  margin-left: 2px;
+}
+.header-search-result-link div div:first-child {
+  font-weight: 500;
+  font-size: 14px;
+}
+.header-search-result-link div div:last-child {
+  font-weight: 500;
+  font-size: 12px;
+  color: var(--main-color);
+  margin-top: 3px;
+}
+.header-form-search input:focus ~ .header-search-result {
+  display: block;
+}
+.header-search-result:hover {
+  display: block !important;
+}
+.header-search-result-link-view-all:hover,
+.header-search-result-link div div:first-child:hover {
+  color: var(--main-color);
+}

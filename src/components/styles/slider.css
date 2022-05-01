@@ -1,0 +1,26 @@
+.dots-slider-slick {
+  display: flex !important;
+  list-style: none;
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.dots-slider-slick li {
+  width: 8px;
+  height: 8px;
+  background-color: #fff;
+  margin: 4px;
+  border-radius: 50%;
+  border: 1px solid lightgray;
+  cursor: pointer;
+}
+
+.dots-slider-slick li.slick-active {
+  background-color: var(--main-color);
+}
+
+.dots-slider-slick li button {
+  display: none;
+}
