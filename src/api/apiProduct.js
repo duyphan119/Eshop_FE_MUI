@@ -21,7 +21,7 @@ export const apiGetProductsByCategorySlug = async (
   dispatch
 ) => {
   try {
-    let queryString = `${API_URL}/category-slug/${categorySlug}${query}`;
+    let queryString = `${API_URL}/category/${categorySlug}${query}`;
     const data = await configAxiosAll(user, dispatch).get(queryString);
     return data;
   } catch (error) {
@@ -36,8 +36,9 @@ export const apiGetProductsByGroupCategorySlug = async (
 ) => {
   try {
     console.log(query);
-    let queryString = `${API_URL}/group-category-slug/${groupCategorySlug}${query}`;
+    let queryString = `${API_URL}/group-category/${groupCategorySlug}${query}`;
     const data = await configAxiosAll(user, dispatch).get(queryString);
+    console.log(data);
     return data;
   } catch (error) {
     console.log(error);
@@ -101,7 +102,7 @@ export const apiGetProductsByGenderCategorySlug = async (
 ) => {
   try {
     const data = await configAxiosAll(user, dispatch).get(
-      `${API_URL}/gender-category-slug/${slug}${query}`
+      `${API_URL}/gender/${slug}${query}`
     );
     return data;
   } catch (error) {
@@ -127,6 +128,16 @@ export const apiCreateProduct = async (user, product, dispatch) => {
       `${API_URL}`,
       product
     );
+    return data;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const apiGetAllProducts = async (user, query, dispatch) => {
+  try {
+    let queryString = `${API_URL}${query}`;
+    const data = await configAxiosAll(user, dispatch).get(queryString);
     return data;
   } catch (error) {
     console.log(error);

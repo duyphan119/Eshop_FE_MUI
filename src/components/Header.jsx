@@ -4,20 +4,20 @@ import SearchOutlinedIcon from "@mui/icons-material/SearchOutlined";
 import ShoppingCartOutlinedIcon from "@mui/icons-material/ShoppingCartOutlined";
 import { Badge, Box, Button, Container, Grid } from "@mui/material";
 import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
+import { apiSearch } from "../api/apiProduct";
+// import { apiGetFavoriteListByUser } from "../api/apiProductUser";
+// import { getFavoriteList } from "../redux/productSlice";
+import AccountNotify from "./AccountNotify";
+import CartNotify from "./CartNotify";
 import HeaderCategoryList from "./HeaderCategoryList";
 import HeaderDrawer from "./HeaderDrawer";
-import { useDispatch, useSelector } from "react-redux";
-import CartNotify from "./CartNotify";
-import { apiGetFavoriteListByUser } from "../api/apiProductUser";
-import { getFavoriteList } from "../redux/productSlice";
-import AccountNotify from "./AccountNotify";
 import "./styles/header.css";
-import { apiSearch } from "../api/apiProduct";
 const Header = () => {
   // const theme = useTheme
 
-  const cart = useSelector((state) => state.cart.list);
+  const cart = useSelector((state) => state.cart.cart);
   const products = useSelector((state) => state.product.favoriteList);
   const user = useSelector((state) => state.auth.currentUser);
 
@@ -30,18 +30,17 @@ const Header = () => {
     q: "",
     maxResult: 4,
   });
-  const [callApiOnlyOne, setCallApiOnlyOne] = useState(false);
-  useEffect(() => {
-    if (user && !callApiOnlyOne) {
-      const callApi = async () => {
-        const data = await apiGetFavoriteListByUser(user, dispatch);
-        dispatch(getFavoriteList(data));
-        setCallApiOnlyOne(true);
-      };
-      callApi();
-    }
-  }, [user, dispatch, callApiOnlyOne]);
-
+  // const [callApiOnlyOne, setCallApiOnlyOne] = useState(false);
+  // useEffect(() => {
+  //   if (user && !callApiOnlyOne) {
+  //     const callApi = async () => {
+  //       const data = await apiGetFavoriteListByUser(user, dispatch);
+  //       dispatch(getFavoriteList(data));
+  //       setCallApiOnlyOne(true);
+  //     };
+  //     callApi();
+  //   }
+  // }, [user, dispatch, callApiOnlyOne]);
   useEffect(() => {
     const timerId = setTimeout(() => {
       if (formSearch.q !== "") {
@@ -83,7 +82,7 @@ const Header = () => {
         zIndex: "999",
       }}
     >
-      <Container>
+      <Container sx={{ position: "relative" }}>
         <Grid
           container
           sx={{
@@ -168,7 +167,6 @@ const Header = () => {
                 {searchProducts && searchProducts.length !== 0 && (
                   <ul className="header-search-result">
                     {searchProducts.map((item) => {
-                      console.log(item.product_colors[0].thumbnail);
                       return (
                         <li key={item.id + Math.random()}>
                           <Link
@@ -221,7 +219,10 @@ const Header = () => {
             </Link>
             <div className="header-cart">
               <Link to="/cart" className="header-cart-link">
-                <Badge badgeContent={cart.length} color="secondary">
+                <Badge
+                  badgeContent={cart && cart.items ? cart.items.length : 0}
+                  color="secondary"
+                >
                   <ShoppingCartOutlinedIcon />
                 </Badge>
               </Link>

@@ -1,11 +1,15 @@
 import { configAxiosAll } from "../config/configAxios";
 import * as constants from "../constants";
-import { removeFavoriteItem } from "../redux/productSlice";
+import { newFavoriteItem, removeFavoriteItem } from "../redux/productSlice";
 import { showToastMessage } from "../redux/toastSlice";
 const API_URL = `${constants.SERVER_URL}/v1/api/product-user`;
 export const apiAddToFavoriteList = async (user, data, dispatch) => {
   try {
-    await configAxiosAll(user, dispatch).post(`${API_URL}`, data);
+    const favoriteItem = await configAxiosAll(user, dispatch).post(
+      `${API_URL}`,
+      data
+    );
+    dispatch(newFavoriteItem(favoriteItem));
     dispatch(
       showToastMessage({
         type: "success",

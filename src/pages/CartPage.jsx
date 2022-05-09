@@ -7,7 +7,7 @@ import CartResult from "../components/CartResult";
 import EmptyCart from "./EmptyCart";
 import "./style/cart.css";
 const CartPage = () => {
-  const cart = useSelector((state) => state.cart.list);
+  const cart = useSelector((state) => state.cart.cart);
 
   useEffect(() => {
     document.title = "Giỏ hàng";
@@ -15,7 +15,7 @@ const CartPage = () => {
 
   return (
     <Box sx={{ minHeight: "100%", paddingBlock: "20px" }}>
-      {!cart || cart.length === 0 ? (
+      {!cart || cart.items.length === 0 ? (
         <EmptyCart />
       ) : (
         <Container>
@@ -30,7 +30,7 @@ const CartPage = () => {
                 <Grid item lg={12}>
                   <Grid container className="cart-header-container">
                     <Grid item lg={6} className="cart-header cart-total-item">
-                      {cart.length} Sản phẩm
+                      {cart.count} Sản phẩm
                     </Grid>
                     <Grid
                       item
@@ -59,7 +59,7 @@ const CartPage = () => {
                 </Grid>
                 <Grid item className="cart-checkout-actions" lg={1}></Grid>
               </Grid>
-              {cart.map((item) => {
+              {cart.items.map((item) => {
                 return <CartItem key={item.id} item={item} />;
               })}
             </Grid>

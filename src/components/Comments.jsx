@@ -1,9 +1,13 @@
 import { Avatar, Box, Button, TextField, Typography } from "@mui/material";
-import { memo, useContext, useEffect, useState } from "react";
+import {
+  memo,
+  // useContext, useEffect,
+  useState,
+} from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { apiAddNewComment, apiUpdateComment } from "../api/apiComment";
-import { SocketContext } from "../context";
+// import { SocketContext } from "../context";
 import { newComment, updateComment } from "../redux/productSlice";
 import Comment from "./Comment";
 import Stars from "./Stars";
@@ -28,11 +32,11 @@ const Comments = () => {
 
   const [rate, setRate] = useState(isCommented ? isCommented.rate : 0);
 
-  const socket = useContext(SocketContext);
+  // const socket = useContext(SocketContext);
 
-  useEffect(() => {
-    socket.emit("join-room", product.id);
-  }, [socket, product.id]);
+  // useEffect(() => {
+  //   socket.emit("join-room", product.id);
+  // }, [socket, product.id]);
 
   // useEffect(() => {
   //   socket.on("receive-message", (message) => {
@@ -58,10 +62,10 @@ const Comments = () => {
     } else {
       const data = await apiAddNewComment(user, _newComment, dispatch);
       dispatch(newComment(data));
-      socket.emit("send-message", {
-        roomId: product.id,
-        ...data,
-      });
+      // socket.emit("send-message", {
+      //   roomId: product.id,
+      //   ...data,
+      // });
     }
   };
   if (!user)

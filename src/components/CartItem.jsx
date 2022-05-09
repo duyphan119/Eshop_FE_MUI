@@ -3,7 +3,8 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import RemoveOutlinedIcon from "@mui/icons-material/RemoveOutlined";
 import { Grid, IconButton, Typography } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
-import { apiRemoveCartItem, apiUpdateCart } from "../api/apiCart";
+import { Link } from "react-router-dom";
+import { apiRemoveCartItem, apiUpdateCart } from "../api/apiCartItem";
 
 const CartItem = ({ item }) => {
   const user = useSelector((state) => state.auth.currentUser);
@@ -16,14 +17,12 @@ const CartItem = ({ item }) => {
       if (!isNaN(newQuantity)) {
         if (newQuantity === 0) {
           apiRemoveCartItem(user, item.id, dispatch);
-        } else if (
-          newQuantity > 0 &&
-          newQuantity <= item.product_color_size.amount
-        ) {
+        } else if (newQuantity > 0 && newQuantity <= item.detail.amount) {
           apiUpdateCart(
             user,
             {
-              product_color_size_id: item.product_color_size.id,
+              id: item.id,
+              product_detail_id: item.detail.id,
               quantity: newQuantity,
             },
             dispatch
@@ -36,6 +35,8 @@ const CartItem = ({ item }) => {
   const handleDeleteItem = () => {
     apiRemoveCartItem(user, item.id, dispatch);
   };
+
+  console.log(item);
 
   return (
     <Grid
@@ -56,9 +57,15 @@ const CartItem = ({ item }) => {
         }}
       >
         <img
-          src={
-            item.product_color_size.product_color.product_color_images[0].url
-          }
+          src={(() => {
+            try {
+              return item.detail.product.images.find(
+                (image) => image.color_id === item.detail.color.id
+              ).url;
+            } catch (error) {
+              return "";
+            }
+          })()}
           alt=""
           style={{
             height: "80px",
@@ -80,14 +87,15 @@ const CartItem = ({ item }) => {
               fontWeight: "600",
             }}
           >
-            {item.product_color_size.product_color.product.name}
+            <Link to={`/${item.detail.product.slug}`}>
+              {item.detail.product.name}
+            </Link>
           </Typography>
           <Typography variant="body2">
-            {item.product_color_size.product_color.color} /{" "}
-            {item.product_color_size.size_text}
+            {item.detail.color.value} / {item.detail.size.value}
           </Typography>
           <Typography variant="body2">
-            {item.product_color_size.product_color.product.price
+            {item.product_price
               .toString()
               .replace(/\B(?=(\d{3})+(?!\d))/g, ".")}
             đ
@@ -166,7 +174,7 @@ const CartItem = ({ item }) => {
           justifyContent: "center",
         }}
       >
-        {(item.product_color_size.product_color.product.price * item.quantity)
+        {(item.product_price * item.quantity)
           .toString()
           .replace(/\B(?=(\d{3})+(?!\d))/g, ".")}
         đ

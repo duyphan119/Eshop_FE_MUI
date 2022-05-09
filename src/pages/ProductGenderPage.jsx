@@ -20,13 +20,13 @@ const ProductGenderPage = ({ genderCategory }) => {
 
   useEffect(() => {
     let array = [];
-    document.title = genderCategory.full_name;
+    document.title = genderCategory.name;
     genderCategory.group_categories.forEach((group_category) => {
       group_category.categories.forEach((category) => {
         array.push(category);
       });
     });
-    if (array.length > 0) {
+    if (array?.length > 0) {
       setCategories(array);
     }
   }, [genderCategory]);
@@ -50,7 +50,7 @@ const ProductGenderPage = ({ genderCategory }) => {
     <Box sx={{ paddingBlock: "20px" }}>
       <Container>
         <Grid container columnSpacing={2} rowSpacing={2}>
-          {categories.map((category) => {
+          {categories?.map((category) => {
             if (!category.icon) return "";
             return (
               <Grid
@@ -97,7 +97,7 @@ const ProductGenderPage = ({ genderCategory }) => {
                         marginBottom: "5px",
                       }}
                     />
-                    {category.short_name}
+                    {category.name}
                   </Link>
                 </Box>
               </Grid>
@@ -121,7 +121,7 @@ const ProductGenderPage = ({ genderCategory }) => {
                 autoplaySpeed: 3000,
               }}
             >
-              {categories.map((category) => {
+              {categories?.map((category) => {
                 return (
                   <Box
                     key={category.slug + Math.random()}
@@ -151,7 +151,7 @@ const ProductGenderPage = ({ genderCategory }) => {
                           marginBottom: "5px",
                         }}
                       />
-                      {category.short_name}
+                      {category.name}
                     </Link>
                   </Box>
                 );
@@ -165,8 +165,8 @@ const ProductGenderPage = ({ genderCategory }) => {
           rowSpacing={2}
           sx={{ marginTop: "8px" }}
         >
-          {products && products.products.length !== 0 ? (
-            products.products.map((product) => (
+          {products && products.items?.length !== 0 ? (
+            products.items?.map((product) => (
               <Grid
                 item
                 xs={6}
@@ -194,9 +194,9 @@ const ProductGenderPage = ({ genderCategory }) => {
           )}
         </Grid>
         {products &&
-        products.products &&
+        products.items &&
         products.total_page &&
-        products.products.length * products.total_page > limit ? (
+        products.items?.length * products.total_page > limit ? (
           <Grid
             container
             columnSpacing={2}

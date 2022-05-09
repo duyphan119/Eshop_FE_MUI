@@ -8,6 +8,7 @@ import {
   apiAddToFavoriteList,
   apiRemoveFavoriteItem,
 } from "../api/apiProductUser";
+import { PRODUCT_COLORS_PREVIEW } from "../constants";
 import { calculateProductSale } from "../utils";
 import "./styles/product.css";
 
@@ -73,10 +74,7 @@ const Product = ({ product }) => {
         {/* <div className="product-tag product-tag-hot">Hot</div> */}
       </div>
       <Link to={`/${product.slug}`} className="product-img-link">
-        <img
-          src={product.product_colors[indexColor].thumbnail}
-          alt={product.name}
-        />
+        <img src={product?.colors[0]?.images[0]?.url} alt={product?.name} />
       </Link>
       <div
         className="product-favorite-btn"
@@ -111,16 +109,29 @@ const Product = ({ product }) => {
         </span>
       </Typography>
       <div className="product-colors-preview">
-        {product.product_colors.map((product_color, index) => (
-          <div
-            className="product-color-preview"
-            key={product_color.id + Math.random()}
-            style={{
-              backgroundColor: `${product_color.color_code}`,
-            }}
-            onClick={() => setIndexColor(index)}
-          ></div>
-        ))}
+        {product.colors.map((color, index) =>
+          index < PRODUCT_COLORS_PREVIEW ? (
+            <div
+              className="product-color-preview"
+              key={color.id + Math.random()}
+              style={{
+                width: "36px",
+                height: "36px",
+                cursor: "pointer",
+                marginRight: "6px",
+                backgroundImage: `url("${color.images[0].url}")`,
+                backgroundClip: "content-box",
+                backgroundSize: "cover",
+                backgroundPosition: "center",
+                backgroundRepeat: "no-repeat",
+                borderRadius: "50%",
+              }}
+              onClick={() => setIndexColor(index)}
+            ></div>
+          ) : (
+            <></>
+          )
+        )}
       </div>
     </Box>
   );

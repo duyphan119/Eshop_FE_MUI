@@ -9,14 +9,20 @@ import ProductGenderPage from "../pages/ProductGenderPage";
 import ProductSearchPage from "../pages/ProductSearchPage";
 import CheckOutPage from "../pages/CheckOutPage";
 import AccountPage from "../pages/AccountPage";
-import AccountOrderPage from "../pages/AccountOrderPage";
 import FavoriteListPage from "../pages/FavoriteListPage";
 import AddProductFormPage from "../pages/AddProductFormPage";
 import NotFoundPage from "../pages/NotFoundPage";
 import CheckOutSuccessPage from "../pages/CheckOutSuccessPage";
 import OAuthPage from "../pages/OAuthPage";
+import OrdersManagement from "../pages/OrdersManagement";
+import Home from "../components/Dashboard/Home/Home";
+import Orders from "../components/Dashboard/Home/Orders";
+import Products from "../components/Dashboard/Product/Products";
+import AddProductForm from "../components/Dashboard/Product/AddProductForm";
+// import DashBoardPage from "../pages/DashBoard/DashBoardPage";
 
 const index = (user, genderCategories) => {
+  console.log(genderCategories);
   const showRoutes = () => {
     let arr = [];
     // genderCategories.forEach((genderCategory) => {
@@ -89,13 +95,26 @@ const index = (user, genderCategories) => {
       {user && (
         <>
           <Route path="/account" element={<AccountPage />} />
-          <Route path="/account/orders" element={<AccountOrderPage />} />
+          <Route path="/orders" element={<OrdersManagement />} />
 
           <Route path="/favorite" element={<FavoriteListPage />} />
 
           <Route path="/checkout" element={<CheckOutPage />} />
 
           <Route path="/checkout/success" element={<CheckOutSuccessPage />} />
+
+          {user.role.role === "admin" && (
+            <>
+              <Route path="/dashboard" element={<Home />} />
+              <Route path="/dashboard/orders" element={<Orders />} />
+
+              <Route path="/dashboard/products" element={<Products />} />
+              <Route
+                path="/dashboard/products/add"
+                element={<AddProductForm />}
+              />
+            </>
+          )}
         </>
       )}
 

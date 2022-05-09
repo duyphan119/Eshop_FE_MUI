@@ -22,7 +22,7 @@ import CheckOutSuccessPage from "./CheckOutSuccessPage";
 
 const CheckOutPage = () => {
   const user = useSelector((state) => state.auth.currentUser);
-  const cart = useSelector((state) => state.cart.list);
+  const cart = useSelector((state) => state.cart.cart);
 
   const dispatch = useDispatch();
 
@@ -33,6 +33,9 @@ const CheckOutPage = () => {
   const [city, setCity] = useState("");
   const [district, setDistrict] = useState("");
   const [ward, setWard] = useState("");
+  const [phoneNumber, setPhoneNumber] = useState(
+    user && user.phone_number ? user.phone_number : ""
+  );
   const [optionsCity, setOptionsCity] = useState([]);
   const [optionsDistrict, setOptionsDistricts] = useState([]);
   const [optionsWards, setOptionsWards] = useState([]);
@@ -46,9 +49,8 @@ const CheckOutPage = () => {
 
   useEffect(() => {
     let result = 0;
-    cart.forEach((item) => {
-      result +=
-        item.quantity * item.product_color_size.product_color.product.price;
+    cart?.items?.forEach((item) => {
+      result += item.quantity * item.product_price;
     });
     setTotalPrice(result);
   }, [cart]);
@@ -81,20 +83,17 @@ const CheckOutPage = () => {
       district !== "" &&
       ward !== "" &&
       addressNo !== "" &&
-      street !== ""
+      street !== "" &&
+      phoneNumber !== ""
     ) {
       const data = await apiCreateOrder(
         user,
         {
+          user_id: user.id,
           cart: cart,
-          city,
-          district,
-          ward,
-          address_no: addressNo,
-          street,
-          delivery_price: 23000,
-          checkout_method: 1,
+          address: `${addressNo} ${street}, ${ward}, ${district}, ${city}`,
           total: totalPrice,
+          telephone: phoneNumber,
         },
         dispatch
       );
@@ -154,7 +153,13 @@ const CheckOutPage = () => {
                     id="full_name"
                     label="Họ tên"
                     variant="outlined"
-                    defaultValue={user.first_name + " " + user.last_name}
+                    defaultValue={
+                      user.last_name +
+                      " " +
+                      user.middle_name +
+                      " " +
+                      user.first_name
+                    }
                     disabled={true}
                   />
                 </FormControl>
@@ -165,8 +170,8 @@ const CheckOutPage = () => {
                     id="phone"
                     label="Số điện thoại liện hệ"
                     variant="outlined"
-                    defaultValue={user.phone_number}
-                    disabled={true}
+                    value={phoneNumber}
+                    onChange={(e) => setPhoneNumber(e.target.value)}
                   />
                 </FormControl>
               </Grid>
@@ -277,6 +282,15 @@ const CheckOutPage = () => {
               >
                 <Typography variant="body1">ĐƠN GIÁ</Typography>
               </Grid>
+              <Grid item xs={12}>
+                <FormControl fullWidth sx={{ marginTop: "12px" }}>
+                  <TextField
+                    placeholder="Mã giảm giá"
+                    label="Mã giảm giá"
+                    size="small"
+                  />
+                </FormControl>
+              </Grid>
               <Grid
                 item
                 lg={12}
@@ -284,6 +298,7 @@ const CheckOutPage = () => {
                   display: "flex",
                   justifyContent: "space-between",
                   marginTop: "10px",
+                  paddingInline: "2px",
                 }}
               >
                 <div
@@ -311,6 +326,7 @@ const CheckOutPage = () => {
                   display: "flex",
                   justifyContent: "space-between",
                   marginTop: "10px",
+                  paddingInline: "2px",
                 }}
               >
                 <div
@@ -328,7 +344,7 @@ const CheckOutPage = () => {
                     textAlign: "right",
                   }}
                 >
-                  23.000đ
+                  0đ
                 </div>
               </Grid>
               <Grid
@@ -338,6 +354,7 @@ const CheckOutPage = () => {
                   display: "flex",
                   justifyContent: "space-between",
                   marginTop: "10px",
+                  paddingInline: "2px",
                 }}
               >
                 <div
@@ -355,10 +372,7 @@ const CheckOutPage = () => {
                     textAlign: "right",
                   }}
                 >
-                  {(totalPrice - 23000)
-                    .toString()
-                    .replace(/\B(?=(\d{3})+(?!\d))/g, ".")}
-                  đ
+                  {totalPrice.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")}đ
                 </div>
               </Grid>
               <Grid

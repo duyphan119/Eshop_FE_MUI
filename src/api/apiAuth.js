@@ -40,17 +40,15 @@ export const apiRegister = async (user, navigate) => {
 };
 export const apiRefreshToken = async (dispatch) => {
   try {
-    const res = await axios.post(
-      `${API_URL}/refresh`,
-      {},
-      {
-        withCredentials: true,
-      }
-    );
+    const res = await axios.get(`${API_URL}/refresh`, {
+      withCredentials: true,
+    });
     return res.data;
   } catch (error) {
     console.log("Lỗi api refresh token");
-    dispatch(logout());
+    if (error.response.status === 401) {
+      dispatch(logout());
+    }
   }
   return null;
 };

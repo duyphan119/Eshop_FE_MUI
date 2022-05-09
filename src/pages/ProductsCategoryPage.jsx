@@ -127,8 +127,8 @@ const ProductsCategoryPage = ({ category, groupCategory }) => {
               >
                 <div style={{ display: "flex", alignItems: "center" }}>
                   <FilterProduct filters={filters} setFilters={setFilters} />
-                  {products?.products?.length > 0 && (
-                    <span>{products.products.length} mặt hàng</span>
+                  {products?.items?.length > 0 && (
+                    <span>{products.items.length} mặt hàng</span>
                   )}
                 </div>
 
@@ -139,7 +139,7 @@ const ProductsCategoryPage = ({ category, groupCategory }) => {
               </Grid>
             </Grid>
             <Grid container columnSpacing={2} rowSpacing={2}>
-              {products && products.products && products.products.length === 0 && (
+              {products && products.items && products.items.length === 0 && (
                 <Grid
                   item
                   lg={12}
@@ -158,9 +158,9 @@ const ProductsCategoryPage = ({ category, groupCategory }) => {
                 </Grid>
               )}
               {products &&
-                products.products &&
-                products.products.length !== 0 &&
-                products.products.map((product) => {
+                products.items &&
+                products.items.length !== 0 &&
+                products.items.map((product) => {
                   return (
                     <Grid
                       key={product.slug}

@@ -21,9 +21,16 @@ const AccountNotify = () => {
           <Link to="/account" className="account-notify-item">
             Thông tin tài khoản
           </Link>
-          <Link to="/account/orders" className="account-notify-item">
-            Đơn hàng của tôi
+          <Link to="/orders" className="account-notify-item">
+            {user.role.role === "admin"
+              ? "Danh sách đơn hàng"
+              : "Đơn hàng của tôi"}
           </Link>
+          {user.role.role === "admin" && (
+            <Link to="/dashboard" className="account-notify-item">
+              Bảng điều khiển
+            </Link>
+          )}
           <div className="account-notify-item" onClick={handleLogout}>
             Đăng xuất
           </div>

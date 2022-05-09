@@ -53,17 +53,6 @@
   color: #fff;
 }
 
-.header-cart-link {
-  cursor: pointer;
-  text-decoration: none;
-  padding-top: 2px;
-  color: #fff;
-  position: relative;
-  display: flex;
-  align-items: center;
-  height: 100%;
-}
-
 .header-search-result {
   position: absolute;
   top: 100%;
@@ -129,4 +118,18 @@
 .header-search-result-link-view-all:hover,
 .header-search-result-link div div:first-child:hover {
   color: var(--main-color);
+}
+.header-cart {
+  position: relative;
+  height: 100%;
+}
+.header-cart-link {
+  cursor: pointer;
+  text-decoration: none;
+  padding-top: 2px;
+  color: #fff;
+  position: relative;
+  display: flex;
+  align-items: center;
+  height: 100%;
 }

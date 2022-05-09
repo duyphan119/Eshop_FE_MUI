@@ -34,9 +34,9 @@ const Footer = () => {
               </ListItem>
               <ListItem>
                 <Typography variant="body2">
-                  CHICK DEV được thành lập vào ngày 11/4/2022 bởi Phan Khánh Duy
-                  - một lập trình viên dởm nhưng đầy tâm huyết và nổ lực. Sản
-                  phẩm chúng tôi rất chất lượng. Mặc một lần là mê tới chết.
+                  CHICK DEV được thành lập vào ngày 11/03/2022 bởi Phan Khánh
+                  Duy - một lập trình viên dởm nhưng đầy tâm huyết và nổ lực.
+                  Sản phẩm chúng tôi rất chất lượng. Mặc một lần là mê tới chết.
                 </Typography>
               </ListItem>
               <ListItem>

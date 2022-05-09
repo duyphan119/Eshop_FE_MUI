@@ -23,7 +23,7 @@ const HeaderCategoryList = () => {
               className="header-category-list-item-link"
               to={`/${genderCategory.slug}`}
             >
-              {genderCategory.short_name}
+              {genderCategory.name}
             </Link>
             <Box className="header-category-list-notify">
               <Container>
@@ -35,7 +35,11 @@ const HeaderCategoryList = () => {
                           to={`/${groupCategory.slug}`}
                           className="header-category-list-notify-group-link"
                         >
-                          {groupCategory.short_name}
+                          {
+                            groupCategory.name
+                              .toLowerCase()
+                              .split(genderCategory.name.toLowerCase())[0]
+                          }
                         </Link>
                         <ul className="header-category-list-notify-links">
                           {groupCategory.categories.map((category) => {
@@ -45,7 +49,13 @@ const HeaderCategoryList = () => {
                                   to={`/${category.slug}`}
                                   className="header-category-list-notify-link"
                                 >
-                                  {category.short_name}
+                                  {
+                                    category.name
+                                      .toLowerCase()
+                                      .split(
+                                        genderCategory.name.toLowerCase()
+                                      )[0]
+                                  }
                                 </Link>
                               </li>
                             );

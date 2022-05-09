@@ -2,42 +2,62 @@ import { createSlice } from "@reduxjs/toolkit";
 import { LOCALSTORAGE_CART_NAME } from "../constants";
 const initCart = JSON.parse(localStorage.getItem(LOCALSTORAGE_CART_NAME));
 const initialState = {
-  list: initCart ? initCart : [],
+  cart: initCart ? initCart : null,
 };
 const cartSlice = createSlice({
   name: "cart",
   initialState: initialState,
   reducers: {
     getCart: (state, action) => {
-      state.list = action.payload;
-      localStorage.setItem(LOCALSTORAGE_CART_NAME, JSON.stringify(state.list));
+      state.cart = action.payload;
+      localStorage.setItem(LOCALSTORAGE_CART_NAME, JSON.stringify(state.cart));
     },
     addToCart: (state, action) => {
       const newItem = action.payload;
-      let index = state.list.findIndex(
-        (item) => item.product_color_size.id === newItem.product_color_size.id
-      );
+      console.log(newItem);
+      let index = state.cart.items.findIndex((item) => item.id === newItem.id);
       if (index !== -1) {
-        state.list[index] = newItem;
+        state.cart.count -= state.cart.items[index].quantity;
+        state.cart.total -=
+          state.cart.items[index].product_price *
+          state.cart.items[index].quantity;
+        state.cart.items[index] = newItem;
+        state.cart.count += state.cart.items[index].quantity;
+        state.cart.total +=
+          state.cart.items[index].product_price *
+          state.cart.items[index].quantity;
       } else {
-        state.list.push(newItem);
+        state.cart.items.push(newItem);
+        state.cart.count += newItem.quantity;
+        state.cart.total = newItem.product_price * newItem.quantity;
       }
-      localStorage.setItem(LOCALSTORAGE_CART_NAME, JSON.stringify(state.list));
+      localStorage.setItem(LOCALSTORAGE_CART_NAME, JSON.stringify(state.cart));
     },
     updateCart: (state, action) => {
       const newItem = action.payload;
-      let index = state.list.findIndex(
-        (item) => item.product_color_size.id === newItem.product_color_size.id
-      );
+      let index = state.cart.items.findIndex((item) => item.id === newItem.id);
       if (index !== -1) {
-        state.list[index] = newItem;
+        state.cart.count -= state.cart.items[index].quantity;
+        state.cart.total -=
+          state.cart.items[index].product_price *
+          state.cart.items[index].quantity;
+        state.cart.items[index] = newItem;
+        state.cart.count += state.cart.items[index].quantity;
+        state.cart.total +=
+          state.cart.items[index].product_price *
+          state.cart.items[index].quantity;
       }
-      localStorage.setItem(LOCALSTORAGE_CART_NAME, JSON.stringify(state.list));
+      localStorage.setItem(LOCALSTORAGE_CART_NAME, JSON.stringify(state.cart));
     },
     removeCartItem: (state, action) => {
       const id = action.payload;
-      state.list = state.list.filter((item) => item.id !== id);
-      localStorage.setItem(LOCALSTORAGE_CART_NAME, JSON.stringify(state.list));
+      const index = state.cart.items.findIndex((item) => item.id === id);
+      state.cart.count -= state.cart.items[index].quantity;
+      state.cart.total -=
+        state.cart.items[index].product_price *
+        state.cart.items[index].quantity;
+      state.cart.items = state.cart.items.filter((item) => item.id !== id);
+      localStorage.setItem(LOCALSTORAGE_CART_NAME, JSON.stringify(state.cart));
     },
   },
 });

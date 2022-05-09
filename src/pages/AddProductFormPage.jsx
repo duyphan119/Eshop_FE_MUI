@@ -221,7 +221,6 @@ const AddProductFormPage = () => {
                   />
                 </FormControl>
               </Grid>
-
               <Grid
                 item
                 xs={12}

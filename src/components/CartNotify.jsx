@@ -3,15 +3,22 @@ import { useDispatch, useSelector } from "react-redux";
 import AddOutlinedIcon from "@mui/icons-material/AddOutlined";
 import DeleteIcon from "@mui/icons-material/Delete";
 import RemoveOutlinedIcon from "@mui/icons-material/RemoveOutlined";
-import { apiRemoveCartItem, apiUpdateCart } from "../api/apiCart";
+import { apiRemoveCartItem, apiUpdateCart } from "../api/apiCartItem";
 import EmptyCart from "../pages/EmptyCart";
 import "./styles/cart_notify.css";
+import { Link } from "react-router-dom";
+import { useEffect } from "react";
+import { apiGetCartByUser } from "../api/apiCart";
 const CartNotify = () => {
-  const cart = useSelector((state) => state.cart.list);
+  const cart = useSelector((state) => state.cart.cart);
 
   const user = useSelector((state) => state.auth.currentUser);
 
   const dispatch = useDispatch();
+
+  useEffect(() => {
+    apiGetCartByUser(user, dispatch);
+  }, [dispatch, user]);
 
   const handleUpdateCart = (item, value) => {
     try {
@@ -38,29 +45,34 @@ const CartNotify = () => {
   const handleDeleteItem = (item) => {
     apiRemoveCartItem(user, item.id, dispatch);
   };
+  console.log(cart);
   return (
     <Box className="cart-notify">
-      {cart.length === 0 && <EmptyCart />}
-      {cart.length > 0 && (
+      {cart?.items?.length === 0 && <EmptyCart />}
+      {cart?.items?.length > 0 && (
         <>
           <div className="cart-notify-list">
-            {cart.map((item) => {
+            {cart.items.map((item) => {
               return (
-                <div key={item.id} className="cart-notify-item">
+                <div key={Math.random()} className="cart-notify-item">
                   <img
-                    src={
-                      item.product_color_size.product_color
-                        .product_color_images[0].url
-                    }
+                    src={(() => {
+                      try {
+                        return item.detail.product.images.find(
+                          (image) => image.color_id === item.detail.color.id
+                        ).url;
+                      } catch (error) {
+                        return "";
+                      }
+                    })()}
                     alt=""
                   />
                   <div className="cart-notify-item-text">
                     <Typography variant="body1">
-                      {item.product_color_size.product_color.product.name}
+                      {item.detail.product.name}
                     </Typography>
                     <Typography variant="body2">
-                      {item.product_color_size.product_color.color} /{" "}
-                      {item.product_color_size.size_text}
+                      {item.detail.color.value} / {item.detail.size.value}
                     </Typography>
                     <div>
                       <div
@@ -117,7 +129,14 @@ const CartNotify = () => {
             })}
           </div>
           <div className="cart-notify-actions">
-            <Button variant="contained">Đi đến giỏ hàng</Button>
+            <Button variant="contained">
+              <Link
+                to={`/cart`}
+                style={{ textDecoration: "none", color: "inherit" }}
+              >
+                Đi đến giỏ hàng
+              </Link>
+            </Button>
           </div>
         </>
       )}

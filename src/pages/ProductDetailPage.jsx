@@ -9,7 +9,7 @@ import { useParams } from "react-router-dom";
 import Slider from "react-slick";
 import "slick-carousel/slick/slick-theme.css";
 import "slick-carousel/slick/slick.css";
-import { apiAddToCart } from "../api/apiCart";
+import { apiAddToCart } from "../api/apiCartItem";
 import { apiGetProductBySlug } from "../api/apiProduct";
 import ProductDetailSlider from "../components/ProductDetailSlider";
 import ProductRating from "../components/ProductRating";
@@ -19,7 +19,33 @@ import { getCurrentProduct } from "../redux/productSlice";
 import { showToastMessage } from "../redux/toastSlice";
 import { calculateProductSale } from "../utils";
 import "./style/product_detail.css";
-
+const SlickArrowLeft = ({ currentSlide, slideCount, ...props }) => (
+  <button
+    {...props}
+    className={
+      "slick-prev slick-arrow" + (currentSlide === 0 ? " slick-disabled" : "")
+    }
+    aria-hidden="true"
+    aria-disabled={currentSlide === 0 ? true : false}
+    type="button"
+  >
+    <KeyboardArrowUpOutlinedIcon />
+  </button>
+);
+const SlickArrowRight = ({ currentSlide, slideCount, ...props }) => (
+  <button
+    {...props}
+    className={
+      "slick-next slick-arrow" +
+      (currentSlide === slideCount - 1 ? " slick-disabled" : "")
+    }
+    aria-hidden="true"
+    aria-disabled={currentSlide === slideCount - 1 ? true : false}
+    type="button"
+  >
+    <KeyboardArrowDownOutlinedIcon />
+  </button>
+);
 const ProductDetailPage = () => {
   const user = useSelector((state) => state.auth.currentUser);
   const product = useSelector((state) => state.product.current);
@@ -34,6 +60,8 @@ const ProductDetailPage = () => {
 
   const params = useParams();
   const { product_slug } = params;
+
+  console.log(product);
 
   useEffect(() => {
     if (product && product.name) {
@@ -84,10 +112,7 @@ const ProductDetailPage = () => {
   };
 
   const handleAddToCart = () => {
-    if (
-      quantity >
-      product.product_colors[indexColor].product_color_sizes[indexSize].amount
-    ) {
+    if (quantity > product.colors[indexColor].sizes[indexSize].amount) {
       dispatch(
         showToastMessage({
           text: "Số lượng không hợp lệ",
@@ -99,13 +124,10 @@ const ProductDetailPage = () => {
       apiAddToCart(
         user,
         {
-          product_color_size_id:
-            product.product_colors[indexColor].product_color_sizes[indexSize]
-              .id,
-          amount:
-            product.product_colors[indexColor].product_color_sizes[indexSize]
-              .amount,
+          product_detail_id:
+            product.colors[indexColor].sizes[indexSize].detail_id,
           quantity,
+          product_price: product.price,
         },
         dispatch
       );
@@ -171,52 +193,40 @@ const ProductDetailPage = () => {
                     dot: true,
                     vertical: true,
                     arrows:
-                      product.product_colors[indexColor].product_color_images
-                        .length > PRODUCTS_SLIDER_VERTICAL
+                      product?.colors[indexColor].images.length >
+                      PRODUCTS_SLIDER_VERTICAL
                         ? true
                         : false,
                     slidesToShow:
-                      product.product_colors[indexColor].product_color_images
-                        .length > PRODUCTS_SLIDER_VERTICAL
+                      product?.colors[indexColor].images.length >
+                      PRODUCTS_SLIDER_VERTICAL
                         ? PRODUCTS_SLIDER_VERTICAL
-                        : product.product_colors[indexColor]
-                            .product_color_images.length,
+                        : product?.colors[indexColor].images.length,
                     verticalSwiping: true,
                     slidesToScroll: 1,
                     initialSlide: 0,
                     className: "slick-vertical-slider",
-                    prevArrow: (
-                      <button type="button">
-                        <KeyboardArrowUpOutlinedIcon />
-                      </button>
-                    ),
-                    nextArrow: (
-                      <button type="button">
-                        <KeyboardArrowDownOutlinedIcon />
-                      </button>
-                    ),
+                    prevArrow: <SlickArrowLeft />,
+                    nextArrow: <SlickArrowRight />,
                   }}
                 >
-                  {product.product_colors[indexColor].product_color_images.map(
-                    (item, index) => {
-                      return (
-                        <img
-                          key={index}
-                          src={item.url}
-                          alt={""}
-                          onClick={() =>
-                            setIndexImage(
-                              product.product_colors[
-                                indexColor
-                              ].product_color_images.findIndex(
-                                (el) => el.url === item.url
-                              )
+                  {product?.colors[indexColor].images.map((item, index) => {
+                    return (
+                      <img
+                        key={index}
+                        src={item.url}
+                        alt={""}
+                        height={113.15}
+                        onClick={() =>
+                          setIndexImage(
+                            product?.colors[indexColor].images.findIndex(
+                              (el) => el.url === item.url
                             )
-                          }
-                        />
-                      );
-                    }
-                  )}
+                          )
+                        }
+                      />
+                    );
+                  })}
                 </Slider>
               </Grid>
               <Grid
@@ -228,11 +238,7 @@ const ProductDetailPage = () => {
                 }}
               >
                 <img
-                  src={
-                    product?.product_colors[indexColor]?.product_color_images[
-                      indexImage
-                    ]?.url
-                  }
+                  src={product?.colors[indexColor]?.images[indexImage]?.url}
                   alt={product.name}
                   height="642"
                 />
@@ -249,9 +255,7 @@ const ProductDetailPage = () => {
               },
             }}
           >
-            <ProductDetailSlider
-              images={product.product_colors[indexColor].product_color_images}
-            />
+            <ProductDetailSlider images={product?.colors[indexColor].images} />
           </Grid>
           <Grid item xs={12} md={6}>
             <Typography
@@ -262,23 +266,23 @@ const ProductDetailPage = () => {
             >
               {product.name}
             </Typography>
-            <Box display="flex" alignItems="center">
-              <Stars rate={averageRating} />
-              <Typography>
-                {product.comments.length === 0
-                  ? "Chưa có đánh giá"
-                  : `${product.comments.length} lượt đánh giá`}
-              </Typography>
-            </Box>
+            {/* <Box display="flex" alignItems="center">
+            <Stars rate={averageRating} />
+            <Typography>
+              {product.comments.length === 0
+                ? "Chưa có đánh giá"
+                : `${product.comments.length} lượt đánh giá`}
+            </Typography>
+          </Box> */}
             <Typography variant="body1">
-              {sale && (
-                <span className="product-new-price">
-                  {calculateProductSale(product.price, sale)
-                    .toString()
-                    .replace(/\B(?=(\d{3})+(?!\d))/g, ".")}
-                  đ
-                </span>
-              )}
+              {/* {sale && (
+              <span className="product-new-price">
+                {calculateProductSale(product.price, sale)
+                  .toString()
+                  .replace(/\B(?=(\d{3})+(?!\d))/g, ".")}
+                đ
+              </span>
+            )} */}
               <span
                 className={`${sale ? "product-old-price" : "product-price"}`}
               >
@@ -287,28 +291,34 @@ const ProductDetailPage = () => {
               </span>
             </Typography>
             <Typography variant="body1" sx={{ mt: 2 }}>
-              Màu sắc: {product.product_colors[indexColor].color}
+              Màu sắc: {product?.colors[indexColor].value}
             </Typography>
             <div
               style={{
                 display: "flex",
               }}
             >
-              {product.product_colors.map((item, index) => {
+              {product.colors.map((item, index) => {
                 return (
                   <div
                     key={index}
                     style={{
-                      backgroundColor: `${item.color_code}`,
-                      width: "30px",
-                      height: "30px",
+                      backgroundImage: `url("${item.images[0].url}")`,
+                      width: "60px",
+                      height: "60px",
                       cursor: "pointer",
                       border: `2px solid  ${
-                        index === indexColor ? "var(--main-color)" : "#000"
+                        index === indexColor
+                          ? "var(--main-color)"
+                          : "transparent"
                       } `,
                       marginRight: "4px",
                       backgroundClip: "content-box",
+                      backgroundSize: "cover",
+                      backgroundPosition: "center",
+                      backgroundRepeat: "no-repeat",
                       padding: "3px",
+                      borderRadius: "50%",
                     }}
                     onClick={() => {
                       setIndexImage(0);
@@ -319,48 +329,41 @@ const ProductDetailPage = () => {
               })}
             </div>
             <Typography variant="body1" sx={{ mt: 2 }}>
-              Kích cỡ:{" "}
-              {
-                product.product_colors[indexColor].product_color_sizes[
-                  indexSize
-                ].size_text
-              }
+              Kích cỡ: {product.colors[indexColor].sizes[indexSize].value}
             </Typography>
             <Box
               style={{
                 display: "flex",
               }}
             >
-              {product.product_colors[indexColor].product_color_sizes.map(
-                (item, index) => {
-                  return (
-                    <div
-                      key={item.id}
-                      style={{
-                        width: "40px",
-                        height: "40px",
-                        cursor: "pointer",
-                        border: `1px solid ${
-                          index === indexSize ? "var(--main-color)" : "#000"
-                        }`,
-                        marginRight: "4px",
-                        padding: "3px",
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        backgroundColor: ` ${
-                          index === indexSize
-                            ? "var(--main-color)"
-                            : "transparent"
-                        }`,
-                      }}
-                      onClick={() => setIndexSize(index)}
-                    >
-                      {item.size_text}
-                    </div>
-                  );
-                }
-              )}
+              {product.colors[indexColor].sizes.map((item, index) => {
+                return (
+                  <div
+                    key={item.id}
+                    style={{
+                      width: "40px",
+                      height: "40px",
+                      cursor: "pointer",
+                      border: `1px solid ${
+                        index === indexSize ? "var(--main-color)" : "#000"
+                      }`,
+                      marginRight: "4px",
+                      padding: "3px",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      backgroundColor: ` ${
+                        index === indexSize
+                          ? "var(--main-color)"
+                          : "transparent"
+                      }`,
+                    }}
+                    onClick={() => setIndexSize(index)}
+                  >
+                    {item.value}
+                  </div>
+                );
+              })}
             </Box>
             <Box sx={{ mt: 2, mb: 2 }}>
               <Box className="product-quantity-wrapper">
@@ -432,11 +435,11 @@ const ProductDetailPage = () => {
             </Box>
           </Grid>
         </Grid>
-        <Grid container columnSpacing={2} rowSpacing={2}>
+        {/* <Grid container columnSpacing={2} rowSpacing={2}>
           <Grid item xs={12}>
             <ProductRating averageRating={averageRating} />
           </Grid>
-        </Grid>
+        </Grid> */}
       </Container>
     </Box>
   );
