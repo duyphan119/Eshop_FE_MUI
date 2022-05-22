@@ -3,6 +3,7 @@ const initialState = {
   list: null,
   favoriteList: [],
   current: null,
+  searchResult: [],
 };
 const productSlice = createSlice({
   name: "product",
@@ -59,6 +60,9 @@ const productSlice = createSlice({
         state.current.comments.replied_comments[index] = replied_comment;
       }
     },
+    getSearchResult: (state, action) => {
+      state.searchResult = action.payload;
+    },
   },
 });
 export const {
@@ -71,5 +75,6 @@ export const {
   newComment,
   updateComment,
   newRepliedComment,
+  getSearchResult,
 } = productSlice.actions;
 export default productSlice.reducer;

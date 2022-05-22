@@ -16,17 +16,18 @@ import {
   apiGetOrdersByUser,
   apiUpdateOrder,
 } from "../../../api/apiOrder";
-import { apiGetCodesByType } from "../../../api/apiCode";
 import { useEffect, useState } from "react";
 import { ADMIN_ORDERS_PER_PAGE } from "../../../constants";
-import OrderDetailModal from "./OrderDetailModal";
-import ConfirmDialog from "../Common/ConfirmDialog";
+// import OrderDetailModal from "./OrderDetailModal";
+import ConfirmDialog from "../ConfirmDialog";
+import { apiGetAllOrderStatus } from "../../../api/apiOrderStatus";
+import OrderDetailModal from "../../OrderDetailModal";
 const Orders = () => {
   const user = useSelector((state) => state.auth.currentUser);
 
   const dispatch = useDispatch();
   const [orders, setOrders] = useState([]);
-  const [codes, setCodes] = useState([]);
+  const [orderStatuses, setOrderStatuses] = useState([]);
   const [p, setP] = useState(0);
   const [orderDetailModal, setOrderDetailModal] = useState({
     open: false,
@@ -52,16 +53,15 @@ const Orders = () => {
       setOrders(data);
     };
     callApi();
-  }, [dispatch, p, user]);
+  }, [dispatch, user]);
 
   useEffect(() => {
     const callApi = async () => {
-      const data = await apiGetCodesByType("ORDER_STATUS");
-      setCodes(data);
+      const data = await apiGetAllOrderStatus(user, dispatch);
+      setOrderStatuses(data);
     };
     callApi();
-  }, []);
-
+  }, [dispatch, user]);
   const handleDeleteOrder = async (order) => {
     if (order.code.is_default) {
       const isDeleted = apiDeleteOrderUser(user, order.id, dispatch);
@@ -91,21 +91,11 @@ const Orders = () => {
       field: "address",
       headerName: "Địa chỉ",
       width: 400,
-      renderCell: (params) => {
-        return (
-          <>{`${params.row.address_no} ${params.row.street}, ${params.row.ward}, ${params.row.district}, ${params.row.city}`}</>
-        );
-      },
     },
     {
-      field: "delivery_price",
-      headerName: "Vận chuyển",
-      width: 100,
-      renderCell: (params) => {
-        return (
-          <>{params.value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")}đ</>
-        );
-      },
+      field: "telephone",
+      headerName: "Số điện thoại",
+      width: 80,
     },
     {
       field: "total",
@@ -117,34 +107,30 @@ const Orders = () => {
       },
     },
     {
-      field: "code",
+      field: "status",
       width: 160,
       headerName: "Trạng thái",
       renderCell: (params) => {
-        return user.is_admin ? (
+        return user.role.role === "admin" ? (
           <select
-            defaultValue={params.row.code_id}
+            value={params.row.status.id}
             style={{ outline: "none", padding: "5px" }}
             onChange={async (e) => {
               apiUpdateOrder(
                 user,
-                { code_id: e.target.value, id: params.row.id },
+                { order_status_id: e.target.value, id: params.row.id },
                 dispatch
               );
             }}
           >
-            {codes.map((code) => (
-              <option key={code.id + code.type} value={code.id}>
-                {code.value_vi}
+            {orderStatuses.map((orderStatus) => (
+              <option key={orderStatus.id} value={orderStatus.id}>
+                {orderStatus.description}
               </option>
             ))}
           </select>
         ) : (
-          <Chip
-            label={params.row.code.value_vi}
-            color={params.row.code.code_key.toLowerCase()}
-            variant="contained"
-          />
+          <Chip label={params.row.status.description} variant="contained" />
         );
       },
     },
@@ -153,6 +139,7 @@ const Orders = () => {
       headerName: "Hành động",
       width: 180,
       renderCell: (params) => {
+        console.log(params.row);
         return (
           <>
             <Button
@@ -165,28 +152,26 @@ const Orders = () => {
             >
               Chi tiết
             </Button>
-            {!user.is_admin && (
-              <Button
-                variant="contained"
-                color="error"
-                size="small"
-                sx={{ fontSize: 12, ml: 1 }}
-                disabled={!params.row.code.is_default}
-                onClick={() =>
-                  setConfirmDialog({
-                    ...confirmDialog,
-                    open: true,
-                    title: "Xác nhận",
-                    text: `Bạn có chắc chắn huỷ đơn hàng ${params.row.id} không ?`,
-                    onConfirm: () => {
-                      handleDeleteOrder(params.row);
-                    },
-                  })
-                }
-              >
-                Huỷ
-              </Button>
-            )}
+            <Button
+              variant="contained"
+              color="error"
+              size="small"
+              sx={{ fontSize: 12, ml: 1 }}
+              disabled={!params.row.status === "Pending"}
+              onClick={() =>
+                setConfirmDialog({
+                  ...confirmDialog,
+                  open: true,
+                  title: "Xác nhận",
+                  text: `Bạn có chắc chắn huỷ đơn hàng ${params.row.id} không ?`,
+                  onConfirm: () => {
+                    handleDeleteOrder(params.row);
+                  },
+                })
+              }
+            >
+              Huỷ
+            </Button>
           </>
         );
       },

@@ -12,7 +12,7 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { apiGetAllProducts } from "../../../api/apiProduct";
 import { ADMIN_ORDERS_PER_PAGE } from "../../../constants";
-import ConfirmDialog from "../Common/ConfirmDialog";
+import ConfirmDialog from "../ConfirmDialog";
 import ProductDetailModal from "./ProductDetailModal";
 import ProductModal from "./ProductModal";
 const Products = () => {

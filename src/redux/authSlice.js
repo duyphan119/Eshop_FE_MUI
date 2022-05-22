@@ -15,6 +15,7 @@ const authSlice = createSlice({
       );
     },
     logout: (state) => {
+      console.log("logout");
       localStorage.setItem(LOCALSTORAGE_USER_NAME, null);
       state.currentUser = null;
     },

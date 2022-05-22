@@ -1,129 +1,168 @@
-import { Route, Routes } from "react-router-dom";
-import HomePage from "../pages/HomePage";
-import LoginPage from "../pages/LoginPage";
-import ProductDetailPage from "../pages/ProductDetailPage";
-import RegisterPage from "../pages/RegisterPage";
-import CartPage from "../pages/CartPage";
-import ProductsCategoryPage from "../pages/ProductsCategoryPage";
-import ProductGenderPage from "../pages/ProductGenderPage";
-import ProductSearchPage from "../pages/ProductSearchPage";
-import CheckOutPage from "../pages/CheckOutPage";
-import AccountPage from "../pages/AccountPage";
-import FavoriteListPage from "../pages/FavoriteListPage";
-import AddProductFormPage from "../pages/AddProductFormPage";
-import NotFoundPage from "../pages/NotFoundPage";
-import CheckOutSuccessPage from "../pages/CheckOutSuccessPage";
-import OAuthPage from "../pages/OAuthPage";
-import OrdersManagement from "../pages/OrdersManagement";
-import Home from "../components/Dashboard/Home/Home";
-import Orders from "../components/Dashboard/Home/Orders";
-import Products from "../components/Dashboard/Product/Products";
-import AddProductForm from "../components/Dashboard/Product/AddProductForm";
+// import Home from "../components/Dashboard/Home/Home";
+import SwitchCategoryProduct from "../components/SwitchCategoryProduct";
+import Home from "../pages/Home";
+import Login from "../pages/Login";
+import NotFound from "../pages/NotFound";
+import ProductSearchResult from "../pages/ProductSearchResult";
+import Register from "../pages/Register";
+import Cart from "../pages/Cart";
+import ProductDetail from "../pages/ProductDetail";
+import DashboardLayout from "../components/Layouts/DashboardLayout";
+import Dashboard from "../pages/Dashboard";
+import ProductManagement from "../pages/ProductManagement";
+import Checkout from "../pages/Checkout";
+import CheckoutSuccess from "../pages/CheckoutSuccess";
 // import DashBoardPage from "../pages/DashBoard/DashBoardPage";
 
-const index = (user, genderCategories) => {
-  console.log(genderCategories);
-  const showRoutes = () => {
-    let arr = [];
-    // genderCategories.forEach((genderCategory) => {
-    //   arr.push(
-    //     <Route
-    //       key={genderCategory.slug}
-    //       path={`/${genderCategory.slug}`}
-    //       element={<ProductGenderPage genderCategory={genderCategory} />}
-    //     />
-    //   );
-    //   genderCategory.group_categories.forEach((groupCategory) => {
-    //     arr.push(
-    //       <Route
-    //         key={groupCategory.slug}
-    //         path={`/${groupCategory.slug}`}
-    //         element={<ProductsCategoryPage groupCategory={groupCategory} />}
-    //       />
-    //     );
-    //     groupCategory.categories.forEach((category) => {
-    //       arr.push(
-    //         <Route
-    //           key={category.slug}
-    //           path={`/${category.slug}`}
-    //           element={<ProductsCategoryPage category={category} />}
-    //         />
-    //       );
-    //     });
-    //   });
-    // });
-    genderCategories.forEach((genderCategory) => {
-      arr.push({
-        path: `/${genderCategory.slug}`,
-        element: <ProductGenderPage genderCategory={genderCategory} />,
-      });
-      genderCategory.group_categories.forEach((groupCategory) => {
-        arr.push({
-          path: `/${groupCategory.slug}`,
-          element: <ProductsCategoryPage groupCategory={groupCategory} />,
-        });
-        groupCategory.categories.forEach((category) => {
-          arr.push({
-            path: `/${category.slug}`,
-            element: <ProductsCategoryPage category={category} />,
-          });
-        });
-      });
-    });
-    return arr.map((item) => (
-      <Route path={item.path} element={item.element} key={item.path} />
-    ));
-  };
-  return (
-    <Routes>
-      <Route path="/" element={<HomePage />} />
+// const index = (user, genderCategories, products) => {
+//   // console.log(genderCategories);
+//   const showRoutes = () => {
+//     let arr = [];
+//     // genderCategories.forEach((genderCategory) => {
+//     //   arr.push(
+//     //     <Route
+//     //       key={genderCategory.slug}
+//     //       path={`/${genderCategory.slug}`}
+//     //       element={<ProductGenderPage genderCategory={genderCategory} />}
+//     //     />
+//     //   );
+//     //   genderCategory.group_categories.forEach((groupCategory) => {
+//     //     arr.push(
+//     //       <Route
+//     //         key={groupCategory.slug}
+//     //         path={`/${groupCategory.slug}`}
+//     //         element={<ProductsCategoryPage groupCategory={groupCategory} />}
+//     //       />
+//     //     );
+//     //     groupCategory.categories.forEach((category) => {
+//     //       arr.push(
+//     //         <Route
+//     //           key={category.slug}
+//     //           path={`/${category.slug}`}
+//     //           element={<ProductsCategoryPage category={category} />}
+//     //         />
+//     //       );
+//     //     });
+//     //   });
+//     // });
+//     genderCategories.forEach((genderCategory) => {
+//       arr.push({
+//         path: `/${genderCategory.slug}`,
+//         element: <ProductGenderPage genderCategory={genderCategory} />,
+//       });
+//       genderCategory.group_categories.forEach((groupCategory) => {
+//         arr.push({
+//           path: `/group/${groupCategory.slug}`,
+//           element: <ProductsCategoryPage groupCategory={groupCategory} />,
+//         });
+//         groupCategory.categories.forEach((category) => {
+//           arr.push({
+//             path: `/category/${category.slug}`,
+//             element: <ProductsCategoryPage category={category} />,
+//           });
+//         });
+//       });
+//     });
+//     arr.push(<Route path="*" key={Math.random()} element={<NotFoundPage />} />);
+//     return arr.map((item) => (
+//       <Route path={item.path} element={item.element} key={Math.random()} />
+//     ));
+//   };
+//   return (
+//     <Routes>
+//       <Route path="/" element={<HomePage />} />
 
-      {genderCategories.length > 0 && showRoutes()}
+//       <Route path="/search" element={<ProductSearchPage />} />
 
-      <Route path="/search" element={<ProductSearchPage />} />
+//       <Route path="/product/add" element={<AddProductFormPage />} />
 
-      {genderCategories.length > 0 && (
-        <Route path="/:product_slug" element={<ProductDetailPage />} />
-      )}
+//       <Route path="/cart" element={<CartPage />} />
 
-      <Route path="/product/add" element={<AddProductFormPage />} />
+//       <Route path="/oauth/success" element={<OAuthPage />} />
 
-      <Route path="/cart" element={<CartPage />} />
+//       {user && (
+//         <>
+//           <Route path="/account" element={<AccountPage />} />
+//           <Route path="/orders" element={<OrdersManagement />} />
 
-      <Route path="/oauth/success" element={<OAuthPage />} />
+//           <Route path="/favorite" element={<FavoriteListPage />} />
 
-      {user && (
-        <>
-          <Route path="/account" element={<AccountPage />} />
-          <Route path="/orders" element={<OrdersManagement />} />
+//           <Route path="/checkout" element={<CheckOutPage />} />
 
-          <Route path="/favorite" element={<FavoriteListPage />} />
+//           <Route path="/checkout/success" element={<CheckOutSuccessPage />} />
 
-          <Route path="/checkout" element={<CheckOutPage />} />
+//           {user && user.role && user.role.role === "admin" && (
+//             <>
+//               <Route path="/dashboard" element={<Home />} />
+//               <Route path="/dashboard/orders" element={<Orders />} />
 
-          <Route path="/checkout/success" element={<CheckOutSuccessPage />} />
+//               <Route path="/dashboard/products" element={<Products />} />
+//               <Route
+//                 path="/dashboard/products/add"
+//                 element={<AddProductForm />}
+//               />
+//             </>
+//           )}
+//         </>
+//       )}
 
-          {user.role.role === "admin" && (
-            <>
-              <Route path="/dashboard" element={<Home />} />
-              <Route path="/dashboard/orders" element={<Orders />} />
+//       <Route path="/login" element={<LoginPage />} />
+//       <Route path="/register" element={<RegisterPage />} />
+//       <Route path="/product/:product_slug" element={<ProductDetailPage />} />
+//       {showRoutes()}
+//     </Routes>
+//   );
+// };
 
-              <Route path="/dashboard/products" element={<Products />} />
-              <Route
-                path="/dashboard/products/add"
-                element={<AddProductForm />}
-              />
-            </>
-          )}
-        </>
-      )}
-
-      <Route path="/login" element={<LoginPage />} />
-      <Route path="/register" element={<RegisterPage />} />
-
-      <Route path="*" element={<NotFoundPage />} />
-    </Routes>
-  );
-};
-
-export default index;
+export const publicRoutes = [
+  {
+    path: "/",
+    component: Home,
+  },
+  {
+    path: "/login",
+    component: Login,
+  },
+  {
+    path: "/register",
+    component: Register,
+  },
+  {
+    path: "/search",
+    component: ProductSearchResult,
+  },
+  {
+    path: "/cart",
+    component: Cart,
+  },
+  {
+    path: "/checkout",
+    component: Checkout,
+  },
+  {
+    path: "/checkout/success",
+    component: CheckoutSuccess,
+  },
+  {
+    path: "/product/:product_slug",
+    component: ProductDetail,
+  },
+  {
+    path: "/dashboard",
+    component: Dashboard,
+    layout: DashboardLayout,
+  },
+  {
+    path: "/dashboard/product",
+    component: ProductManagement,
+    layout: DashboardLayout,
+  },
+  {
+    path: "/:category_slug",
+    component: SwitchCategoryProduct,
+  },
+  {
+    path: "*",
+    component: NotFound,
+  },
+];

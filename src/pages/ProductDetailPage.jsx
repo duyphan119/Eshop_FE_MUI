@@ -12,12 +12,9 @@ import "slick-carousel/slick/slick.css";
 import { apiAddToCart } from "../api/apiCartItem";
 import { apiGetProductBySlug } from "../api/apiProduct";
 import ProductDetailSlider from "../components/ProductDetailSlider";
-import ProductRating from "../components/ProductRating";
-import Stars from "../components/Stars";
 import { PRODUCTS_SLIDER_VERTICAL } from "../constants";
 import { getCurrentProduct } from "../redux/productSlice";
 import { showToastMessage } from "../redux/toastSlice";
-import { calculateProductSale } from "../utils";
 import "./style/product_detail.css";
 const SlickArrowLeft = ({ currentSlide, slideCount, ...props }) => (
   <button

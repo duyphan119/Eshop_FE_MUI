@@ -37,6 +37,7 @@ export const apiGetProductsByGroupCategorySlug = async (
   try {
     console.log(query);
     let queryString = `${API_URL}/group-category/${groupCategorySlug}${query}`;
+    console.log(queryString);
     const data = await configAxiosAll(user, dispatch).get(queryString);
     console.log(data);
     return data;
@@ -141,5 +142,6 @@ export const apiGetAllProducts = async (user, query, dispatch) => {
     return data;
   } catch (error) {
     console.log(error);
+    return [];
   }
 };
