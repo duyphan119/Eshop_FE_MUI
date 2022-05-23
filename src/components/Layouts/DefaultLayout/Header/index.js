@@ -5,8 +5,13 @@ import { Badge, Box, Container, Grid } from "@mui/material";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
-import { configAxiosAll } from "../../../../config/configAxios";
-import { API_CART_URL } from "../../../../constants";
+import Tooltip from "@mui/material/Tooltip";
+import {
+  configAxiosAll,
+  configAxiosResponse,
+} from "../../../../config/configAxios";
+import { API_CART_URL, API_PRODUCT_URL } from "../../../../constants";
+import { getWishlist } from "../../../../redux/wishlistSlice";
 import { getCart } from "../../../../redux/cartSlice";
 import AccountNotify from "./AccountNotify";
 import CartNotify from "./CartNotify";
@@ -18,7 +23,7 @@ const Header = () => {
   // const theme = useTheme
 
   const cart = useSelector((state) => state.cart.cart);
-  const products = useSelector((state) => state.product.favoriteList);
+  const wishlist = useSelector((state) => state.wishlist.wishlist);
   const user = useSelector((state) => state.auth.currentUser);
 
   const dispatch = useDispatch();
@@ -26,25 +31,27 @@ const Header = () => {
   useEffect(() => {
     if (user) {
       (async function () {
-        const data = await configAxiosAll(user, dispatch).get(
-          `${API_CART_URL}/user/${user.id}`
-        );
-        console.log(data);
-        dispatch(getCart(data));
+        const promiseWishlist = new Promise((resolve, reject) => {
+          resolve(
+            configAxiosResponse().get(`${API_PRODUCT_URL}/user/${user.id}`)
+          );
+        });
+        const promiseCart = new Promise((resolve, reject) => {
+          resolve(
+            configAxiosAll(user, dispatch).get(
+              `${API_CART_URL}/user/${user.id}`
+            )
+          );
+        });
+        Promise.allSettled([promiseWishlist, promiseCart])
+          .then((values) => {
+            dispatch(getWishlist(values[0].value));
+            dispatch(getCart(values[1].value));
+          })
+          .catch((err) => () => {});
       })();
     }
   }, [user, dispatch]);
-  // const [callApiOnlyOne, setCallApiOnlyOne] = useState(false);
-  // useEffect(() => {
-  //   if (user && !callApiOnlyOne) {
-  //     const callApi = async () => {
-  //       const data = await apiGetFavoriteListByUser(user, dispatch);
-  //       dispatch(getFavoriteList(data));
-  //       setCallApiOnlyOne(true);
-  //     };
-  //     callApi();
-  //   }
-  // }, [user, dispatch, callApiOnlyOne]);
 
   return (
     <Box
@@ -132,19 +139,23 @@ const Header = () => {
               </Link>
               <AccountNotify />
             </div>
-            <Link to="/favorite" className="header-favorite-link">
-              <Badge badgeContent={products.length} color="secondary">
-                <FavoriteBorderOutlinedIcon />
-              </Badge>
+            <Link to="/account/favorite" className="header-favorite-link">
+              <Tooltip title="Sản phẩm yêu thích">
+                <Badge badgeContent={wishlist.length} color="secondary">
+                  <FavoriteBorderOutlinedIcon />
+                </Badge>
+              </Tooltip>
             </Link>
             <div className="header-cart">
               <Link to="/cart" className="header-cart-link">
-                <Badge
-                  badgeContent={cart && cart.items ? cart.items.length : 0}
-                  color="secondary"
-                >
-                  <ShoppingCartOutlinedIcon />
-                </Badge>
+                <Tooltip title="Giỏ hàng của bạn">
+                  <Badge
+                    badgeContent={cart && cart.items ? cart.items.length : 0}
+                    color="secondary"
+                  >
+                    <ShoppingCartOutlinedIcon />
+                  </Badge>
+                </Tooltip>
               </Link>
               <CartNotify />
             </div>

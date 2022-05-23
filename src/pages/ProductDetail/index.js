@@ -3,7 +3,7 @@ import KeyboardArrowDownOutlinedIcon from "@mui/icons-material/KeyboardArrowDown
 import KeyboardArrowUpOutlinedIcon from "@mui/icons-material/KeyboardArrowUpOutlined";
 import RemoveOutlinedIcon from "@mui/icons-material/RemoveOutlined";
 import { Box, Button, Container, Grid, Typography } from "@mui/material";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import Slider from "react-slick";
@@ -15,11 +15,14 @@ import {
   PRODUCTS_SLIDER_VERTICAL,
 } from "../../constants";
 import { configAxiosAll } from "../../config/configAxios";
-import ProductDetailSlider from "./ProductDetailSlider";
 import { showToastMessage } from "../../redux/toastSlice";
 import { addToCart } from "../../redux/cartSlice";
 import "./ProductDetail.css";
 import { formatThousandDigits } from "../../utils";
+import { addToLatest } from "../../redux/productSlice";
+import ProductDetailSlider from "../../components/ProductDetailSlider";
+import Comments from "../../components/Comments";
+import { SocketContext } from "../../context";
 const SlickArrowLeft = ({ currentSlide, slideCount, ...props }) => (
   <button
     {...props}
@@ -48,6 +51,8 @@ const SlickArrowRight = ({ currentSlide, slideCount, ...props }) => (
   </button>
 );
 const ProductDetail = () => {
+  const socket = useContext(SocketContext);
+
   const user = useSelector((state) => state.auth.currentUser);
 
   const dispatch = useDispatch();
@@ -67,17 +72,19 @@ const ProductDetail = () => {
   console.log(product);
 
   useEffect(() => {
-    if (product && product.name) {
-      document.title = product.name;
+    if (product) {
+      socket.emit("join-room", product.slug);
     }
-  }, [product]);
+  }, [socket, product]);
 
   useEffect(() => {
     (function () {
       configAxiosAll(user, dispatch)
         .get(`${API_PRODUCT_URL}/slug/${product_slug}`)
         .then((data) => {
+          document.title = data.name;
           setProduct(data);
+          dispatch(addToLatest(data));
           setIndexSize(
             data.colors[0].sizes.findIndex((item) => item.amount > 0)
           );
@@ -456,6 +463,7 @@ const ProductDetail = () => {
             <ProductRating averageRating={averageRating} />
           </Grid>
         </Grid> */}
+        {product && <Comments product={product} />}
       </Container>
     </Box>
   );

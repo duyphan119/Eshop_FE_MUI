@@ -1,12 +1,12 @@
 import { Avatar, Box, TextField, Typography } from "@mui/material";
-import Stars from "./Stars";
+import Stars from "../Stars";
 import moment from "moment";
 import "moment/locale/vi";
 import { useState } from "react";
-import RepliedComment from "./RepliedComment";
+import RepliedComment from "../RepliedComment";
 import { useDispatch, useSelector } from "react-redux";
-import { apiAddNewRepliedComment } from "../api/apiRepliedComment";
-import { newRepliedComment } from "../redux/productSlice";
+import { apiAddNewRepliedComment } from "../../api/apiRepliedComment";
+import { newRepliedComment } from "../../redux/productSlice";
 
 const Comment = ({ comment }) => {
   const user = useSelector((state) => state.auth.currentUser);

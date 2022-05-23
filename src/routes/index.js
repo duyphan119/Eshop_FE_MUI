@@ -12,6 +12,11 @@ import Dashboard from "../pages/Dashboard";
 import ProductManagement from "../pages/ProductManagement";
 import Checkout from "../pages/Checkout";
 import CheckoutSuccess from "../pages/CheckoutSuccess";
+import AccountInfo from "../pages/AccountInfo";
+import ClientOrders from "../pages/ClientOrders";
+import Favorite from "../pages/Favorite";
+import Latest from "../pages/Latest";
+import { AccountLayout } from "../components/Layouts";
 // import DashBoardPage from "../pages/DashBoard/DashBoardPage";
 
 // const index = (user, genderCategories, products) => {
@@ -156,6 +161,26 @@ export const publicRoutes = [
     path: "/dashboard/product",
     component: ProductManagement,
     layout: DashboardLayout,
+  },
+  {
+    path: "/account",
+    component: AccountInfo,
+    layout: AccountLayout,
+  },
+  {
+    path: "/account/order",
+    component: ClientOrders,
+    layout: AccountLayout,
+  },
+  {
+    path: "/account/latest",
+    component: Latest,
+    layout: AccountLayout,
+  },
+  {
+    path: "/account/favorite",
+    component: Favorite,
+    layout: AccountLayout,
   },
   {
     path: "/:category_slug",

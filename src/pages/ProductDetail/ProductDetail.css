@@ -79,28 +79,3 @@
 .slick-next {
   right: 0;
 }
-.size-stuck {
-  position: relative;
-  overflow: hidden;
-}
-.size-stuck::before {
-  content: "";
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  height: 1px;
-  width: 200%;
-  transform: translate(-50%, -50%) rotate(45deg);
-  background-color: #000;
-}
-
-.size-stuck::after {
-  content: "";
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  height: 1px;
-  width: 200%;
-  transform: translate(-50%, -50%) rotate(-45deg);
-  background-color: #000;
-}

@@ -1,6 +1,6 @@
 import { Box } from "@mui/material";
 import axios from "axios";
-import React from "react";
+import LogoutIcon from "@mui/icons-material/Logout";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import { API_AUTH_URL } from "../../../../constants";
@@ -33,7 +33,23 @@ const AccountNotify = () => {
               Bảng điều khiển
             </Link>
           )}
-          <div className="account-notify-item" onClick={handleLogout}>
+          <Link to="/account/latest" className="account-notify-item">
+            Đã xem gần đây
+          </Link>
+          <Link to="/account/favorite" className="account-notify-item">
+            Sản phẩm yêu thích
+          </Link>
+          <div
+            className="account-notify-item"
+            onClick={handleLogout}
+            style={{
+              borderTop: "1px solid #000",
+              paddingTop: "8px",
+              display: "flex",
+              alignItems: "center",
+            }}
+          >
+            <LogoutIcon fontSize="20px" style={{ marginRight: "4px" }} />
             Đăng xuất
           </div>
         </>

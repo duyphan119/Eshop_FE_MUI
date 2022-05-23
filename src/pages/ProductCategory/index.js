@@ -102,7 +102,7 @@ const ProductsCategory = ({ category, groupCategory, genderCategory }) => {
       // objQuery.sortType = sort.sortType;
       queryParams.set("sortBy", sort.sortBy);
       queryParams.set("sortType", sort.sortType);
-      otherQueryParams.sortBy = sortBy;
+      otherQueryParams.sortBy = sort.sortBy;
       if (
         sort.sortType.toLowerCase() !== "asc" ||
         sort.sortType.toLowerCase() !== "desc"

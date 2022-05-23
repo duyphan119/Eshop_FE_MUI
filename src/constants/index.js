@@ -21,6 +21,7 @@ export const API_AUTH_URL = `${SERVER_URL}/v1/api/auth`;
 export const API_PRODUCT_MATERIAL_URL = `${SERVER_URL}/v1/api/product-material`;
 export const API_UPLOAD_URL = `${SERVER_URL}/v1/api/upload`;
 export const API_STATISTICS_URL = `${SERVER_URL}/v1/api/statistics`;
+export const API_PRODUCT_USER_URL = `${SERVER_URL}/v1/api/product-user`;
 export const API_PROVINCE_URL = "https://provinces.open-api.vn/api/";
 
 export const LIMIT_BEST_SELLER = 10;
@@ -72,3 +73,7 @@ export const LIMIT_ROW_SIZE = 5;
 export const LIMIT_ROW_MATERIAL = 5;
 
 export const LIMIT_COMMENT = 5;
+
+export const LIMIT_LATEST = 12;
+
+export const LIMIT_WISHLIST = 6;

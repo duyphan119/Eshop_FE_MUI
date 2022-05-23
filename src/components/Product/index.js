@@ -1,37 +1,70 @@
-// import FavoriteIcon from "@mui/icons-material/Favorite";
-// import FavoriteBorderOutlinedIcon from "@mui/icons-material/FavoriteBorderOutlined";
-import { Box, Typography } from "@mui/material";
-import { useState } from "react";
-// import { useDispatch, useSelector } from "react-redux";
+import FavoriteIcon from "@mui/icons-material/Favorite";
+import FavoriteBorderOutlinedIcon from "@mui/icons-material/FavoriteBorderOutlined";
+import { Box, Tooltip, Typography } from "@mui/material";
+import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
+import { configAxiosAll } from "../../config/configAxios";
 // import {
 //   apiAddToFavoriteList,
 //   apiRemoveFavoriteItem,
 // } from "../api/apiProductUser";
-import { PRODUCT_COLORS_PREVIEW } from "../../constants";
+import { API_PRODUCT_USER_URL, PRODUCT_COLORS_PREVIEW } from "../../constants";
 import { formatThousandDigits } from "../../utils";
+import { showToastMessage } from "../../redux/toastSlice";
 import "./Product.css";
+import { addToWishlist, removeWishlistItem } from "../../redux/wishlistSlice";
 
 const Product = ({ product }) => {
-  // const user = useSelector((state) => state.auth.currentUser);
-  // const favoriteList = useSelector((state) => state.product.favoriteList);
-  // const dispatch = useDispatch();
+  const user = useSelector((state) => state.auth.currentUser);
+  const wishlist = useSelector((state) => state.wishlist.wishlist);
+  const dispatch = useDispatch();
 
   // const [isLoved, setIsLoved] = useState(
   //   favoriteList.find((item) => item.product_id === product.id) ? true : false
   // );
   const [indexColor, setIndexColor] = useState(0);
+  const [productUser, setProductUser] = useState();
 
-  // const handleAddToFavoriteList = () => {
-  //   if (user) {
-  //     if (isLoved) {
-  //       apiRemoveFavoriteItem(user, { product_id: product.id }, dispatch);
-  //     } else {
-  //       apiAddToFavoriteList(user, { product_id: product.id }, dispatch);
-  //     }
-  //     setIsLoved(!isLoved);
-  //   }
-  // };
+  useEffect(() => {
+    setProductUser(wishlist.findIndex((item) => item.id === product.id) !== -1);
+  }, [product.id, wishlist]);
+
+  async function handleAddToFavoriteList() {
+    if (user) {
+      try {
+        if (!productUser) {
+          await configAxiosAll(user, dispatch).post(`${API_PRODUCT_USER_URL}`, {
+            product_id: product.id,
+            user_id: user.id,
+          });
+          dispatch(addToWishlist(product));
+          dispatch(
+            showToastMessage({
+              type: "success",
+              text: "Đã thêm vào danh sách yêu thích",
+              isOpen: true,
+            })
+          );
+        } else {
+          await configAxiosAll(user, dispatch).delete(
+            `${API_PRODUCT_USER_URL}/product/${product.id}`
+          );
+          dispatch(removeWishlistItem(product.id));
+          dispatch(
+            showToastMessage({
+              type: "success",
+              text: "Đã xoá khỏi danh sách yêu thích",
+              isOpen: true,
+            })
+          );
+        }
+        setProductUser(!productUser);
+      } catch (error) {
+        console.log(error);
+      }
+    }
+  }
 
   const checkIsNewProduct = () => {
     if (product) {
@@ -45,7 +78,7 @@ const Product = ({ product }) => {
     }
     return false;
   };
-  if (!product || product?.product_colors?.length === 0) {
+  if (!product || product?.colors?.length === 0) {
     return "";
   }
   return (
@@ -53,7 +86,13 @@ const Product = ({ product }) => {
       <div className="product-tags">
         {product && product.discounts && product.discounts.length > 0 && (
           <div className="product-tag product-tag-sale">
-            -{product.discounts[0].percent}%
+            -
+            {Math.round(
+              ((product.price - product.discounts[0].new_price) /
+                product.price) *
+                100
+            )}
+            %
           </div>
         )}
         {checkIsNewProduct() && (
@@ -68,19 +107,23 @@ const Product = ({ product }) => {
           alt={product?.name}
         />
       </Link>
-      {/* <div
+      <div
         className="product-favorite-btn"
         style={{
-          color: `${isLoved ? "#f11" : "#000"}`,
+          color: `${productUser ? "#f11" : "#000"}`,
         }}
-        // onClick={handleAddToFavoriteList}
+        onClick={handleAddToFavoriteList}
       >
-        {isLoved ? (
-          <FavoriteIcon className="product-favorite-icon" />
+        {productUser ? (
+          <Tooltip title="Huỷ bỏ yêu thích">
+            <FavoriteIcon className="product-favorite-icon" />
+          </Tooltip>
         ) : (
-          <FavoriteBorderOutlinedIcon className="product-favorite-icon" />
+          <Tooltip title="Yêu thích">
+            <FavoriteBorderOutlinedIcon className="product-favorite-icon" />
+          </Tooltip>
         )}
-      </div> */}
+      </div>
       <Link
         to={`/product/${product.slug}`}
         className="product-name three-dot three-dot-2"

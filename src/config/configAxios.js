@@ -8,9 +8,9 @@ export const configAxios = (user, dispatch) => {
   });
   instance.interceptors.request.use(
     async (config) => {
-      console.log(user);
       if (user) {
         const decodeToken = jwtDecode(user.access_token) * 1000;
+
         if (isNaN(decodeToken) || decodeToken < new Date().getTime()) {
           const data = await apiRefreshToken();
           if (data.access_token) {
@@ -44,7 +44,8 @@ export const configAxiosAll = (user, dispatch) => {
   instance.interceptors.request.use(
     async (config) => {
       if (user) {
-        const decodeToken = jwtDecode(user.access_token) * 1000;
+        const decodeToken = jwtDecode(user.access_token).exp * 1000;
+
         if (isNaN(decodeToken) || decodeToken < new Date().getTime()) {
           const data = await apiRefreshToken(dispatch);
           if (data.access_token) {

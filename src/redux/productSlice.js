@@ -1,9 +1,11 @@
 import { createSlice } from "@reduxjs/toolkit";
+const initLatest = JSON.parse(localStorage.getItem("shop-of-duy:latest"));
 const initialState = {
   list: null,
   favoriteList: [],
   current: null,
   searchResult: [],
+  latest: initLatest ? initLatest : [],
 };
 const productSlice = createSlice({
   name: "product",
@@ -63,6 +65,12 @@ const productSlice = createSlice({
     getSearchResult: (state, action) => {
       state.searchResult = action.payload;
     },
+    addToLatest: (state, action) => {
+      const newItem = action.payload;
+      state.latest = state.latest.filter((item) => item.id !== newItem.id);
+      state.latest = [newItem, ...state.latest];
+      localStorage.setItem("shop-of-duy:latest", JSON.stringify(state.latest));
+    },
   },
 });
 export const {
@@ -76,5 +84,6 @@ export const {
   updateComment,
   newRepliedComment,
   getSearchResult,
+  addToLatest,
 } = productSlice.actions;
 export default productSlice.reducer;

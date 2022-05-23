@@ -11,6 +11,7 @@ import sizeSlice from "./sizeSlice";
 import colorSlice from "./colorSlice";
 import materialSlice from "./materialSlice";
 import commentSlice from "./commentSlice";
+import wishlistSlice from "./wishlistSlice";
 
 const store = configureStore({
   reducer: {
@@ -26,6 +27,7 @@ const store = configureStore({
     color: colorSlice,
     material: materialSlice,
     comment: commentSlice,
+    wishlist: wishlistSlice,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({

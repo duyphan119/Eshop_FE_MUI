@@ -2,19 +2,19 @@ import { Box, Container, Grid, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import BannerSlider from "../../components/BannerSlider";
-import Product from "../../components/Product";
-import {
-  API_PRODUCT_URL,
-  LIMIT_BEST_SELLER,
-  LIMIT_NEW_PRODUCT,
-} from "../../constants";
-import { configAxiosAll, configAxiosResponse } from "../../config/configAxios";
 import {
   ButtonLink,
   isShowCollapse,
   isShowLoadMore,
 } from "../../components/Button";
+import Product from "../../components/Product";
 import ProductSkeleton from "../../components/Skeleton/Product";
+import { configAxiosAll } from "../../config/configAxios";
+import {
+  API_PRODUCT_URL,
+  LIMIT_BEST_SELLER,
+  LIMIT_NEW_PRODUCT,
+} from "../../constants";
 
 const Home = () => {
   const user = useSelector((state) => state.auth.currentUser);
@@ -41,7 +41,7 @@ const Home = () => {
       });
       const promiseNew = new Promise((resolve, reject) => {
         resolve(
-          configAxiosResponse().get(
+          configAxiosAll(user, dispatch).get(
             `${API_PRODUCT_URL}?include=true&limit=${LIMIT_NEW_PRODUCT}`
           )
         );
@@ -99,11 +99,31 @@ const Home = () => {
               </div>
             </Grid>
           )}
-          {newestProduct?.items?.length > 0 ? (
-            newestProduct?.items?.map((product) => {
-              return (
+          {newestProduct?.items?.length > 0
+            ? newestProduct?.items?.map((product) => {
+                return (
+                  <Grid
+                    key={product.slug}
+                    item
+                    xs={6}
+                    sm={4}
+                    md={3}
+                    sx={{
+                      flexBasis: {
+                        lg: "20% !important",
+                      },
+                      maxWidth: {
+                        lg: "20% !important",
+                      },
+                      marginBlock: "5px",
+                    }}
+                  >
+                    <Product product={product} />
+                  </Grid>
+                );
+              })
+            : new Array(LIMIT_NEW_PRODUCT).fill(1).map((item, index) => (
                 <Grid
-                  key={product.slug}
                   item
                   xs={6}
                   sm={4}
@@ -117,30 +137,11 @@ const Home = () => {
                     },
                     marginBlock: "5px",
                   }}
+                  key={index}
                 >
-                  <Product product={product} />
+                  <ProductSkeleton />
                 </Grid>
-              );
-            })
-          ) : (
-            <Grid
-              item
-              xs={6}
-              sm={4}
-              md={3}
-              sx={{
-                flexBasis: {
-                  lg: "20% !important",
-                },
-                maxWidth: {
-                  lg: "20% !important",
-                },
-                marginBlock: "5px",
-              }}
-            >
-              <ProductSkeleton />
-            </Grid>
-          )}
+              ))}
         </Grid>
         <Box sx={{ textAlign: "center" }} my={1}>
           {isShowLoadMore(newestProduct, LIMIT_NEW_PRODUCT, () =>
@@ -182,11 +183,31 @@ const Home = () => {
               </div>
             </Grid>
           )}
-          {bestSellerProduct?.items?.length > 0 ? (
-            bestSellerProduct?.items?.map((product) => {
-              return (
+          {bestSellerProduct?.items?.length > 0
+            ? bestSellerProduct?.items?.map((product) => {
+                return (
+                  <Grid
+                    key={product.slug}
+                    item
+                    xs={6}
+                    sm={4}
+                    md={3}
+                    sx={{
+                      flexBasis: {
+                        lg: "20% !important",
+                      },
+                      maxWidth: {
+                        lg: "20% !important",
+                      },
+                      marginBlock: "5px",
+                    }}
+                  >
+                    <Product product={product} />
+                  </Grid>
+                );
+              })
+            : new Array(LIMIT_BEST_SELLER).fill(1).map((item, index) => (
                 <Grid
-                  key={product.slug}
                   item
                   xs={6}
                   sm={4}
@@ -200,30 +221,11 @@ const Home = () => {
                     },
                     marginBlock: "5px",
                   }}
+                  key={index}
                 >
-                  <Product product={product} />
+                  <ProductSkeleton />
                 </Grid>
-              );
-            })
-          ) : (
-            <Grid
-              item
-              xs={6}
-              sm={4}
-              md={3}
-              sx={{
-                flexBasis: {
-                  lg: "20% !important",
-                },
-                maxWidth: {
-                  lg: "20% !important",
-                },
-                marginBlock: "5px",
-              }}
-            >
-              <ProductSkeleton />
-            </Grid>
-          )}
+              ))}
         </Grid>
         <Box sx={{ textAlign: "center" }} my={1}>
           <ButtonLink link={`/`} label="Xem thêm" />

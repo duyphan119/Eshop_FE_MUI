@@ -20,11 +20,13 @@ const authSlice = createSlice({
       state.currentUser = null;
     },
     refreshToken: (state, action) => {
-      state.currentUser.access_token = action.payload;
-      localStorage.setItem(
-        LOCALSTORAGE_USER_NAME,
-        JSON.stringify(state.currentUser)
-      );
+      if (state.currentUser.access_token !== action.payload) {
+        state.currentUser.access_token = action.payload;
+        localStorage.setItem(
+          LOCALSTORAGE_USER_NAME,
+          JSON.stringify(state.currentUser)
+        );
+      }
     },
     updateUser: (state, action) => {
       state.currentUser = { ...state.currentUser, ...action.payload };

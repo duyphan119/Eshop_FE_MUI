@@ -1,6 +1,7 @@
 import Slider from "react-slick";
 import "slick-carousel/slick/slick-theme.css";
 import "slick-carousel/slick/slick.css";
+import "./product_detail_slider.css";
 const ProductDetailSlider = ({ images }) => {
   const settings = {
     dots: true,

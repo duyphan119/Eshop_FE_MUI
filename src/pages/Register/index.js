@@ -19,9 +19,7 @@ export default function Register() {
 
   const formik = useFormik({
     initialValues: {
-      first_name: "",
-      middle_name: "",
-      last_name: "",
+      full_name: "",
       email: "",
       password: "",
       confirm_password: "",
@@ -36,9 +34,7 @@ export default function Register() {
         .catch((err) => console.log(err));
     },
     validationSchema: Yup.object().shape({
-      first_name: Yup.string().required("First name is required"),
-      middle_name: Yup.string().required("Middle name is required"),
-      last_name: Yup.string().required("Last name is required"),
+      full_name: Yup.string().required("Full name is required"),
       email: Yup.string()
         .required("Email address is required")
         .matches(
@@ -86,56 +82,17 @@ export default function Register() {
             <Grid item xs={12}>
               <TextField
                 error={
-                  formik.touched.first_name && formik.errors.first_name
+                  formik.touched.full_name && formik.errors.full_name
                     ? true
                     : false
                 }
-                helperText={
-                  formik.touched.first_name && formik.errors.first_name
-                }
+                helperText={formik.touched.full_name && formik.errors.full_name}
                 required
                 fullWidth
-                label="First Name"
-                name="first_name"
-                id="first_name"
-                value={formik.values.first_name}
-                onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <TextField
-                error={
-                  formik.touched.first_name && formik.errors.first_name
-                    ? true
-                    : false
-                }
-                helperText={
-                  formik.touched.middle_name && formik.errors.middle_name
-                }
-                required
-                fullWidth
-                label="Middle Name"
-                name="middle_name"
-                id="middle_name"
-                value={formik.values.middle_name}
-                onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <TextField
-                error={
-                  formik.touched.last_name && formik.errors.last_name
-                    ? true
-                    : false
-                }
-                helperText={formik.touched.last_name && formik.errors.last_name}
-                required
-                fullWidth
-                label="Last Name"
-                name="last_name"
-                value={formik.values.last_name}
+                label="Họ tên"
+                name="full_name"
+                id="full_name"
+                value={formik.values.full_name}
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
               />
@@ -148,7 +105,7 @@ export default function Register() {
                 helperText={formik.touched.email && formik.errors.email}
                 required
                 fullWidth
-                label="Email Address"
+                label="Địa chỉ email"
                 name="email"
                 value={formik.values.email}
                 onChange={formik.handleChange}
@@ -165,7 +122,7 @@ export default function Register() {
                 helperText={formik.touched.password && formik.errors.password}
                 required
                 fullWidth
-                label="Password"
+                label="Mật khẩu"
                 type="password"
                 name="password"
                 value={formik.values.password}
@@ -187,7 +144,7 @@ export default function Register() {
                 }
                 required
                 fullWidth
-                label="Confirm Password"
+                label="Nhập lại mật khẩu"
                 type="password"
                 name="confirm_password"
                 value={formik.values.confirm_password}
