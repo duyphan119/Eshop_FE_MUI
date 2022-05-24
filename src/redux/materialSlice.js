@@ -5,11 +5,15 @@ const initialState = {
   page: 1,
   limit: LIMIT_ROW_MATERIAL,
   current: null,
+  all: [],
 };
 const categorySlice = createSlice({
   name: "material",
   initialState: initialState,
   reducers: {
+    getAll: (state, action) => {
+      state.all = action.payload;
+    },
     getAllMaterials: (state, action) => {
       state.list = action.payload;
     },
@@ -42,5 +46,6 @@ export const {
   getCurrentMaterial,
   updateMaterial,
   deleteMaterial,
+  getAll,
 } = categorySlice.actions;
 export default categorySlice.reducer;

@@ -9,6 +9,8 @@ import BarChartIcon from "@mui/icons-material/BarChart";
 import AssignmentIcon from "@mui/icons-material/Assignment";
 import InventoryIcon from "@mui/icons-material/Inventory";
 import ReceiptIcon from "@mui/icons-material/Receipt";
+import ModeCommentIcon from "@mui/icons-material/ModeComment";
+import CategoryIcon from "@mui/icons-material/Category";
 import { Link } from "react-router-dom";
 export const MainListItems = (
   <React.Fragment>
@@ -20,12 +22,28 @@ export const MainListItems = (
         <ListItemText primary="Bảng điều khiển" />
       </ListItemButton>
     </Link>
+    <Link to="/dashboard/category">
+      <ListItemButton>
+        <ListItemIcon>
+          <CategoryIcon />
+        </ListItemIcon>
+        <ListItemText primary="Danh mục" />
+      </ListItemButton>
+    </Link>
     <Link to="/dashboard/product">
       <ListItemButton>
         <ListItemIcon>
           <InventoryIcon />
         </ListItemIcon>
         <ListItemText primary="Sản phẩm" />
+      </ListItemButton>
+    </Link>
+    <Link to="/dashboard/comment">
+      <ListItemButton>
+        <ListItemIcon>
+          <ModeCommentIcon />
+        </ListItemIcon>
+        <ListItemText primary="Bình luận, đánh giá" />
       </ListItemButton>
     </Link>
     <Link to="/dashboard/order">
@@ -36,18 +54,22 @@ export const MainListItems = (
         <ListItemText primary="Hoá đơn" />
       </ListItemButton>
     </Link>
-    <ListItemButton>
-      <ListItemIcon>
-        <PeopleIcon />
-      </ListItemIcon>
-      <ListItemText primary="Người dùng" />
-    </ListItemButton>
-    <ListItemButton>
-      <ListItemIcon>
-        <BarChartIcon />
-      </ListItemIcon>
-      <ListItemText primary="Thống kê" />
-    </ListItemButton>
+    <Link to="/dashboard/user">
+      <ListItemButton>
+        <ListItemIcon>
+          <PeopleIcon />
+        </ListItemIcon>
+        <ListItemText primary="Người dùng" />
+      </ListItemButton>
+    </Link>
+    <Link to="/dashboard/statistics">
+      <ListItemButton>
+        <ListItemIcon>
+          <BarChartIcon />
+        </ListItemIcon>
+        <ListItemText primary="Thống kê" />
+      </ListItemButton>
+    </Link>
   </React.Fragment>
 );
 

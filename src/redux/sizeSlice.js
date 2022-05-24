@@ -5,11 +5,15 @@ const initialState = {
   page: 1,
   limit: LIMIT_ROW_SIZE,
   current: null,
+  all: [],
 };
 const sizeSlice = createSlice({
   name: "size",
   initialState: initialState,
   reducers: {
+    getAll: (state, action) => {
+      state.all = action.payload;
+    },
     getAllSizes: (state, action) => {
       state.list = action.payload;
     },
@@ -42,5 +46,6 @@ export const {
   getCurrentSize,
   updateSize,
   deleteSize,
+  getAll,
 } = sizeSlice.actions;
 export default sizeSlice.reducer;

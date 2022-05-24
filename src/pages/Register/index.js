@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import CssBaseline from "@mui/material/CssBaseline";
@@ -8,53 +8,33 @@ import Box from "@mui/material/Box";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
+import { useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
-import { useFormik } from "formik";
-import * as Yup from "yup";
 import axios from "axios";
 import { API_AUTH_URL } from "../../constants";
 
 export default function Register() {
   const navigate = useNavigate();
-
-  const formik = useFormik({
-    initialValues: {
-      full_name: "",
-      email: "",
-      password: "",
-      confirm_password: "",
-    },
-    onSubmit: (data) => {
-      delete data.confirm_password;
-      axios
-        .post(`${API_AUTH_URL}/register`, data)
-        .then((res) => {
-          navigate("/login");
-        })
-        .catch((err) => console.log(err));
-    },
-    validationSchema: Yup.object().shape({
-      full_name: Yup.string().required("Full name is required"),
-      email: Yup.string()
-        .required("Email address is required")
-        .matches(
-          /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
-          "Email address is invalid"
-        ),
-      password: Yup.string()
-        .required("Password is required")
-        .min(3, "Password must be least 3 characters"),
-      confirm_password: Yup.string().equals(
-        [Yup.ref("password")],
-        "Confirm password must be equal password"
-      ),
-    }),
-  });
-
+  const {
+    register,
+    handleSubmit,
+    watch,
+    formState: { errors },
+  } = useForm();
+  const onSubmit = (data) => {
+    axios
+      .post(`${API_AUTH_URL}/register`, data)
+      .then(() => {
+        navigate("/login");
+      })
+      .catch((err) => {});
+  };
+  const password = useRef({});
+  password.current = watch("password", "");
   useEffect(() => {
     document.title = "Đăng kí";
   }, []);
-
+  console.log(errors);
   return (
     <Container component="main" maxWidth="xs">
       <CssBaseline />
@@ -70,86 +50,73 @@ export default function Register() {
           <LockOutlinedIcon />
         </Avatar>
         <Typography component="h1" variant="h5">
-          Register
+          Đăng ký tài khoản
         </Typography>
         <Box
           component="form"
           noValidate
-          onSubmit={formik.handleSubmit}
+          onSubmit={handleSubmit(onSubmit)}
           sx={{ mt: 3 }}
         >
           <Grid container spacing={2}>
             <Grid item xs={12}>
               <TextField
-                error={
-                  formik.touched.full_name && formik.errors.full_name
-                    ? true
-                    : false
-                }
-                helperText={formik.touched.full_name && formik.errors.full_name}
-                required
+                {...register("full_name", {
+                  required: "Trường này không được để trống",
+                })}
                 fullWidth
                 label="Họ tên"
-                name="full_name"
-                id="full_name"
-                value={formik.values.full_name}
-                onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
+                error={errors.full_name}
+                helperText={errors.full_name && errors.full_name.message}
               />
             </Grid>
             <Grid item xs={12}>
               <TextField
-                error={
-                  formik.touched.email && formik.errors.email ? true : false
-                }
-                helperText={formik.touched.email && formik.errors.email}
-                required
+                {...register("email", {
+                  required: "Trường này không được để trống",
+                  pattern: {
+                    value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                    message: "Địa chỉ email không hợp lệ",
+                  },
+                })}
                 fullWidth
                 label="Địa chỉ email"
-                name="email"
-                value={formik.values.email}
-                onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
+                error={errors.email}
+                helperText={errors.email && errors.email.message}
               />
             </Grid>
             <Grid item xs={12}>
               <TextField
-                error={
-                  formik.touched.password && formik.errors.password
-                    ? true
-                    : false
-                }
-                helperText={formik.touched.password && formik.errors.password}
-                required
+                {...register("password", {
+                  required: "Trường này không được để trống",
+                  minLength: { value: 6, message: "Mật khẩu ít nhất 6 kí tự" },
+                })}
                 fullWidth
+                type="password"
                 label="Mật khẩu"
-                type="password"
-                name="password"
-                value={formik.values.password}
-                onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
+                error={errors.password}
+                helperText={
+                  errors.password
+                    ? errors.password.message
+                    : "Mật khẩu ít nhất 6 kí tự"
+                }
               />
             </Grid>
             <Grid item xs={12}>
               <TextField
-                error={
-                  formik.touched.confirm_password &&
-                  formik.errors.confirm_password
-                    ? true
-                    : false
-                }
-                helperText={
-                  formik.touched.confirm_password &&
-                  formik.errors.confirm_password
-                }
-                required
+                {...register("confirmPassword", {
+                  required: "Trường này không được để trống",
+                  validate: (value) =>
+                    value === password.current ||
+                    "Nhập lại mật khẩu không chính xác",
+                })}
                 fullWidth
-                label="Nhập lại mật khẩu"
                 type="password"
-                name="confirm_password"
-                value={formik.values.confirm_password}
-                onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
+                label="Nhập lại mật khẩu"
+                error={errors.confirmPassword}
+                helperText={
+                  errors.confirmPassword && errors.confirmPassword.message
+                }
               />
             </Grid>
           </Grid>
@@ -159,11 +126,11 @@ export default function Register() {
             variant="contained"
             sx={{ mt: 3, mb: 2 }}
           >
-            Register
+            Đăng ký
           </Button>
           <Grid container justifyContent="flex-end">
             <Grid item>
-              <Link to="/login">Already have an account? Login</Link>
+              <Link to="/login">Đã có tài khoản? Đăng nhập</Link>
             </Grid>
           </Grid>
         </Box>

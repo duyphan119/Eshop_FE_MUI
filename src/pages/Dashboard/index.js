@@ -1,13 +1,46 @@
 import { Grid, Paper } from "@mui/material";
-import React, { useEffect } from "react";
+import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { configAxiosAll } from "../../config/configAxios";
+import { API_STATISTICS_URL } from "../../constants";
 import Chart from "./Chart";
 import Deposits from "./Deposits";
 import Orders from "./Orders";
 
 const Dashboard = () => {
+  const user = useSelector((state) => state.auth.currentUser);
+
+  const dispatch = useDispatch();
+
+  const [revenueHoursInDay, setRevenueHoursInDay] = useState([]);
+
   useEffect(() => {
     document.title = "Bảng điều khiển";
   }, []);
+
+  useEffect(() => {
+    (async function () {
+      (async function () {
+        const data = await configAxiosAll(user, dispatch).get(
+          `${API_STATISTICS_URL}/revenue?type=hoursInDay`
+        );
+        let i, j;
+        const arr = new Array(12).fill(1).map((item, index) => {
+          i = data.findIndex((el) => el.hour === index * 2);
+          j = data.findIndex((el) => el.hour === index * 2 + 1);
+
+          return {
+            hour: index * 2 + " - " + (index * 2 + 2),
+            total:
+              (i === -1 ? 0 : data[i].total) + (j === -1 ? 0 : data[j].total),
+          };
+        });
+
+        setRevenueHoursInDay(arr);
+      })();
+    })();
+  }, [user, dispatch]);
+
   return (
     <Grid container spacing={3}>
       {/* Chart */}
@@ -20,7 +53,7 @@ const Dashboard = () => {
             height: 240,
           }}
         >
-          <Chart />
+          <Chart data={revenueHoursInDay} />
         </Paper>
       </Grid>
       {/* Recent Deposits */}
@@ -33,7 +66,11 @@ const Dashboard = () => {
             height: 240,
           }}
         >
-          <Deposits />
+          <Deposits
+            total={revenueHoursInDay.reduce((prev, cur) => {
+              return prev + cur.total;
+            }, 0)}
+          />
         </Paper>
       </Grid>
       {/* Recent Orders */}

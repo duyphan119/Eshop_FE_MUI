@@ -5,11 +5,15 @@ const initialState = {
   page: 1,
   limit: LIMIT_ROW_COLOR,
   current: null,
+  all: [],
 };
 const colorSlice = createSlice({
   name: "color",
   initialState: initialState,
   reducers: {
+    getAll: (state, action) => {
+      state.all = action.payload;
+    },
     getAllColors: (state, action) => {
       state.list = action.payload;
     },
@@ -41,5 +45,6 @@ export const {
   getCurrentColor,
   updateColor,
   deleteColor,
+  getAll,
 } = colorSlice.actions;
 export default colorSlice.reducer;

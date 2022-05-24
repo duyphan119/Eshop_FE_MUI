@@ -55,7 +55,7 @@ export const DRAWER_WIDTH = 240;
 export const PRODUCTS_CATEGORY_PER_PAGE = 10;
 export const BEST_SELLER_PRODUCTS_PREVIEW = 12;
 export const LIMIT_SEARCH_RESULT = 5;
-export const LIMIT_ROW_PRODUCT = 10;
+export const LIMIT_ROW_PRODUCT = 20;
 export const NEW_PRODUCTS_PREVIEW = 12;
 
 export const LIMIT_ROW_CATEGORY = 10;

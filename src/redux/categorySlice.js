@@ -5,11 +5,15 @@ const initialState = {
   page: 1,
   limit: LIMIT_ROW_CATEGORY,
   current: null,
+  all: [],
 };
 const categorySlice = createSlice({
   name: "category",
   initialState: initialState,
   reducers: {
+    getAll: (state, action) => {
+      state.all = action.payload;
+    },
     getAllCategories: (state, action) => {
       state.list = action.payload;
     },
@@ -42,5 +46,6 @@ export const {
   getCurrentCategory,
   updateCategory,
   deleteCategory,
+  getAll,
 } = categorySlice.actions;
 export default categorySlice.reducer;

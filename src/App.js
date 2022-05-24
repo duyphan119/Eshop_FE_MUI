@@ -1,4 +1,5 @@
 import { Box } from "@mui/material";
+import { useEffect } from "react";
 import { Route, Routes } from "react-router-dom";
 import ScrollToTop from "react-scroll-to-top";
 import "./App.css";
@@ -7,6 +8,9 @@ import Toast from "./components/Toast";
 import { socket, SocketContext } from "./context";
 import { publicRoutes } from "./routes";
 function App() {
+  useEffect(() => {
+    socket.emit("join-room", "admin");
+  }, []);
   return (
     <SocketContext.Provider value={socket}>
       <Box
@@ -17,7 +21,7 @@ function App() {
           },
         }}
       >
-        <ScrollToTop smooth color="#6f00ff" />
+        <ScrollToTop smooth color="var(--main-color)" />
       </Box>
       <Routes>
         {publicRoutes.map((router, index) => {

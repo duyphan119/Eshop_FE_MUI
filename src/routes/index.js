@@ -17,108 +17,11 @@ import ClientOrders from "../pages/ClientOrders";
 import Favorite from "../pages/Favorite";
 import Latest from "../pages/Latest";
 import { AccountLayout } from "../components/Layouts";
-// import DashBoardPage from "../pages/DashBoard/DashBoardPage";
-
-// const index = (user, genderCategories, products) => {
-//   // console.log(genderCategories);
-//   const showRoutes = () => {
-//     let arr = [];
-//     // genderCategories.forEach((genderCategory) => {
-//     //   arr.push(
-//     //     <Route
-//     //       key={genderCategory.slug}
-//     //       path={`/${genderCategory.slug}`}
-//     //       element={<ProductGenderPage genderCategory={genderCategory} />}
-//     //     />
-//     //   );
-//     //   genderCategory.group_categories.forEach((groupCategory) => {
-//     //     arr.push(
-//     //       <Route
-//     //         key={groupCategory.slug}
-//     //         path={`/${groupCategory.slug}`}
-//     //         element={<ProductsCategoryPage groupCategory={groupCategory} />}
-//     //       />
-//     //     );
-//     //     groupCategory.categories.forEach((category) => {
-//     //       arr.push(
-//     //         <Route
-//     //           key={category.slug}
-//     //           path={`/${category.slug}`}
-//     //           element={<ProductsCategoryPage category={category} />}
-//     //         />
-//     //       );
-//     //     });
-//     //   });
-//     // });
-//     genderCategories.forEach((genderCategory) => {
-//       arr.push({
-//         path: `/${genderCategory.slug}`,
-//         element: <ProductGenderPage genderCategory={genderCategory} />,
-//       });
-//       genderCategory.group_categories.forEach((groupCategory) => {
-//         arr.push({
-//           path: `/group/${groupCategory.slug}`,
-//           element: <ProductsCategoryPage groupCategory={groupCategory} />,
-//         });
-//         groupCategory.categories.forEach((category) => {
-//           arr.push({
-//             path: `/category/${category.slug}`,
-//             element: <ProductsCategoryPage category={category} />,
-//           });
-//         });
-//       });
-//     });
-//     arr.push(<Route path="*" key={Math.random()} element={<NotFoundPage />} />);
-//     return arr.map((item) => (
-//       <Route path={item.path} element={item.element} key={Math.random()} />
-//     ));
-//   };
-//   return (
-//     <Routes>
-//       <Route path="/" element={<HomePage />} />
-
-//       <Route path="/search" element={<ProductSearchPage />} />
-
-//       <Route path="/product/add" element={<AddProductFormPage />} />
-
-//       <Route path="/cart" element={<CartPage />} />
-
-//       <Route path="/oauth/success" element={<OAuthPage />} />
-
-//       {user && (
-//         <>
-//           <Route path="/account" element={<AccountPage />} />
-//           <Route path="/orders" element={<OrdersManagement />} />
-
-//           <Route path="/favorite" element={<FavoriteListPage />} />
-
-//           <Route path="/checkout" element={<CheckOutPage />} />
-
-//           <Route path="/checkout/success" element={<CheckOutSuccessPage />} />
-
-//           {user && user.role && user.role.role === "admin" && (
-//             <>
-//               <Route path="/dashboard" element={<Home />} />
-//               <Route path="/dashboard/orders" element={<Orders />} />
-
-//               <Route path="/dashboard/products" element={<Products />} />
-//               <Route
-//                 path="/dashboard/products/add"
-//                 element={<AddProductForm />}
-//               />
-//             </>
-//           )}
-//         </>
-//       )}
-
-//       <Route path="/login" element={<LoginPage />} />
-//       <Route path="/register" element={<RegisterPage />} />
-//       <Route path="/product/:product_slug" element={<ProductDetailPage />} />
-//       {showRoutes()}
-//     </Routes>
-//   );
-// };
-
+import OrderManagement from "../pages/OrderManagement";
+import UserManagement from "../pages/UserManagement";
+import CommentManagement from "../pages/CommentManagement";
+import Statistics from "../pages/Statistcs";
+import CategoryManagement from "../pages/CategoryManagement";
 export const publicRoutes = [
   {
     path: "/",
@@ -158,8 +61,33 @@ export const publicRoutes = [
     layout: DashboardLayout,
   },
   {
+    path: "/dashboard/category",
+    component: CategoryManagement,
+    layout: DashboardLayout,
+  },
+  {
     path: "/dashboard/product",
     component: ProductManagement,
+    layout: DashboardLayout,
+  },
+  {
+    path: "/dashboard/order",
+    component: OrderManagement,
+    layout: DashboardLayout,
+  },
+  {
+    path: "/dashboard/user",
+    component: UserManagement,
+    layout: DashboardLayout,
+  },
+  {
+    path: "/dashboard/comment",
+    component: CommentManagement,
+    layout: DashboardLayout,
+  },
+  {
+    path: "/dashboard/statistics",
+    component: Statistics,
     layout: DashboardLayout,
   },
   {

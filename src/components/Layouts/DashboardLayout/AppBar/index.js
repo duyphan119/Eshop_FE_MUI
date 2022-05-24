@@ -9,6 +9,7 @@ import Typography from "@mui/material/Typography";
 import * as React from "react";
 import { useLocation } from "react-router-dom";
 import { DRAWER_WIDTH } from "../../../../constants";
+import { SocketContext } from "../../../../context";
 
 const StyledAppBar = styled(MuiAppBar, {
   shouldForwardProp: (prop) => prop !== "open",
@@ -28,15 +29,33 @@ const StyledAppBar = styled(MuiAppBar, {
   }),
 }));
 const AppBar = ({ open, toggleDrawer }) => {
+  const socket = React.useContext(SocketContext);
+
   const [title, setTitle] = React.useState("");
 
   const location = useLocation();
 
   React.useEffect(() => {
-    if (location.pathname === "/dashboard/orders") {
+    const handler = (item) => {
+      console.log(item);
+    };
+    socket.on("receive-notify", handler);
+    return () => socket.off("receive-notify", handler);
+  }, [socket]);
+
+  React.useEffect(() => {
+    if (location.pathname === "/dashboard/order") {
       setTitle("Quản lý hoá đơn");
     } else if (location.pathname === "/dashboard/product") {
       setTitle("Quản lý sản phẩm");
+    } else if (location.pathname === "/dashboard/user") {
+      setTitle("Quản lý người dùng");
+    } else if (location.pathname === "/dashboard/comment") {
+      setTitle("Quản lý bình luận");
+    } else if (location.pathname === "/dashboard/statistics") {
+      setTitle("Báo cáo, thống kê");
+    } else if (location.pathname === "/dashboard/category") {
+      setTitle("Quản lý danh mục");
     } else if (location.pathname === "/dashboard") {
       setTitle("Bảng điều khiển");
     }

@@ -25,7 +25,7 @@ const CartItem = ({ item }) => {
           await configAxiosAll(user, dispatch).delete(
             `${API_CART_ITEM_URL}/${item.id}`
           );
-          dispatch(removeCartItem(item.id));
+          dispatch(removeCartItem(item));
         } else if (newQuantity > 0 && newQuantity <= item.detail.amount) {
           const data = await configAxiosAll(user, dispatch).put(
             `${API_CART_ITEM_URL}`,

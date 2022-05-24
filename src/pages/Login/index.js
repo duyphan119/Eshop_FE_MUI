@@ -10,8 +10,7 @@ import Typography from "@mui/material/Typography";
 import { useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
-import { useFormik } from "formik";
-import * as Yup from "yup";
+import { useForm } from "react-hook-form";
 import GoogleIcon from "@mui/icons-material/Google";
 import FacebookIcon from "@mui/icons-material/Facebook";
 import { API_AUTH_URL, SERVER_URL } from "../../constants";
@@ -22,34 +21,20 @@ const Login = () => {
 
   const navigate = useNavigate();
 
-  const formik = useFormik({
-    initialValues: {
-      email: "",
-      password: "",
-    },
-    onSubmit: async (data) => {
-      try {
-        const resData = await configAxiosResponse().post(
-          `${API_AUTH_URL}/login`,
-          data
-        );
-        dispatch(login(resData));
-        navigate("/");
-      } catch (error) {}
-    },
-    validationSchema: Yup.object().shape({
-      email: Yup.string()
-        .required("Email address is required")
-        .matches(
-          /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
-          "Email address is invalid"
-        ),
-      password: Yup.string()
-        .required("Password is required")
-        .min(3, "Password must be least 3 characters"),
-    }),
-  });
-
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm();
+  const onSubmit = (data) => {
+    configAxiosResponse
+      .post(`${API_AUTH_URL}/login`, data)
+      .then((res) => {
+        dispatch(login(res));
+        navigate("/login");
+      })
+      .catch((err) => {});
+  };
   useEffect(() => {
     document.title = "Đăng nhập";
   }, []);
@@ -69,43 +54,44 @@ const Login = () => {
           <LockOutlinedIcon />
         </Avatar>
         <Typography component="h1" variant="h5">
-          Login
+          Đăng nhập
         </Typography>
         <Box
           component="form"
-          onSubmit={formik.handleSubmit}
+          onSubmit={handleSubmit(onSubmit)}
           noValidate
           sx={{ mt: 1 }}
         >
           <TextField
-            error={formik.touched.email && formik.errors.email ? true : false}
-            helperText={formik.touched.email && formik.errors.email}
-            required
+            {...register("email", {
+              required: "Trường này không được để trống",
+              pattern: {
+                value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                message: "Địa chỉ email không hợp lệ",
+              },
+            })}
             fullWidth
-            label="Email Address"
-            name="email"
-            value={formik.values.email}
-            onChange={formik.handleChange}
-            onBlur={formik.handleBlur}
-            margin="normal"
+            label="Địa chỉ email"
+            error={errors.email}
+            helperText={errors.email && errors.email.message}
           />
           <TextField
-            error={
-              formik.touched.password && formik.errors.password ? true : false
-            }
-            helperText={formik.touched.password && formik.errors.password}
-            required
+            {...register("password", {
+              required: "Trường này không được để trống",
+              minLength: { value: 6, message: "Mật khẩu ít nhất 6 kí tự" },
+            })}
             fullWidth
-            label="Password"
             type="password"
-            name="password"
-            value={formik.values.password}
-            onChange={formik.handleChange}
-            onBlur={formik.handleBlur}
-            margin="normal"
+            label="Mật khẩu"
+            error={errors.password}
+            helperText={
+              errors.password
+                ? errors.password.message
+                : "Mật khẩu ít nhất 6 kí tự"
+            }
           />
           <Button type="submit" fullWidth variant="contained" sx={{ mt: 3 }}>
-            Login
+            Đăng nhập
           </Button>
           <Button
             variant="outlined"
@@ -117,7 +103,7 @@ const Login = () => {
               window.open(`${SERVER_URL}/v1/api/auth/google`, "_self");
             }}
           >
-            Login with google
+            Đăng nhập với Google
           </Button>
           <Button
             variant="outlined"
@@ -129,14 +115,14 @@ const Login = () => {
               window.open(`${SERVER_URL}/v1/api/auth/facebook`, "_self");
             }}
           >
-            Login with Facebook
+            Đăng nhập với Facebook
           </Button>
           <Grid container>
             <Grid item xs>
-              <Link to="/">Forgot password?</Link>
+              <Link to="/">Quên mật khẩu?</Link>
             </Grid>
             <Grid item>
-              <Link to="/register">{"Don't have an account? Register"}</Link>
+              <Link to="/register">{"Chưa có tài khoản? Đăng ký"}</Link>
             </Grid>
           </Grid>
         </Box>

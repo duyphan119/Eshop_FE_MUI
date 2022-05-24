@@ -5,24 +5,24 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { configAxiosAll } from "../../config/configAxios";
-// import {
-//   apiAddToFavoriteList,
-//   apiRemoveFavoriteItem,
-// } from "../api/apiProductUser";
-import { API_PRODUCT_USER_URL, PRODUCT_COLORS_PREVIEW } from "../../constants";
+import AddShoppingCartIcon from "@mui/icons-material/AddShoppingCart";
+import {
+  API_CART_ITEM_URL,
+  API_PRODUCT_USER_URL,
+  PRODUCT_COLORS_PREVIEW,
+} from "../../constants";
 import { formatThousandDigits } from "../../utils";
 import { showToastMessage } from "../../redux/toastSlice";
 import "./Product.css";
 import { addToWishlist, removeWishlistItem } from "../../redux/wishlistSlice";
+import { addToCart } from "../../redux/cartSlice";
 
 const Product = ({ product }) => {
   const user = useSelector((state) => state.auth.currentUser);
   const wishlist = useSelector((state) => state.wishlist.wishlist);
+
   const dispatch = useDispatch();
 
-  // const [isLoved, setIsLoved] = useState(
-  //   favoriteList.find((item) => item.product_id === product.id) ? true : false
-  // );
   const [indexColor, setIndexColor] = useState(0);
   const [productUser, setProductUser] = useState();
 
@@ -78,6 +78,60 @@ const Product = ({ product }) => {
     }
     return false;
   };
+  async function handleAddToCart() {
+    if (user) {
+      const indexSize = product.colors[indexColor].sizes.findIndex(
+        (el) => el.amount > 0
+      );
+      if (indexSize === -1) {
+        dispatch(
+          showToastMessage({
+            text: "Sản phẩm thuộc màu này hiện đã hết",
+            type: "info",
+            isOpen: true,
+          })
+        );
+      } else {
+        if (1 > product.colors[indexColor].sizes[indexSize].amount) {
+          dispatch(
+            showToastMessage({
+              text: "Số lượng không hợp lệ",
+              type: "info",
+              isOpen: true,
+            })
+          );
+        } else {
+          try {
+            const data = await configAxiosAll(user, dispatch).post(
+              `${API_CART_ITEM_URL}`,
+              {
+                product_detail_id:
+                  product.colors[indexColor].sizes[indexSize].detail_id,
+                quantity: 1,
+                cart_id: user.cart.id,
+              }
+            );
+            dispatch(addToCart(data));
+            dispatch(
+              showToastMessage({
+                type: "success",
+                text: "Thêm thành công",
+                isOpen: true,
+              })
+            );
+          } catch (error) {}
+        }
+      }
+    } else {
+      dispatch(
+        showToastMessage({
+          text: "Bạn cần phải đăng nhập để thêm giỏ hàng",
+          type: "info",
+          isOpen: true,
+        })
+      );
+    }
+  }
   if (!product || product?.colors?.length === 0) {
     return "";
   }
@@ -101,12 +155,19 @@ const Product = ({ product }) => {
 
         {/* <div className="product-tag product-tag-hot">Hot</div> */}
       </div>
-      <Link to={`/product/${product.slug}`} className="product-img-link">
-        <img
-          src={product?.colors[indexColor]?.images[0]?.url}
-          alt={product?.name}
-        />
-      </Link>
+      <div className="product-img-wrapper">
+        <Link to={`/product/${product.slug}`} className="product-img-link">
+          <img
+            src={product?.colors[indexColor]?.images[0]?.url}
+            alt={product?.name}
+          />
+        </Link>
+        <div className="product-add-to-cart-btn" onClick={handleAddToCart}>
+          <Tooltip title="Thêm vào giỏ hàng">
+            <AddShoppingCartIcon className="product-add-to-cart-icon" />
+          </Tooltip>
+        </div>
+      </div>
       <div
         className="product-favorite-btn"
         style={{

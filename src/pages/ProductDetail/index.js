@@ -458,11 +458,6 @@ const ProductDetail = () => {
             </Box>
           </Grid>
         </Grid>
-        {/* <Grid container columnSpacing={2} rowSpacing={2}>
-          <Grid item xs={12}>
-            <ProductRating averageRating={averageRating} />
-          </Grid>
-        </Grid> */}
         {product && <Comments product={product} />}
       </Container>
     </Box>

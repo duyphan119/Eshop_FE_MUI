@@ -9,48 +9,16 @@ import {
   Tooltip,
 } from "recharts";
 import Title from "./Title";
-import { useDispatch, useSelector } from "react-redux";
-import { API_STATISTICS_URL } from "../../constants";
-import { configAxiosAll } from "../../config/configAxios";
 
-export default function Chart() {
-  const user = useSelector((state) => state.auth.currentUser);
-
-  const dispatch = useDispatch();
-
-  const [revenueHoursInDay, setRevenueHoursInDay] = React.useState([]);
-
+export default function Chart({ data }) {
   const theme = useTheme();
-
-  React.useEffect(() => {
-    (async function () {
-      (async function () {
-        const data = await configAxiosAll(user, dispatch).get(
-          `${API_STATISTICS_URL}/revenue?type=hoursInDay`
-        );
-        let i, j;
-        const arr = new Array(12).fill(1).map((item, index) => {
-          i = data.findIndex((el) => el.hour === index * 2);
-          j = data.findIndex((el) => el.hour === index * 2 + 1);
-
-          return {
-            hour: index * 2 + " - " + (index * 2 + 2),
-            total:
-              (i === -1 ? 0 : data[i].total) + (j === -1 ? 0 : data[j].total),
-          };
-        });
-
-        setRevenueHoursInDay(arr);
-      })();
-    })();
-  }, [user, dispatch]);
 
   return (
     <React.Fragment>
       <Title>Biểu đồ doanh thu hôm nay</Title>
       <ResponsiveContainer>
         <LineChart
-          data={revenueHoursInDay}
+          data={data}
           margin={{
             top: 16,
             right: 16,
