@@ -58,68 +58,57 @@ export default function Register() {
           onSubmit={handleSubmit(onSubmit)}
           sx={{ mt: 3 }}
         >
-          <Grid container spacing={2}>
-            <Grid item xs={12}>
-              <TextField
-                {...register("full_name", {
-                  required: "Trường này không được để trống",
-                })}
-                fullWidth
-                label="Họ tên"
-                error={errors.full_name}
-                helperText={errors.full_name && errors.full_name.message}
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <TextField
-                {...register("email", {
-                  required: "Trường này không được để trống",
-                  pattern: {
-                    value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-                    message: "Địa chỉ email không hợp lệ",
-                  },
-                })}
-                fullWidth
-                label="Địa chỉ email"
-                error={errors.email}
-                helperText={errors.email && errors.email.message}
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <TextField
-                {...register("password", {
-                  required: "Trường này không được để trống",
-                  minLength: { value: 6, message: "Mật khẩu ít nhất 6 kí tự" },
-                })}
-                fullWidth
-                type="password"
-                label="Mật khẩu"
-                error={errors.password}
-                helperText={
-                  errors.password
-                    ? errors.password.message
-                    : "Mật khẩu ít nhất 6 kí tự"
-                }
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <TextField
-                {...register("confirmPassword", {
-                  required: "Trường này không được để trống",
-                  validate: (value) =>
-                    value === password.current ||
-                    "Nhập lại mật khẩu không chính xác",
-                })}
-                fullWidth
-                type="password"
-                label="Nhập lại mật khẩu"
-                error={errors.confirmPassword}
-                helperText={
-                  errors.confirmPassword && errors.confirmPassword.message
-                }
-              />
-            </Grid>
-          </Grid>
+          <TextField
+            {...register("full_name", {
+              required: "Trường này không được để trống",
+            })}
+            fullWidth
+            label="Họ tên"
+            error={errors.full_name}
+            helperText={errors.full_name && errors.full_name.message}
+          />
+          <TextField
+            {...register("email", {
+              required: "Trường này không được để trống",
+              pattern: {
+                value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                message: "Địa chỉ email không hợp lệ",
+              },
+            })}
+            fullWidth
+            sx={{ mt: 2 }}
+            label="Địa chỉ email"
+            error={errors.email}
+            helperText={errors.email && errors.email.message}
+          />
+          <TextField
+            {...register("password", {
+              required: "Trường này không được để trống",
+              minLength: { value: 6, message: "Mật khẩu ít nhất 6 kí tự" },
+            })}
+            fullWidth
+            sx={{ mt: 2 }}
+            type="password"
+            label="Mật khẩu"
+            error={errors.password}
+            helperText={errors.password && errors.password.message}
+          />
+          <TextField
+            {...register("confirmPassword", {
+              required: "Trường này không được để trống",
+              validate: (value) =>
+                value === password.current ||
+                "Nhập lại mật khẩu không chính xác",
+            })}
+            fullWidth
+            sx={{ mt: 2 }}
+            type="password"
+            label="Nhập lại mật khẩu"
+            error={errors.confirmPassword}
+            helperText={
+              errors.confirmPassword && errors.confirmPassword.message
+            }
+          />
           <Button
             type="submit"
             fullWidth

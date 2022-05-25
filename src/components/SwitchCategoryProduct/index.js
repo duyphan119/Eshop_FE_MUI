@@ -33,7 +33,7 @@ const SwitchCategoryProduct = () => {
         }
       }
     }
-    return <></>;
+    return <ProductsCategory />;
   }
 
   return <div>{switchPages()}</div>;

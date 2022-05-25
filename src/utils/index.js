@@ -80,3 +80,10 @@ export const getTotalPage = (cart) => {
   }
   return result;
 };
+
+export const getTotalDaysOfMonth = () => {
+  let dt = new Date();
+  let month = dt.getMonth();
+  let year = dt.getFullYear();
+  return new Date(year, month, 0).getDate();
+};

@@ -1,14 +1,14 @@
-import * as React from "react";
 import Typography from "@mui/material/Typography";
-import Title from "./Title";
+import * as React from "react";
 import { Link } from "react-router-dom";
+import { TitlePaper } from "../../components/Title";
 import { formatThousandDigits, formatTimeVN } from "../../utils";
 
 export default function Deposits({ total }) {
   console.log(total);
   return (
     <React.Fragment>
-      <Title>Doanh thu hôm nay</Title>
+      <TitlePaper>Doanh thu hôm nay</TitlePaper>
       <Typography component="p" variant="h4">
         {formatThousandDigits(total)}đ
       </Typography>

@@ -1,14 +1,14 @@
-import * as React from "react";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
-import TableCell from "@mui/material/TableCell";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
-import Title from "./Title";
+import * as React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
-import { API_ORDER_URL, LIMIT_RECENT_ORDERS } from "../../constants";
+import { CustomTableCell } from "../../components/TableCell";
+import { TitlePaper } from "../../components/Title";
 import { configAxiosAll } from "../../config/configAxios";
+import { API_ORDER_URL, LIMIT_RECENT_ORDERS } from "../../constants";
 import { formatThousandDigits, formatTimeVN } from "../../utils";
 
 export default function Orders() {
@@ -29,27 +29,53 @@ export default function Orders() {
 
   return (
     <React.Fragment>
-      <Title>Đơn hàng gần đây</Title>
+      <TitlePaper>Đơn hàng gần đây</TitlePaper>
       <Table size="small">
         <TableHead>
           <TableRow>
-            <TableCell>Đơn số</TableCell>
-            <TableCell>Thời gian</TableCell>
-            <TableCell>Địa chỉ</TableCell>
-            <TableCell>Giảm giá</TableCell>
-            <TableCell>Tổng</TableCell>
-            <TableCell>Trạng thái</TableCell>
+            <CustomTableCell header align="center">
+              Đơn số
+            </CustomTableCell>
+            <CustomTableCell header align="center">
+              Thời gian
+            </CustomTableCell>
+            <CustomTableCell header align="center">
+              Địa chỉ
+            </CustomTableCell>
+            <CustomTableCell header align="center">
+              Số điện thoại
+            </CustomTableCell>
+            <CustomTableCell header align="center">
+              Giảm giá
+            </CustomTableCell>
+            <CustomTableCell header align="center">
+              Tổng
+            </CustomTableCell>
+            <CustomTableCell header align="center">
+              Trạng thái
+            </CustomTableCell>
           </TableRow>
         </TableHead>
         <TableBody>
           {orders.map((order) => (
             <TableRow key={order.id}>
-              <TableCell>{order.id}</TableCell>
-              <TableCell>{formatTimeVN(order.createdAt)}</TableCell>
-              <TableCell>{order.address}</TableCell>
-              <TableCell>Không</TableCell>
-              <TableCell>{formatThousandDigits(order.total)}</TableCell>
-              <TableCell>{order.status.description}</TableCell>
+              <CustomTableCell align="center">{order.id}</CustomTableCell>
+              <CustomTableCell align="center">
+                {formatTimeVN(order.createdAt)}
+              </CustomTableCell>
+              <CustomTableCell align="center">{order.address}</CustomTableCell>
+              <CustomTableCell align="center">
+                {order.telephone}
+              </CustomTableCell>
+              <CustomTableCell align="center">
+                {order.coupon.percent}
+              </CustomTableCell>
+              <CustomTableCell align="center">
+                {formatThousandDigits(order.total)}
+              </CustomTableCell>
+              <CustomTableCell align="center">
+                {order.status.description}
+              </CustomTableCell>
             </TableRow>
           ))}
         </TableBody>

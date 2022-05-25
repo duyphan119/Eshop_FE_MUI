@@ -12,7 +12,7 @@ const AccountNotify = () => {
 
   const navigate = useNavigate();
   const handleLogout = () => {
-    axios.post(`${API_AUTH_URL}/logout`);
+    axios.get(`${API_AUTH_URL}/logout`);
     dispatch(logout());
     navigate("/login");
   };
@@ -23,7 +23,7 @@ const AccountNotify = () => {
           <Link to="/account" className="account-notify-item">
             Thông tin tài khoản
           </Link>
-          <Link to="/orders" className="account-notify-item">
+          <Link to="/account/order" className="account-notify-item">
             {user && user.role && user.role.role === "admin"
               ? "Danh sách đơn hàng"
               : "Đơn hàng của tôi"}

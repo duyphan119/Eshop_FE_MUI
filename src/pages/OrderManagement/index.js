@@ -109,6 +109,9 @@ const OrderManagement = () => {
                 Địa chỉ
               </CustomTableCell>
               <CustomTableCell header align="center">
+                Số điện thoại
+              </CustomTableCell>
+              <CustomTableCell header align="center">
                 Giảm giá
               </CustomTableCell>
               <CustomTableCell header align="center">
@@ -132,6 +135,9 @@ const OrderManagement = () => {
                     </CustomTableCell>
                     <CustomTableCell align="center">
                       {row.address}
+                    </CustomTableCell>
+                    <CustomTableCell align="center">
+                      {row.telephone}
                     </CustomTableCell>
                     <CustomTableCell align="center">
                       {row.coupon.percent === 0 ? 0 : row.coupon.percent + "%"}

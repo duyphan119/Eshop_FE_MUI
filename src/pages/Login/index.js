@@ -27,11 +27,11 @@ const Login = () => {
     formState: { errors },
   } = useForm();
   const onSubmit = (data) => {
-    configAxiosResponse
+    configAxiosResponse()
       .post(`${API_AUTH_URL}/login`, data)
       .then((res) => {
         dispatch(login(res));
-        navigate("/login");
+        navigate("/");
       })
       .catch((err) => {});
   };
@@ -81,14 +81,11 @@ const Login = () => {
               minLength: { value: 6, message: "Mật khẩu ít nhất 6 kí tự" },
             })}
             fullWidth
+            sx={{ mt: 2 }}
             type="password"
             label="Mật khẩu"
             error={errors.password}
-            helperText={
-              errors.password
-                ? errors.password.message
-                : "Mật khẩu ít nhất 6 kí tự"
-            }
+            helperText={errors.password && errors.password.message}
           />
           <Button type="submit" fullWidth variant="contained" sx={{ mt: 3 }}>
             Đăng nhập

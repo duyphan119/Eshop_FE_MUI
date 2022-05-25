@@ -5,6 +5,7 @@ const initialState = {
   limit: LIMIT_ROW_GROUP_CATEGORY,
   page: 1,
   current: null,
+  all: [],
 };
 const groupCategorySlice = createSlice({
   name: "groupCategory",
@@ -12,6 +13,9 @@ const groupCategorySlice = createSlice({
   reducers: {
     getAllGroupCategories: (state, action) => {
       state.list = action.payload;
+    },
+    getAll: (state, action) => {
+      state.all = action.payload;
     },
     addGroupCategory: (state, action) => {
       state.list = [action.payload, ...state.list];
@@ -44,5 +48,6 @@ export const {
   changePage,
   getCurrentGroupCategory,
   deleteGroupCategory,
+  getAll,
 } = groupCategorySlice.actions;
 export default groupCategorySlice.reducer;

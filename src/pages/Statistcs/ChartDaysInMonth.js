@@ -1,23 +1,25 @@
 import * as React from "react";
 import { useTheme } from "@mui/material/styles";
 import {
-  LineChart,
-  Line,
+  BarChart,
+  Bar,
   XAxis,
   YAxis,
   ResponsiveContainer,
   Tooltip,
 } from "recharts";
-import { TitlePaper } from "../../components/Title";
+import { Typography } from "@mui/material";
 
-export default function Chart({ data }) {
+const ChartDaysInMonth = ({ data }) => {
   const theme = useTheme();
-
   return (
-    <React.Fragment>
-      <TitlePaper>Biểu đồ doanh thu hôm nay</TitlePaper>
+    <>
+      <Typography component="h2" variant="h6" color="primary" gutterBottom>
+        Biểu đồ doanh thu tháng {new Date().getMonth() + 1} năm{" "}
+        {new Date().getFullYear()}
+      </Typography>
       <ResponsiveContainer>
-        <LineChart
+        <BarChart
           data={data}
           margin={{
             top: 16,
@@ -27,7 +29,7 @@ export default function Chart({ data }) {
           }}
         >
           <XAxis
-            dataKey="hour"
+            dataKey="day"
             stroke={theme.palette.text.secondary}
             style={theme.typography.body2}
           />
@@ -36,15 +38,11 @@ export default function Chart({ data }) {
             style={theme.typography.body2}
           ></YAxis>
           <Tooltip />
-          <Line
-            isAnimationActive={true}
-            type="monotone"
-            dataKey="total"
-            stroke={theme.palette.primary.main}
-            dot={false}
-          />
-        </LineChart>
+          <Bar dataKey="total" fill="var(--main-color)" />
+        </BarChart>
       </ResponsiveContainer>
-    </React.Fragment>
+    </>
   );
-}
+};
+
+export default ChartDaysInMonth;

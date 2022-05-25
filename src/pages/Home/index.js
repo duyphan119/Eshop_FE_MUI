@@ -24,7 +24,7 @@ const Home = () => {
   const [bestSellerProduct, setBestSellerProduct] = useState();
   const [newestProduct, setNewestProduct] = useState();
 
-  const [limit, setLimit] = useState(LIMIT_NEW_PRODUCT);
+  const [limit, setLimit] = useState(LIMIT_BEST_SELLER);
 
   useEffect(() => {
     document.title = "Trang chủ";
@@ -35,7 +35,7 @@ const Home = () => {
       const promiseBestSellerProduct = new Promise((resolve, reject) => {
         resolve(
           configAxiosAll(user, dispatch).get(
-            `${API_PRODUCT_URL}?type=best-seller&limit=${LIMIT_BEST_SELLER}`
+            `${API_PRODUCT_URL}?type=best-seller&limit=${limit}`
           )
         );
       });
@@ -53,7 +53,7 @@ const Home = () => {
         }
       );
     })();
-  }, [user, dispatch]);
+  }, [user, dispatch, limit]);
   return (
     <>
       <Box
@@ -144,12 +144,7 @@ const Home = () => {
               ))}
         </Grid>
         <Box sx={{ textAlign: "center" }} my={1}>
-          {isShowLoadMore(newestProduct, LIMIT_NEW_PRODUCT, () =>
-            setLimit(limit + LIMIT_NEW_PRODUCT)
-          )}
-          {isShowCollapse(newestProduct, LIMIT_NEW_PRODUCT, () =>
-            setLimit(LIMIT_NEW_PRODUCT)
-          )}
+          <ButtonLink link={`/all`} label="Xem thêm" />
         </Box>
         <Grid container columnSpacing={2} rowSpacing={2}>
           <Grid
@@ -228,7 +223,12 @@ const Home = () => {
               ))}
         </Grid>
         <Box sx={{ textAlign: "center" }} my={1}>
-          <ButtonLink link={`/`} label="Xem thêm" />
+          {isShowLoadMore(bestSellerProduct, LIMIT_BEST_SELLER, () =>
+            setLimit(limit + LIMIT_BEST_SELLER)
+          )}
+          {isShowCollapse(bestSellerProduct, LIMIT_BEST_SELLER, () =>
+            setLimit(LIMIT_BEST_SELLER)
+          )}
         </Box>
       </Container>
     </>

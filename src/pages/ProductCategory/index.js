@@ -68,19 +68,32 @@ const ProductsCategory = ({ category, groupCategory, genderCategory }) => {
   }
 
   useEffect(() => {
-    document.title = category ? category.name : groupCategory.name;
-  }, [category, groupCategory.name]);
+    document.title = category
+      ? category.name
+      : groupCategory
+      ? groupCategory.name
+      : "Tất cả sản phẩm";
+  }, [category, groupCategory]);
 
   useEffect(() => {
     (async function () {
       try {
-        const data = await configAxiosAll(user, dispatch).get(
-          `${API_PRODUCT_URL}/${
-            category ? "category" : "group-category"
-          }/${category_slug}?include=true&limit=${PRODUCTS_PER_PAGE}${
-            filters ? "&" + queryString : ""
-          }`
-        );
+        let data;
+        if (category_slug !== "all") {
+          data = await configAxiosAll(user, dispatch).get(
+            `${API_PRODUCT_URL}/${
+              category ? "category" : "group-category"
+            }/${category_slug}?include=true&limit=${PRODUCTS_PER_PAGE}${
+              filters ? "&" + queryString : ""
+            }`
+          );
+        } else {
+          data = await configAxiosAll(user, dispatch).get(
+            `${API_PRODUCT_URL}?include=true&limit=${PRODUCTS_PER_PAGE}${
+              filters ? "&" + queryString : ""
+            }`
+          );
+        }
         setProduct(data);
       } catch (error) {}
     })();
@@ -93,7 +106,6 @@ const ProductsCategory = ({ category, groupCategory, genderCategory }) => {
     filters,
     queryString,
   ]);
-
   useEffect(() => {
     let url;
     const otherQueryParams = {};
@@ -108,7 +120,6 @@ const ProductsCategory = ({ category, groupCategory, genderCategory }) => {
         sort.sortType.toLowerCase() !== "desc"
       ) {
         otherQueryParams.sortType = "desc";
-        setQueryString(new URLSearchParams(otherQueryParams).toString());
       }
     } else {
       queryParams.delete("sortBy");
@@ -117,6 +128,7 @@ const ProductsCategory = ({ category, groupCategory, genderCategory }) => {
 
     if (page > 1) {
       queryParams.set("p", page);
+      otherQueryParams.p = page;
     } else {
       queryParams.delete("p");
     }
@@ -125,6 +137,7 @@ const ProductsCategory = ({ category, groupCategory, genderCategory }) => {
       for (const key in filters) {
         if (filters[key].length > 0) {
           queryParams.set(key, JSON.stringify(filters[key]));
+          otherQueryParams[key] = filters[key];
         } else {
           queryParams.delete(key);
         }
@@ -132,6 +145,7 @@ const ProductsCategory = ({ category, groupCategory, genderCategory }) => {
     }
 
     url = queryParams.toString();
+    setQueryString(new URLSearchParams(otherQueryParams).toString());
     if (url === "" && !window.location.href.endsWith(location.pathname)) {
       navigate(location.pathname);
     } else if (!window.location.href.endsWith(url)) {
@@ -143,7 +157,6 @@ const ProductsCategory = ({ category, groupCategory, genderCategory }) => {
       navigate(location.pathname + "?" + location.search);
     }
   }, [navigate, sort, location, page, filters, queryParams]);
-
   return (
     <Box sx={{ paddingBlock: "20px" }}>
       <Container sx={{ backgroundColor: "#fff" }}>

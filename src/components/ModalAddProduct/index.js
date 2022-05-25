@@ -39,7 +39,19 @@ const ModalAddProduct = ({
   const [openMaterial, setOpenMaterial] = useState(false);
   const [openImage, setOpenImage] = useState(false);
   const [price, setPrice] = useState(product ? product.price : "");
-  const [details, setDetails] = useState([]);
+  const [details, setDetails] = useState(
+    product
+      ? (function () {
+          let arr = [];
+          product.colors.forEach((item) => {
+            item.sizes.forEach((size) => {
+              arr.push({ color: item, size, amount: size.amount });
+            });
+          });
+          return arr;
+        })()
+      : []
+  );
   const [materials, setMaterials] = useState([]);
   const [images, setImages] = useState([]);
 
