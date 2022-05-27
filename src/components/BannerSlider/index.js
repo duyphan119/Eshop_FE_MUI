@@ -3,30 +3,9 @@ import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import "./Slider.css";
-const banners = [
-  {
-    src: "https://bizweb.dktcdn.net/100/438/408/themes/848101/assets/slider_1.jpg?1647343206623",
-    to: "/",
-  },
-  {
-    src: "https://bizweb.dktcdn.net/100/438/408/themes/848101/assets/slider_2.jpg?1646486842767",
-    to: "/",
-  },
-  {
-    src: "https://bizweb.dktcdn.net/100/438/408/themes/848101/assets/slider_3.jpg?1646486842767",
-    to: "/",
-  },
-  {
-    src: "https://bizweb.dktcdn.net/100/438/408/themes/848101/assets/slider_4.jpg?1646486842767",
-    to: "/",
-  },
-  {
-    src: "https://bizweb.dktcdn.net/100/438/408/themes/848101/assets/slider_5.jpg?1646486842767",
-    to: "/",
-  },
-];
-const BannerSlider = () => {
-  const settings = {
+
+const BannerSlider = ({ banners, settings }) => {
+  const _settings = {
     dots: true,
     infinite: true,
     speed: 500,
@@ -35,21 +14,20 @@ const BannerSlider = () => {
     draggable: true,
     autoplay: true,
     arrows: false,
+    ...settings,
   };
   return (
-    <Slider {...settings}>
+    <Slider {..._settings}>
       {banners.map((item, index) => {
         return (
-          <Link to={`/`} key={index}>
+          <Link to={`${item.href}`} key={index}>
             <img
-              src={item.src}
+              src={item.url}
               alt=""
               style={{
                 objectFit: "cover",
                 width: "100%",
-                height: "470px",
                 position: "relative",
-                cursor: "grab",
               }}
             />
           </Link>

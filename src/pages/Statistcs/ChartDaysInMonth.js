@@ -1,5 +1,4 @@
 import * as React from "react";
-import { useTheme } from "@mui/material/styles";
 import {
   BarChart,
   Bar,
@@ -11,14 +10,13 @@ import {
 import { Typography } from "@mui/material";
 
 const ChartDaysInMonth = ({ data }) => {
-  const theme = useTheme();
   return (
     <>
       <Typography component="h2" variant="h6" color="primary" gutterBottom>
         Biểu đồ doanh thu tháng {new Date().getMonth() + 1} năm{" "}
         {new Date().getFullYear()}
       </Typography>
-      <ResponsiveContainer>
+      <ResponsiveContainer width="100%" height="100%">
         <BarChart
           data={data}
           margin={{
@@ -28,15 +26,8 @@ const ChartDaysInMonth = ({ data }) => {
             left: 16,
           }}
         >
-          <XAxis
-            dataKey="day"
-            stroke={theme.palette.text.secondary}
-            style={theme.typography.body2}
-          />
-          <YAxis
-            stroke={theme.palette.text.secondary}
-            style={theme.typography.body2}
-          ></YAxis>
+          <XAxis dataKey="day" />
+          <YAxis></YAxis>
           <Tooltip />
           <Bar dataKey="total" fill="var(--main-color)" />
         </BarChart>

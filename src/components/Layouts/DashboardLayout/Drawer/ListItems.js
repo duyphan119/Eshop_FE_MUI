@@ -11,6 +11,7 @@ import InventoryIcon from "@mui/icons-material/Inventory";
 import ReceiptIcon from "@mui/icons-material/Receipt";
 import ModeCommentIcon from "@mui/icons-material/ModeComment";
 import CategoryIcon from "@mui/icons-material/Category";
+import ViewCarouselIcon from "@mui/icons-material/ViewCarousel";
 import { Link } from "react-router-dom";
 export const MainListItems = (
   <React.Fragment>
@@ -60,6 +61,14 @@ export const MainListItems = (
           <PeopleIcon />
         </ListItemIcon>
         <ListItemText primary="Người dùng" />
+      </ListItemButton>
+    </Link>
+    <Link to="/dashboard/banner">
+      <ListItemButton>
+        <ListItemIcon>
+          <ViewCarouselIcon />
+        </ListItemIcon>
+        <ListItemText primary="Banner" />
       </ListItemButton>
     </Link>
     <Link to="/dashboard/statistics">

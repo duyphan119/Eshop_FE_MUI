@@ -9,8 +9,9 @@ import {
 } from "../../components/Button";
 import Product from "../../components/Product";
 import ProductSkeleton from "../../components/Skeleton/Product";
-import { configAxiosAll } from "../../config/configAxios";
+import { configAxiosAll, configAxiosResponse } from "../../config/configAxios";
 import {
+  API_BANNER_URL,
   API_PRODUCT_URL,
   LIMIT_BEST_SELLER,
   LIMIT_NEW_PRODUCT,
@@ -23,8 +24,11 @@ const Home = () => {
 
   const [bestSellerProduct, setBestSellerProduct] = useState();
   const [newestProduct, setNewestProduct] = useState();
+  const [banners, setBanners] = useState([]);
 
   const [limit, setLimit] = useState(LIMIT_BEST_SELLER);
+
+  console.log(banners);
 
   useEffect(() => {
     document.title = "Trang chủ";
@@ -32,39 +36,60 @@ const Home = () => {
 
   useEffect(() => {
     (async function () {
-      const promiseBestSellerProduct = new Promise((resolve, reject) => {
-        resolve(
-          configAxiosAll(user, dispatch).get(
-            `${API_PRODUCT_URL}?type=best-seller&limit=${limit}`
-          )
+      try {
+        const promises = [];
+        promises.push(
+          new Promise((resolve, reject) => {
+            resolve(
+              configAxiosResponse().get(
+                `${API_BANNER_URL}?position=under-header&page=/&isShow=true`
+              )
+            );
+          })
         );
-      });
-      const promiseNew = new Promise((resolve, reject) => {
-        resolve(
-          configAxiosAll(user, dispatch).get(
-            `${API_PRODUCT_URL}?include=true&limit=${LIMIT_NEW_PRODUCT}`
-          )
+        promises.push(
+          new Promise((resolve, reject) => {
+            resolve(
+              configAxiosAll(user, dispatch).get(
+                `${API_PRODUCT_URL}?type=best-seller&limit=${limit}`
+              )
+            );
+          })
         );
-      });
-      Promise.allSettled([promiseNew, promiseBestSellerProduct]).then(
-        (values) => {
-          setNewestProduct(values[0].value);
-          setBestSellerProduct(values[1].value);
+        promises.push(
+          new Promise((resolve, reject) => {
+            resolve(
+              configAxiosAll(user, dispatch).get(
+                `${API_PRODUCT_URL}?include=true&limit=${LIMIT_NEW_PRODUCT}`
+              )
+            );
+          })
+        );
+
+        const listRes = await Promise.allSettled(promises);
+        if (listRes[0].status === "fulfilled") {
+          setBanners(listRes[0].value);
         }
-      );
+        if (listRes[1].status === "fulfilled") {
+          setNewestProduct(listRes[1].value);
+        }
+        if (listRes[2].status === "fulfilled") {
+          setBestSellerProduct(listRes[2].value);
+        }
+      } catch (error) {}
     })();
   }, [user, dispatch, limit]);
   return (
     <>
       <Box
-        sx={{
-          display: {
-            sm: "block",
-            xs: "none",
-          },
-        }}
+      // sx={{
+      //   display: {
+      //     sm: "block",
+      //     xs: "none",
+      //   },
+      // }}
       >
-        <BannerSlider />
+        <BannerSlider banners={banners} />
       </Box>
       <Container>
         <Grid container columnSpacing={2} rowSpacing={2}>

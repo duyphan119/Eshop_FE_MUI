@@ -12,6 +12,7 @@ import "slick-carousel/slick/slick.css";
 import {
   API_CART_ITEM_URL,
   API_PRODUCT_URL,
+  LIMIT_RECOMMEND_PRODUCT,
   PRODUCTS_SLIDER_VERTICAL,
 } from "../../constants";
 import { configAxiosAll } from "../../config/configAxios";
@@ -23,6 +24,8 @@ import { addToLatest } from "../../redux/productSlice";
 import ProductDetailSlider from "../../components/ProductDetailSlider";
 import Comments from "../../components/Comments";
 import { SocketContext } from "../../context";
+import Product from "../../components/Product";
+import ProductSkeleton from "../../components/Skeleton/Product";
 const SlickArrowLeft = ({ currentSlide, slideCount, ...props }) => (
   <button
     {...props}
@@ -58,6 +61,7 @@ const ProductDetail = () => {
   const dispatch = useDispatch();
 
   const [product, setProduct] = useState();
+  const [recommendedProduct, setRecommendedProduct] = useState();
   const [indexColor, setIndexColor] = useState(0);
   const [indexImage, setIndexImage] = useState(0);
   const [indexSize, setIndexSize] = useState(0);
@@ -78,18 +82,18 @@ const ProductDetail = () => {
   }, [socket, product]);
 
   useEffect(() => {
-    (function () {
-      configAxiosAll(user, dispatch)
-        .get(`${API_PRODUCT_URL}/slug/${product_slug}`)
-        .then((data) => {
-          document.title = data.name;
-          setProduct(data);
-          dispatch(addToLatest(data));
-          setIndexSize(
-            data.colors[0].sizes.findIndex((item) => item.amount > 0)
-          );
-        })
-        .catch((err) => () => {});
+    (async function () {
+      const data = await configAxiosAll(user, dispatch).get(
+        `${API_PRODUCT_URL}/slug/${product_slug}`
+      );
+      document.title = data.name;
+      setProduct(data);
+      dispatch(addToLatest(data));
+      setIndexSize(data.colors[0].sizes.findIndex((item) => item.amount > 0));
+      const data2 = await configAxiosAll(user, dispatch).get(
+        `${API_PRODUCT_URL}/category/${data.category.slug}?exceptId=${data.id}&limit=${LIMIT_RECOMMEND_PRODUCT}`
+      );
+      setRecommendedProduct(data2);
     })();
   }, [dispatch, product_slug, user]);
 
@@ -167,7 +171,7 @@ const ProductDetail = () => {
 
   return (
     <Box sx={{ minHeight: "100%", paddingBlock: "20px" }}>
-      <Container>
+      <Container sx={{ paddingInline: "120px !important" }}>
         <Grid container columnSpacing={3}>
           <Grid
             item
@@ -185,7 +189,7 @@ const ProductDetail = () => {
                 xs={2}
                 sx={{
                   overflow: "hidden",
-                  height: "642px",
+                  height: "520px",
                   display: "flex",
                   justifyContent: "center",
                   alignItems: "center",
@@ -220,7 +224,7 @@ const ProductDetail = () => {
                         key={index}
                         src={item.url}
                         alt={""}
-                        height={113.15}
+                        height={88}
                         onClick={() =>
                           setIndexImage(
                             product?.colors[indexColor].images.findIndex(
@@ -244,7 +248,7 @@ const ProductDetail = () => {
                 <img
                   src={product?.colors[indexColor]?.images[indexImage]?.url}
                   alt={product.name}
-                  height="642"
+                  height="520"
                 />
               </Grid>
             </Grid>
@@ -263,9 +267,9 @@ const ProductDetail = () => {
           </Grid>
           <Grid item xs={12} md={6}>
             <Typography
-              variant="h5"
+              variant="h6"
               sx={{
-                fontWeight: "500",
+                fontWeight: "600",
               }}
             >
               {product.name}
@@ -459,6 +463,82 @@ const ProductDetail = () => {
           </Grid>
         </Grid>
         {product && <Comments product={product} />}
+        <Grid container columnSpacing={2} rowSpacing={2}>
+          <Grid
+            item
+            md={12}
+            sx={{
+              textAlign: "center",
+              marginBlock: "5px",
+            }}
+          >
+            <Typography
+              variant="h6"
+              textTransform="uppercase"
+              color="var(--main-color)"
+            >
+              Có thể bạn muốn mua
+            </Typography>
+          </Grid>
+        </Grid>
+        <Grid container columnSpacing={2} rowSpacing={2}>
+          {recommendedProduct?.items?.length === 0 && (
+            <Grid
+              item
+              xs={12}
+              sx={{
+                marginBottom: "8px",
+              }}
+            >
+              <div className="no-result">
+                Không có sản phẩm trong danh mục này
+              </div>
+            </Grid>
+          )}
+          {recommendedProduct?.items?.length > 0
+            ? recommendedProduct?.items?.map((product) => {
+                return (
+                  <Grid
+                    key={product.slug}
+                    item
+                    xs={6}
+                    sm={4}
+                    md={3}
+                    sx={{
+                      flexBasis: {
+                        lg: "20% !important",
+                      },
+                      maxWidth: {
+                        lg: "20% !important",
+                      },
+                      marginBlock: "5px",
+                    }}
+                  >
+                    <Product product={product} />
+                  </Grid>
+                );
+              })
+            : new Array(LIMIT_RECOMMEND_PRODUCT).fill(1).map((item, index) => (
+                <Grid
+                  item
+                  xs={6}
+                  sm={4}
+                  md={3}
+                  sx={{
+                    flexBasis: {
+                      lg: "20% !important",
+                    },
+                    maxWidth: {
+                      lg: "20% !important",
+                    },
+                    marginBlock: "5px",
+                  }}
+                  key={index}
+                >
+                  <ProductSkeleton />
+                </Grid>
+              ))}
+        </Grid>
       </Container>
     </Box>
   );

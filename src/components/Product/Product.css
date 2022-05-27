@@ -73,13 +73,13 @@
   border-bottom: 20px solid #ff0800;
 }
 .product-img-wrapper {
-  height: 320px;
+  max-height: 320px;
   overflow: hidden;
   position: relative;
 }
 .product-img-link img {
   width: 100%;
-  height: 320px;
+  height: 100%;
   object-fit: cover;
 }
 .product-img-wrapper:hover img {

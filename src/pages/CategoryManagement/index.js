@@ -2,26 +2,20 @@ import AddIcon from "@mui/icons-material/Add";
 import EditIcon from "@mui/icons-material/Edit";
 import { Button, IconButton, Tab, Tabs, Tooltip } from "@mui/material";
 import Paper from "@mui/material/Paper";
-import Table from "@mui/material/Table";
-import TableBody from "@mui/material/TableBody";
-import TableContainer from "@mui/material/TableContainer";
-import TableHead from "@mui/material/TableHead";
-import TablePagination from "@mui/material/TablePagination";
-import TableRow from "@mui/material/TableRow";
-import { makeStyles } from "@mui/styles";
 import { Box } from "@mui/system";
+import "ag-grid-community/dist/styles/ag-grid.css";
+import "ag-grid-community/dist/styles/ag-theme-alpine.css";
+import { AgGridReact } from "ag-grid-react";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import ModalCategory from "../../components/ModalCategory";
 import ModalGroupCategory from "../../components/ModalGroupCategory";
-import { CustomTableCell } from "../../components/TableCell";
 import { configAxiosAll, configAxiosResponse } from "../../config/configAxios";
 import {
   API_CATEGORY_URL,
   API_GENDER_URL,
   API_GROUP_CATEGORY_URL,
-  LIMIT_ROW_CATEGORY,
-  LIMIT_ROW_GROUP_CATEGORY,
+  API_UPLOAD_URL,
 } from "../../constants";
 import {
   getAll as getAllCategories,
@@ -32,15 +26,116 @@ import {
   getAll as getAllGroupCategories,
   getCurrentGroupCategory,
 } from "../../redux/groupCategorySlice";
-const useStyles = makeStyles({
-  sticky: {
-    position: "sticky",
-    right: 0,
-    backgroundColor: "#fff",
-  },
-});
+import { calHeightDataGrid } from "../../utils";
+
 const CategoryManagement = () => {
-  const classes = useStyles();
+  const columnGroups = [
+    {
+      field: "id",
+      headerName: "ID",
+      flex: 1,
+      sortable: true,
+      filter: true,
+    },
+    {
+      field: "gender.name",
+      headerName: "Đối tượng khách hàng",
+      flex: 1,
+      sortable: true,
+      filter: true,
+    },
+    {
+      field: "name",
+      headerName: "Tên nhóm danh mục",
+      flex: 1,
+      sortable: true,
+      filter: true,
+    },
+    {
+      field: "actions",
+      headerName: "",
+      pinned: "right",
+      width: 100,
+      cellRenderer: (params) => (
+        <Tooltip title="Sửa nhóm danh mục">
+          <IconButton
+            onClick={() => {
+              dispatch(getCurrentGroupCategory(params.data));
+              setOpenGroupCategory(true);
+            }}
+          >
+            <EditIcon />
+          </IconButton>
+        </Tooltip>
+      ),
+    },
+  ];
+
+  const columnCategories = [
+    {
+      field: "id",
+      headerName: "ID",
+      flex: 1,
+      sortable: true,
+      filter: true,
+    },
+    {
+      field: "group_category.gender.name",
+      headerName: "Đối tượng khách hàng",
+      flex: 1,
+      sortable: true,
+      filter: true,
+    },
+    {
+      field: "group_category.name",
+      headerName: "Nhóm danh mục",
+      flex: 1,
+      sortable: true,
+      filter: true,
+    },
+    {
+      field: "name",
+      headerName: "Tên danh mục",
+      flex: 1,
+      sortable: true,
+      filter: true,
+      cellRenderer: (params) => (
+        <div style={{ display: "flex", alignItems: "center" }}>
+          {params.data.icon === "" ? (
+            ""
+          ) : (
+            <img src={params.data.icon} width="16" height="16" alt="" />
+          )}
+          {params.data.name}
+        </div>
+      ),
+    },
+    {
+      field: "code",
+      headerName: "Viết tắt",
+      flex: 1,
+      sortable: true,
+      filter: true,
+    },
+    {
+      field: "actions",
+      headerName: "",
+      pinned: "right",
+      width: 100,
+      cellRenderer: (params) => (
+        <Tooltip title="Sửa danh mục">
+          <IconButton
+            onClick={() => {
+              dispatch(getCurrentCategory(params.data));
+              setOpenCategory(true);
+            }}
+          >
+            <EditIcon />
+          </IconButton>
+        </Tooltip>
+      ),
+    },
+  ];
 
   const user = useSelector((state) => state.auth.currentUser);
   const categories = useSelector((state) => state.category.all);
@@ -54,13 +149,7 @@ const CategoryManagement = () => {
 
   const [openGroupCategory, setOpenGroupCategory] = useState(false);
   const [openCategory, setOpenCategory] = useState(false);
-  const [pageGroupCategory, setPageGroupCategory] = useState(0);
-  const [pageCategory, setPageCategory] = useState(0);
   const [tab, setTab] = useState(1);
-
-  useEffect(() => {
-    document.title = "Quản lý danh mục";
-  }, []);
 
   useEffect(() => {
     (function () {
@@ -123,14 +212,24 @@ const CategoryManagement = () => {
     }
   }
 
-  function getCategory(data) {
-    const { name, code, groupCategory } = data;
+  async function getCategory(data) {
+    const { name, code, file, groupCategory } = data;
+    let urlList;
+    if (file) {
+      let formData = new FormData();
+      formData.append("images", file);
+      urlList = await configAxiosResponse().post(`${API_UPLOAD_URL}`, formData);
+    }
     if (currentCategory) {
       configAxiosAll(user, dispatch)
         .put(`${API_CATEGORY_URL}`, {
-          id: currentCategory,
+          id: currentCategory.id,
           name,
           code,
+          icon:
+            urlList && urlList.length > 0
+              ? urlList[0].secure_url
+              : currentCategory.icon,
           group_category_id: groupCategory.id,
         })
         .then((res) => {
@@ -149,6 +248,7 @@ const CategoryManagement = () => {
         .post(`${API_CATEGORY_URL}`, {
           name,
           code,
+          icon: urlList && urlList.length > 0 ? urlList[0].secure_url : null,
           group_category_id: groupCategory.id,
         })
         .then((res) => {
@@ -181,76 +281,22 @@ const CategoryManagement = () => {
         >
           Thêm nhóm danh mục
         </Button>
-        <Paper sx={{ width: "100%", overflow: "hidden" }}>
-          <TableContainer sx={{ maxHeight: 380 }} className="custom-scrollbar">
-            <Table stickyHeader size="small">
-              <TableHead>
-                <TableRow>
-                  <CustomTableCell header align="center">
-                    Mã nhóm
-                  </CustomTableCell>
-                  <CustomTableCell header align="center">
-                    Đối tượng kháchh hàng
-                  </CustomTableCell>
-                  <CustomTableCell header align="center">
-                    Tên nhóm danh mục
-                  </CustomTableCell>
-                  <CustomTableCell className={classes.sticky}></CustomTableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {[...groupCategories]
-                  .splice(
-                    pageGroupCategory * LIMIT_ROW_GROUP_CATEGORY,
-                    LIMIT_ROW_GROUP_CATEGORY
-                  )
-                  .map((row) => {
-                    return (
-                      <TableRow
-                        hover
-                        role="checkbox"
-                        tabIndex={-1}
-                        key={row.id}
-                      >
-                        <CustomTableCell align="center">
-                          {row.id}
-                        </CustomTableCell>
-                        <CustomTableCell align="center">
-                          {row.gender.name}
-                        </CustomTableCell>
-                        <CustomTableCell align="center">
-                          {row.name}
-                        </CustomTableCell>
-                        <CustomTableCell className={classes.sticky}>
-                          <Tooltip title="Sửa nhóm danh mục">
-                            <IconButton
-                              onClick={() => {
-                                dispatch(getCurrentGroupCategory(row));
-                                setOpenGroupCategory(true);
-                              }}
-                            >
-                              <EditIcon />
-                            </IconButton>
-                          </Tooltip>
-                        </CustomTableCell>
-                      </TableRow>
-                    );
-                  })}
-              </TableBody>
-            </Table>
-          </TableContainer>
-          {groupCategories && (
-            <TablePagination
-              rowsPerPageOptions={[LIMIT_ROW_GROUP_CATEGORY, 50, 100]}
-              component="div"
-              count={groupCategories.length}
-              rowsPerPage={LIMIT_ROW_GROUP_CATEGORY}
-              page={pageGroupCategory}
-              onPageChange={(e, page) => {
-                setPageGroupCategory(page);
-              }}
-            />
-          )}
+        <Paper
+          sx={{
+            width: "100%",
+            height: calHeightDataGrid(10),
+            overflow: "hidden",
+          }}
+        >
+          <div
+            className="ag-theme-alpine"
+            style={{ width: "100%", height: "100%" }}
+          >
+            <AgGridReact
+              rowData={groupCategories}
+              columnDefs={columnGroups}
+            ></AgGridReact>
+          </div>
           {openGroupCategory && (
             <ModalGroupCategory
               open={openGroupCategory}
@@ -278,92 +324,35 @@ const CategoryManagement = () => {
         >
           Thêm danh mục
         </Button>
-        <Paper sx={{ width: "100%", overflow: "hidden" }}>
-          <TableContainer sx={{ maxHeight: 380 }} className="custom-scrollbar">
-            <Table stickyHeader size="small">
-              <TableHead>
-                <TableRow>
-                  <CustomTableCell header align="center">
-                    Mã danh mục
-                  </CustomTableCell>
-                  <CustomTableCell header align="center">
-                    Nhóm danh mục
-                  </CustomTableCell>
-                  <CustomTableCell header align="center">
-                    Tên danh mục
-                  </CustomTableCell>
-                  <CustomTableCell header align="center">
-                    SKU
-                  </CustomTableCell>
-                  <CustomTableCell className={classes.sticky}></CustomTableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {[...categories]
-                  .splice(pageCategory * LIMIT_ROW_CATEGORY, LIMIT_ROW_CATEGORY)
-                  .map((row) => {
-                    return (
-                      <TableRow
-                        hover
-                        role="checkbox"
-                        tabIndex={-1}
-                        key={row.id}
-                      >
-                        <CustomTableCell align="center">
-                          {row.id}
-                        </CustomTableCell>
-                        <CustomTableCell align="center">
-                          {row.group_category.name}
-                        </CustomTableCell>
-                        <CustomTableCell align="center">
-                          {row.name}
-                        </CustomTableCell>
-                        <CustomTableCell align="center">
-                          {row.code}
-                        </CustomTableCell>
-                        <CustomTableCell className={classes.sticky}>
-                          <Tooltip title="Sửa danh mục">
-                            <IconButton
-                              onClick={() => {
-                                dispatch(getCurrentCategory(row));
-                                setOpenCategory(true);
-                              }}
-                            >
-                              <EditIcon />
-                            </IconButton>
-                          </Tooltip>
-                        </CustomTableCell>
-                      </TableRow>
-                    );
-                  })}
-              </TableBody>
-            </Table>
-          </TableContainer>
-          {categories && (
-            <TablePagination
-              rowsPerPageOptions={[LIMIT_ROW_CATEGORY, 50, 100]}
-              component="div"
-              count={categories.length}
-              rowsPerPage={LIMIT_ROW_CATEGORY}
-              page={pageCategory}
-              onPageChange={(e, page) => {
-                setPageCategory(page);
-              }}
-            />
-          )}
-          {openCategory && (
-            <ModalCategory
-              open={openCategory}
-              handleClose={() => setOpenCategory(false)}
-              labelOk={currentCategory ? "Sửa" : "Thêm"}
-              title={!currentCategory ? "Thêm danh mục" : "Sửa danh mục"}
-              isCloseAfterOk={true}
-              category={currentCategory}
-              // width={500}
-              handleOk={getCategory}
-            />
-          )}
+
+        <Paper
+          sx={{
+            width: "100%",
+            height: calHeightDataGrid(10),
+            overflow: "hidden",
+          }}
+        >
+          <div
+            className="ag-theme-alpine"
+            style={{ width: "100%", height: "100%" }}
+          >
+            <AgGridReact
+              rowData={categories}
+              columnDefs={columnCategories}
+            ></AgGridReact>
+          </div>
         </Paper>
+        {openCategory && (
+          <ModalCategory
+            open={openCategory}
+            handleClose={() => setOpenCategory(false)}
+            labelOk={currentCategory ? "Sửa" : "Thêm"}
+            title={!currentCategory ? "Thêm danh mục" : "Sửa danh mục"}
+            isCloseAfterOk={true}
+            category={currentCategory}
+            handleOk={getCategory}
+          />
+        )}
       </TabPanel>
     </>
   );

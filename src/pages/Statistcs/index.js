@@ -23,10 +23,6 @@ const Statistics = () => {
   const [countComment, setCountComment] = useState([]);
 
   useEffect(() => {
-    document.title = "Báo cáo, thống kê";
-  }, []);
-
-  useEffect(() => {
     const promises = [];
 
     promises.push(
@@ -111,7 +107,7 @@ const Statistics = () => {
 
   return (
     <Grid container spacing={3}>
-      <Grid item xs={3}>
+      <Grid item xs={12} lg={3} md={6}>
         <Widget
           icon={<PersonAddAltIcon sx={{ fontSize: 40 }} />}
           title="Người dùng"
@@ -129,7 +125,7 @@ const Statistics = () => {
           }
         />
       </Grid>
-      <Grid item xs={3}>
+      <Grid item xs={12} lg={3} md={6}>
         <Widget
           icon={<ReceiptLongIcon sx={{ fontSize: 40 }} />}
           title="Hoá đơn"
@@ -147,7 +143,7 @@ const Statistics = () => {
           }
         />
       </Grid>
-      <Grid item xs={3}>
+      <Grid item xs={12} lg={3} md={6}>
         <Widget
           icon={<AttachMoneyIcon sx={{ fontSize: 40 }} />}
           title="Doanh thu"
@@ -171,7 +167,7 @@ const Statistics = () => {
           }
         />
       </Grid>
-      <Grid item xs={3}>
+      <Grid item xs={12} lg={3} md={6}>
         <Widget
           icon={<ChatBubbleOutlineIcon sx={{ fontSize: 40 }} />}
           title="Đánh giá"
@@ -197,7 +193,7 @@ const Statistics = () => {
             p: 2,
             display: "flex",
             flexDirection: "column",
-            height: 240,
+            height: 360,
           }}
         >
           <ChartDaysInMonth data={revenuesDaysInMonth} />

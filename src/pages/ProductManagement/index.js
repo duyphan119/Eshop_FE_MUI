@@ -3,21 +3,12 @@ import EditIcon from "@mui/icons-material/Edit";
 import { Box, IconButton, Tab, Tabs, Tooltip } from "@mui/material";
 import Button from "@mui/material/Button";
 import Paper from "@mui/material/Paper";
-import Table from "@mui/material/Table";
-import TableBody from "@mui/material/TableBody";
-import TableContainer from "@mui/material/TableContainer";
-import TableHead from "@mui/material/TableHead";
-import TablePagination from "@mui/material/TablePagination";
-import TableRow from "@mui/material/TableRow";
-import { makeStyles } from "@mui/styles";
+import { AgGridReact } from "ag-grid-react";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+
 import ConfirmDialog from "../../components/ConfirmDialog";
 import ModalAddProduct from "../../components/ModalAddProduct";
-import ModalColor from "../../components/ModalColor";
-import ModalMaterial from "../../components/ModalMaterial";
-import ModalSize from "../../components/ModalSize";
-import { CustomTableCell } from "../../components/TableCell";
 import { configAxiosAll, configAxiosResponse } from "../../config/configAxios";
 import {
   API_CATEGORY_URL,
@@ -29,41 +20,72 @@ import {
   API_PRODUCT_URL,
   API_SIZE_URL,
   API_UPLOAD_URL,
-  LIMIT_ROW_COLOR,
-  LIMIT_ROW_MATERIAL,
   LIMIT_ROW_PRODUCT,
-  LIMIT_ROW_SIZE,
 } from "../../constants";
 import { getAll as getAllCategories } from "../../redux/categorySlice";
-import {
-  getAll as getAllColors,
-  getCurrentColor,
-} from "../../redux/colorSlice";
-import {
-  getAll as getAllMaterials,
-  getCurrentMaterial,
-} from "../../redux/materialSlice";
-import { getAll as getAllSizes, getCurrentSize } from "../../redux/sizeSlice";
-import { formatThousandDigits } from "../../utils";
+import { getAll as getAllColors } from "../../redux/colorSlice";
+import { getAll as getAllMaterials } from "../../redux/materialSlice";
+import { getAll as getAllSizes } from "../../redux/sizeSlice";
+import { calHeightDataGrid, formatThousandDigits } from "../../utils";
+import ColorTabPanel from "./ColorTabPanel";
+import MaterialTabPanel from "./MaterialTabPanel";
+import SizeTabPanel from "./SizeTabPanel";
 
-const useStyles = makeStyles({
-  sticky: {
-    position: "sticky",
-    right: 0,
-    backgroundColor: "#fff",
-  },
-});
+import "ag-grid-community/dist/styles/ag-grid.css";
+import "ag-grid-community/dist/styles/ag-theme-alpine.css";
 
 const ProductManagement = () => {
-  const classes = useStyles();
+  const columns = [
+    {
+      field: "id",
+      headerName: "ID",
+      flex: 1,
+      sortable: true,
+      filter: true,
+    },
+    {
+      field: "category.name",
+      headerName: "Danh mục",
+      flex: 2,
+      sortable: true,
+      filter: true,
+    },
+    {
+      field: "name",
+      headerName: "Tên sản phẩm",
+      flex: 8,
+      sortable: true,
+      filter: true,
+    },
+    {
+      field: "price",
+      headerName: "Giá sản phẩm",
+      flex: 2,
+      sortable: true,
+      filter: true,
+      valueFormatter: (params) => formatThousandDigits(params.data.price),
+    },
+    {
+      field: "actions",
+      headerName: "",
+      pinned: "right",
+      width: 100,
+      cellRenderer: (params) => (
+        <Tooltip title="Sửa sản phẩm">
+          <IconButton
+            onClick={() => {
+              setCurrentProduct(params.data);
+              setOpen(true);
+            }}
+          >
+            <EditIcon />
+          </IconButton>
+        </Tooltip>
+      ),
+    },
+  ];
 
   const user = useSelector((state) => state.auth.currentUser);
-  const colors = useSelector((state) => state.color.all);
-  const currentColor = useSelector((state) => state.color.current);
-  const sizes = useSelector((state) => state.size.all);
-  const currentSize = useSelector((state) => state.size.current);
-  const materials = useSelector((state) => state.material.all);
-  const currentMaterial = useSelector((state) => state.material.current);
   const dispatch = useDispatch();
 
   const [product, setProduct] = useState();
@@ -71,22 +93,12 @@ const ProductManagement = () => {
   const [open, setOpen] = useState(false);
   const [page, setPage] = useState(0);
   const [tab, setTab] = useState(0);
-  const [openSize, setOpenSize] = useState(false);
-  const [pageSize, setPageSize] = useState(0);
-  const [openColor, setOpenColor] = useState(false);
-  const [pageColor, setPageColor] = useState(0);
-  const [openMaterial, setOpenMaterial] = useState(false);
-  const [pageMaterial, setPageMaterial] = useState(0);
   const [confirmDialog, setConfirmDialog] = useState({
     open: false,
     title: "",
     text: "",
     onConfirm: () => {},
   });
-
-  useEffect(() => {
-    document.title = "Quản lý sản phẩm";
-  }, []);
 
   useEffect(() => {
     (function () {
@@ -126,194 +138,101 @@ const ProductManagement = () => {
           dispatch(getAllMaterials(listRes[3].value));
           setProduct(listRes[4].value);
         })
-        .catch((err) => console.log(err));
+        .catch((err) => {});
     })();
   }, [dispatch, user, page]);
 
-  function handleOk(data) {
+  async function handleOk(data) {
     const { name, price, description, category, details, materials, images } =
       data;
-    configAxiosAll(user, dispatch)
-      .post(`${API_PRODUCT_URL}`, {
-        name,
-        price,
-        description,
-        category_id: category.id,
-      })
-      .then((_product) => {
-        let productImages = [];
-        let formData = new FormData();
-        images.forEach((image) => {
-          image.files.forEach((file) => {
-            console.log(file);
-            formData.append("images", file);
-            productImages.push({ color: image.color });
-          });
+    try {
+      const _product = await configAxiosAll(user, dispatch).post(
+        `${API_PRODUCT_URL}`,
+        {
+          name,
+          price,
+          description,
+          category_id: category.id,
+        }
+      );
+      let productImages = [];
+      let formData = new FormData();
+      images.forEach((image) => {
+        image.files.forEach((file) => {
+          console.log(file);
+          formData.append("images", file);
+          productImages.push({ color: image.color });
         });
+      });
 
-        configAxiosResponse()
-          .post(`${API_UPLOAD_URL}`, formData)
-          .then((urlList) => {
-            const promises = [];
-            if (materials.length > 0) {
-              promises.push(
-                new Promise((resolve, reject) =>
-                  resolve(
-                    configAxiosAll(user, dispatch).post(
-                      `${API_PRODUCT_MATERIAL_URL}?many=true`,
-                      materials.map((item) => ({
-                        material_id: item.id,
-                        product_id: _product.id,
-                      }))
-                    )
-                  )
-                )
-              );
-            }
-            if (details.length > 0) {
-              promises.push(
-                new Promise((resolve, reject) =>
-                  resolve(
-                    configAxiosAll(user, dispatch).post(
-                      `${API_PRODUCT_DETAIL_URL}?many=true`,
-                      details.map((item) => ({
-                        color_id: item.color.id,
-                        size_id: item.size.id,
-                        amount: item.amount,
-                        product_id: _product.id,
-                        sku: `${category.code}${`000${_product.id}`.slice(
-                          -4
-                        )}-${item.color.code}-${item.size.code}`,
-                      }))
-                    )
-                  )
-                )
-              );
-            }
-            if (images.length > 0) {
-              promises.push(
-                new Promise((resolve, reject) =>
-                  resolve(
-                    configAxiosAll(user, dispatch).post(
-                      `${API_IMAGE_URL}?many=true`,
-                      urlList.map((url, index) => ({
-                        product_id: _product.id,
-                        url: url.secure_url,
-                        color_id: productImages[index].color.id,
-                      }))
-                    )
-                  )
-                )
-              );
-            }
-            Promise.allSettled(promises)
-              .then(() => {
-                setProduct({
-                  ...product,
-                  total_result: product.total_result + 1,
-                  items: [
-                    { ..._product, category },
-                    [...product.items].splice(product.items.length - 1, 1),
-                  ],
-                  total_page: Math.ceil(product.total_result / product.limit),
-                });
-              })
-              .catch((err) => {});
-          })
-          .catch((err) => {});
-      })
-      .catch((err) => {});
-  }
+      const urlList = await configAxiosResponse().post(
+        `${API_UPLOAD_URL}`,
+        formData
+      );
 
-  function getMaterial(data) {
-    const { value } = data;
-    if (currentMaterial) {
-      configAxiosAll(user, dispatch)
-        .put(`${API_MATERIAL_URL}`, {
-          id: currentMaterial,
-          value,
-        })
-        .then((res) => {
-          const _materials = [...materials];
-          const index = _materials.findIndex(
-            (el) => el.id === currentMaterial.id
-          );
-          if (index !== -1) {
-            _materials[index] = res;
-            dispatch(getAllMaterials(_materials));
-          }
-        })
-        .catch((err) => {});
-    } else {
-      configAxiosAll(user, dispatch)
-        .post(`${API_MATERIAL_URL}`, {
-          value,
-        })
-        .then((res) => {
-          dispatch(getAllMaterials([res, ...materials]));
-        })
-        .catch((err) => {});
-    }
-  }
-  function getSize(data) {
-    const { value, code } = data;
-    if (currentSize) {
-      configAxiosAll(user, dispatch)
-        .put(`${API_SIZE_URL}`, {
-          id: currentSize,
-          value,
-          code,
-        })
-        .then((res) => {
-          const _sizes = [...sizes];
-          const index = _sizes.findIndex((el) => el.id === currentSize.id);
-          if (index !== -1) {
-            _sizes[index] = res;
-            dispatch(getAllSizes(_sizes));
-          }
-        })
-        .catch((err) => {});
-    } else {
-      configAxiosAll(user, dispatch)
-        .post(`${API_SIZE_URL}`, {
-          value,
-          code,
-        })
-        .then((res) => {
-          dispatch(getAllSizes([res, ...sizes]));
-        })
-        .catch((err) => {});
-    }
-  }
-  function getColor(data) {
-    const { value, code } = data;
-    if (currentColor) {
-      configAxiosAll(user, dispatch)
-        .put(`${API_COLOR_URL}`, {
-          id: currentColor,
-          value,
-          code,
-        })
-        .then((res) => {
-          const _colors = [...colors];
-          const index = _colors.findIndex((el) => el.id === currentColor.id);
-          if (index !== -1) {
-            _colors[index] = res;
-            dispatch(getAllColors(_colors));
-          }
-        })
-        .catch((err) => {});
-    } else {
-      configAxiosAll(user, dispatch)
-        .post(`${API_COLOR_URL}`, {
-          value,
-          code,
-        })
-        .then((res) => {
-          dispatch(getAllColors([res, ...colors]));
-        })
-        .catch((err) => {});
-    }
+      const promises = [];
+      if (materials.length > 0) {
+        promises.push(
+          new Promise((resolve, reject) =>
+            resolve(
+              configAxiosAll(user, dispatch).post(
+                `${API_PRODUCT_MATERIAL_URL}?many=true`,
+                materials.map((item) => ({
+                  material_id: item.id,
+                  product_id: _product.id,
+                }))
+              )
+            )
+          )
+        );
+      }
+      if (details.length > 0) {
+        promises.push(
+          new Promise((resolve, reject) =>
+            resolve(
+              configAxiosAll(user, dispatch).post(
+                `${API_PRODUCT_DETAIL_URL}?many=true`,
+                details.map((item) => ({
+                  color_id: item.color.id,
+                  size_id: item.size.id,
+                  amount: item.amount,
+                  product_id: _product.id,
+                  sku: `${category.code}${`000${_product.id}`.slice(-4)}-${
+                    item.color.code
+                  }-${item.size.code}`,
+                }))
+              )
+            )
+          )
+        );
+      }
+      if (images.length > 0) {
+        promises.push(
+          new Promise((resolve, reject) =>
+            resolve(
+              configAxiosAll(user, dispatch).post(
+                `${API_IMAGE_URL}?many=true`,
+                urlList.map((url, index) => ({
+                  product_id: _product.id,
+                  url: url.secure_url,
+                  color_id: productImages[index].color.id,
+                }))
+              )
+            )
+          )
+        );
+      }
+      await Promise.allSettled(promises);
+      setProduct({
+        ...product,
+        total_result: product.total_result + 1,
+        items: [
+          { ..._product, category },
+          [...product.items].splice(product.items.length - 1, 1),
+        ],
+        total_page: Math.ceil(product.total_result / product.limit),
+      });
+    } catch (error) {}
   }
 
   return (
@@ -331,244 +250,13 @@ const ProductManagement = () => {
         </Tabs>
       </Box>
       <TabPanel index={0} value={tab}>
-        <Button
-          variant="contained"
-          sx={{ mb: 2 }}
-          onClick={() => {
-            dispatch(getCurrentMaterial(null));
-            setOpenMaterial(true);
-          }}
-          startIcon={<AddIcon />}
-        >
-          Thêm chất liệu
-        </Button>
-        <Paper sx={{ width: "100%", overflow: "hidden" }}>
-          <TableContainer sx={{ maxHeight: 400 }} className="custom-scrollbar">
-            <Table stickyHeader size="small">
-              <TableHead>
-                <TableRow>
-                  <CustomTableCell header align="center">
-                    ID
-                  </CustomTableCell>
-                  <CustomTableCell header align="center">
-                    Tên chất liệu
-                  </CustomTableCell>
-                  <CustomTableCell className={classes.sticky}></CustomTableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {[...materials]
-                  .splice(pageMaterial * LIMIT_ROW_MATERIAL, LIMIT_ROW_MATERIAL)
-                  .map((row) => {
-                    return (
-                      <TableRow
-                        hover
-                        role="checkbox"
-                        tabIndex={-1}
-                        key={row.id}
-                      >
-                        <CustomTableCell align="center">
-                          {row.id}
-                        </CustomTableCell>
-                        <CustomTableCell align="center">
-                          {row.value}
-                        </CustomTableCell>
-                        <CustomTableCell className={classes.sticky}>
-                          <Tooltip title="Sửa chất liệu">
-                            <IconButton
-                              size="small"
-                              onClick={() => {
-                                dispatch(getCurrentMaterial(row));
-                                setOpenMaterial(true);
-                              }}
-                            >
-                              <EditIcon />
-                            </IconButton>
-                          </Tooltip>
-                        </CustomTableCell>
-                      </TableRow>
-                    );
-                  })}
-              </TableBody>
-            </Table>
-          </TableContainer>
-          {materials && (
-            <TablePagination
-              rowsPerPageOptions={[LIMIT_ROW_MATERIAL, 50, 100]}
-              component="div"
-              count={materials.length}
-              rowsPerPage={LIMIT_ROW_MATERIAL}
-              page={pageMaterial}
-              onPageChange={(e, page) => {
-                setPageMaterial(page);
-              }}
-            />
-          )}
-        </Paper>
+        <MaterialTabPanel />
       </TabPanel>
       <TabPanel index={1} value={tab}>
-        <Button
-          variant="contained"
-          sx={{ mb: 2 }}
-          onClick={() => {
-            dispatch(getCurrentColor(null));
-            setOpenColor(true);
-          }}
-          startIcon={<AddIcon />}
-        >
-          Thêm màu sắc
-        </Button>
-        <Paper sx={{ width: "100%", overflow: "hidden" }}>
-          <TableContainer sx={{ maxHeight: 400 }} className="custom-scrollbar">
-            <Table stickyHeader size="small">
-              <TableHead>
-                <TableRow>
-                  <CustomTableCell header align="center">
-                    ID
-                  </CustomTableCell>
-                  <CustomTableCell header align="center">
-                    Tên màu sắc
-                  </CustomTableCell>
-                  <CustomTableCell header align="center">
-                    SKU
-                  </CustomTableCell>
-                  <CustomTableCell className={classes.sticky}></CustomTableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {[...colors]
-                  .splice(pageColor * LIMIT_ROW_COLOR, LIMIT_ROW_COLOR)
-                  .map((row) => {
-                    return (
-                      <TableRow
-                        hover
-                        role="checkbox"
-                        tabIndex={-1}
-                        key={row.id}
-                      >
-                        <CustomTableCell align="center">
-                          {row.id}
-                        </CustomTableCell>
-                        <CustomTableCell align="center">
-                          {row.value}
-                        </CustomTableCell>
-                        <CustomTableCell align="center">
-                          {row.code}
-                        </CustomTableCell>
-                        <CustomTableCell className={classes.sticky}>
-                          <Tooltip title="Sửa màu sắc">
-                            <IconButton
-                              size="small"
-                              onClick={() => {
-                                dispatch(getCurrentColor(row));
-                                setOpenColor(true);
-                              }}
-                            >
-                              <EditIcon />
-                            </IconButton>
-                          </Tooltip>
-                        </CustomTableCell>
-                      </TableRow>
-                    );
-                  })}
-              </TableBody>
-            </Table>
-          </TableContainer>
-          {colors && (
-            <TablePagination
-              rowsPerPageOptions={[LIMIT_ROW_COLOR, 50, 100]}
-              component="div"
-              count={colors.length}
-              rowsPerPage={LIMIT_ROW_COLOR}
-              page={pageColor}
-              onPageChange={(e, page) => {
-                setPageColor(page);
-              }}
-            />
-          )}
-        </Paper>
+        <ColorTabPanel />
       </TabPanel>
       <TabPanel index={2} value={tab}>
-        <Button
-          variant="contained"
-          sx={{ mb: 2 }}
-          onClick={() => {
-            dispatch(getCurrentSize(null));
-            setOpenSize(true);
-          }}
-          startIcon={<AddIcon />}
-        >
-          Thêm kích cỡ
-        </Button>
-        <Paper sx={{ width: "100%", overflow: "hidden" }}>
-          <TableContainer sx={{ maxHeight: 400 }} className="custom-scrollbar">
-            <Table stickyHeader size="small">
-              <TableHead>
-                <TableRow>
-                  <CustomTableCell header align="center">
-                    ID
-                  </CustomTableCell>
-                  <CustomTableCell header align="center">
-                    Tên kích cỡ
-                  </CustomTableCell>
-                  <CustomTableCell header align="center">
-                    SKU
-                  </CustomTableCell>
-                  <CustomTableCell className={classes.sticky}></CustomTableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {[...sizes]
-                  .splice(pageSize * LIMIT_ROW_SIZE, LIMIT_ROW_SIZE)
-                  .map((row) => {
-                    return (
-                      <TableRow
-                        hover
-                        role="checkbox"
-                        tabIndex={-1}
-                        key={row.id}
-                      >
-                        <CustomTableCell align="center">
-                          {row.id}
-                        </CustomTableCell>
-                        <CustomTableCell align="center">
-                          {row.value}
-                        </CustomTableCell>
-                        <CustomTableCell align="center">
-                          {row.code}
-                        </CustomTableCell>
-                        <CustomTableCell className={classes.sticky}>
-                          <Tooltip title="Sửa màu sắc">
-                            <IconButton
-                              size="small"
-                              onClick={() => {
-                                dispatch(getCurrentSize(row));
-                                setOpenSize(true);
-                              }}
-                            >
-                              <EditIcon />
-                            </IconButton>
-                          </Tooltip>
-                        </CustomTableCell>
-                      </TableRow>
-                    );
-                  })}
-              </TableBody>
-            </Table>
-          </TableContainer>
-          {sizes && (
-            <TablePagination
-              rowsPerPageOptions={[LIMIT_ROW_SIZE, 50, 100]}
-              component="div"
-              count={sizes.length}
-              rowsPerPage={LIMIT_ROW_SIZE}
-              page={pageSize}
-              onPageChange={(e, page) => {
-                setPageSize(page);
-              }}
-            />
-          )}
-        </Paper>
+        <SizeTabPanel />
       </TabPanel>
       <TabPanel index={3} value={tab}>
         <Button
@@ -582,69 +270,23 @@ const ProductManagement = () => {
         >
           Thêm sản phẩm
         </Button>
-        <Paper sx={{ width: "100%", overflow: "hidden" }}>
-          <TableContainer sx={{ maxHeight: 400 }} className="custom-scrollbar">
-            <Table stickyHeader size="small">
-              <TableHead>
-                <TableRow>
-                  <CustomTableCell header align="center">
-                    ID
-                  </CustomTableCell>
-                  <CustomTableCell header align="center">
-                    Danh mục
-                  </CustomTableCell>
-                  <CustomTableCell header align="center">
-                    Tên sản phẩm
-                  </CustomTableCell>
-                  <CustomTableCell header align="center">
-                    Giá
-                  </CustomTableCell>
-                  <CustomTableCell className={classes.sticky}></CustomTableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {product &&
-                  product.items &&
-                  product.items.map((row) => {
-                    return (
-                      <TableRow
-                        hover
-                        role="checkbox"
-                        tabIndex={-1}
-                        key={row.id}
-                      >
-                        <CustomTableCell align="center">
-                          {row.id}
-                        </CustomTableCell>
-                        <CustomTableCell align="center">
-                          {row.category.name}
-                        </CustomTableCell>
-                        <CustomTableCell align="center">
-                          {row.name}
-                        </CustomTableCell>
-                        <CustomTableCell align="center">
-                          {formatThousandDigits(row.price)}
-                        </CustomTableCell>
-                        <CustomTableCell className={classes.sticky}>
-                          <Tooltip title="Sửa sản phẩm">
-                            <IconButton
-                              size="small"
-                              onClick={() => {
-                                setCurrentProduct(row);
-                                setOpen(true);
-                              }}
-                            >
-                              <EditIcon />
-                            </IconButton>
-                          </Tooltip>
-                        </CustomTableCell>
-                      </TableRow>
-                    );
-                  })}
-              </TableBody>
-            </Table>
-          </TableContainer>
-          {product && (
+        <Paper
+          sx={{
+            width: "100%",
+            overflow: "hidden",
+            height: calHeightDataGrid(10),
+          }}
+        >
+          <div
+            className="ag-theme-alpine"
+            style={{ width: "100%", height: "100%" }}
+          >
+            <AgGridReact
+              rowData={product && product.items ? product.items : []}
+              columnDefs={columns}
+            ></AgGridReact>
+          </div>
+          {/* {product && (
             <TablePagination
               rowsPerPageOptions={[LIMIT_ROW_PRODUCT, 50, 100]}
               component="div"
@@ -655,7 +297,7 @@ const ProductManagement = () => {
                 setPage(page);
               }}
             />
-          )}
+          )} */}
         </Paper>
       </TabPanel>
       {confirmDialog.open && (
@@ -678,39 +320,6 @@ const ProductManagement = () => {
           width={900}
           handleOk={handleOk}
           product={currentProduct}
-        />
-      )}
-      {openMaterial && (
-        <ModalMaterial
-          open={openMaterial}
-          handleClose={() => setOpenMaterial(false)}
-          labelOk={currentMaterial ? "Sửa" : "Thêm"}
-          title={currentMaterial ? "Sửa chất liệu" : "Thêm chất liệu"}
-          isCloseAfterOk={true}
-          handleOk={getMaterial}
-          material={currentMaterial}
-        />
-      )}
-      {openSize && (
-        <ModalSize
-          open={openSize}
-          handleClose={() => setOpenSize(false)}
-          labelOk={currentSize ? "Sửa" : "Thêm"}
-          title={currentSize ? "Sửa kích cỡ" : "Thêm kích cỡ"}
-          isCloseAfterOk={true}
-          handleOk={getSize}
-          size={currentSize}
-        />
-      )}
-      {openColor && (
-        <ModalColor
-          open={openColor}
-          handleClose={() => setOpenColor(false)}
-          labelOk={currentColor ? "Sửa" : "Thêm"}
-          title={currentColor ? "Sửa màu sắc" : "Thêm màu sắc"}
-          isCloseAfterOk={true}
-          handleOk={getColor}
-          color={currentColor}
         />
       )}
     </>

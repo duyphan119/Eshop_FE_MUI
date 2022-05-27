@@ -22,6 +22,7 @@ import UserManagement from "../pages/UserManagement";
 import CommentManagement from "../pages/CommentManagement";
 import Statistics from "../pages/Statistcs";
 import CategoryManagement from "../pages/CategoryManagement";
+import BannerManagement from "../pages/BannerManagement";
 export const publicRoutes = [
   {
     path: "/",
@@ -88,6 +89,11 @@ export const publicRoutes = [
   {
     path: "/dashboard/statistics",
     component: Statistics,
+    layout: DashboardLayout,
+  },
+  {
+    path: "/dashboard/banner",
+    component: BannerManagement,
     layout: DashboardLayout,
   },
   {

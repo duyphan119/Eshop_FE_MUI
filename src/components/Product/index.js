@@ -1,7 +1,7 @@
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import FavoriteBorderOutlinedIcon from "@mui/icons-material/FavoriteBorderOutlined";
 import { Box, Tooltip, Typography } from "@mui/material";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { configAxiosAll } from "../../config/configAxios";
@@ -25,6 +25,8 @@ const Product = ({ product }) => {
 
   const [indexColor, setIndexColor] = useState(0);
   const [productUser, setProductUser] = useState();
+
+  const productRef = useRef();
 
   useEffect(() => {
     setProductUser(wishlist.findIndex((item) => item.id === product.id) !== -1);
@@ -155,7 +157,15 @@ const Product = ({ product }) => {
 
         {/* <div className="product-tag product-tag-hot">Hot</div> */}
       </div>
-      <div className="product-img-wrapper">
+      <div
+        className="product-img-wrapper"
+        ref={productRef}
+        style={{
+          height: productRef.current
+            ? `${(productRef.current.getBoundingClientRect().width * 3) / 2}px`
+            : "0",
+        }}
+      >
         <Link to={`/product/${product.slug}`} className="product-img-link">
           <img
             src={product?.colors[indexColor]?.images[0]?.url}

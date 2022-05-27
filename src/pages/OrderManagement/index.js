@@ -1,11 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Paper from "@mui/material/Paper";
-import Table from "@mui/material/Table";
-import TableBody from "@mui/material/TableBody";
-import TableContainer from "@mui/material/TableContainer";
-import TableHead from "@mui/material/TableHead";
-import TablePagination from "@mui/material/TablePagination";
-import TableRow from "@mui/material/TableRow";
+import { AgGridReact } from "ag-grid-react";
 import { useDispatch, useSelector } from "react-redux";
 import { IconButton, Tooltip } from "@mui/material";
 import { makeStyles } from "@mui/styles";
@@ -17,20 +12,104 @@ import {
   API_ORDER_URL,
   LIMIT_ROW_ORDER,
 } from "../../constants";
-import { formatThousandDigits, formatTimeVN } from "../../utils";
+import {
+  calHeightDataGrid,
+  formatThousandDigits,
+  formatTimeVN,
+} from "../../utils";
 import ModalEditOrder from "../../components/ModalEditOrder";
-import { CustomTableCell } from "../../components/TableCell";
 
-const useStyles = makeStyles({
-  sticky: {
-    position: "sticky",
-    right: 0,
-    backgroundColor: "#fff",
-  },
-});
+import "ag-grid-community/dist/styles/ag-grid.css";
+import "ag-grid-community/dist/styles/ag-theme-alpine.css";
 
 const OrderManagement = () => {
-  const classes = useStyles();
+  const columns = [
+    {
+      field: "id",
+      headerName: "Đơn số",
+      width: 110,
+      sortable: true,
+      filter: true,
+      pinned: "left",
+    },
+    {
+      field: "user.full_name",
+      headerName: "Khách hàng",
+      width: 200,
+      sortable: true,
+      filter: true,
+    },
+    {
+      field: "createdAt",
+      headerName: "Thời gian",
+      width: 170,
+      sortable: true,
+      filter: true,
+      valueFormatter: (params) => formatTimeVN(params.data.createdAt),
+    },
+    {
+      field: "address",
+      headerName: "Địa chỉ",
+      width: 560,
+      sortable: true,
+      filter: true,
+    },
+    {
+      field: "telephone",
+      headerName: "Số điện thoại",
+      width: 140,
+      sortable: true,
+      filter: true,
+    },
+    {
+      field: "coupon.percent",
+      headerName: "Giảm giá",
+      width: 110,
+      sortable: true,
+      filter: true,
+    },
+    {
+      field: "total",
+      headerName: "Tổng tiền",
+      width: 120,
+      sortable: true,
+      filter: true,
+      valueFormatter: (params) => formatThousandDigits(params.data.total),
+    },
+    {
+      field: "status.description",
+      headerName: "Trạng thái",
+      width: 130,
+      pinned: "right",
+      sortable: true,
+      filter: true,
+    },
+    {
+      field: "actions",
+      headerName: "",
+      pinned: "right",
+      width: 120,
+      cellRenderer: (params) => (
+        <>
+          <Tooltip title="Sửa hoá đơn">
+            <IconButton
+              onClick={() => {
+                setCurrentOrder(params.data);
+                setOpen(true);
+              }}
+            >
+              <EditIcon />
+            </IconButton>
+          </Tooltip>
+          <Tooltip title="Sửa hoá đơn">
+            <IconButton>
+              <DownloadIcon />
+            </IconButton>
+          </Tooltip>
+        </>
+      ),
+    },
+  ];
 
   const user = useSelector((state) => state.auth.currentUser);
 
@@ -41,10 +120,6 @@ const OrderManagement = () => {
   const [currentOrder, setCurrentOrder] = useState();
   const [open, setOpen] = useState(false);
   const [orderStatuses, setOrderStatuses] = useState([]);
-
-  useEffect(() => {
-    document.title = "Quản lý hoá đơn";
-  }, []);
 
   console.log(order);
 
@@ -94,84 +169,19 @@ const OrderManagement = () => {
   }
 
   return (
-    <Paper sx={{ width: "100%", overflow: "hidden" }}>
-      <TableContainer sx={{ maxHeight: 520 }} className="custom-scrollbar">
-        <Table stickyHeader size="small">
-          <TableHead>
-            <TableRow>
-              <CustomTableCell header align="center">
-                Đơn số
-              </CustomTableCell>
-              <CustomTableCell header align="center">
-                Thời gian
-              </CustomTableCell>
-              <CustomTableCell header align="center">
-                Địa chỉ
-              </CustomTableCell>
-              <CustomTableCell header align="center">
-                Số điện thoại
-              </CustomTableCell>
-              <CustomTableCell header align="center">
-                Giảm giá
-              </CustomTableCell>
-              <CustomTableCell header align="center">
-                Tổng tiền
-              </CustomTableCell>
-              <CustomTableCell header align="center">
-                Trạng thái
-              </CustomTableCell>
-              <CustomTableCell className={classes.sticky}></CustomTableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {order &&
-              order.items &&
-              order.items.map((row) => {
-                return (
-                  <TableRow hover role="checkbox" tabIndex={-1} key={row.id}>
-                    <CustomTableCell align="center">{row.id}</CustomTableCell>
-                    <CustomTableCell align="center">
-                      {formatTimeVN(row.createdAt)}
-                    </CustomTableCell>
-                    <CustomTableCell align="center">
-                      {row.address}
-                    </CustomTableCell>
-                    <CustomTableCell align="center">
-                      {row.telephone}
-                    </CustomTableCell>
-                    <CustomTableCell align="center">
-                      {row.coupon.percent === 0 ? 0 : row.coupon.percent + "%"}
-                    </CustomTableCell>
-                    <CustomTableCell align="center">
-                      {formatThousandDigits(row.total)}
-                    </CustomTableCell>
-                    <CustomTableCell align="center">
-                      {row.status.description}
-                    </CustomTableCell>
-                    <CustomTableCell className={classes.sticky}>
-                      <Tooltip title="Sửa hoá đơn">
-                        <IconButton
-                          onClick={() => {
-                            setCurrentOrder(row);
-                            setOpen(true);
-                          }}
-                        >
-                          <EditIcon />
-                        </IconButton>
-                      </Tooltip>
-                      <Tooltip title="Xuất PDF">
-                        <IconButton>
-                          <DownloadIcon />
-                        </IconButton>
-                      </Tooltip>
-                    </CustomTableCell>
-                  </TableRow>
-                );
-              })}
-          </TableBody>
-        </Table>
-      </TableContainer>
-      {order && (
+    <Paper
+      sx={{ width: "100%", overflow: "hidden", height: calHeightDataGrid(12) }}
+    >
+      <div
+        className="ag-theme-alpine"
+        style={{ width: "100%", height: "100%" }}
+      >
+        <AgGridReact
+          rowData={order && order.items ? order.items : []}
+          columnDefs={columns}
+        ></AgGridReact>
+      </div>
+      {/* {order && (
         <TablePagination
           rowsPerPageOptions={[LIMIT_ROW_ORDER, 50, 100]}
           component="div"
@@ -182,7 +192,7 @@ const OrderManagement = () => {
             setPage(page);
           }}
         />
-      )}
+      )} */}
       {currentOrder && open && (
         <ModalEditOrder
           open={open}

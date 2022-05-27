@@ -1,17 +1,44 @@
-import Table from "@mui/material/Table";
-import TableBody from "@mui/material/TableBody";
-import TableHead from "@mui/material/TableHead";
-import TableRow from "@mui/material/TableRow";
 import * as React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
-import { CustomTableCell } from "../../components/TableCell";
 import { TitlePaper } from "../../components/Title";
 import { configAxiosAll } from "../../config/configAxios";
 import { API_ORDER_URL, LIMIT_RECENT_ORDERS } from "../../constants";
-import { formatThousandDigits, formatTimeVN } from "../../utils";
-
+import { calHeightDataGrid, formatTimeVN } from "../../utils";
+import { AgGridReact } from "ag-grid-react";
+import "ag-grid-community/dist/styles/ag-grid.css";
+import "ag-grid-community/dist/styles/ag-theme-alpine.css";
 export default function Orders() {
+  const columns = [
+    {
+      field: "id",
+      headerName: "Đơn số",
+      width: 90,
+    },
+    {
+      field: "createdAt",
+      headerName: "Thời gian",
+      valueFormatter: (params) => `${formatTimeVN(params.data.createdAt)}`,
+      width: 160,
+    },
+    {
+      field: "address",
+      headerName: "Địa chỉ",
+      width: 620,
+    },
+    {
+      field: "telephone",
+      headerName: "Số điện thoại",
+      width: 120,
+    },
+    {
+      field: "status",
+      headerName: "Trạng thái",
+      valueGetter: (params) => params.data.status.description,
+      flex: 1,
+    },
+  ];
+
   const user = useSelector((state) => state.auth.currentUser);
 
   const dispatch = useDispatch();
@@ -30,56 +57,25 @@ export default function Orders() {
   return (
     <React.Fragment>
       <TitlePaper>Đơn hàng gần đây</TitlePaper>
-      <Table size="small">
-        <TableHead>
-          <TableRow>
-            <CustomTableCell header align="center">
-              Đơn số
-            </CustomTableCell>
-            <CustomTableCell header align="center">
-              Thời gian
-            </CustomTableCell>
-            <CustomTableCell header align="center">
-              Địa chỉ
-            </CustomTableCell>
-            <CustomTableCell header align="center">
-              Số điện thoại
-            </CustomTableCell>
-            <CustomTableCell header align="center">
-              Giảm giá
-            </CustomTableCell>
-            <CustomTableCell header align="center">
-              Tổng
-            </CustomTableCell>
-            <CustomTableCell header align="center">
-              Trạng thái
-            </CustomTableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {orders.map((order) => (
-            <TableRow key={order.id}>
-              <CustomTableCell align="center">{order.id}</CustomTableCell>
-              <CustomTableCell align="center">
-                {formatTimeVN(order.createdAt)}
-              </CustomTableCell>
-              <CustomTableCell align="center">{order.address}</CustomTableCell>
-              <CustomTableCell align="center">
-                {order.telephone}
-              </CustomTableCell>
-              <CustomTableCell align="center">
-                {order.coupon.percent}
-              </CustomTableCell>
-              <CustomTableCell align="center">
-                {formatThousandDigits(order.total)}
-              </CustomTableCell>
-              <CustomTableCell align="center">
-                {order.status.description}
-              </CustomTableCell>
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
+      <div
+        style={{
+          width: "100%",
+          height: calHeightDataGrid(LIMIT_RECENT_ORDERS),
+        }}
+      >
+        <div
+          className="ag-theme-alpine"
+          style={{ width: "100%", height: "100%" }}
+        >
+          <AgGridReact
+            sideBar={{
+              toolPanels: ["filters", "columns"],
+            }}
+            rowData={orders}
+            columnDefs={columns}
+          ></AgGridReact>
+        </div>
+      </div>
       <Link
         to="/dashboard/orders"
         style={{

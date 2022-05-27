@@ -23,6 +23,7 @@ export const API_UPLOAD_URL = `${SERVER_URL}/v1/api/upload`;
 export const API_STATISTICS_URL = `${SERVER_URL}/v1/api/statistics`;
 export const API_PRODUCT_USER_URL = `${SERVER_URL}/v1/api/product-user`;
 export const API_ROLE_URL = `${SERVER_URL}/v1/api/role`;
+export const API_BANNER_URL = `${SERVER_URL}/v1/api/banner`;
 export const API_PROVINCE_URL = "https://provinces.open-api.vn/api/";
 
 export const LIMIT_BEST_SELLER = 10;
@@ -41,6 +42,7 @@ export const EXAMPLE_STARS_ARRAY_REVERSE = [5, 4, 3, 2, 1];
 export const PRODUCTS_PER_PAGE = 10;
 export const PRODUCTS_SLIDER_VERTICAL = 5;
 export const PRODUCT_COLORS_PREVIEW = 5;
+export const LIMIT_RECOMMEND_PRODUCT = 10;
 
 export const COMMENTS_PER_PAGE = 1;
 
@@ -49,7 +51,7 @@ export const ADMIN_ORDERS_PER_PAGE = 20;
 export const WIDTH_ORDER_DETAIL = 60;
 export const HEIGHT_ORDER_DETAIL = 82;
 export const LIMIT_ORDER_DETAILS = 2;
-export const LIMIT_RECENT_ORDERS = 6;
+export const LIMIT_RECENT_ORDERS = 5;
 
 export const DRAWER_WIDTH = 240;
 
@@ -67,11 +69,11 @@ export const LIMIT_ROW_GENDER = 5;
 
 export const LIMIT_ROW_ORDER = 20;
 
-export const LIMIT_ROW_COLOR = 5;
+export const LIMIT_ROW_COLOR = 20;
 
-export const LIMIT_ROW_SIZE = 5;
+export const LIMIT_ROW_SIZE = 20;
 
-export const LIMIT_ROW_MATERIAL = 5;
+export const LIMIT_ROW_MATERIAL = 20;
 
 export const LIMIT_COMMENT = 5;
 

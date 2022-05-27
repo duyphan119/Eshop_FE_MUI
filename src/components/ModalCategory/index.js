@@ -20,10 +20,13 @@ const ModalCategory = ({
   width,
   category,
 }) => {
+  const icon = category ? category.icon : "";
+
   const groupCategories = useSelector((state) => state.groupCategory.all);
 
   const [name, setName] = useState(category ? category.name : "");
   const [code, setCode] = useState(category ? category.code : "");
+  const [file, setFile] = useState();
 
   const [indexGroup, setIndexGroup] = useState(
     (function () {
@@ -49,6 +52,7 @@ const ModalCategory = ({
         handleOk({
           name,
           code,
+          file,
           groupCategory: groupCategories[indexGroup],
         });
       }}
@@ -86,11 +90,38 @@ const ModalCategory = ({
         <Grid item xs={3}>
           <FormControl fullWidth>
             <TextField
-              label="SKU"
+              label="Viết tắt"
               value={code}
               onChange={(e) => setCode(e.target.value)}
             />
           </FormControl>
+        </Grid>
+        <Grid item xs={3}>
+          <input
+            accept="image/*"
+            id="icon"
+            hidden
+            type="file"
+            onChange={(e) => setFile(e.target.files[0])}
+          />
+          <label
+            htmlFor="icon"
+            style={{
+              border: "1px solid #000",
+              width: "64px",
+              height: "64px",
+              cursor: "pointer",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              textAlign: "center",
+              backgroundImage: `url(${
+                file ? URL.createObjectURL(file) : icon
+              })`,
+            }}
+          >
+            {file ? "" : icon ? "" : "Tải ảnh lên"}
+          </label>
         </Grid>
       </Grid>
     </Modal>

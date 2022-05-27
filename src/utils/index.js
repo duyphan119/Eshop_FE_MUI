@@ -87,3 +87,10 @@ export const getTotalDaysOfMonth = () => {
   let year = dt.getFullYear();
   return new Date(year, month, 0).getDate();
 };
+
+export const calHeightDataGrid = (rowCount) => {
+  const rowHeight = 41;
+  const rowHeaderHeight = 48;
+  const borderCount = rowCount + 3;
+  return rowCount * rowHeight + rowHeaderHeight + borderCount;
+};

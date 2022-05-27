@@ -20,7 +20,7 @@ const CartNotify = () => {
     configAxiosAll(user, dispatch)
       .delete(`${API_CART_ITEM_URL}/${item.id}`)
       .then((res) => {
-        dispatch(removeCartItem(item.id));
+        dispatch(removeCartItem(item));
         dispatch(
           showToastMessage({
             type: "success",

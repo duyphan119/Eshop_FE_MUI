@@ -49,10 +49,6 @@ const UserManagement = () => {
   const [tab, setTab] = useState(1);
 
   useEffect(() => {
-    document.title = "Quản lý người dùng";
-  }, []);
-
-  useEffect(() => {
     const promises = [];
 
     promises.push(

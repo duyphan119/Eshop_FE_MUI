@@ -4,6 +4,7 @@
   --warning-color: #ffcf33;
   --main-color-light: #85c0ff;
   --star-color: #f4d058;
+  --error-color: rgb(225, 29, 29);
 }
 
 .no-result {

@@ -23,14 +23,13 @@ const AccountNotify = () => {
           <Link to="/account" className="account-notify-item">
             Thông tin tài khoản
           </Link>
-          <Link to="/account/order" className="account-notify-item">
-            {user && user.role && user.role.role === "admin"
-              ? "Danh sách đơn hàng"
-              : "Đơn hàng của tôi"}
-          </Link>
-          {user && user.role && user.role.role === "admin" && (
+          {user && user.role && user.role.role === "admin" ? (
             <Link to="/dashboard" className="account-notify-item">
               Bảng điều khiển
+            </Link>
+          ) : (
+            <Link to="/account/order" className="account-notify-item">
+              Đơn hàng của tôi
             </Link>
           )}
           <Link to="/account/latest" className="account-notify-item">
