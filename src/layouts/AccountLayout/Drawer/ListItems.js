@@ -5,8 +5,8 @@ import LogoutIcon from "@mui/icons-material/Logout";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import axios from "axios";
-import { API_AUTH_URL } from "../../../../constants";
-import { logout } from "../../../../redux/authSlice";
+import { API_AUTH_URL } from "../../../constants";
+import { logout } from "../../../redux/authSlice";
 export const MainListItems = ({ items, indexItem, getIndexItem }) => {
   const dispatch = useDispatch();
 

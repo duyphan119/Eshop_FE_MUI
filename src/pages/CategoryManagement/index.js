@@ -2,9 +2,9 @@ import AddIcon from "@mui/icons-material/Add";
 import EditIcon from "@mui/icons-material/Edit";
 import { Button, IconButton, Tab, Tabs, Tooltip } from "@mui/material";
 import Paper from "@mui/material/Paper";
-import { Box } from "@mui/system";
-import "ag-grid-community/dist/styles/ag-grid.css";
-import "ag-grid-community/dist/styles/ag-theme-alpine.css";
+import { Box } from "@mui/material";
+import DeleteIcon from "@mui/icons-material/Delete";
+
 import { AgGridReact } from "ag-grid-react";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -27,6 +27,10 @@ import {
   getCurrentGroupCategory,
 } from "../../redux/groupCategorySlice";
 import { calHeightDataGrid } from "../../utils";
+
+import "ag-grid-community/dist/styles/ag-grid.css";
+import "ag-grid-community/dist/styles/ag-theme-alpine.css";
+import ConfirmDialog from "../../components/ConfirmDialog";
 
 const CategoryManagement = () => {
   const columnGroups = [
@@ -55,18 +59,30 @@ const CategoryManagement = () => {
       field: "actions",
       headerName: "",
       pinned: "right",
-      width: 100,
+      width: 120,
       cellRenderer: (params) => (
-        <Tooltip title="Sửa nhóm danh mục">
-          <IconButton
-            onClick={() => {
-              dispatch(getCurrentGroupCategory(params.data));
-              setOpenGroupCategory(true);
-            }}
-          >
-            <EditIcon />
-          </IconButton>
-        </Tooltip>
+        <>
+          <Tooltip title="Sửa nhóm danh mục">
+            <IconButton
+              onClick={() => {
+                dispatch(getCurrentGroupCategory(params.data));
+                setOpenGroupCategory(true);
+              }}
+            >
+              <EditIcon />
+            </IconButton>
+          </Tooltip>
+          <Tooltip title="Xoá nhóm danh mục">
+            <IconButton
+              onClick={() => {
+                dispatch(getCurrentGroupCategory(params.data));
+                setOpenDialog(true);
+              }}
+            >
+              <DeleteIcon />
+            </IconButton>
+          </Tooltip>
+        </>
       ),
     },
   ];
@@ -81,7 +97,7 @@ const CategoryManagement = () => {
     },
     {
       field: "group_category.gender.name",
-      headerName: "Đối tượng khách hàng",
+      headerName: "Đối tượng",
       flex: 1,
       sortable: true,
       filter: true,
@@ -94,21 +110,19 @@ const CategoryManagement = () => {
       filter: true,
     },
     {
+      field: "icon",
+      headerName: "Icon",
+      flex: 1,
+      cellRenderer: (params) => (
+        <img src={params.data.icon} width="16" height="16" alt="" />
+      ),
+    },
+    {
       field: "name",
       headerName: "Tên danh mục",
       flex: 1,
       sortable: true,
       filter: true,
-      cellRenderer: (params) => (
-        <div style={{ display: "flex", alignItems: "center" }}>
-          {params.data.icon === "" ? (
-            ""
-          ) : (
-            <img src={params.data.icon} width="16" height="16" alt="" />
-          )}
-          {params.data.name}
-        </div>
-      ),
     },
     {
       field: "code",
@@ -121,18 +135,30 @@ const CategoryManagement = () => {
       field: "actions",
       headerName: "",
       pinned: "right",
-      width: 100,
+      width: 120,
       cellRenderer: (params) => (
-        <Tooltip title="Sửa danh mục">
-          <IconButton
-            onClick={() => {
-              dispatch(getCurrentCategory(params.data));
-              setOpenCategory(true);
-            }}
-          >
-            <EditIcon />
-          </IconButton>
-        </Tooltip>
+        <>
+          <Tooltip title="Sửa danh mục">
+            <IconButton
+              onClick={() => {
+                dispatch(getCurrentCategory(params.data));
+                setOpenCategory(true);
+              }}
+            >
+              <EditIcon />
+            </IconButton>
+          </Tooltip>
+          <Tooltip title="Xoá danh mục">
+            <IconButton
+              onClick={() => {
+                dispatch(getCurrentCategory(params.data));
+                setOpenDialog(true);
+              }}
+            >
+              <DeleteIcon />
+            </IconButton>
+          </Tooltip>
+        </>
       ),
     },
   ];
@@ -147,6 +173,7 @@ const CategoryManagement = () => {
 
   const dispatch = useDispatch();
 
+  const [openDialog, setOpenDialog] = useState(false);
   const [openGroupCategory, setOpenGroupCategory] = useState(false);
   const [openCategory, setOpenCategory] = useState(false);
   const [tab, setTab] = useState(1);
@@ -201,12 +228,15 @@ const CategoryManagement = () => {
         .catch((err) => {});
     } else {
       configAxiosAll(user, dispatch)
-        .post(`${API_CATEGORY_URL}`, {
+        .post(`${API_GROUP_CATEGORY_URL}`, {
           name,
           gender_id: gender.id,
         })
         .then((res) => {
-          dispatch(getAllCategories([{ ...res, gender }, ...groupCategories]));
+          console.log(res);
+          dispatch(
+            getAllGroupCategories([{ ...res, gender }, ...groupCategories])
+          );
         })
         .catch((err) => {});
     }
@@ -260,6 +290,26 @@ const CategoryManagement = () => {
     }
   }
 
+  async function onConfirm() {
+    try {
+      if (tab === 0) {
+        await configAxiosAll(user, dispatch).delete(
+          `${API_GROUP_CATEGORY_URL}/${currentGroupCategory.id}`
+        );
+        const data = await configAxiosResponse().get(
+          `${API_GROUP_CATEGORY_URL}`
+        );
+        dispatch(getAllGroupCategories(data));
+      } else {
+        await configAxiosAll(user, dispatch).delete(
+          `${API_CATEGORY_URL}/${currentCategory.id}`
+        );
+        const data = await configAxiosResponse().get(`${API_CATEGORY_URL}`);
+        dispatch(getAllCategories(data));
+      }
+    } catch (error) {}
+  }
+
   return (
     <>
       <Box sx={{ borderBottom: 1, borderColor: "divider", bgcolor: "#fff" }}>
@@ -276,7 +326,10 @@ const CategoryManagement = () => {
         <Button
           variant="contained"
           sx={{ mb: 2 }}
-          onClick={() => setOpenGroupCategory(true)}
+          onClick={() => {
+            dispatch(getCurrentGroupCategory(null));
+            setOpenGroupCategory(true);
+          }}
           startIcon={<AddIcon />}
         >
           Thêm nhóm danh mục
@@ -319,7 +372,10 @@ const CategoryManagement = () => {
         <Button
           variant="contained"
           sx={{ mb: 2 }}
-          onClick={() => setOpenCategory(true)}
+          onClick={() => {
+            dispatch(getCurrentCategory(null));
+            setOpenCategory(true);
+          }}
           startIcon={<AddIcon />}
         >
           Thêm danh mục
@@ -354,6 +410,16 @@ const CategoryManagement = () => {
           />
         )}
       </TabPanel>
+      {openDialog && (
+        <ConfirmDialog
+          open={openDialog}
+          onClose={() => setOpenDialog(false)}
+          onConfirm={onConfirm}
+          text={`Bạn có chắc chắn muốn xoá ${
+            tab === 0 ? "nhóm" : ""
+          } danh mục này ?`}
+        />
+      )}
     </>
   );
 };

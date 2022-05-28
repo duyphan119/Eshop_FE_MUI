@@ -2,18 +2,26 @@ import AddIcon from "@mui/icons-material/Add";
 import CancelIcon from "@mui/icons-material/Cancel";
 import CheckBoxIcon from "@mui/icons-material/CheckBox";
 import EditIcon from "@mui/icons-material/Edit";
-import { Button, IconButton, Tooltip } from "@mui/material";
+import { Box, Button, IconButton, Tooltip } from "@mui/material";
 import Paper from "@mui/material/Paper";
-import "ag-grid-community/dist/styles/ag-grid.css";
-import "ag-grid-community/dist/styles/ag-theme-alpine.css";
+import DeleteIcon from "@mui/icons-material/Delete";
+
 import { AgGridReact } from "ag-grid-react";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import ModalBanner from "../../components/ModalBanner";
 import { configAxiosAll, configAxiosResponse } from "../../config/configAxios";
-import { API_BANNER_URL, API_UPLOAD_URL } from "../../constants";
-import { getAll, getCurrentBanner } from "../../redux/bannerSlice";
+import {
+  API_BANNER_URL,
+  API_UPLOAD_URL,
+  LIMIT_ROW_BANNER,
+} from "../../constants";
 import { calHeightDataGrid } from "../../utils";
+import Pagination from "../../components/Pagination";
+import ConfirmDialog from "../../components/ConfirmDialog";
+
+import "ag-grid-community/dist/styles/ag-grid.css";
+import "ag-grid-community/dist/styles/ag-theme-alpine.css";
 const BannerManagement = () => {
   const columns = [
     {
@@ -82,11 +90,21 @@ const BannerManagement = () => {
           <Tooltip title="Sửa banner">
             <IconButton
               onClick={() => {
-                dispatch(getCurrentBanner(params.data));
+                setCurrent(params.data);
                 setOpen(true);
               }}
             >
               <EditIcon />
+            </IconButton>
+          </Tooltip>
+          <Tooltip title="Xoá banner">
+            <IconButton
+              onClick={() => {
+                setCurrent(params.data);
+                setOpenDialog(true);
+              }}
+            >
+              <DeleteIcon />
             </IconButton>
           </Tooltip>
         </>
@@ -95,21 +113,23 @@ const BannerManagement = () => {
   ];
 
   const user = useSelector((state) => state.auth.currentUser);
-  const banners = useSelector((state) => state.banner.all);
-  const current = useSelector((state) => state.banner.current);
 
   const dispatch = useDispatch();
 
+  const [banner, setBanner] = useState();
+  const [current, setCurrent] = useState();
   const [open, setOpen] = useState(false);
+  const [page, setPage] = useState(1);
+  const [openDialog, setOpenDialog] = useState(false);
 
   useEffect(() => {
     configAxiosResponse()
-      .get(`${API_BANNER_URL}`)
+      .get(`${API_BANNER_URL}?limit=${LIMIT_ROW_BANNER}&p=${page}`)
       .then((data) => {
-        dispatch(getAll(data));
+        setBanner(data);
       })
       .catch((err) => {});
-  }, [dispatch]);
+  }, [page]);
 
   async function getData(data) {
     const { file, position, href, isShow, page } = data;
@@ -138,11 +158,11 @@ const BannerManagement = () => {
                 : current.url,
           }
         );
-        const _banners = [...banners];
+        const _banners = [...banner.items];
         const index = _banners.findIndex((el) => el.id === current.id);
         if (index !== -1) {
           _banners[index] = updated;
-          dispatch(getAll(_banners));
+          setBanner({ ...banner, items: _banners });
         }
       } else {
         const created = await configAxiosAll(user, dispatch).post(
@@ -155,51 +175,94 @@ const BannerManagement = () => {
             url: urlList && urlList.length > 0 ? urlList[0].secure_url : null,
           }
         );
-        dispatch(getAll([created, ...banners]));
+        setBanner({
+          ...banner,
+          items: [created, ...banner.items],
+          total_result: banner.total_result + 1,
+          total_page: (banner.total_result + 1) / banner.limit,
+        });
+      }
+    } catch (error) {}
+  }
+
+  async function onConfirm() {
+    try {
+      if (current) {
+        await configAxiosAll(user, dispatch).delete(
+          `${API_BANNER_URL}/${current.id}`
+        );
+        const data = await configAxiosResponse().get(
+          `${API_BANNER_URL}?limit=${LIMIT_ROW_BANNER}&p=${page}`
+        );
+        setBanner(data);
       }
     } catch (error) {}
   }
 
   return (
-    <Paper sx={{ width: "100%", p: 2 }}>
-      <Button
-        variant="contained"
-        sx={{ mb: 2 }}
-        onClick={() => {
-          dispatch(getCurrentBanner(null));
-          setOpen(true);
-        }}
-        startIcon={<AddIcon />}
-      >
-        Thêm banner
-      </Button>
-      <Paper
-        sx={{
-          width: "100%",
-          height: calHeightDataGrid(10),
-          overflow: "hidden",
-        }}
-      >
-        <div
-          className="ag-theme-alpine"
-          style={{ width: "100%", height: "100%" }}
+    <>
+      <Paper sx={{ width: "100%", p: 2 }}>
+        <Button
+          variant="contained"
+          sx={{ mb: 2 }}
+          onClick={() => {
+            setCurrent(null);
+            setOpen(true);
+          }}
+          startIcon={<AddIcon />}
         >
-          <AgGridReact rowData={banners} columnDefs={columns}></AgGridReact>
-        </div>
-        {open && (
-          <ModalBanner
-            open={open}
-            handleClose={() => setOpen(false)}
-            labelOk={current ? "Sửa" : "Thêm"}
-            title={!current ? "Thêm banner" : "Sửa banner"}
-            isCloseAfterOk={true}
-            banner={current}
-            width={700}
-            handleOk={getData}
-          />
+          Thêm banner
+        </Button>
+        {banner && (
+          <Paper
+            sx={{
+              width: "100%",
+              height: calHeightDataGrid(10),
+              overflow: "hidden",
+            }}
+          >
+            <div
+              className="ag-theme-alpine"
+              style={{ width: "100%", height: "100%" }}
+            >
+              <AgGridReact
+                rowData={banner.items}
+                columnDefs={columns}
+              ></AgGridReact>
+            </div>
+            {open && (
+              <ModalBanner
+                open={open}
+                handleClose={() => setOpen(false)}
+                labelOk={current ? "Sửa" : "Thêm"}
+                title={!current ? "Thêm banner" : "Sửa banner"}
+                isCloseAfterOk={true}
+                banner={current}
+                width={700}
+                handleOk={getData}
+              />
+            )}
+          </Paper>
+        )}
+        {banner && banner.total_page && banner.total_page > 1 && (
+          <Box display="flex" justifyContent="center" mt={1}>
+            <Pagination
+              page={page}
+              totalPage={banner.total_page}
+              onChange={(e, value) => setPage(value)}
+            />
+          </Box>
         )}
       </Paper>
-    </Paper>
+      {openDialog && (
+        <ConfirmDialog
+          open={openDialog}
+          onClose={() => setOpenDialog(false)}
+          onConfirm={onConfirm}
+          text="Bạn có chắc chắn muốn xoá banner này ?"
+        />
+      )}
+    </>
   );
 };
 

@@ -1,27 +1,33 @@
-import { Box, Container, Grid, Pagination, Stack } from "@mui/material";
+import { Box, Container, Grid } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  useLocation,
-  useNavigate,
-  useParams,
-  useSearchParams,
-} from "react-router-dom";
-import { API_PRODUCT_URL } from "../../constants";
-import Filter from "./Filter";
+import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
+
 import Product from "../../components/Product";
-import { PRODUCTS_PER_PAGE } from "../../constants";
-import { configAxiosAll } from "../../config/configAxios";
-import "./ProductCategory.css";
+import Breadcrumbs from "../../components/Breadcrumbs";
+import Pagination from "../../components/Pagination";
+import Filter from "./Filter";
+import {
+  API_COLOR_URL,
+  API_SIZE_URL,
+  PRODUCTS_PER_PAGE,
+} from "../../constants";
+import { configAxiosAll, configAxiosResponse } from "../../config/configAxios";
 import Sort from "./Sort";
-const ProductsCategory = ({ category, groupCategory, genderCategory }) => {
+import "./ProductCategory.css";
+const ProductsCategory = ({
+  category,
+  groupCategory,
+  genderCategory,
+  query,
+  title,
+}) => {
   const user = useSelector((state) => state.auth.currentUser);
   const dispatch = useDispatch();
 
   const navigate = useNavigate();
 
   const location = useLocation();
-  const { category_slug } = useParams();
 
   const [queryParams] = useSearchParams();
   const p = queryParams.get("p");
@@ -31,7 +37,10 @@ const ProductsCategory = ({ category, groupCategory, genderCategory }) => {
   const price = queryParams.get("price");
   const sortBy = queryParams.get("sortBy");
   const sortType = queryParams.get("sortType");
+
   const [product, setProduct] = useState();
+  const [colorFilters, setColorFilters] = useState([]);
+  const [sizeFilters, setSizeFilters] = useState([]);
   const [page, setPage] = useState(initPage(p));
   const [sort, setSort] = useState({ sortBy, sortType });
   const [queryString, setQueryString] = useState(queryParams.toString());
@@ -68,44 +77,46 @@ const ProductsCategory = ({ category, groupCategory, genderCategory }) => {
   }
 
   useEffect(() => {
-    document.title = category
-      ? category.name
-      : groupCategory
-      ? groupCategory.name
-      : "Tất cả sản phẩm";
-  }, [category, groupCategory]);
+    document.title = title;
+  }, [title]);
 
   useEffect(() => {
     (async function () {
       try {
-        let data;
-        if (category_slug !== "all") {
-          data = await configAxiosAll(user, dispatch).get(
-            `${API_PRODUCT_URL}/${
-              category ? "category" : "group-category"
-            }/${category_slug}?include=true&limit=${PRODUCTS_PER_PAGE}${
-              filters ? "&" + queryString : ""
-            }`
-          );
-        } else {
-          data = await configAxiosAll(user, dispatch).get(
-            `${API_PRODUCT_URL}?include=true&limit=${PRODUCTS_PER_PAGE}${
-              filters ? "&" + queryString : ""
-            }`
-          );
+        const promises = [];
+        promises.push(
+          new Promise((resolve, reject) => {
+            resolve(configAxiosResponse().get(`${API_COLOR_URL}`));
+          })
+        );
+        promises.push(
+          new Promise((resolve, reject) => {
+            resolve(configAxiosResponse().get(`${API_SIZE_URL}`));
+          })
+        );
+        const listRes = await Promise.allSettled(promises);
+        if (listRes[0].status === "fulfilled") {
+          setColorFilters(listRes[0].value);
         }
+        if (listRes[0].status === "fulfilled") {
+          setSizeFilters(listRes[1].value);
+        }
+      } catch (error) {}
+    })();
+  }, []);
+
+  useEffect(() => {
+    (async function () {
+      try {
+        let data = await configAxiosAll(user, dispatch).get(
+          `${query}?include=true&limit=${PRODUCTS_PER_PAGE}${
+            filters ? "&" + queryString : ""
+          }`
+        );
         setProduct(data);
       } catch (error) {}
     })();
-  }, [
-    queryParams,
-    category,
-    category_slug,
-    user,
-    dispatch,
-    filters,
-    queryString,
-  ]);
+  }, [dispatch, filters, query, queryString, user]);
   useEffect(() => {
     let url;
     const otherQueryParams = {};
@@ -137,7 +148,7 @@ const ProductsCategory = ({ category, groupCategory, genderCategory }) => {
       for (const key in filters) {
         if (filters[key].length > 0) {
           queryParams.set(key, JSON.stringify(filters[key]));
-          otherQueryParams[key] = filters[key];
+          otherQueryParams[key] = JSON.stringify(filters[key]);
         } else {
           queryParams.delete(key);
         }
@@ -157,9 +168,54 @@ const ProductsCategory = ({ category, groupCategory, genderCategory }) => {
       navigate(location.pathname + "?" + location.search);
     }
   }, [navigate, sort, location, page, filters, queryParams]);
+
+  function showBreadCrumbs() {
+    let items = [{ text: "Trang chủ", to: "/" }];
+    let text = "";
+    if (category && groupCategory && genderCategory) {
+      items = [
+        ...items,
+        {
+          text: genderCategory.name,
+          to: `/${genderCategory.slug}`,
+        },
+        {
+          text: groupCategory.name,
+          to: `/${groupCategory.slug}`,
+        },
+      ];
+      text = category.name;
+    } else if (groupCategory && genderCategory) {
+      items = [
+        ...items,
+        {
+          text: genderCategory.name,
+          to: `/${genderCategory.slug}`,
+        },
+      ];
+      text = groupCategory.name;
+    } else if (genderCategory) {
+      items = [
+        ...items,
+        {
+          text: genderCategory.name,
+          to: `/${genderCategory.slug}`,
+        },
+      ];
+      text = `Thời trang ${genderCategory.name.toLowerCase()}`;
+    }
+
+    return <Breadcrumbs items={items} text={text} />;
+  }
+
   return (
     <Box sx={{ paddingBlock: "20px" }}>
       <Container sx={{ backgroundColor: "#fff" }}>
+        <Grid container>
+          <Grid item lg={12}>
+            {showBreadCrumbs()}
+          </Grid>
+        </Grid>
         <Grid container>
           <Grid item lg={12}>
             <Grid container>
@@ -174,7 +230,12 @@ const ProductsCategory = ({ category, groupCategory, genderCategory }) => {
                 }}
               >
                 <div style={{ display: "flex", alignItems: "center" }}>
-                  <Filter filters={filters} setFilters={setFilters} />
+                  <Filter
+                    filters={filters}
+                    setFilters={setFilters}
+                    colorFilters={colorFilters.map((item) => item.value)}
+                    sizeFilters={sizeFilters.map((item) => item.value)}
+                  />
                   {product?.items?.length > 0 && (
                     <span>{product?.total_result} mặt hàng</span>
                   )}
@@ -227,7 +288,7 @@ const ProductsCategory = ({ category, groupCategory, genderCategory }) => {
                     </Grid>
                   );
                 })}
-              {product?.total_page > 1 && (
+              {product && product.total_page > 1 && (
                 <Grid
                   item
                   xs={12}
@@ -236,16 +297,11 @@ const ProductsCategory = ({ category, groupCategory, genderCategory }) => {
                     justifyContent: "center",
                   }}
                 >
-                  <Stack spacing={2}>
-                    <Pagination
-                      count={product.total_page}
-                      color="primary"
-                      page={page > 0 ? page : 1}
-                      onChange={(e, value) => {
-                        setPage(value);
-                      }}
-                    />
-                  </Stack>
+                  <Pagination
+                    page={page}
+                    onChange={(e, value) => setPage(value)}
+                    totalPage={product.total_page}
+                  />
                 </Grid>
               )}
             </Grid>

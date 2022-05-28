@@ -9,8 +9,8 @@ import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import * as React from "react";
 import { Link, useLocation } from "react-router-dom";
-import { DRAWER_WIDTH } from "../../../../constants";
-import { SocketContext } from "../../../../context";
+import { DRAWER_WIDTH } from "../../../constants";
+import { SocketContext } from "../../../context";
 
 const StyledAppBar = styled(MuiAppBar, {
   shouldForwardProp: (prop) => prop !== "open",

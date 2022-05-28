@@ -2,10 +2,13 @@ import React, { useEffect, useState } from "react";
 import Paper from "@mui/material/Paper";
 import { AgGridReact } from "ag-grid-react";
 import { useDispatch, useSelector } from "react-redux";
-import { IconButton, Tooltip } from "@mui/material";
-import { makeStyles } from "@mui/styles";
+import { IconButton, Tooltip, Box } from "@mui/material";
+
 import DownloadIcon from "@mui/icons-material/Download";
 import EditIcon from "@mui/icons-material/Edit";
+import DeleteIcon from "@mui/icons-material/Delete";
+
+import Pagination from "../../components/Pagination";
 import { configAxiosAll, configAxiosResponse } from "../../config/configAxios";
 import {
   API_ORDER_STATUS_URL,
@@ -21,6 +24,7 @@ import ModalEditOrder from "../../components/ModalEditOrder";
 
 import "ag-grid-community/dist/styles/ag-grid.css";
 import "ag-grid-community/dist/styles/ag-theme-alpine.css";
+import ConfirmDialog from "../../components/ConfirmDialog";
 
 const OrderManagement = () => {
   const columns = [
@@ -88,9 +92,14 @@ const OrderManagement = () => {
       field: "actions",
       headerName: "",
       pinned: "right",
-      width: 120,
+      width: 160,
       cellRenderer: (params) => (
         <>
+          <Tooltip title="Xuất hoá đơn">
+            <IconButton>
+              <DownloadIcon />
+            </IconButton>
+          </Tooltip>
           <Tooltip title="Sửa hoá đơn">
             <IconButton
               onClick={() => {
@@ -101,9 +110,14 @@ const OrderManagement = () => {
               <EditIcon />
             </IconButton>
           </Tooltip>
-          <Tooltip title="Sửa hoá đơn">
+          <Tooltip title="Xoá hoá đơn">
             <IconButton>
-              <DownloadIcon />
+              <DeleteIcon
+                onClick={() => {
+                  setCurrentOrder(params.data);
+                  setOpenDialog(true);
+                }}
+              />
             </IconButton>
           </Tooltip>
         </>
@@ -115,10 +129,11 @@ const OrderManagement = () => {
 
   const dispatch = useDispatch();
 
-  const [page, setPage] = useState(0);
+  const [page, setPage] = useState(1);
   const [order, setOrder] = useState();
   const [currentOrder, setCurrentOrder] = useState();
   const [open, setOpen] = useState(false);
+  const [openDialog, setOpenDialog] = useState(false);
   const [orderStatuses, setOrderStatuses] = useState([]);
 
   console.log(order);
@@ -167,46 +182,69 @@ const OrderManagement = () => {
       })
       .catch((err) => {});
   }
-
+  async function onConfirm() {
+    try {
+      await configAxiosAll(user, dispatch).delete(
+        `${API_ORDER_URL}/${currentOrder.id}`
+      );
+      const data = await configAxiosAll(user, dispatch).get(
+        `${API_ORDER_URL}?limit=${LIMIT_ROW_ORDER}&p=${page}`
+      );
+      setOrder(data);
+    } catch (error) {}
+  }
   return (
-    <Paper
-      sx={{ width: "100%", overflow: "hidden", height: calHeightDataGrid(12) }}
-    >
-      <div
-        className="ag-theme-alpine"
-        style={{ width: "100%", height: "100%" }}
+    <Box p={1} bgcolor="#fff">
+      <Paper
+        sx={{
+          width: "100%",
+          overflow: "hidden",
+          height: calHeightDataGrid(12),
+        }}
       >
-        <AgGridReact
-          rowData={order && order.items ? order.items : []}
-          columnDefs={columns}
-        ></AgGridReact>
-      </div>
-      {/* {order && (
-        <TablePagination
-          rowsPerPageOptions={[LIMIT_ROW_ORDER, 50, 100]}
-          component="div"
-          count={order.total_result}
-          rowsPerPage={LIMIT_ROW_ORDER}
-          page={page}
-          onPageChange={(e, page) => {
-            setPage(page);
-          }}
-        />
-      )} */}
-      {currentOrder && open && (
-        <ModalEditOrder
-          open={open}
-          handleClose={() => setOpen(false)}
-          labelOk="Sửa"
-          title={`Sửa hoá đơn ${currentOrder.id}`}
-          isCloseAfterOk={true}
-          order={currentOrder}
-          width={600}
-          orderStatuses={orderStatuses}
-          handleOk={handleOk}
+        <div
+          className="ag-theme-alpine"
+          style={{ width: "100%", height: "100%" }}
+        >
+          <AgGridReact
+            rowData={order && order.items ? order.items : []}
+            columnDefs={columns}
+          ></AgGridReact>
+        </div>
+        {currentOrder && open && (
+          <ModalEditOrder
+            open={open}
+            handleClose={() => setOpen(false)}
+            labelOk="Sửa"
+            title={`Sửa hoá đơn ${currentOrder.id}`}
+            isCloseAfterOk={true}
+            order={currentOrder}
+            width={600}
+            orderStatuses={orderStatuses}
+            handleOk={handleOk}
+          />
+        )}
+      </Paper>
+      {order && order.total_page && order.total_page > 1 && (
+        <Box sx={{ display: "flex", justifyContent: "center", mt: 1 }}>
+          <Pagination
+            onChange={(e, value) => {
+              setPage(value);
+            }}
+            page={page}
+            totalPage={order.total_page}
+          />
+        </Box>
+      )}
+      {openDialog && (
+        <ConfirmDialog
+          open={openDialog}
+          onClose={() => setOpenDialog(false)}
+          onConfirm={onConfirm}
+          text={`Bạn có chắc chắn muốn xoá hoá đơn này ?`}
         />
       )}
-    </Paper>
+    </Box>
   );
 };
 

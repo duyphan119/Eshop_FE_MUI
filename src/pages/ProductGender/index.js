@@ -1,21 +1,21 @@
-import { Box, Container, Grid } from "@mui/material";
+import { Box, Button, Container, Grid } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useLocation } from "react-router-dom";
 import Slider from "react-slick";
 import "slick-carousel/slick/slick-theme.css";
 import "slick-carousel/slick/slick.css";
-import { isShowCollapse, isShowLoadMore } from "../../components/Button";
-import ProductSkeleton from "../../components/Skeleton/Product";
+import BannerSlider from "../../components/BannerSlider";
+import { ButtonLink } from "../../components/Button";
 import Product from "../../components/Product";
+import ProductSkeleton from "../../components/Skeleton/Product";
+import { TitleCenter } from "../../components/Title";
 import { configAxiosAll, configAxiosResponse } from "../../config/configAxios";
 import {
   API_BANNER_URL,
   API_PRODUCT_URL,
   PRODUCTS_PER_PAGE,
 } from "../../constants";
-import BannerSlider from "../../components/BannerSlider";
-import { TitleCenter } from "../../components/Title";
 
 const ProductGender = ({ genderCategory }) => {
   const user = useSelector((state) => state.auth.currentUser);
@@ -24,9 +24,12 @@ const ProductGender = ({ genderCategory }) => {
 
   const [categories, setCategories] = useState([]);
   const [product, setProduct] = useState();
-  const [limit, setLimit] = useState(PRODUCTS_PER_PAGE);
-  const [callFirstApi, setCallFirstApi] = useState(false);
   const [banners, setBanners] = useState([]);
+  const [queryString, setQueryString] = useState(
+    `${API_PRODUCT_URL}/gender/${genderCategory.slug}?type=best-seller&limit=${PRODUCTS_PER_PAGE}`
+  );
+  const [loading, setLoading] = useState(false);
+  const [index, setIndex] = useState(0);
 
   const location = useLocation();
 
@@ -46,37 +49,31 @@ const ProductGender = ({ genderCategory }) => {
   useEffect(() => {
     (async function () {
       try {
-        const promises = [];
-        promises.push(
-          new Promise((resolve, reject) =>
-            resolve(
-              configAxiosResponse().get(
-                `${API_BANNER_URL}?page=${location.pathname}&position=under-header&isShow=true`
-              )
-            )
-          )
+        const data = await configAxiosResponse().get(
+          `${API_BANNER_URL}?page=${location.pathname}&position=under-header&isShow=true`
         );
-        promises.push(
-          new Promise((resolve, reject) =>
-            resolve(
-              configAxiosAll(user, dispatch).get(
-                `${API_PRODUCT_URL}/gender/${genderCategory.slug}?limit=${limit}`
-              )
-            )
-          )
-        );
-        const listRes = await Promise.allSettled(promises);
-
-        if (listRes[0].status === "fulfilled") {
-          setBanners(listRes[0].value);
-        }
-        if (listRes[1].status === "fulfilled") {
-          setProduct(listRes[1].value);
-          setCallFirstApi(true);
-        }
+        setBanners(data);
       } catch (error) {}
     })();
-  }, [genderCategory, dispatch, limit, user, location.pathname]);
+  }, [location.pathname]);
+
+  useEffect(() => {
+    (async function () {
+      try {
+        const data = await configAxiosAll(user, dispatch).get(queryString);
+        setProduct(data);
+        setLoading(false);
+      } catch (error) {}
+    })();
+  }, [dispatch, queryString, user]);
+
+  function handleClick(i, q) {
+    setIndex(i);
+    setQueryString(q);
+    setProduct(null);
+    setLoading(true);
+  }
+
   return (
     <>
       <Box>
@@ -196,6 +193,55 @@ const ProductGender = ({ genderCategory }) => {
             </Grid>
           </Grid>
           <TitleCenter>Đề xuất cho bạn</TitleCenter>
+          <Box
+            display="flex"
+            alignItems="center"
+            justifyContent="center"
+            mb={2}
+          >
+            <Button
+              variant={index === 0 ? "contained" : "outlined"}
+              onClick={() =>
+                handleClick(
+                  0,
+                  `${API_PRODUCT_URL}/gender/${genderCategory.slug}?type=best-seller&limit=${PRODUCTS_PER_PAGE}`
+                )
+              }
+            >
+              Bán chạy nhất
+            </Button>
+            <Button
+              variant={index === 1 ? "contained" : "outlined"}
+              sx={{ ml: 1 }}
+              onClick={() =>
+                handleClick(
+                  1,
+                  `${API_PRODUCT_URL}/gender/${genderCategory.slug}?limit=${PRODUCTS_PER_PAGE}`
+                )
+              }
+            >
+              Mới nhất
+            </Button>
+            {genderCategory.group_categories.map((item, i) => (
+              <Button
+                variant={index === i + 2 ? "contained" : "outlined"}
+                sx={{ ml: 1 }}
+                key={i}
+                onClick={() =>
+                  handleClick(
+                    i + 2,
+                    `${API_PRODUCT_URL}/group-category/${item.slug}?limit=${PRODUCTS_PER_PAGE}`
+                  )
+                }
+              >
+                {
+                  item.name
+                    .toLowerCase()
+                    .split(genderCategory.name.toLowerCase())[0]
+                }
+              </Button>
+            ))}
+          </Box>
           <Grid container spacing={2}>
             {product && product.items?.length !== 0 ? (
               product.items?.map((product) => (
@@ -217,38 +263,39 @@ const ProductGender = ({ genderCategory }) => {
                   <Product product={product} />
                 </Grid>
               ))
-            ) : callFirstApi ? (
+            ) : !loading ? (
               <Grid item xs={12}>
                 <div className="no-result">
                   Không có sản phẩm trong danh mục này
                 </div>
               </Grid>
             ) : (
-              <Grid
-                item
-                xs={6}
-                sm={4}
-                md={3}
-                sx={{
-                  maxWidth: {
-                    lg: "20% !important",
-                  },
-                  flexBasis: {
-                    lg: "20% !important",
-                  },
-                }}
-              >
-                <ProductSkeleton />
-              </Grid>
+              new Array(PRODUCTS_PER_PAGE).fill(1).map((item, i) => (
+                <Grid
+                  item
+                  xs={6}
+                  sm={4}
+                  md={3}
+                  sx={{
+                    maxWidth: {
+                      lg: "20% !important",
+                    },
+                    flexBasis: {
+                      lg: "20% !important",
+                    },
+                  }}
+                  key={i}
+                >
+                  <ProductSkeleton />
+                </Grid>
+              ))
             )}
           </Grid>
           <Box textAlign="center" my={1}>
-            {isShowLoadMore(product, PRODUCTS_PER_PAGE, () =>
-              setLimit(limit + PRODUCTS_PER_PAGE)
-            )}
-            {isShowCollapse(product, PRODUCTS_PER_PAGE, () =>
-              setLimit(PRODUCTS_PER_PAGE)
-            )}
+            <ButtonLink
+              label="Xem thêm"
+              link={`/thoi-trang-${genderCategory.slug}`}
+            />
           </Box>
         </Container>
       </Box>

@@ -1,15 +1,26 @@
 import AddOutlinedIcon from "@mui/icons-material/AddOutlined";
 import DeleteIcon from "@mui/icons-material/Delete";
 import RemoveOutlinedIcon from "@mui/icons-material/RemoveOutlined";
-import { Grid, IconButton, Typography } from "@mui/material";
+import {
+  Checkbox,
+  FormControlLabel,
+  Grid,
+  IconButton,
+  Typography,
+} from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { configAxiosAll } from "../../config/configAxios";
 import { API_CART_ITEM_URL } from "../../constants";
-import { removeCartItem, updateCart } from "../../redux/cartSlice";
-import { formatThousandDigits } from "../../utils";
+import {
+  removeCartItem,
+  updateCart,
+  selectCartItem,
+  deSelectCartItem,
+} from "../../redux/cartSlice";
+import { formatThousandDigits, getThumbnailCartItem } from "../../utils";
 
-const CartItem = ({ item }) => {
+const CartItem = ({ item, checked }) => {
   const user = useSelector((state) => state.auth.currentUser);
 
   const dispatch = useDispatch();
@@ -50,6 +61,14 @@ const CartItem = ({ item }) => {
     } catch (error) {}
   }
 
+  function handleCheck(e) {
+    if (e.target.checked) {
+      dispatch(selectCartItem(item));
+    } else {
+      dispatch(deSelectCartItem(item));
+    }
+  }
+
   if (!item) return "";
   console.log(item);
   return (
@@ -70,16 +89,11 @@ const CartItem = ({ item }) => {
           paddingLeft: "8px",
         }}
       >
+        <FormControlLabel
+          control={<Checkbox checked={checked} onChange={handleCheck} />}
+        />
         <img
-          src={(() => {
-            try {
-              return item.detail.product.images.find(
-                (image) => image.color_id === item.detail.color.id
-              ).url;
-            } catch (error) {
-              return "";
-            }
-          })()}
+          src={getThumbnailCartItem(item)}
           alt=""
           style={{
             height: "80px",

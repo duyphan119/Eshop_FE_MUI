@@ -3,9 +3,7 @@ import FilterAltOutlinedIcon from "@mui/icons-material/FilterAltOutlined";
 import { Badge, Box, Button, Typography } from "@mui/material";
 import ClickAwayListener from "@mui/material/ClickAwayListener";
 import { useState } from "react";
-const colorFilters = ["Đỏ", "Trắng", "Đen"];
-const sizeFilters = ["XS", "S", "M", "L", "XL", "2XL", "3XL"];
-const Filter = ({ filters, setFilters }) => {
+const Filter = ({ filters, setFilters, colorFilters, sizeFilters }) => {
   const [min, setMin] = useState(0);
   const [max, setMax] = useState(1000000);
 
@@ -77,15 +75,13 @@ const Filter = ({ filters, setFilters }) => {
           Lọc
         </Badge>
         {open && (
-          <Box
-            className="filter-product-box"
-            sx={{
-              cursor: "default",
-            }}
-          >
-            <label htmlFor="filter-product" className="filter-product-close">
+          <Box className="filter-product-box custom-scrollbar">
+            <div
+              className="filter-product-close"
+              onClick={() => setOpen(false)}
+            >
               <ClearOutlinedIcon />
-            </label>
+            </div>
             {(filters.color.length !== 0 ||
               filters.size.length !== 0 ||
               filters.price.length !== 0) && (

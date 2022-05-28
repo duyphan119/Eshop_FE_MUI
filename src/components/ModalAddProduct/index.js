@@ -106,15 +106,17 @@ const ModalAddProduct = ({
         title={title}
         labelOk={labelOk}
         handleOk={() => {
-          handleOk({
-            name,
-            price,
-            description,
-            category: categories[indexCategory],
-            details,
-            materials,
-            images,
-          });
+          if (details.length > 0 && images.length > 0) {
+            handleOk({
+              name,
+              price,
+              description,
+              category: categories[indexCategory],
+              details,
+              materials,
+              images,
+            });
+          }
         }}
         isCloseAfterOk={isCloseAfterOk}
         width={width}

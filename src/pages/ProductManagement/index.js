@@ -8,7 +8,9 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
 import ConfirmDialog from "../../components/ConfirmDialog";
+import DeleteIcon from "@mui/icons-material/Delete";
 import ModalAddProduct from "../../components/ModalAddProduct";
+import Pagination from "../../components/Pagination";
 import { configAxiosAll, configAxiosResponse } from "../../config/configAxios";
 import {
   API_CATEGORY_URL,
@@ -69,18 +71,30 @@ const ProductManagement = () => {
       field: "actions",
       headerName: "",
       pinned: "right",
-      width: 100,
+      width: 120,
       cellRenderer: (params) => (
-        <Tooltip title="Sửa sản phẩm">
-          <IconButton
-            onClick={() => {
-              setCurrentProduct(params.data);
-              setOpen(true);
-            }}
-          >
-            <EditIcon />
-          </IconButton>
-        </Tooltip>
+        <>
+          <Tooltip title="Sửa sản phẩm">
+            <IconButton
+              onClick={() => {
+                setCurrentProduct(params.data);
+                setOpen(true);
+              }}
+            >
+              <EditIcon />
+            </IconButton>
+          </Tooltip>
+          <Tooltip title="Xoá sản phẩm">
+            <IconButton
+              onClick={() => {
+                setCurrentProduct(params.data);
+                setOpenDialog(true);
+              }}
+            >
+              <DeleteIcon />
+            </IconButton>
+          </Tooltip>
+        </>
       ),
     },
   ];
@@ -91,14 +105,9 @@ const ProductManagement = () => {
   const [product, setProduct] = useState();
   const [currentProduct, setCurrentProduct] = useState();
   const [open, setOpen] = useState(false);
-  const [page, setPage] = useState(0);
-  const [tab, setTab] = useState(0);
-  const [confirmDialog, setConfirmDialog] = useState({
-    open: false,
-    title: "",
-    text: "",
-    onConfirm: () => {},
-  });
+  const [page, setPage] = useState(1);
+  const [tab, setTab] = useState(3);
+  const [openDialog, setOpenDialog] = useState(false);
 
   useEffect(() => {
     (function () {
@@ -106,10 +115,10 @@ const ProductManagement = () => {
         resolve(configAxiosAll(user, dispatch).get(`${API_CATEGORY_URL}`));
       });
       const promiseColor = new Promise((resolve, reject) => {
-        resolve(configAxiosAll(user, dispatch).get(`${API_COLOR_URL}`));
+        resolve(configAxiosResponse().get(`${API_COLOR_URL}`));
       });
       const promiseSize = new Promise((resolve, reject) => {
-        resolve(configAxiosAll(user, dispatch).get(`${API_SIZE_URL}`));
+        resolve(configAxiosResponse().get(`${API_SIZE_URL}`));
       });
       const promiseMaterial = new Promise((resolve, reject) => {
         resolve(configAxiosAll(user, dispatch).get(`${API_MATERIAL_URL}`));
@@ -117,9 +126,7 @@ const ProductManagement = () => {
       const promiseProduct = new Promise((resolve, reject) => {
         resolve(
           configAxiosAll(user, dispatch).get(
-            `${API_PRODUCT_URL}?limit=${LIMIT_ROW_PRODUCT}&include=true&p=${
-              page + 1
-            }`
+            `${API_PRODUCT_URL}?limit=${LIMIT_ROW_PRODUCT}&include=true&p=${page}`
           )
         );
       });
@@ -141,6 +148,8 @@ const ProductManagement = () => {
         .catch((err) => {});
     })();
   }, [dispatch, user, page]);
+
+  console.log(product);
 
   async function handleOk(data) {
     const { name, price, description, category, details, materials, images } =
@@ -164,11 +173,13 @@ const ProductManagement = () => {
           productImages.push({ color: image.color });
         });
       });
-
-      const urlList = await configAxiosResponse().post(
-        `${API_UPLOAD_URL}`,
-        formData
-      );
+      let urlList = [];
+      if (images.length > 0) {
+        urlList = await configAxiosResponse().post(
+          `${API_UPLOAD_URL}`,
+          formData
+        );
+      }
 
       const promises = [];
       if (materials.length > 0) {
@@ -235,6 +246,20 @@ const ProductManagement = () => {
     } catch (error) {}
   }
 
+  async function onConfirm() {
+    try {
+      if (currentProduct) {
+        await configAxiosAll(user, dispatch).delete(
+          `${API_PRODUCT_URL}/${currentProduct.id}`
+        );
+        const data = await configAxiosAll(user, dispatch).get(
+          `${API_PRODUCT_URL}?limit=${LIMIT_ROW_PRODUCT}&include=true&p=${page}`
+        );
+        setProduct(data);
+      }
+    } catch (error) {}
+  }
+
   return (
     <>
       <Box sx={{ borderBottom: 1, borderColor: "divider", bgcolor: "#fff" }}>
@@ -286,27 +311,25 @@ const ProductManagement = () => {
               columnDefs={columns}
             ></AgGridReact>
           </div>
-          {/* {product && (
-            <TablePagination
-              rowsPerPageOptions={[LIMIT_ROW_PRODUCT, 50, 100]}
-              component="div"
-              count={product.total_result}
-              rowsPerPage={LIMIT_ROW_PRODUCT}
-              page={page}
-              onPageChange={(e, page) => {
-                setPage(page);
-              }}
-            />
-          )} */}
         </Paper>
+        {product && product.total_page && product.total_page > 1 && (
+          <Box sx={{ display: "flex", justifyContent: "center", mt: 1 }}>
+            <Pagination
+              onChange={(e, value) => {
+                setPage(value);
+              }}
+              page={page}
+              totalPage={product.total_page}
+            />
+          </Box>
+        )}
       </TabPanel>
-      {confirmDialog.open && (
+      {openDialog && (
         <ConfirmDialog
-          open={confirmDialog.open}
-          title={confirmDialog.title}
-          text={confirmDialog.text}
-          onConfirm={confirmDialog.onConfirm}
-          onClose={() => setConfirmDialog({ ...confirmDialog, open: false })}
+          open={openDialog}
+          text="Bạn có chắc chắn muốn xoá sản phẩm này ?"
+          onConfirm={onConfirm}
+          onClose={() => setOpenDialog(false)}
         />
       )}
 
@@ -343,7 +366,7 @@ function TabPanel(props) {
       {...other}
     >
       {value === index && (
-        <Box sx={{ p: 3, bgcolor: "#fff" }}>
+        <Box sx={{ p: 1, bgcolor: "#fff" }}>
           <>{children}</>
         </Box>
       )}

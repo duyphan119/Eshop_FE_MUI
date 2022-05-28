@@ -15,6 +15,7 @@ import useMediaQuery from "@mui/material/useMediaQuery";
 import MenuIcon from "@mui/icons-material/Menu";
 import { useSelector } from "react-redux";
 import CategoryOutlinedIcon from "@mui/icons-material/CategoryOutlined";
+import config from "../../../config";
 
 export default function HeaderDrawer() {
   const theme = useTheme();
@@ -44,7 +45,7 @@ export default function HeaderDrawer() {
         <Box sx={{ width: 250 }} onKeyDown={() => setState(!state)}>
           <List>
             <Link
-              to="/account"
+              to={config.routes.account}
               style={{
                 textDecoration: "none",
                 color: "inherit",
@@ -58,7 +59,7 @@ export default function HeaderDrawer() {
               </ListItem>
             </Link>
             <Link
-              to="/cart"
+              to={config.routes.cart}
               style={{
                 textDecoration: "none",
                 color: "inherit",
@@ -95,7 +96,7 @@ export default function HeaderDrawer() {
                 </Link>
               ))}
             <Link
-              to="/favorite"
+              to={config.routes.accountFavorite}
               style={{
                 textDecoration: "none",
                 color: "inherit",

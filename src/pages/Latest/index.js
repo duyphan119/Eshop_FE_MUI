@@ -1,7 +1,8 @@
-import { Box, Button, Grid, Typography } from "@mui/material";
+import { Box, Button, Grid } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import Product from "../../components/Product";
+import { TitleAccount } from "../../components/Title";
 import { LIMIT_LATEST } from "../../constants";
 
 const Latest = () => {
@@ -17,18 +18,12 @@ const Latest = () => {
 
   return (
     <>
-      <Box
-        display="flex"
-        alignItems="center"
-        justifyContent="space-between"
-        p={2}
-        borderBottom="1px solid black"
-      >
-        <Typography color="var(--main-color)">Đã xem gần đây</Typography>
-        <Typography>{latest.length} sản phẩm</Typography>
-      </Box>
+      <TitleAccount
+        leftLabel="Đã xem gần đây"
+        rightLabel={`${latest.length} sản phẩm`}
+      />
       <Box py={1} px={2}>
-        <Grid container columnSpacing={2} sx={{ marginTop: "8px" }}>
+        <Grid container spacing={2} sx={{ marginTop: "8px" }}>
           {latest.length !== 0 ? (
             [...latest].splice(0, limit).map((product, index) => (
               <Grid item xs={6} sm={4} md={3} key={index}>

@@ -4,10 +4,12 @@ import AccountBoxOutlinedIcon from "@mui/icons-material/AccountBoxOutlined";
 import ReceiptIcon from "@mui/icons-material/Receipt";
 import HistoryIcon from "@mui/icons-material/History";
 import FavoriteIcon from "@mui/icons-material/Favorite";
+import LockResetIcon from "@mui/icons-material/LockReset";
 import Footer from "../DefaultLayout/Footer";
 import { Container, Grid, Box, Typography } from "@mui/material";
+
 import Drawer from "./Drawer";
-import Breadcrumbs from "../../Breadcrumbs";
+import Breadcrumbs from "../../components/Breadcrumbs";
 import { useLocation } from "react-router-dom";
 const items = [
   {
@@ -33,6 +35,12 @@ const items = [
     title: "Sản phẩm yêu thích",
     breadcrumb: "Yêu thích",
     icon: FavoriteIcon,
+  },
+  {
+    to: "/account/change-password",
+    title: "Đổi mật khẩu",
+    breadcrumb: "Tài khoản",
+    icon: LockResetIcon,
   },
 ];
 const AccountLayout = ({ children }) => {
@@ -102,6 +110,7 @@ const AccountLayout = ({ children }) => {
             <Grid item xs={9}>
               <Box
                 minHeight="calc(100vh - 200px)"
+                height="100%"
                 bgcolor="#fff"
                 position="relative"
               >

@@ -44,25 +44,24 @@
 }
 
 /* Cart Result */
-.cart-result-container {
-  background-color: #fff;
-  padding-inline: 8px;
-}
-.cart-result-item {
+.cart-result-wrapper {
   display: flex;
+  align-items: center;
   justify-content: space-between;
+  width: 100%;
+  padding-left: 8px;
 }
-.cart-result-item-left,
-.cart-result-item-right {
-  flex: 1;
-  margin-top: 10px;
-  font-size: 14px;
+.cart-result-left {
+  display: flex;
+  align-items: center;
 }
-.cart-result-item-right {
-  text-align: right;
+.cart-result-check-all {
+  margin-right: 16px;
 }
-.cart-result-last-item-left,
-.cart-result-last-item-right {
-  font-weight: 600;
-  font-size: 16px;
+.cart-result-right {
+  display: flex;
+  align-items: center;
+}
+.cart-result-total {
+  margin-right: 16px;
 }

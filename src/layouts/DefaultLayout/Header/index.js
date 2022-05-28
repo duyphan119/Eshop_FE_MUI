@@ -9,16 +9,18 @@ import Tooltip from "@mui/material/Tooltip";
 import {
   configAxiosAll,
   configAxiosResponse,
-} from "../../../../config/configAxios";
-import { API_CART_URL, API_PRODUCT_URL } from "../../../../constants";
-import { getWishlist } from "../../../../redux/wishlistSlice";
-import { getCart } from "../../../../redux/cartSlice";
+} from "../../../config/configAxios";
+import { API_CART_URL, API_PRODUCT_URL } from "../../../constants";
+import { getWishlist } from "../../../redux/wishlistSlice";
+import { getCart } from "../../../redux/cartSlice";
 import AccountNotify from "./AccountNotify";
 import CartNotify from "./CartNotify";
 import "./Header.css";
 import HeaderCategoryList from "./HeaderCategoryList";
 import HeaderDrawer from "./HeaderDrawer";
 import SearchBar from "./SearchBar";
+import config from "../../../config";
+import Logo from "../../../components/Logo";
 const Header = () => {
   // const theme = useTheme
 
@@ -77,16 +79,7 @@ const Header = () => {
           }}
         >
           <Grid item xs={3} xl={2} lg={2}>
-            <Link
-              to="/"
-              style={{
-                textDecoration: "none",
-                color: "#fff",
-                fontWeight: "500",
-              }}
-            >
-              CHICKEN DEV
-            </Link>
+            <Logo />
           </Grid>
           <Grid
             item
@@ -139,7 +132,10 @@ const Header = () => {
               </Link>
               <AccountNotify />
             </div>
-            <Link to="/account/favorite" className="header-favorite-link">
+            <Link
+              to={config.routes.accountFavorite}
+              className="header-favorite-link"
+            >
               <Tooltip title="Sản phẩm yêu thích">
                 <Badge badgeContent={wishlist.length} color="secondary">
                   <FavoriteBorderOutlinedIcon />
@@ -147,7 +143,7 @@ const Header = () => {
               </Tooltip>
             </Link>
             <div className="header-cart">
-              <Link to="/cart" className="header-cart-link">
+              <Link to={config.routes.cart} className="header-cart-link">
                 <Tooltip title="Giỏ hàng của bạn">
                   <Badge
                     badgeContent={cart && cart.items ? cart.items.length : 0}

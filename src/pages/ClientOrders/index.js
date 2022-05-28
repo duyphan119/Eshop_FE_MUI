@@ -5,10 +5,10 @@ import {
   TableCell,
   TableHead,
   TableRow,
-  Typography,
 } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { TitleAccount } from "../../components/Title";
 import { configAxiosAll } from "../../config/configAxios";
 import { API_ORDER_URL } from "../../constants";
 import { formatThousandDigits, formatTimeVN } from "../../utils";
@@ -38,16 +38,10 @@ const ClientOrders = () => {
 
   return (
     <>
-      <Box
-        display="flex"
-        alignItems="center"
-        justifyContent="space-between"
-        p={2}
-        borderBottom="1px solid black"
-      >
-        <Typography color="var(--main-color)">Đơn hàng của tôi</Typography>
-        <Typography>{order.items.length} đơn hàng</Typography>
-      </Box>
+      <TitleAccount
+        leftLabel="Đơn hàng của tôi"
+        rightLabel={`${order.items.length} đơn hàng`}
+      />
       <Box p={1}>
         <Table size="small" aria-label="a dense table">
           <TableHead>

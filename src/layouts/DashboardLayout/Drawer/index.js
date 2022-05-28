@@ -6,7 +6,7 @@ import List from "@mui/material/List";
 import { styled } from "@mui/material/styles";
 import Toolbar from "@mui/material/Toolbar";
 import * as React from "react";
-import { DRAWER_WIDTH } from "../../../../constants";
+import { DRAWER_WIDTH } from "../../../constants";
 import { MainListItems, SecondaryListItems } from "./ListItems";
 const StyledDrawer = styled(MuiDrawer, {
   shouldForwardProp: (prop) => prop !== "open",

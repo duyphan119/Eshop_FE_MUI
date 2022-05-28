@@ -1,52 +1,147 @@
 import AddIcon from "@mui/icons-material/Add";
 import EditIcon from "@mui/icons-material/Edit";
+import DeleteIcon from "@mui/icons-material/Delete";
 import { Button, IconButton, Tab, Tabs, Tooltip } from "@mui/material";
 import Paper from "@mui/material/Paper";
-import Table from "@mui/material/Table";
-import TableBody from "@mui/material/TableBody";
-import TableContainer from "@mui/material/TableContainer";
-import TableHead from "@mui/material/TableHead";
-import TablePagination from "@mui/material/TablePagination";
-import TableRow from "@mui/material/TableRow";
-import { makeStyles } from "@mui/styles";
+import { AgGridReact } from "ag-grid-react";
 import { Box } from "@mui/system";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+
 import ModalRole from "../../components/ModalRole";
 import ModalUser from "../../components/ModalUser";
-import { CustomTableCell } from "../../components/TableCell";
+import ConfirmDialog from "../../components/ConfirmDialog";
 import { configAxiosAll } from "../../config/configAxios";
-import {
-  API_ROLE_URL,
-  API_USER_URL,
-  LIMIT_ROW_ROLE,
-  LIMIT_ROW_USER,
-} from "../../constants";
+import { API_ROLE_URL, API_USER_URL, LIMIT_ROW_USER } from "../../constants";
 import { getAll as getAllRoles, getCurrentRole } from "../../redux/roleSlice";
-import { getAll as getAllUSers, getCurrentUser } from "../../redux/userSlice";
-const useStyles = makeStyles({
-  sticky: {
-    position: "sticky",
-    right: 0,
-    backgroundColor: "#fff",
-  },
-});
+import Pagination from "../../components/Pagination";
+import "ag-grid-community/dist/styles/ag-grid.css";
+import "ag-grid-community/dist/styles/ag-theme-alpine.css";
+import { calHeightDataGrid, formatTimeVN } from "../../utils";
+
 const UserManagement = () => {
-  const classes = useStyles();
+  const columnRoles = [
+    {
+      field: "id",
+      headerName: "ID",
+      flex: 1,
+      sortable: true,
+      filter: true,
+    },
+    {
+      field: "role",
+      headerName: "Quyền",
+      flex: 1,
+      sortable: true,
+      filter: true,
+    },
+    {
+      field: "actions",
+      headerName: "",
+      pinned: "right",
+      width: 120,
+      cellRenderer: (params) => (
+        <>
+          <Tooltip title="Sửa quyền">
+            <IconButton
+              onClick={() => {
+                dispatch(getCurrentRole(params.data));
+                setOpenUser(true);
+              }}
+            >
+              <EditIcon />
+            </IconButton>
+          </Tooltip>
+          <Tooltip title="Xoá quyền">
+            <IconButton
+              onClick={() => {
+                dispatch(getCurrentRole(params.data));
+                setOpenDialog(true);
+              }}
+            >
+              <EditIcon />
+            </IconButton>
+          </Tooltip>
+        </>
+      ),
+    },
+  ];
+  const columnUsers = [
+    {
+      field: "id",
+      headerName: "ID",
+      width: 90,
+      sortable: true,
+      filter: true,
+      pinned: "left",
+    },
+    {
+      field: "full_name",
+      headerName: "Họ và tên",
+      width: 200,
+      sortable: true,
+      filter: true,
+    },
+    {
+      field: "email",
+      headerName: "Địa chỉ email",
+      width: 300,
+      sortable: true,
+      filter: true,
+    },
+    {
+      field: "createdAt",
+      headerName: "Thời gian tạo",
+      width: 170,
+      sortable: true,
+      filter: true,
+      valueFormatter: (params) => formatTimeVN(params.data.createdAt),
+    },
+    {
+      field: "actions",
+      headerName: "",
+      pinned: "right",
+      width: 120,
+      cellRenderer: (params) => (
+        <>
+          <Tooltip title="Sửa người dùng">
+            <IconButton
+              onClick={() => {
+                setCurrentUser(params.data);
+                setOpenUser(true);
+              }}
+            >
+              <EditIcon />
+            </IconButton>
+          </Tooltip>
+          <Tooltip title="Xoá người dùng">
+            <IconButton
+              onClick={() => {
+                setCurrentUser(params.data);
+                setOpenDialog(true);
+              }}
+            >
+              <DeleteIcon />
+            </IconButton>
+          </Tooltip>
+        </>
+      ),
+    },
+  ];
 
   const user = useSelector((state) => state.auth.currentUser);
-  const users = useSelector((state) => state.user.all);
-  const currentUser = useSelector((state) => state.user.current);
   const roles = useSelector((state) => state.role.all);
   const currentRole = useSelector((state) => state.role.current);
 
   const dispatch = useDispatch();
 
   const [openRole, setOpenRole] = useState(false);
-  const [pageRole, setPageRole] = useState(0);
+  const [dataUser, setDataUser] = useState();
+  const [currentUser, setCurrentUser] = useState();
   const [openUser, setOpenUser] = useState(false);
-  const [pageUser, setPageUser] = useState(0);
+  const [pageUser, setPageUser] = useState(1);
   const [tab, setTab] = useState(1);
+  const [openDialog, setOpenDialog] = useState(false);
 
   useEffect(() => {
     const promises = [];
@@ -58,7 +153,11 @@ const UserManagement = () => {
     );
     promises.push(
       new Promise((resolve, reject) =>
-        resolve(configAxiosAll(user, dispatch).get(`${API_USER_URL}`))
+        resolve(
+          configAxiosAll(user, dispatch).get(
+            `${API_USER_URL}?limit=${LIMIT_ROW_USER}&p=${pageUser}`
+          )
+        )
       )
     );
     Promise.allSettled(promises)
@@ -67,11 +166,11 @@ const UserManagement = () => {
           dispatch(getAllRoles(listRes[0].value));
         }
         if (listRes[1].status === "fulfilled") {
-          dispatch(getAllUSers(listRes[1].value));
+          setDataUser(listRes[1].value);
         }
       })
       .catch((err) => {});
-  }, [dispatch, user]);
+  }, [dispatch, user, pageUser]);
 
   function getRole(data) {
     const { role } = data;
@@ -112,11 +211,11 @@ const UserManagement = () => {
           email,
         })
         .then((res) => {
-          const _users = [...users];
+          const _users = [...dataUser.items];
           const index = _users.findIndex((el) => el.id === currentUser.id);
           if (index !== -1) {
             _users[index] = res;
-            dispatch(getAllUSers(_users));
+            setDataUser({ ...dataUser, items: _users });
           }
         })
         .catch((err) => {});
@@ -128,10 +227,36 @@ const UserManagement = () => {
           email,
         })
         .then((res) => {
-          dispatch(getAllUSers([{ ...res, role }, ...users]));
+          setDataUser({
+            ...dataUser,
+            items: [{ ...res, role }, ...dataUser.items],
+            total_result: dataUser.items.length + 1,
+            total_page: Math.ceil((dataUser.items.length + 1) / dataUser.limit),
+          });
         })
         .catch((err) => {});
     }
+  }
+  async function onConfirm() {
+    try {
+      if (tab === 0) {
+        await configAxiosAll(user, dispatch).delete(
+          `${API_ROLE_URL}/${currentRole.id}`
+        );
+        const data = await configAxiosAll(user, dispatch).get(
+          `${API_ROLE_URL}`
+        );
+        dispatch(getAllRoles(data));
+      } else {
+        await configAxiosAll(user, dispatch).delete(
+          `${API_USER_URL}/${currentUser.id}`
+        );
+        const data = await configAxiosAll(user, dispatch).get(
+          `${API_USER_URL}?limit=${LIMIT_ROW_USER}&p=${pageUser}`
+        );
+        setDataUser(data);
+      }
+    } catch (error) {}
   }
 
   return (
@@ -150,72 +275,27 @@ const UserManagement = () => {
         <Button
           variant="contained"
           sx={{ mb: 2 }}
-          onClick={() => setOpenRole(true)}
+          onClick={() => {
+            dispatch(getCurrentRole(null));
+            setOpenRole(true);
+          }}
           startIcon={<AddIcon />}
         >
           Thêm quyền
         </Button>
-        <Paper sx={{ width: "100%", overflow: "hidden" }}>
-          <TableContainer sx={{ maxHeight: 380 }} className="custom-scrollbar">
-            <Table stickyHeader size="small">
-              <TableHead>
-                <TableRow>
-                  <CustomTableCell header align="center">
-                    Mã số
-                  </CustomTableCell>
-                  <CustomTableCell header align="center">
-                    Quyền
-                  </CustomTableCell>
-                  <CustomTableCell className={classes.sticky}></CustomTableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {[...roles]
-                  .splice(pageRole * LIMIT_ROW_ROLE, LIMIT_ROW_ROLE)
-                  .map((row) => {
-                    return (
-                      <TableRow
-                        hover
-                        role="checkbox"
-                        tabIndex={-1}
-                        key={row.id}
-                      >
-                        <CustomTableCell align="center">
-                          {row.id}
-                        </CustomTableCell>
-                        <CustomTableCell align="center">
-                          {row.role}
-                        </CustomTableCell>
-                        <CustomTableCell className={classes.sticky}>
-                          <Tooltip title="Sửa quyền">
-                            <IconButton
-                              onClick={() => {
-                                dispatch(getCurrentRole(row));
-                                setOpenRole(true);
-                              }}
-                            >
-                              <EditIcon />
-                            </IconButton>
-                          </Tooltip>
-                        </CustomTableCell>
-                      </TableRow>
-                    );
-                  })}
-              </TableBody>
-            </Table>
-          </TableContainer>
-          {roles && (
-            <TablePagination
-              rowsPerPageOptions={[LIMIT_ROW_ROLE, 50, 100]}
-              component="div"
-              count={roles.length}
-              rowsPerPage={LIMIT_ROW_ROLE}
-              page={pageRole}
-              onPageChange={(e, page) => {
-                setPageRole(page);
-              }}
-            />
-          )}
+        <Paper
+          sx={{
+            width: "100%",
+            height: calHeightDataGrid(10),
+            overflow: "hidden",
+          }}
+        >
+          <div
+            className="ag-theme-alpine"
+            style={{ width: "100%", height: "100%" }}
+          >
+            <AgGridReact rowData={roles} columnDefs={columnRoles}></AgGridReact>
+          </div>
           {openRole && (
             <ModalRole
               open={openRole}
@@ -224,7 +304,6 @@ const UserManagement = () => {
               title={!currentRole ? "Thêm quyền" : "Sửa quyền"}
               isCloseAfterOk={true}
               user={currentRole}
-              // width={500}
               handleOk={getRole}
             />
           )}
@@ -234,98 +313,64 @@ const UserManagement = () => {
         <Button
           variant="contained"
           sx={{ mb: 2 }}
-          onClick={() => setOpenUser(true)}
+          onClick={() => {
+            setCurrentUser(null);
+            setOpenUser(true);
+          }}
           startIcon={<AddIcon />}
         >
           Thêm người dùng
         </Button>
-        <Paper sx={{ width: "100%", overflow: "hidden" }}>
-          <TableContainer sx={{ maxHeight: 380 }} className="custom-scrollbar">
-            <Table stickyHeader size="small">
-              <TableHead>
-                <TableRow>
-                  <CustomTableCell header align="center">
-                    Mã số
-                  </CustomTableCell>
-                  <CustomTableCell header align="center">
-                    Họ tên
-                  </CustomTableCell>
-                  <CustomTableCell header align="center">
-                    Địa chỉ email
-                  </CustomTableCell>
-                  <CustomTableCell header align="center">
-                    Quyền
-                  </CustomTableCell>
-                  <CustomTableCell className={classes.sticky}></CustomTableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {[...users]
-                  .splice(pageUser * LIMIT_ROW_USER, LIMIT_ROW_USER)
-                  .map((row) => {
-                    return (
-                      <TableRow
-                        hover
-                        role="checkbox"
-                        tabIndex={-1}
-                        key={row.id}
-                      >
-                        <CustomTableCell align="center">
-                          {row.id}
-                        </CustomTableCell>
-                        <CustomTableCell align="center">
-                          {row.full_name}
-                        </CustomTableCell>
-                        <CustomTableCell align="center">
-                          {row.email}
-                        </CustomTableCell>
-                        <CustomTableCell align="center">
-                          {row.role.role}
-                        </CustomTableCell>
-                        <CustomTableCell className={classes.sticky}>
-                          <Tooltip title="Sửa người dùng">
-                            <IconButton
-                              onClick={() => {
-                                dispatch(getCurrentUser(row));
-                                setOpenUser(true);
-                              }}
-                            >
-                              <EditIcon />
-                            </IconButton>
-                          </Tooltip>
-                        </CustomTableCell>
-                      </TableRow>
-                    );
-                  })}
-              </TableBody>
-            </Table>
-          </TableContainer>
-          {users && (
-            <TablePagination
-              rowsPerPageOptions={[LIMIT_ROW_USER, 50, 100]}
-              component="div"
-              count={users.length}
-              rowsPerPage={LIMIT_ROW_USER}
+        {dataUser && (
+          <Paper
+            sx={{
+              width: "100%",
+              overflow: "hidden",
+              height: calHeightDataGrid(10),
+            }}
+          >
+            <div
+              className="ag-theme-alpine"
+              style={{ width: "100%", height: "100%" }}
+            >
+              <AgGridReact
+                rowData={dataUser.items}
+                columnDefs={columnUsers}
+              ></AgGridReact>
+            </div>
+            {openUser && (
+              <ModalUser
+                open={openUser}
+                handleClose={() => setOpenUser(false)}
+                labelOk={currentUser ? "Sửa" : "Thêm"}
+                title={!currentUser ? "Thêm người dùng" : "Sửa người dùng"}
+                isCloseAfterOk={true}
+                user={currentUser}
+                handleOk={getUser}
+              />
+            )}
+          </Paper>
+        )}
+        {dataUser && dataUser.total_page && dataUser.total_page > 1 && (
+          <Box display="flex" justifyContent="center" mt={1}>
+            <Pagination
               page={pageUser}
-              onPageChange={(e, page) => {
-                setPageUser(page);
-              }}
+              onChange={(e, value) => setPageUser(value)}
+              totalPage={dataUser.total_page}
             />
-          )}
-          {openUser && (
-            <ModalUser
-              open={openUser}
-              handleClose={() => setOpenUser(false)}
-              labelOk={currentUser ? "Sửa" : "Thêm"}
-              title={!currentUser ? "Thêm người dùng" : "Sửa người dùng"}
-              isCloseAfterOk={true}
-              user={currentUser}
-              // width={500}
-              handleOk={getUser}
-            />
-          )}
-        </Paper>
+          </Box>
+        )}
       </TabPanel>
+      {openDialog && (
+        <ConfirmDialog
+          open={openDialog}
+          onClose={() => setOpenDialog(false)}
+          onConfirm={onConfirm}
+          text={`Bạn có chắc chắn muốn xoá ${
+            tab === 0 ? "quyền" : "người dùng"
+          } này ?`}
+        />
+      )}
     </>
   );
 };
@@ -347,7 +392,7 @@ function TabPanel(props) {
       {...other}
     >
       {value === index && (
-        <Box sx={{ p: 3, bgcolor: "#fff" }}>
+        <Box sx={{ p: 1, bgcolor: "#fff" }}>
           <>{children}</>
         </Box>
       )}

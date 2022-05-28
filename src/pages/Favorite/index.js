@@ -1,8 +1,9 @@
-import { Box, Button, Typography } from "@mui/material";
+import { Box, Button } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import EmptyFavorite from "../../components/EmptyFavorite";
 import FavoriteItem from "../../components/FavoriteItem";
+import { TitleAccount } from "../../components/Title";
 import { LIMIT_WISHLIST } from "../../constants";
 
 const Favorite = () => {
@@ -16,16 +17,10 @@ const Favorite = () => {
 
   return (
     <>
-      <Box
-        display="flex"
-        alignItems="center"
-        justifyContent="space-between"
-        p={2}
-        borderBottom="1px solid black"
-      >
-        <Typography color="var(--main-color)">Sản phẩm yêu thích</Typography>
-        <Typography>{wishlist.length} sản phẩm</Typography>
-      </Box>
+      <TitleAccount
+        leftLabel="Sản phẩm yêu thích"
+        rightLabel={`${wishlist.length} sản phẩm`}
+      />
       <Box>
         {wishlist.length === 0 && <EmptyFavorite />}
         <Box p={1}>

@@ -11,6 +11,7 @@ import Container from "@mui/material/Container";
 import { useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
+
 import { API_AUTH_URL } from "../../constants";
 
 export default function Register() {

@@ -6,8 +6,7 @@ import { configAxiosAll } from "../../config/configAxios";
 import { API_ORDER_URL, LIMIT_RECENT_ORDERS } from "../../constants";
 import { calHeightDataGrid, formatTimeVN } from "../../utils";
 import { AgGridReact } from "ag-grid-react";
-import "ag-grid-community/dist/styles/ag-grid.css";
-import "ag-grid-community/dist/styles/ag-theme-alpine.css";
+
 export default function Orders() {
   const columns = [
     {

@@ -2,17 +2,19 @@ import { Button, IconButton, Paper, Tooltip } from "@mui/material";
 import { useState } from "react";
 import EditIcon from "@mui/icons-material/Edit";
 import AddIcon from "@mui/icons-material/Add";
+import DeleteIcon from "@mui/icons-material/Delete";
 import { AgGridReact } from "ag-grid-react";
 import { useDispatch, useSelector } from "react-redux";
 
 import { getAll, getCurrentColor } from "../../redux/colorSlice";
 import { calHeightDataGrid } from "../../utils";
 import ModalColor from "../../components/ModalColor";
-import { configAxiosAll } from "../../config/configAxios";
+import { configAxiosAll, configAxiosResponse } from "../../config/configAxios";
 import { API_COLOR_URL } from "../../constants";
 
 import "ag-grid-community/dist/styles/ag-grid.css";
 import "ag-grid-community/dist/styles/ag-theme-alpine.css";
+import ConfirmDialog from "../../components/ConfirmDialog";
 
 const ColorTabPanel = () => {
   const user = useSelector((state) => state.auth.currentUser);
@@ -22,6 +24,7 @@ const ColorTabPanel = () => {
   const dispatch = useDispatch();
 
   const [open, setOpen] = useState(false);
+  const [openDialog, setOpenDialog] = useState(false);
 
   const columns = [
     {
@@ -49,18 +52,30 @@ const ColorTabPanel = () => {
       field: "actions",
       headerName: "",
       pinned: "right",
-      width: 100,
+      width: 120,
       cellRenderer: (params) => (
-        <Tooltip title="Sửa màu sắc">
-          <IconButton
-            onClick={() => {
-              dispatch(getCurrentColor(params.data));
-              setOpen(true);
-            }}
-          >
-            <EditIcon />
-          </IconButton>
-        </Tooltip>
+        <>
+          <Tooltip title="Sửa màu sắc">
+            <IconButton
+              onClick={() => {
+                dispatch(getCurrentColor(params.data));
+                setOpen(true);
+              }}
+            >
+              <EditIcon />
+            </IconButton>
+          </Tooltip>
+          <Tooltip title="Xoá màu sắc">
+            <IconButton
+              onClick={() => {
+                dispatch(getCurrentColor(params.data));
+                setOpenDialog(true);
+              }}
+            >
+              <DeleteIcon />
+            </IconButton>
+          </Tooltip>
+        </>
       ),
     },
   ];
@@ -74,9 +89,9 @@ const ColorTabPanel = () => {
         })
         .then((res) => {
           const _all = [...all];
-          const index = all.findIndex((el) => el.id === current.id);
+          const index = _all.findIndex((el) => el.id === current.id);
           if (index !== -1) {
-            all[index] = res;
+            _all[index] = res;
             dispatch(getAll(_all));
           }
         })
@@ -91,6 +106,16 @@ const ColorTabPanel = () => {
         })
         .catch((err) => {});
     }
+  }
+
+  async function onConfirm() {
+    try {
+      await configAxiosAll(user, dispatch).delete(
+        `${API_COLOR_URL}/${current.id}`
+      );
+      const data = await configAxiosResponse().get(`${API_COLOR_URL}`);
+      dispatch(getAll(data));
+    } catch (error) {}
   }
 
   return (
@@ -128,6 +153,14 @@ const ColorTabPanel = () => {
           />
         )}
       </Paper>
+      {openDialog && (
+        <ConfirmDialog
+          open={openDialog}
+          text="Bạn có chắc chắn muốn xoá màu này ?"
+          onClose={() => setOpenDialog(false)}
+          onConfirm={onConfirm}
+        />
+      )}
     </>
   );
 };

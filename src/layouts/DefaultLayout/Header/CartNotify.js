@@ -2,12 +2,13 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import { Box, Button, Typography } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
-import { configAxiosAll } from "../../../../config/configAxios";
-import { API_CART_ITEM_URL } from "../../../../constants";
-import { removeCartItem } from "../../../../redux/cartSlice";
-import { showToastMessage } from "../../../../redux/toastSlice";
-import { formatThousandDigits } from "../../../../utils";
-import EmptyCart from "../../../EmptyCart";
+import EmptyCart from "../../../components/EmptyCart";
+import config from "../../../config";
+import { configAxiosAll } from "../../../config/configAxios";
+import { API_CART_ITEM_URL } from "../../../constants";
+import { removeCartItem } from "../../../redux/cartSlice";
+import { showToastMessage } from "../../../redux/toastSlice";
+import { formatThousandDigits } from "../../../utils";
 
 const CartNotify = () => {
   const cart = useSelector((state) => state.cart.cart);
@@ -107,7 +108,7 @@ const CartNotify = () => {
           <div className="cart-notify-actions">
             <Button variant="contained">
               <Link
-                to={`/cart`}
+                to={config.routes.cart}
                 style={{ textDecoration: "none", color: "inherit" }}
               >
                 Đi đến giỏ hàng

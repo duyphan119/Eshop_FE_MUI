@@ -4,9 +4,9 @@ import { Link, useNavigate } from "react-router-dom";
 import SearchOutlinedIcon from "@mui/icons-material/SearchOutlined";
 import { Button } from "@mui/material";
 import ClickAwayListener from "@mui/material/ClickAwayListener";
-import { formatThousandDigits, getThumbnailProduct } from "../../../../utils";
-import { configAxiosAll } from "../../../../config/configAxios";
-import { API_PRODUCT_URL, LIMIT_SEARCH_RESULT } from "../../../../constants";
+import { formatThousandDigits, getThumbnailProduct } from "../../../utils";
+import { configAxiosAll } from "../../../config/configAxios";
+import { API_PRODUCT_URL, LIMIT_SEARCH_RESULT } from "../../../constants";
 
 const SearchBar = () => {
   const user = useSelector((state) => state.auth.currentUser);

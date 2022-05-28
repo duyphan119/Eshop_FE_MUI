@@ -21,8 +21,10 @@
   z-index: 5;
   font-size: 12px;
   width: 660px;
-  max-height: 400px;
+  max-height: 500px;
+  overflow-y: overlay;
   border-radius: 2px;
+  cursor: default;
 }
 .filter-product-close {
   position: absolute;
@@ -46,6 +48,7 @@
   align-items: flex-start;
 }
 .filter-product-result-selected li {
+  cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -62,6 +65,7 @@
 }
 .filter-product-color li,
 .filter-product-size li {
+  cursor: pointer;
   padding: 4px 5px;
   display: flex;
   align-items: center;
@@ -69,7 +73,8 @@
   border: 2px solid #000;
 }
 .filter-product-size li {
-  width: 40px;
+  cursor: pointer;
+  min-width: 40px;
 }
 .filter-product-result-selected li:last-child,
 .filter-product-color li:last-child,
@@ -78,6 +83,7 @@
 }
 .filter-product-color li,
 .filter-product-size li {
+  cursor: pointer;
   margin: 2px 0;
   margin-right: 10px;
 }

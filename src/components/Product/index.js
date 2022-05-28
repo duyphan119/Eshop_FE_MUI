@@ -197,7 +197,7 @@ const Product = ({ product }) => {
       </div>
       <Link
         to={`/product/${product.slug}`}
-        className="product-name three-dot three-dot-2"
+        className="product-name three-dot three-dot-2 hover-color-main-color"
         style={{
           height: "45px",
           marginTop: "1px",

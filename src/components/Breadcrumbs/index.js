@@ -2,9 +2,9 @@ import { Link } from "react-router-dom";
 import { Typography, Breadcrumbs } from "@mui/material";
 const _Breadcrumbs = ({ items, text }) => {
   return (
-    <Breadcrumbs aria-label="breadcrumb" fontSize="14px">
+    <Breadcrumbs fontSize="14px">
       {items.map((item, index) => (
-        <Link to={item.to} key={index}>
+        <Link to={item.to} key={index} className="hover-color-main-color">
           {item.text}
         </Link>
       ))}

@@ -1,6 +1,3 @@
-import { useEffect, useState } from "react";
-import { useSelector, useDispatch } from "react-redux";
-import { showToastMessage } from "../../redux/toastSlice";
 import {
   Box,
   Button,
@@ -15,17 +12,24 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
+import axios from "axios";
+import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { Navigate, useNavigate } from "react-router-dom";
-import { getTotalPage } from "../../utils";
+import { TitleControl } from "../../components/Title";
+import config from "../../config";
 import { configAxiosAll } from "../../config/configAxios";
 import { API_ORDER_URL, API_PROVINCE_URL } from "../../constants";
+import { getSelectedCartItems } from "../../redux/cartSlice";
+import { showToastMessage } from "../../redux/toastSlice";
+import { getTotalPage } from "../../utils";
 import CheckoutSuccess from "../CheckoutSuccess";
-import axios from "axios";
-import { getCart } from "../../redux/cartSlice";
 
 const Checkout = () => {
   const user = useSelector((state) => state.auth.currentUser);
-  const cart = useSelector((state) => state.cart.cart);
+  const selectedCartItems = useSelector(
+    (state) => state.cart.selectedCartItems
+  );
 
   const dispatch = useDispatch();
 
@@ -39,6 +43,9 @@ const Checkout = () => {
   const [phoneNumber, setPhoneNumber] = useState(
     user && user.phone_number ? user.phone_number : ""
   );
+  const [fullName, setFullName] = useState(
+    user && user.full_name ? user.full_name : ""
+  );
   const [optionsCity, setOptionsCity] = useState([]);
   const [optionsDistrict, setOptionsDistricts] = useState([]);
   const [optionsWards, setOptionsWards] = useState([]);
@@ -51,8 +58,8 @@ const Checkout = () => {
   }, []);
 
   useEffect(() => {
-    setTotalPrice(getTotalPage(cart));
-  }, [cart]);
+    setTotalPrice(getTotalPage(selectedCartItems));
+  }, [selectedCartItems]);
 
   useEffect(() => {
     (async function () {
@@ -82,20 +89,22 @@ const Checkout = () => {
       ward !== "" &&
       addressNo !== "" &&
       street !== "" &&
-      phoneNumber !== ""
+      phoneNumber !== "" &&
+      fullName !== ""
     ) {
       const data = await configAxiosAll(user, dispatch).post(
         `${API_ORDER_URL}`,
         {
           user_id: user.id,
-          cart: cart,
+          cart: selectedCartItems,
           address: `${addressNo} ${street}, ${ward}, ${district}, ${city}`,
           total: totalPrice,
           telephone: phoneNumber,
+          full_name: fullName,
         }
       );
       if (data) {
-        dispatch(getCart({ items: [], count: 0 }));
+        dispatch(getSelectedCartItems({ items: [], count: 0 }));
         setIsSuccessful(!isSuccessful);
       } else {
         dispatch(
@@ -119,61 +128,52 @@ const Checkout = () => {
     }
   };
   if (isSuccessful) return <CheckoutSuccess />;
-  if (cart.count === 0) return <Navigate to="/cart" />;
+  if (selectedCartItems.count === 0)
+    return <Navigate to={config.routes.cart} />;
 
   return (
     <Box sx={{ paddingBlock: "20px" }}>
       <Container>
-        <Grid container columnSpacing={2} rowSpacing={2}>
-          <Grid item xs={12}>
-            <Typography variant="body1" sx={{ fontWeight: "600" }}>
-              THÔNG TIN ĐƠN HÀNG
-            </Typography>
-          </Grid>
-          <Grid item xs={9}>
-            <Grid container columnSpacing={2} rowSpacing={2}>
-              <Grid item xs={12}>
-                <Typography variant="body2">THÔNG TIN KHÁCH HÀNG</Typography>
-              </Grid>
-              <Grid item xs={4}>
-                <FormControl fullWidth>
+        <Grid container spacing={2}>
+          <Grid item xs={8}>
+            <Grid container spacing={2}>
+              <Grid item xs={6}>
+                <TitleControl>Thông tin giao hàng</TitleControl>
+                <FormControl fullWidth sx={{ mt: 2 }}>
                   <TextField
-                    id="email"
-                    label="Email"
-                    variant="outlined"
-                    defaultValue={user.email}
-                    disabled={true}
-                  />
-                </FormControl>
-              </Grid>
-              <Grid item xs={4}>
-                <FormControl fullWidth>
-                  <TextField
-                    id="full_name"
+                    inputProps={{
+                      style: { fontSize: 14 },
+                    }}
+                    size="small"
                     label="Họ tên"
                     variant="outlined"
-                    defaultValue={user.full_name}
-                    disabled={true}
+                    value={fullName}
+                    onChange={(e) => setFullName(e.target.value)}
                   />
                 </FormControl>
-              </Grid>
-              <Grid item xs={4}>
-                <FormControl fullWidth>
+                <FormControl fullWidth sx={{ mt: 2 }}>
                   <TextField
-                    id="phone"
+                    inputProps={{
+                      style: { fontSize: 14 },
+                    }}
+                    size="small"
                     label="Số điện thoại liện hệ"
                     variant="outlined"
                     value={phoneNumber}
                     onChange={(e) => setPhoneNumber(e.target.value)}
                   />
                 </FormControl>
-              </Grid>
-              <Grid item xs={4}>
-                <FormControl fullWidth>
-                  <InputLabel id="city">Tỉnh, Thành phố</InputLabel>
+                <FormControl fullWidth sx={{ mt: 2 }} size="small">
+                  <InputLabel
+                    id="city"
+                    sx={{ bgcolor: "#fff", padding: "0 8px 0 3px" }}
+                  >
+                    Tỉnh, Thành phố
+                  </InputLabel>
                   <Select
+                    className="fz-14"
                     labelId="city"
-                    id="select-city"
+                    size="small"
                     value={city}
                     label="Tỉnh, Thành phố"
                     onChange={(e) => setCity(e.target.value)}
@@ -187,13 +187,16 @@ const Checkout = () => {
                     })}
                   </Select>
                 </FormControl>
-              </Grid>
-              <Grid item xs={4}>
-                <FormControl fullWidth>
-                  <InputLabel id="district">Quận, Huyện</InputLabel>
+                <FormControl fullWidth sx={{ mt: 2 }} size="small">
+                  <InputLabel
+                    id="district"
+                    sx={{ bgcolor: "#fff", padding: "0 8px 0 3px" }}
+                  >
+                    Quận, Huyện
+                  </InputLabel>
                   <Select
                     labelId="district"
-                    id="select-district"
+                    className="fz-14"
                     value={district}
                     label="Quận, Huyện"
                     disabled={optionsDistrict.length === 0}
@@ -208,13 +211,16 @@ const Checkout = () => {
                     })}
                   </Select>
                 </FormControl>
-              </Grid>
-              <Grid item xs={4}>
-                <FormControl fullWidth>
-                  <InputLabel id="ward">Phường</InputLabel>
+                <FormControl fullWidth sx={{ mt: 2 }} size="small">
+                  <InputLabel
+                    id="ward"
+                    sx={{ bgcolor: "#fff", padding: "0 8px 0 3px" }}
+                  >
+                    Phường
+                  </InputLabel>
                   <Select
                     labelId="ward"
-                    id="select-ward"
+                    className="fz-14"
                     value={ward}
                     label="Phường"
                     disabled={optionsWards.length === 0}
@@ -229,10 +235,12 @@ const Checkout = () => {
                     })}
                   </Select>
                 </FormControl>
-              </Grid>
-              <Grid item xs={4}>
-                <FormControl fullWidth>
+                <FormControl fullWidth sx={{ mt: 2 }}>
                   <TextField
+                    inputProps={{
+                      style: { fontSize: 14 },
+                    }}
+                    size="small"
                     id="street"
                     label="Tên đường"
                     variant="outlined"
@@ -241,10 +249,12 @@ const Checkout = () => {
                     onChange={(e) => setStreet(e.target.value)}
                   />
                 </FormControl>
-              </Grid>
-              <Grid item xs={4}>
-                <FormControl fullWidth>
+                <FormControl fullWidth sx={{ mt: 2 }}>
                   <TextField
+                    inputProps={{
+                      style: { fontSize: 14 },
+                    }}
+                    size="small"
                     id="addressNo"
                     label="Số nhà"
                     variant="outlined"
@@ -254,7 +264,8 @@ const Checkout = () => {
                   />
                 </FormControl>
               </Grid>
-              <Grid item xs={12}>
+
+              <Grid item xs={6}>
                 <FormControlLabel
                   control={<Checkbox defaultChecked />}
                   label="Thanh toán khi giao hàng"
@@ -262,141 +273,120 @@ const Checkout = () => {
               </Grid>
             </Grid>
           </Grid>
-          <Grid item xs={3}>
-            <Grid
-              container
+          <Grid item xs={4} sx={{ borderLeft: "0.5px solid lightgray" }}>
+            <TitleControl>
+              Đơn hàng ({selectedCartItems.count} sản phẩm)
+            </TitleControl>
+
+            <Box
               sx={{
-                backgroundColor: "#fff",
+                display: "flex",
+                justifyContent: "space-between",
+                marginTop: "10px",
+                paddingInline: "2px",
               }}
             >
-              <Grid
-                item
-                lg={12}
-                sx={{
-                  display: "flex",
-                  justifyContent: "space-between",
+              <div
+                style={{
+                  flex: "1",
+                  fontSize: "14px",
                 }}
               >
-                <Typography variant="body1">ĐƠN GIÁ</Typography>
-              </Grid>
-              <Grid
-                item
-                lg={12}
-                sx={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  marginTop: "10px",
-                  paddingInline: "2px",
+                Thành tiền
+              </div>
+              <div
+                style={{
+                  flex: "1",
+                  fontSize: "14px",
+                  textAlign: "right",
                 }}
               >
-                <div
-                  style={{
-                    flex: "1",
-                    fontSize: "14px",
-                  }}
-                >
-                  Thành tiền
-                </div>
-                <div
-                  style={{
-                    flex: "1",
-                    fontSize: "14px",
-                    textAlign: "right",
-                  }}
-                >
-                  {totalPrice.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")}đ
-                </div>
-              </Grid>
-              <Grid
-                item
-                lg={12}
-                sx={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  marginTop: "10px",
-                  paddingInline: "2px",
+                {totalPrice.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")}đ
+              </div>
+            </Box>
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "space-between",
+                marginTop: "10px",
+                paddingInline: "2px",
+              }}
+            >
+              <div
+                style={{
+                  flex: "1",
+                  fontSize: "14px",
                 }}
               >
-                <div
-                  style={{
-                    flex: "1",
-                    fontSize: "14px",
-                  }}
-                >
-                  Vận chuyển
-                </div>
-                <div
-                  style={{
-                    flex: "1",
-                    fontSize: "14px",
-                    textAlign: "right",
-                  }}
-                >
-                  0đ
-                </div>
-              </Grid>
-              <Grid
-                item
-                lg={12}
-                sx={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  marginTop: "10px",
-                  paddingInline: "2px",
+                Vận chuyển
+              </div>
+              <div
+                style={{
+                  flex: "1",
+                  fontSize: "14px",
+                  textAlign: "right",
                 }}
               >
-                <div
-                  style={{
-                    flex: "1",
-                    fontWeight: "500",
-                  }}
-                >
-                  Tổng cộng
-                </div>
-                <div
-                  style={{
-                    flex: "1",
-                    fontWeight: "500",
-                    textAlign: "right",
-                  }}
-                >
-                  {totalPrice.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")}đ
-                </div>
-              </Grid>
-              <Grid
-                item
-                lg={12}
-                sx={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  margin: "10px 0",
-                  flexDirection: "column",
+                0đ
+              </div>
+            </Box>
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "space-between",
+                marginTop: "10px",
+                paddingInline: "2px",
+              }}
+            >
+              <div
+                style={{
+                  flex: "1",
+                  fontWeight: "500",
                 }}
               >
-                <Button
-                  color="primary"
-                  variant="outlined"
-                  sx={{
-                    flex: "1",
-                    marginTop: "5px",
-                  }}
-                  onClick={() => navigate("/cart")}
-                >
-                  QUAY VỀ GIỎ HÀNG
-                </Button>
-                <Button
-                  color="primary"
-                  variant="contained"
-                  sx={{
-                    flex: "1",
-                    marginTop: "5px",
-                  }}
-                  onClick={() => handleCheckout()}
-                >
-                  ĐẶT HÀNG
-                </Button>
-              </Grid>
-            </Grid>
+                Tổng cộng
+              </div>
+              <div
+                style={{
+                  flex: "1",
+                  fontWeight: "500",
+                  textAlign: "right",
+                }}
+              >
+                {totalPrice.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")}đ
+              </div>
+            </Box>
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "space-between",
+                margin: "10px 0",
+                flexDirection: "column",
+              }}
+            >
+              <Button
+                color="primary"
+                variant="outlined"
+                sx={{
+                  flex: "1",
+                  marginTop: "5px",
+                }}
+                onClick={() => navigate("/cart")}
+              >
+                QUAY VỀ GIỎ HÀNG
+              </Button>
+              <Button
+                color="primary"
+                variant="contained"
+                sx={{
+                  flex: "1",
+                  marginTop: "5px",
+                }}
+                onClick={() => handleCheckout()}
+              >
+                ĐẶT HÀNG
+              </Button>
+            </Box>
           </Grid>
         </Grid>
       </Container>

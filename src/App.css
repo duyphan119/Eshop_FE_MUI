@@ -31,7 +31,9 @@ ul {
   margin: 0;
   padding: 0;
 }
-
+.fz-14 {
+  font-size: 14px !important;
+}
 .three-dot {
   overflow: hidden;
   display: -webkit-box;
@@ -91,6 +93,6 @@ ul {
   transform: translate(-50%, -50%) rotate(-45deg);
   background-color: #000;
 }
-.hover-text-main-color:hover {
+.hover-color-main-color:hover {
   color: var(--main-color);
 }

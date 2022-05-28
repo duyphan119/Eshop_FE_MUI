@@ -98,7 +98,7 @@ const FavoriteItem = ({ item }) => {
         <Box className="">
           <Link
             to={`/product/${item.slug}`}
-            className="hover-text-main-color three-dot three-dot-1"
+            className="hover-color-main-color three-dot three-dot-1"
           >
             {item.name}
           </Link>

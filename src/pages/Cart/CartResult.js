@@ -1,59 +1,66 @@
-import { Button, Grid } from "@mui/material";
-import React from "react";
-import { useSelector } from "react-redux";
+import { Button, Checkbox, FormControlLabel } from "@mui/material";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { formatThousandDigits, getTotalPage } from "../../utils";
-
+import config from "../../config";
+import { getSelectedCartItems } from "../../redux/cartSlice";
 const CartResult = () => {
   const cart = useSelector((state) => state.cart.cart);
-
+  const selectedCartItems = useSelector(
+    (state) => state.cart.selectedCartItems
+  );
   const navigate = useNavigate();
 
+  const dispatch = useDispatch();
+
   const handleCheckOut = () => {
-    navigate("/checkout");
+    if (selectedCartItems.items.length > 0) {
+      navigate(config.routes.checkout);
+    }
   };
 
+  function handleChange(e) {
+    if (e.target.checked) {
+      dispatch(getSelectedCartItems(cart));
+    } else {
+      dispatch(getSelectedCartItems({ items: [], count: 0 }));
+    }
+  }
+
   return (
-    <Grid container className="cart-result-container">
-      <Grid item lg={12} className="cart-result-item">
-        <div className="cart-result-item-left">Thành tiền</div>
-        <div className="cart-result-item-right">
-          {formatThousandDigits(getTotalPage(cart))}đ
+    <>
+      <div className="cart-result-wrapper">
+        <div className="cart-result-left">
+          <div className="cart-result-check-all">
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={cart.items.length === selectedCartItems.items.length}
+                  onChange={handleChange}
+                />
+              }
+            />
+            Chọn tất cả
+          </div>
+          <Button
+            color="error"
+            size="small"
+            variant="outlined"
+            onClick={handleCheckOut}
+          >
+            Xoá
+          </Button>
         </div>
-      </Grid>
-      <Grid item lg={12} className="cart-result-item">
-        <div className="cart-result-item-left">Giảm giá</div>
-        <div className="cart-result-item-right">Không</div>
-      </Grid>
-      <Grid item lg={12} className="cart-result-item">
-        <div className="cart-result-item-left cart-result-last-item-left">
-          Tổng cộng
+        <div className="cart-result-right">
+          <div className="cart-result-total">
+            Tổng cộng: {formatThousandDigits(getTotalPage(selectedCartItems))}đ
+          </div>
+          <Button color="primary" variant="contained" onClick={handleCheckOut}>
+            THANH TOÁN
+          </Button>
         </div>
-        <div className="cart-result-item-right cart-result-last-item-right">
-          {formatThousandDigits(getTotalPage(cart))}đ
-        </div>
-      </Grid>
-      <Grid
-        item
-        lg={12}
-        sx={{
-          display: "flex",
-          justifyContent: "space-between",
-          margin: "10px 0",
-        }}
-      >
-        <Button
-          color="primary"
-          variant="contained"
-          sx={{
-            flex: "1",
-          }}
-          onClick={handleCheckOut}
-        >
-          THANH TOÁN
-        </Button>
-      </Grid>
-    </Grid>
+      </div>
+    </>
   );
 };
 

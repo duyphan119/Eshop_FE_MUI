@@ -2,9 +2,9 @@ import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect } from "react";
 import { Box, Container, Grid } from "@mui/material";
-import { configAxiosResponse } from "../../../../config/configAxios";
-import { API_GENDER_URL } from "../../../../constants";
-import { getAll } from "../../../../redux/genderCategorySlice";
+import { configAxiosResponse } from "../../../config/configAxios";
+import { API_GENDER_URL } from "../../../constants";
+import { getAll } from "../../../redux/genderCategorySlice";
 const HeaderCategoryList = () => {
   const genderCategories = useSelector((state) => state.genderCategory.all);
 

@@ -2,14 +2,16 @@ import { Button, IconButton, Paper, Tooltip } from "@mui/material";
 import { useState } from "react";
 import EditIcon from "@mui/icons-material/Edit";
 import AddIcon from "@mui/icons-material/Add";
+import DeleteIcon from "@mui/icons-material/Delete";
 import { AgGridReact } from "ag-grid-react";
 import { useDispatch, useSelector } from "react-redux";
 
 import { getAll, getCurrentSize } from "../../redux/sizeSlice";
 import { calHeightDataGrid } from "../../utils";
 import ModalSize from "../../components/ModalSize";
-import { configAxiosAll } from "../../config/configAxios";
+import { configAxiosAll, configAxiosResponse } from "../../config/configAxios";
 import { API_SIZE_URL } from "../../constants";
+import ConfirmDialog from "../../components/ConfirmDialog";
 
 import "ag-grid-community/dist/styles/ag-grid.css";
 import "ag-grid-community/dist/styles/ag-theme-alpine.css";
@@ -22,6 +24,7 @@ const SizeTabPanel = () => {
   const dispatch = useDispatch();
 
   const [open, setOpen] = useState(false);
+  const [openDialog, setOpenDialog] = useState(false);
 
   const columns = [
     {
@@ -49,18 +52,30 @@ const SizeTabPanel = () => {
       field: "actions",
       headerName: "",
       pinned: "right",
-      width: 100,
+      width: 120,
       cellRenderer: (params) => (
-        <Tooltip title="Sửa kích cỡ">
-          <IconButton
-            onClick={() => {
-              dispatch(getCurrentSize(params.data));
-              setOpen(true);
-            }}
-          >
-            <EditIcon />
-          </IconButton>
-        </Tooltip>
+        <>
+          <Tooltip title="Sửa kích cỡ">
+            <IconButton
+              onClick={() => {
+                dispatch(getCurrentSize(params.data));
+                setOpen(true);
+              }}
+            >
+              <EditIcon />
+            </IconButton>
+          </Tooltip>{" "}
+          <Tooltip title="Xoá kích cỡ">
+            <IconButton
+              onClick={() => {
+                dispatch(getCurrentSize(params.data));
+                setOpenDialog(true);
+              }}
+            >
+              <DeleteIcon />
+            </IconButton>
+          </Tooltip>
+        </>
       ),
     },
   ];
@@ -74,9 +89,9 @@ const SizeTabPanel = () => {
         })
         .then((res) => {
           const _all = [...all];
-          const index = all.findIndex((el) => el.id === current.id);
+          const index = _all.findIndex((el) => el.id === current.id);
           if (index !== -1) {
-            all[index] = res;
+            _all[index] = res;
             dispatch(getAll(_all));
           }
         })
@@ -91,6 +106,15 @@ const SizeTabPanel = () => {
         })
         .catch((err) => {});
     }
+  }
+  async function onConfirm() {
+    try {
+      await configAxiosAll(user, dispatch).delete(
+        `${API_SIZE_URL}/${current.id}`
+      );
+      const data = await configAxiosResponse().get(`${API_SIZE_URL}`);
+      dispatch(getAll(data));
+    } catch (error) {}
   }
 
   return (
@@ -128,6 +152,14 @@ const SizeTabPanel = () => {
           />
         )}
       </Paper>
+      {openDialog && (
+        <ConfirmDialog
+          open={openDialog}
+          text="Bạn có chắc chắn muốn xoá kích cỡ này ?"
+          onClose={() => setOpenDialog(false)}
+          onConfirm={onConfirm}
+        />
+      )}
     </>
   );
 };
