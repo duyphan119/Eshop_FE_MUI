@@ -1,3 +1,4 @@
+import { AgGridReact } from "ag-grid-react";
 import * as React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
@@ -5,7 +6,6 @@ import { TitlePaper } from "../../components/Title";
 import { configAxiosAll } from "../../config/configAxios";
 import { API_ORDER_URL, LIMIT_RECENT_ORDERS } from "../../constants";
 import { calHeightDataGrid, formatTimeVN } from "../../utils";
-import { AgGridReact } from "ag-grid-react";
 
 export default function Orders() {
   const columns = [
@@ -23,7 +23,7 @@ export default function Orders() {
     {
       field: "address",
       headerName: "Địa chỉ",
-      width: 620,
+      width: 560,
     },
     {
       field: "telephone",
@@ -31,9 +31,18 @@ export default function Orders() {
       width: 120,
     },
     {
-      field: "status",
+      field: "coupon.percent",
+      headerName: "Giảm giá",
+      width: 100,
+    },
+    {
+      field: "total",
+      headerName: "Tổng",
+      width: 90,
+    },
+    {
+      field: "status.description",
       headerName: "Trạng thái",
-      valueGetter: (params) => params.data.status.description,
       flex: 1,
     },
   ];

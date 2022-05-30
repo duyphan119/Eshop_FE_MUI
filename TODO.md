@@ -27,9 +27,12 @@
 15. export các bảng, biểu đồ
 16. avatar user
 17. add to cart localStorage (khó)
-18. sửa sản phẩm trong dashboard
+
+# 18. sửa sản phẩm trong dashboard
+
 19. làm thông báo
-20. tạo skeleton các component nào xài api
+
+# 20. tạo skeleton các component nào xài api
 
 # 21. sửa giao diện thanh toán
 
@@ -40,7 +43,8 @@
 
 # 25. tách route cho user không vào được dashboard
 
-26. trả lời đánh giá
+# 26. trả lời đánh giá
+
 27. làm dashboard đánh giá
 
 # Nếu còn dư thời gian thì thêm saga vô

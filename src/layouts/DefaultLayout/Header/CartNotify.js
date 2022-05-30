@@ -8,7 +8,7 @@ import { configAxiosAll } from "../../../config/configAxios";
 import { API_CART_ITEM_URL } from "../../../constants";
 import { removeCartItem } from "../../../redux/cartSlice";
 import { showToastMessage } from "../../../redux/toastSlice";
-import { formatThousandDigits } from "../../../utils";
+import { formatThousandDigits, getThumbnailCartItem } from "../../../utils";
 
 const CartNotify = () => {
   const cart = useSelector((state) => state.cart.cart);
@@ -52,18 +52,7 @@ const CartNotify = () => {
                 item.detail.product.discounts.length;
               return (
                 <div key={Math.random()} className="cart-notify-item">
-                  <img
-                    src={(() => {
-                      try {
-                        return item.detail.product.images.find(
-                          (image) => image.color_id === item.detail.color.id
-                        ).url;
-                      } catch (error) {
-                        return "";
-                      }
-                    })()}
-                    alt=""
-                  />
+                  <img src={getThumbnailCartItem(item)} alt="" />
                   <div className="cart-notify-item-text">
                     <Typography variant="body1">
                       {item.detail.product.name}
@@ -72,13 +61,15 @@ const CartNotify = () => {
                       {item.detail.color.value} / {item.detail.size.value}
                     </Typography>
                     <Typography variant="body2">
-                      {hasDiscount && (
+                      {hasDiscount ? (
                         <span style={{ color: "var(--main-color)" }}>
                           {formatThousandDigits(
                             item.detail.product.discounts[0].new_price
                           )}
                           đ
                         </span>
+                      ) : (
+                        ""
                       )}
                       <span
                         style={

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import Header from "../DefaultLayout/Header";
 import AccountBoxOutlinedIcon from "@mui/icons-material/AccountBoxOutlined";
 import ReceiptIcon from "@mui/icons-material/Receipt";
@@ -48,14 +48,15 @@ const AccountLayout = ({ children }) => {
 
   const location = useLocation();
 
+  const headerRef = useRef();
+
   useEffect(() => {
     const index = items.findIndex((item) => item.to === location.pathname);
     setIndexItem(index === -1 ? 0 : index);
   }, [location.pathname]);
-
   return (
     <>
-      <Header />
+      <Header headerRef={headerRef} />
       <div
         style={{
           minHeight: "100vh",
@@ -63,7 +64,11 @@ const AccountLayout = ({ children }) => {
           flexDirection: "column",
           width: "100%",
           overflowX: "hidden",
-          paddingTop: "60px",
+          paddingTop: `${
+            headerRef.current
+              ? headerRef.current.getBoundingClientRect().height
+              : 60
+          }px`,
           backgroundColor: "rgb(249,249,249)",
         }}
       >

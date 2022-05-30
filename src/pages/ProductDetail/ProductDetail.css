@@ -79,3 +79,7 @@
 .slick-next {
   right: 0;
 }
+.product-rate {
+  display: flex;
+  align-items: center;
+}

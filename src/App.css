@@ -96,3 +96,6 @@ ul {
 .hover-color-main-color:hover {
   color: var(--main-color);
 }
+.cursor-pointer {
+  cursor: pointer;
+}

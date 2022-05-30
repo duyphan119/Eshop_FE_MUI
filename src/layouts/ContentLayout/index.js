@@ -1,7 +1,5 @@
-import React from "react";
-
 const ContentLayout = ({ children }) => {
-  return <>{children}</>;
+  return children;
 };
 
 export default ContentLayout;

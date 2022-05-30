@@ -62,7 +62,7 @@ const ClientOrders = () => {
                   {formatTimeVN(item.createdAt)}
                 </TableCell>
                 <TableCell align="center">{item.address}</TableCell>
-                <TableCell align="center">Không</TableCell>
+                <TableCell align="center">{item.coupon.percent}%</TableCell>
                 <TableCell align="center">
                   {formatThousandDigits(item.total)}
                 </TableCell>

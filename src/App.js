@@ -3,6 +3,7 @@ import { useEffect } from "react";
 import { Route, Routes } from "react-router-dom";
 import ScrollToTop from "react-scroll-to-top";
 import { useSelector } from "react-redux";
+import { ErrorBoundary } from "react-error-boundary";
 
 import { DefaultLayout } from "./layouts";
 import Toast from "./components/Toast";
@@ -10,6 +11,21 @@ import { socket, SocketContext } from "./context";
 import { publicRoutes, adminRoutes } from "./routes";
 import "./App.css";
 import NavigateScrollToTop from "./components/NavigateScrollToTop";
+function ErrorFallback({ error, resetErrorBoundary }) {
+  return (
+    <div
+      style={{
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        width: "100vw",
+        height: "100vh",
+      }}
+    >
+      Đã có lỗi xảy ra.
+    </div>
+  );
+}
 function App() {
   const user = useSelector((state) => state.auth.currentUser);
 
@@ -38,24 +54,31 @@ function App() {
     });
   }
   return (
-    <SocketContext.Provider value={socket}>
-      <NavigateScrollToTop />
-      <Box
-        sx={{
-          display: {
-            md: "block",
-            xs: "none",
-          },
-        }}
-      >
-        <ScrollToTop smooth color="var(--main-color)" />
-      </Box>
-      <Routes>
-        {showRoutes(publicRoutes)}
-        {user && showRoutes(adminRoutes)}
-      </Routes>
-      <Toast />
-    </SocketContext.Provider>
+    <ErrorBoundary
+      FallbackComponent={ErrorFallback}
+      onReset={() => {
+        // reset the state of your app so the error doesn't happen again
+      }}
+    >
+      <SocketContext.Provider value={socket}>
+        <NavigateScrollToTop />
+        <Box
+          sx={{
+            display: {
+              md: "block",
+              xs: "none",
+            },
+          }}
+        >
+          <ScrollToTop smooth color="var(--main-color)" />
+        </Box>
+        <Routes>
+          {showRoutes(publicRoutes)}
+          {user && showRoutes(adminRoutes)}
+        </Routes>
+        <Toast />
+      </SocketContext.Provider>
+    </ErrorBoundary>
   );
 }
 

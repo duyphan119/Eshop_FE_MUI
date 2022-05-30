@@ -26,6 +26,7 @@ import Comments from "../../components/Comments";
 import { SocketContext } from "../../context";
 import Product from "../../components/Product";
 import ProductSkeleton from "../../components/Skeleton/Product";
+import Stars from "../../components/Stars";
 const SlickArrowLeft = ({ currentSlide, slideCount, ...props }) => (
   <button
     {...props}
@@ -73,7 +74,6 @@ const ProductDetail = () => {
 
   const hasDiscount =
     product && product.discounts && product.discounts.length > 0;
-  console.log(product);
 
   useEffect(() => {
     if (product) {
@@ -93,6 +93,9 @@ const ProductDetail = () => {
       const data2 = await configAxiosAll(user, dispatch).get(
         `${API_PRODUCT_URL}/category/${data.category.slug}?exceptId=${data.id}&limit=${LIMIT_RECOMMEND_PRODUCT}`
       );
+      console.log(
+        `${API_PRODUCT_URL}/category/${data.category.slug}?exceptId=${data.id}&limit=${LIMIT_RECOMMEND_PRODUCT}`
+      );
       setRecommendedProduct(data2);
     })();
   }, [dispatch, product_slug, user]);
@@ -106,12 +109,10 @@ const ProductDetail = () => {
         if (newQuantity === 0) {
           newQuantity = 1;
         } else if (
-          newQuantity >
-          product.product_colors[indexColor].product_color_sizes[indexSize]
-            .amount
+          newQuantity > product.colors[indexColor].sizes[indexSize].amount
         ) {
           setMsgQuantity(
-            `Mặt hàng này chỉ còn ${product.product_colors[indexColor].product_color_sizes[indexSize].amount}`
+            `Mặt hàng này chỉ còn ${product.colors[indexColor].sizes[indexSize].amount}`
           );
         } else {
           setMsgQuantity("");
@@ -154,7 +155,6 @@ const ProductDetail = () => {
       } catch (error) {}
     }
   }
-
   // const calculateAverageRating = () => {
   //   let result = 0;
   //   if (product && product.comments) {
@@ -263,7 +263,7 @@ const ProductDetail = () => {
               },
             }}
           >
-            <ProductDetailSlider images={product?.colors[indexColor].images} />
+            <ProductDetailSlider images={product.colors[indexColor].images} />
           </Grid>
           <Grid item xs={12} md={6}>
             <Typography
@@ -274,6 +274,20 @@ const ProductDetail = () => {
             >
               {product.name}
             </Typography>
+            <div className="product-rate">
+              <Stars
+                rate={
+                  product.rate.total_rate && product.rate.count > 0
+                    ? product.rate.total_rate / product.rate.count
+                    : 0
+                }
+              />
+              <div className="">
+                &nbsp;(
+                {product.rate.count === 0 ? "Chưa có " : product.rate.count}
+                &nbsp;đánh giá)
+              </div>
+            </div>
             {/* <Box display="flex" alignItems="center">
             <Stars rate={averageRating} />
             <Typography>
@@ -348,15 +362,19 @@ const ProductDetail = () => {
                 );
               })}
             </div>
-            <Typography variant="body1" sx={{ mt: 2 }}>
-              Kích cỡ: {product.colors[indexColor].sizes[indexSize].value}
-            </Typography>
+            {product.colors[indexColor].sizes[indexSize].code !== "0" && (
+              <Typography variant="body1" sx={{ mt: 2 }}>
+                Kích cỡ: {product.colors[indexColor].sizes[indexSize].value}
+              </Typography>
+            )}
+
             <Box
               style={{
                 display: "flex",
               }}
             >
               {product.colors[indexColor].sizes.map((item, index) => {
+                if (item.code === "0") return "";
                 return (
                   <div
                     key={item.id}
@@ -463,40 +481,33 @@ const ProductDetail = () => {
           </Grid>
         </Grid>
         {product && <Comments product={product} />}
-        <Grid container columnSpacing={2} rowSpacing={2}>
-          <Grid
-            item
-            md={12}
-            sx={{
-              textAlign: "center",
-              marginBlock: "5px",
-            }}
-          >
-            <Typography
-              variant="h6"
-              textTransform="uppercase"
-              color="var(--main-color)"
-            >
-              Có thể bạn muốn mua
-            </Typography>
-          </Grid>
-        </Grid>
-        <Grid container columnSpacing={2} rowSpacing={2}>
-          {recommendedProduct?.items?.length === 0 && (
+        {recommendedProduct && recommendedProduct.items.length === 0 ? (
+          <></>
+        ) : (
+          <Grid container columnSpacing={2} rowSpacing={2}>
             <Grid
               item
-              xs={12}
+              md={12}
               sx={{
-                marginBottom: "8px",
+                textAlign: "center",
+                marginBlock: "5px",
               }}
             >
-              <div className="no-result">
-                Không có sản phẩm trong danh mục này
-              </div>
+              <Typography
+                variant="h6"
+                textTransform="uppercase"
+                color="var(--main-color)"
+              >
+                Có thể bạn muốn mua
+              </Typography>
             </Grid>
-          )}
-          {recommendedProduct?.items?.length > 0
-            ? recommendedProduct?.items?.map((product) => {
+          </Grid>
+        )}
+
+        <Grid container spacing={2}>
+          {recommendedProduct
+            ? recommendedProduct.items.length > 0 &&
+              recommendedProduct.items.map((product) => {
                 return (
                   <Grid
                     key={product.slug}

@@ -8,6 +8,7 @@ import {
   isShowLoadMore,
 } from "../../components/Button";
 import Product from "../../components/Product";
+import BannerSkeleton from "../../components/Skeleton/Banner";
 import ProductSkeleton from "../../components/Skeleton/Product";
 import { configAxiosAll, configAxiosResponse } from "../../config/configAxios";
 import {
@@ -24,7 +25,7 @@ const Home = () => {
 
   const [bestSellerProduct, setBestSellerProduct] = useState();
   const [newestProduct, setNewestProduct] = useState();
-  const [banners, setBanners] = useState([]);
+  const [banners, setBanners] = useState();
 
   const [limit, setLimit] = useState(LIMIT_BEST_SELLER);
 
@@ -69,27 +70,22 @@ const Home = () => {
         const listRes = await Promise.allSettled(promises);
         if (listRes[0].status === "fulfilled") {
           setBanners(listRes[0].value);
+        } else {
+          setBanners([]);
         }
         if (listRes[1].status === "fulfilled") {
-          setNewestProduct(listRes[1].value);
+          setBestSellerProduct(listRes[1].value);
         }
         if (listRes[2].status === "fulfilled") {
-          setBestSellerProduct(listRes[2].value);
+          setNewestProduct(listRes[2].value);
         }
       } catch (error) {}
     })();
   }, [user, dispatch, limit]);
   return (
     <>
-      <Box
-      // sx={{
-      //   display: {
-      //     sm: "block",
-      //     xs: "none",
-      //   },
-      // }}
-      >
-        <BannerSlider banners={banners} />
+      <Box>
+        {banners ? <BannerSlider banners={banners} /> : <BannerSkeleton />}
       </Box>
       <Container>
         <Grid container columnSpacing={2} rowSpacing={2}>

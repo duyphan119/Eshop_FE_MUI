@@ -1,12 +1,12 @@
-import { Box, TextField, Typography } from "@mui/material";
+import { Box, FormControl, TextField, Typography } from "@mui/material";
 import Stars from "../Stars";
 import "moment/locale/vi";
 import { useState } from "react";
 import RepliedComment from "../RepliedComment";
 import { useDispatch, useSelector } from "react-redux";
-import { apiAddNewRepliedComment } from "../../api/apiRepliedComment";
-import { newRepliedComment } from "../../redux/productSlice";
 import { fromNow } from "../../utils";
+import { configAxiosAll } from "../../config/configAxios";
+import { API_REPLIED_COMMENT_URL } from "../../constants";
 
 const Comment = ({ comment }) => {
   const user = useSelector((state) => state.auth.currentUser);
@@ -24,12 +24,11 @@ const Comment = ({ comment }) => {
       user_id: user.id,
       content: content,
     };
-    const data = await apiAddNewRepliedComment(
-      user,
-      req_replied_comment,
-      dispatch
+    const data = await configAxiosAll(user, dispatch).post(
+      `${API_REPLIED_COMMENT_URL}`,
+      req_replied_comment
     );
-    dispatch(newRepliedComment(data));
+    console.log(data);
   };
 
   return (
@@ -87,15 +86,17 @@ const Comment = ({ comment }) => {
                 );
               })}
             {showReplyForm && (
-              <Box display="flex" mt={1}>
-                <form onSubmit={handleSubmit}>
-                  <TextField
-                    fullWidth
-                    name="relied_comment"
-                    id="relied_comment"
-                    defaultValue={""}
-                    placeholder="Nhập phản hồi của bạn"
-                  />
+              <Box display="flex" mt={1} width="100%">
+                <form onSubmit={handleSubmit} style={{ width: "100%" }}>
+                  <FormControl fullWidth>
+                    <TextField
+                      size="small"
+                      name="relied_comment"
+                      id="relied_comment"
+                      defaultValue={""}
+                      placeholder="Nhập phản hồi của bạn"
+                    />
+                  </FormControl>
                 </form>
               </Box>
             )}

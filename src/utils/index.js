@@ -94,3 +94,13 @@ export const calHeightDataGrid = (rowCount) => {
   const borderCount = rowCount + 3;
   return rowCount * rowHeight + rowHeaderHeight + borderCount;
 };
+export const getSku = (category_code, product_id, color_code, size_code) => {
+  console.log(
+    `${category_code}${`000${product_id}`.slice(-4)}-${color_code}${
+      size_code === "0" ? "" : `-${size_code}`
+    }`
+  );
+  return `${category_code}${`000${product_id}`.slice(-4)}-${color_code}${
+    size_code === "0" ? "" : `-${size_code}`
+  }`;
+};

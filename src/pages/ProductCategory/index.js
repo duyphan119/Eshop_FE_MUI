@@ -203,6 +203,8 @@ const ProductsCategory = ({
         },
       ];
       text = `Thời trang ${genderCategory.name.toLowerCase()}`;
+    } else {
+      text = `Tất cả sản phẩm`;
     }
 
     return <Breadcrumbs items={items} text={text} />;

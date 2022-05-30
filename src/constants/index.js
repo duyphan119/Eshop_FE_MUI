@@ -9,6 +9,7 @@ export const API_GROUP_CATEGORY_URL = `${SERVER_URL}/v1/api/group-category`;
 export const API_GENDER_URL = `${SERVER_URL}/v1/api/gender`;
 export const API_PRODUCT_DETAIL_URL = `${SERVER_URL}/v1/api/product-detail`;
 export const API_COMMENT_URL = `${SERVER_URL}/v1/api/comment`;
+export const API_REPLIED_COMMENT_URL = `${SERVER_URL}/v1/api/replied-comment`;
 export const API_ORDER_URL = `${SERVER_URL}/v1/api/order`;
 export const API_CART_URL = `${SERVER_URL}/v1/api/cart`;
 export const API_CART_ITEM_URL = `${SERVER_URL}/v1/api/cart-item`;

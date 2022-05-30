@@ -17,10 +17,10 @@ const Dashboard = () => {
   useEffect(() => {
     document.title = "Bảng điều khiển";
   }, []);
-
+  console.log(`${API_STATISTICS_URL}/revenue?type=hoursInDay`);
   useEffect(() => {
     (async function () {
-      (async function () {
+      try {
         const data = await configAxiosAll(user, dispatch).get(
           `${API_STATISTICS_URL}/revenue?type=hoursInDay`
         );
@@ -32,12 +32,13 @@ const Dashboard = () => {
           return {
             hour: index * 2 + " - " + (index * 2 + 2),
             total:
-              (i === -1 ? 0 : data[i].total) + (j === -1 ? 0 : data[j].total),
+              (i === -1 ? 0 : parseInt(data[i].total)) +
+              (j === -1 ? 0 : parseInt(data[j].total)),
           };
         });
 
         setRevenueHoursInDay(arr);
-      })();
+      } catch (error) {}
     })();
   }, [user, dispatch]);
 

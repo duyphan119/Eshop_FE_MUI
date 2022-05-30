@@ -27,7 +27,7 @@ const ChartDaysInMonth = ({ data }) => {
           }}
         >
           <XAxis dataKey="day" />
-          <YAxis></YAxis>
+          <YAxis />
           <Tooltip />
           <Bar dataKey="total" fill="var(--main-color)" />
         </BarChart>

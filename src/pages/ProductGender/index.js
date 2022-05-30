@@ -8,6 +8,8 @@ import "slick-carousel/slick/slick.css";
 import BannerSlider from "../../components/BannerSlider";
 import { ButtonLink } from "../../components/Button";
 import Product from "../../components/Product";
+import BannerSkeleton from "../../components/Skeleton/Banner";
+import CategoryIconSkeleton from "../../components/Skeleton/CategoryIcon";
 import ProductSkeleton from "../../components/Skeleton/Product";
 import { TitleCenter } from "../../components/Title";
 import { configAxiosAll, configAxiosResponse } from "../../config/configAxios";
@@ -16,36 +18,41 @@ import {
   API_PRODUCT_URL,
   PRODUCTS_PER_PAGE,
 } from "../../constants";
+import "./ProductGender.css";
 
 const ProductGender = ({ genderCategory }) => {
   const user = useSelector((state) => state.auth.currentUser);
 
   const dispatch = useDispatch();
 
-  const [categories, setCategories] = useState([]);
+  const [categories, setCategories] = useState();
   const [product, setProduct] = useState();
-  const [banners, setBanners] = useState([]);
+  const [banners, setBanners] = useState();
   const [queryString, setQueryString] = useState(
     `${API_PRODUCT_URL}/gender/${genderCategory.slug}?type=best-seller&limit=${PRODUCTS_PER_PAGE}`
   );
-  const [loading, setLoading] = useState(false);
+
   const [index, setIndex] = useState(0);
 
   const location = useLocation();
 
   useEffect(() => {
     let array = [];
-    document.title = genderCategory.name;
+    document.title = `Thời trang ${genderCategory.name.toLowerCase()}`;
     genderCategory.group_categories.forEach((group_category) => {
       group_category.categories.forEach((category) => {
         array.push(category);
       });
     });
-    if (array?.length > 0) {
+    setQueryString(
+      `${API_PRODUCT_URL}/gender/${genderCategory.slug}?type=best-seller&limit=${PRODUCTS_PER_PAGE}`
+    );
+    if (array.length > 0) {
       setCategories(array);
+    } else {
+      setCategories([]);
     }
   }, [genderCategory]);
-
   useEffect(() => {
     (async function () {
       try {
@@ -53,7 +60,9 @@ const ProductGender = ({ genderCategory }) => {
           `${API_BANNER_URL}?page=${location.pathname}&position=under-header&isShow=true`
         );
         setBanners(data);
-      } catch (error) {}
+      } catch (error) {
+        setBanners([]);
+      }
     })();
   }, [location.pathname]);
 
@@ -62,7 +71,6 @@ const ProductGender = ({ genderCategory }) => {
       try {
         const data = await configAxiosAll(user, dispatch).get(queryString);
         setProduct(data);
-        setLoading(false);
       } catch (error) {}
     })();
   }, [dispatch, queryString, user]);
@@ -71,71 +79,77 @@ const ProductGender = ({ genderCategory }) => {
     setIndex(i);
     setQueryString(q);
     setProduct(null);
-    setLoading(true);
   }
 
   return (
     <>
       <Box>
-        <BannerSlider banners={banners} />
+        {banners ? <BannerSlider banners={banners} /> : <BannerSkeleton />}
       </Box>
       <Box>
         <Container>
           <TitleCenter>Mua theo thể loại</TitleCenter>
           <Grid container spacing={2}>
-            {categories?.map((category) => {
-              if (!category.icon) return "";
-              return (
-                <Grid
-                  item
-                  sm={3}
-                  sx={{
-                    maxWidth: {
-                      lg: "20% !important",
-                    },
-                    flexBasis: {
-                      lg: "20% !important",
-                    },
-                    display: {
-                      xs: "none",
-                      sm: "block",
-                    },
-                  }}
-                  key={category.slug + Math.random()}
-                >
-                  <Box
-                    sx={{
-                      height: "120px",
-                      textTransform: "capitalize",
-                      backgroundColor: "#e3dede7a",
-                    }}
-                  >
-                    <Link
-                      to={`/${category.slug}`}
-                      style={{
-                        height: "100%",
-                        width: "100%",
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        textDecoration: "none",
-                        color: "#000",
-                        flexDirection: "column",
+            {categories
+              ? categories.map((category) => {
+                  if (!category.icon) return "";
+                  return (
+                    <Grid
+                      item
+                      sm={3}
+                      sx={{
+                        maxWidth: {
+                          lg: "20% !important",
+                        },
+                        flexBasis: {
+                          lg: "20% !important",
+                        },
+                        display: {
+                          xs: "none",
+                          sm: "block",
+                        },
                       }}
+                      key={category.slug + Math.random()}
                     >
-                      <img
-                        src={category.icon}
-                        alt=""
-                        style={{
-                          marginBottom: "5px",
+                      <Box
+                        sx={{
+                          height: "120px",
+                          textTransform: "capitalize",
+                          backgroundColor: "#e3dede7a",
                         }}
-                      />
-                      {category.name}
-                    </Link>
-                  </Box>
-                </Grid>
-              );
-            })}
+                      >
+                        <Link
+                          to={`/${category.slug}`}
+                          className="category-icon-link"
+                        >
+                          <img src={category.icon} alt="" />
+                          {category.name}
+                        </Link>
+                      </Box>
+                    </Grid>
+                  );
+                })
+              : new Array(5).fill(1).map((item, index) => (
+                  <Grid
+                    item
+                    sm={3}
+                    sx={{
+                      maxWidth: {
+                        lg: "20% !important",
+                      },
+                      flexBasis: {
+                        lg: "20% !important",
+                      },
+                      display: {
+                        xs: "none",
+                        sm: "block",
+                      },
+                    }}
+                    key={index}
+                  >
+                    <CategoryIconSkeleton />
+                  </Grid>
+                ))}
             <Grid
               item
               xs={12}
@@ -166,24 +180,9 @@ const ProductGender = ({ genderCategory }) => {
                     >
                       <Link
                         to={`/${category.slug}`}
-                        style={{
-                          height: "100%",
-                          width: "100%",
-                          display: "flex",
-                          alignItems: "center",
-                          justifyContent: "center",
-                          textDecoration: "none",
-                          color: "#000",
-                          flexDirection: "column",
-                        }}
+                        className="category-icon-link"
                       >
-                        <img
-                          src={category.icon}
-                          alt=""
-                          style={{
-                            marginBottom: "5px",
-                          }}
-                        />
+                        <img src={category.icon} alt="" />
                         {category.name}
                       </Link>
                     </Box>
@@ -193,12 +192,7 @@ const ProductGender = ({ genderCategory }) => {
             </Grid>
           </Grid>
           <TitleCenter>Đề xuất cho bạn</TitleCenter>
-          <Box
-            display="flex"
-            alignItems="center"
-            justifyContent="center"
-            mb={2}
-          >
+          <Box className="category-list" mb={2}>
             <Button
               variant={index === 0 ? "contained" : "outlined"}
               onClick={() =>
@@ -243,32 +237,34 @@ const ProductGender = ({ genderCategory }) => {
             ))}
           </Box>
           <Grid container spacing={2}>
-            {product && product.items?.length !== 0 ? (
-              product.items?.map((product) => (
-                <Grid
-                  item
-                  xs={6}
-                  sm={4}
-                  md={3}
-                  sx={{
-                    maxWidth: {
-                      lg: "20% !important",
-                    },
-                    flexBasis: {
-                      lg: "20% !important",
-                    },
-                  }}
-                  key={product.id + Math.random()}
-                >
-                  <Product product={product} />
+            {product ? (
+              product.items.length !== 0 ? (
+                product.items?.map((product) => (
+                  <Grid
+                    item
+                    xs={6}
+                    sm={4}
+                    md={3}
+                    sx={{
+                      maxWidth: {
+                        lg: "20% !important",
+                      },
+                      flexBasis: {
+                        lg: "20% !important",
+                      },
+                    }}
+                    key={product.id + Math.random()}
+                  >
+                    <Product product={product} />
+                  </Grid>
+                ))
+              ) : (
+                <Grid item xs={12}>
+                  <div className="no-result">
+                    Không có sản phẩm trong danh mục này
+                  </div>
                 </Grid>
-              ))
-            ) : !loading ? (
-              <Grid item xs={12}>
-                <div className="no-result">
-                  Không có sản phẩm trong danh mục này
-                </div>
-              </Grid>
+              )
             ) : (
               new Array(PRODUCTS_PER_PAGE).fill(1).map((item, i) => (
                 <Grid

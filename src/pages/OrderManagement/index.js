@@ -111,13 +111,13 @@ const OrderManagement = () => {
             </IconButton>
           </Tooltip>
           <Tooltip title="Xoá hoá đơn">
-            <IconButton>
-              <DeleteIcon
-                onClick={() => {
-                  setCurrentOrder(params.data);
-                  setOpenDialog(true);
-                }}
-              />
+            <IconButton
+              onClick={() => {
+                setCurrentOrder(params.data);
+                setOpenDialog(true);
+              }}
+            >
+              <DeleteIcon />
             </IconButton>
           </Tooltip>
         </>
@@ -193,6 +193,7 @@ const OrderManagement = () => {
       setOrder(data);
     } catch (error) {}
   }
+  console.log(order?.items[0]);
   return (
     <Box p={1} bgcolor="#fff">
       <Paper

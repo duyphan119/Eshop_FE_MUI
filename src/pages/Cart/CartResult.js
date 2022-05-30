@@ -35,12 +35,18 @@ const CartResult = () => {
             <FormControlLabel
               control={
                 <Checkbox
+                  id="cart-result-check-all"
                   checked={cart.items.length === selectedCartItems.items.length}
                   onChange={handleChange}
                 />
               }
             />
-            Chọn tất cả
+            <label
+              htmlFor="cart-result-check-all"
+              className="hover-color-main-color cursor-pointer"
+            >
+              Chọn tất cả
+            </label>
           </div>
           <Button
             color="error"

@@ -1,11 +1,5 @@
+import { Box, CssBaseline, ThemeProvider, Toolbar } from "@mui/material";
 import { createTheme } from "@mui/material/styles";
-import {
-  Box,
-  Container,
-  CssBaseline,
-  ThemeProvider,
-  Toolbar,
-} from "@mui/material";
 import { useState } from "react";
 import AppBar from "./AppBar";
 import Drawer from "./Drawer";
@@ -37,9 +31,7 @@ const DashboardLayout = ({ children }) => {
           }}
         >
           <Toolbar />
-          <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
-            {children}
-          </Container>
+          <Box sx={{ p: 1 }}>{children}</Box>
         </Box>
       </Box>
     </ThemeProvider>

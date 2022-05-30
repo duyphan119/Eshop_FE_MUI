@@ -1,9 +1,10 @@
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
+import { useMediaQuery } from "@mui/material";
 import Divider from "@mui/material/Divider";
 import MuiDrawer from "@mui/material/Drawer";
 import IconButton from "@mui/material/IconButton";
 import List from "@mui/material/List";
-import { styled } from "@mui/material/styles";
+import { styled, useTheme } from "@mui/material/styles";
 import Toolbar from "@mui/material/Toolbar";
 import * as React from "react";
 import { DRAWER_WIDTH } from "../../../constants";
@@ -35,8 +36,10 @@ const StyledDrawer = styled(MuiDrawer, {
 }));
 
 const Drawer = ({ open, toggleDrawer }) => {
+  const theme = useTheme();
+  const matches = useMediaQuery(theme.breakpoints.up("lg"));
   return (
-    <StyledDrawer variant="permanent" open={open}>
+    <StyledDrawer variant={matches ? "permanent" : "temporary"} open={open}>
       <Toolbar
         sx={{
           display: "flex",

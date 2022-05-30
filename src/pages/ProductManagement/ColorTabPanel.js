@@ -80,12 +80,13 @@ const ColorTabPanel = () => {
     },
   ];
   function getData(data) {
-    const { value } = data;
+    const { value, code } = data;
     if (current) {
       configAxiosAll(user, dispatch)
         .put(`${API_COLOR_URL}`, {
           id: current.id,
           value,
+          code,
         })
         .then((res) => {
           const _all = [...all];
@@ -100,6 +101,7 @@ const ColorTabPanel = () => {
       configAxiosAll(user, dispatch)
         .post(`${API_COLOR_URL}`, {
           value,
+          code,
         })
         .then((res) => {
           dispatch(getAll([res, ...all]));

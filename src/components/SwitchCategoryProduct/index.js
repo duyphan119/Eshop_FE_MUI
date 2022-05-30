@@ -47,7 +47,12 @@ const SwitchCategoryProduct = () => {
       }
     }
     if (category_slug === "all") {
-      return <ProductsCategory query={`${API_PRODUCT_URL}`} />;
+      return (
+        <ProductsCategory
+          query={`${API_PRODUCT_URL}`}
+          title="Tất cả sản phẩm"
+        />
+      );
     }
     return "";
   }

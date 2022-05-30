@@ -9,13 +9,14 @@ const _Modal = ({
   labelOk,
   isCloseAfterOk,
   width,
+  height,
 }) => {
   return (
     <Modal open={open} onClose={handleClose}>
       <Box
         sx={{
           width: width ? width : 500,
-          maxHeight: 500,
+          maxHeight: height ? height : 500,
           bgcolor: "#fff",
           position: "absolute",
           top: "50%",

@@ -1,10 +1,10 @@
 import MenuIcon from "@mui/icons-material/Menu";
 import NotificationsIcon from "@mui/icons-material/Notifications";
-import { ClickAwayListener, Paper } from "@mui/material";
+import { ClickAwayListener, Paper, useMediaQuery } from "@mui/material";
 import MuiAppBar from "@mui/material/AppBar";
 import Badge from "@mui/material/Badge";
 import IconButton from "@mui/material/IconButton";
-import { styled } from "@mui/material/styles";
+import { styled, useTheme } from "@mui/material/styles";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import * as React from "react";
@@ -14,15 +14,15 @@ import { SocketContext } from "../../../context";
 
 const StyledAppBar = styled(MuiAppBar, {
   shouldForwardProp: (prop) => prop !== "open",
-})(({ theme, open }) => ({
+})(({ theme, open, marginLeft, width }) => ({
   zIndex: theme.zIndex.drawer + 1,
   transition: theme.transitions.create(["width", "margin"], {
     easing: theme.transitions.easing.sharp,
     duration: theme.transitions.duration.leavingScreen,
   }),
   ...(open && {
-    marginLeft: DRAWER_WIDTH,
-    width: `calc(100% - ${DRAWER_WIDTH}px)`,
+    marginLeft,
+    width,
     transition: theme.transitions.create(["width", "margin"], {
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.enteringScreen,
@@ -90,6 +90,9 @@ const notifications = [
 ];
 
 const AppBar = ({ open, toggleDrawer }) => {
+  const theme = useTheme();
+  const matches = useMediaQuery(theme.breakpoints.up("lg"));
+
   const socket = React.useContext(SocketContext);
 
   const [title, setTitle] = React.useState("");
@@ -127,9 +130,14 @@ const AppBar = ({ open, toggleDrawer }) => {
     document.title = _title;
     setTitle(_title);
   }, [location.pathname]);
-
+  console.log(matches);
   return (
-    <StyledAppBar position="absolute" open={open}>
+    <StyledAppBar
+      position="absolute"
+      open={open}
+      marginLeft={!matches ? "0" : `${DRAWER_WIDTH}px`}
+      width={!matches ? "100%" : `calc(100% - ${DRAWER_WIDTH}px)`}
+    >
       <Toolbar
         sx={{
           pr: "24px", // keep right padding when drawer closed

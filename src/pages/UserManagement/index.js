@@ -59,7 +59,7 @@ const UserManagement = () => {
                 setOpenDialog(true);
               }}
             >
-              <EditIcon />
+              <DeleteIcon />
             </IconButton>
           </Tooltip>
         </>
