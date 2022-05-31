@@ -29,8 +29,6 @@ const Home = () => {
 
   const [limit, setLimit] = useState(LIMIT_BEST_SELLER);
 
-  console.log(banners);
-
   useEffect(() => {
     document.title = "Trang chủ";
   }, []);

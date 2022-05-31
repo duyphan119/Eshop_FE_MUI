@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { memo, useState } from "react";
 import { Link } from "react-router-dom";
 import Box from "@mui/material/Box";
 import Drawer from "@mui/material/Drawer";
@@ -17,7 +17,7 @@ import { useSelector } from "react-redux";
 import CategoryOutlinedIcon from "@mui/icons-material/CategoryOutlined";
 import config from "../../../config";
 
-export default function HeaderDrawer() {
+const HeaderDrawer = () => {
   const theme = useTheme();
   const matches = useMediaQuery(theme.breakpoints.up("lg"));
 
@@ -120,4 +120,5 @@ export default function HeaderDrawer() {
       </Drawer>
     </>
   );
-}
+};
+export default memo(HeaderDrawer);

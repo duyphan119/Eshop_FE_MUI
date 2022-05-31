@@ -20,7 +20,7 @@ const ModalComment = ({
       title={title}
       labelOk={labelOk}
       handleOk={() => {
-        handleOk(rate, content);
+        handleOk({ rate, content });
       }}
       isCloseAfterOk={isCloseAfterOk}
     >

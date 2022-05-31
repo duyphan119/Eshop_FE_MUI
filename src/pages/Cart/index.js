@@ -11,9 +11,9 @@ import { Link } from "react-router-dom";
 import EmptyCart from "../../components/EmptyCart";
 import { TitlePage } from "../../components/Title";
 import { getSelectedCartItems } from "../../redux/cartSlice";
-import "./Cart.css";
 import CartItem from "./CartItem";
 import CartResult from "./CartResult";
+import "./Cart.css";
 const Cart = () => {
   const cart = useSelector((state) => state.cart.cart);
   const selectedCartItems = useSelector(

@@ -45,6 +45,6 @@
 
 # 26. trả lời đánh giá
 
-27. làm dashboard đánh giá
+# 27. làm dashboard đánh giá
 
 # Nếu còn dư thời gian thì thêm saga vô

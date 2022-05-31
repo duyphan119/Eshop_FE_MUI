@@ -14,14 +14,14 @@ import { SocketContext } from "../../../context";
 
 const StyledAppBar = styled(MuiAppBar, {
   shouldForwardProp: (prop) => prop !== "open",
-})(({ theme, open, marginLeft, width }) => ({
+})(({ theme, open, marginleft, width }) => ({
   zIndex: theme.zIndex.drawer + 1,
   transition: theme.transitions.create(["width", "margin"], {
     easing: theme.transitions.easing.sharp,
     duration: theme.transitions.duration.leavingScreen,
   }),
   ...(open && {
-    marginLeft,
+    marginLeft: marginleft,
     width,
     transition: theme.transitions.create(["width", "margin"], {
       easing: theme.transitions.easing.sharp,
@@ -135,7 +135,7 @@ const AppBar = ({ open, toggleDrawer }) => {
     <StyledAppBar
       position="absolute"
       open={open}
-      marginLeft={!matches ? "0" : `${DRAWER_WIDTH}px`}
+      marginleft={!matches ? "0" : `${DRAWER_WIDTH}px`}
       width={!matches ? "100%" : `calc(100% - ${DRAWER_WIDTH}px)`}
     >
       <Toolbar

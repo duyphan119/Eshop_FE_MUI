@@ -2,6 +2,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import { Box, Button, Typography } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
+import { memo } from "react";
 import EmptyCart from "../../../components/EmptyCart";
 import config from "../../../config";
 import { configAxiosAll } from "../../../config/configAxios";
@@ -40,6 +41,7 @@ const CartNotify = () => {
         );
       });
   };
+
   return (
     <Box className="cart-notify">
       {cart?.items?.length === 0 && <EmptyCart />}
@@ -112,4 +114,4 @@ const CartNotify = () => {
   );
 };
 
-export default CartNotify;
+export default memo(CartNotify);

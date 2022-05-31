@@ -164,17 +164,15 @@ const ProductManagement = () => {
       deleteImages,
     } = data;
     try {
+      let _product;
       if (currentProduct) {
-        const _product = await configAxiosAll(user, dispatch).put(
-          `${API_PRODUCT_URL}`,
-          {
-            id: currentProduct.id,
-            name,
-            price,
-            description,
-            category_id: category.id,
-          }
-        );
+        await configAxiosAll(user, dispatch).put(`${API_PRODUCT_URL}`, {
+          id: currentProduct.id,
+          name,
+          price,
+          description,
+          category_id: category.id,
+        });
         const promises = [];
         if (details.length > 0) {
           promises.push(
@@ -188,10 +186,10 @@ const ProductManagement = () => {
                       color_id: item.color.id,
                       size_id: item.size.id,
                       amount: item.amount,
-                      product_id: _product.id,
+                      product_id: currentProduct.id,
                       sku: getSku(
                         category.code,
-                        _product.id,
+                        currentProduct.id,
                         item.code.code,
                         item.size.code
                       ),
@@ -279,7 +277,7 @@ const ProductManagement = () => {
         }
         await Promise.allSettled(promises);
       } else {
-        const _product = await configAxiosAll(user, dispatch).post(
+        _product = await configAxiosAll(user, dispatch).post(
           `${API_PRODUCT_URL}`,
           {
             name,
@@ -321,7 +319,6 @@ const ProductManagement = () => {
             )
           );
         }
-        console.log(details);
         if (details.length > 0) {
           promises.push(
             new Promise((resolve, reject) =>
@@ -362,19 +359,18 @@ const ProductManagement = () => {
           );
         }
         await Promise.allSettled(promises);
-        const newProduct = await configAxiosResponse().get(
-          `${API_PRODUCT_URL}/slug/${_product.slug}`
-        );
-        setProduct({
-          ...product,
-          total_result: product.total_result + 1,
-          items: [
-            newProduct,
-            ...[...product.items].splice(0, product.limit - 1),
-          ],
-          total_page: Math.ceil(product.total_result / product.limit),
-        });
       }
+      const newProduct = await configAxiosResponse().get(
+        `${API_PRODUCT_URL}/slug/${
+          currentProduct ? currentProduct.slug : _product.slug
+        }`
+      );
+      setProduct({
+        ...product,
+        total_result: product.total_result + 1,
+        items: [newProduct, ...[...product.items].splice(0, product.limit - 1)],
+        total_page: Math.ceil(product.total_result / product.limit),
+      });
     } catch (error) {
       console.log(error);
     }

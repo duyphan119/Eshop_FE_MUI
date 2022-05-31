@@ -1,0 +1,38 @@
+.row-comment {
+  position: relative;
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  padding: 8px;
+  min-height: 60px;
+  background-color: #fff;
+  box-shadow: 0 0 1px 0 #666;
+}
+.row-replied-comment:hover,
+.row-comment:hover {
+  background-color: lightcyan;
+}
+.row-replied-comment:hover .view-link,
+.row-comment:hover .view-link {
+  display: block;
+}
+.view-link {
+  position: absolute;
+  top: 50%;
+  right: 0;
+  transform: translate(-50%, -50%);
+  display: none;
+  color: gray;
+}
+.row-replied-comment {
+  font-size: 12px;
+  padding: 8px 8px 8px 108px;
+  position: relative;
+  background-color: #fff;
+  box-shadow: 0 0 1px 0 #666;
+}
+.comment-action {
+  text-transform: uppercase;
+  width: 100px;
+  cursor: pointer;
+}

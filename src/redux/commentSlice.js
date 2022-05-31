@@ -5,6 +5,7 @@ const initialState = {
   page: 1,
   limit: LIMIT_COMMENT,
   current: null,
+  comment: null,
 };
 const commentSlice = createSlice({
   name: "comment",
@@ -13,25 +14,71 @@ const commentSlice = createSlice({
     getAllComments: (state, action) => {
       state.list = action.payload;
     },
+    getComment: (state, action) => {
+      state.comment = action.payload;
+    },
     addComment: (state, action) => {
       if (state.list.findIndex((item) => item.id === action.payload.id) === -1)
         state.list = [action.payload, ...state.list];
     },
     updateComment: (state, action) => {
       const newComment = action.payload;
-      const index = state.list.findIndex((item) => item.id === newComment.id);
-      state.list[index] = newComment;
-      state.current = null;
+      const index = state.comment.items.findIndex(
+        (item) => item.id === newComment.id
+      );
+      state.comment.items[index] = {
+        ...state.comment.items[index],
+        ...newComment,
+      };
     },
-    deleteComment: (state) => {
-      state.list = state.list.filter((item) => item.id !== state.current.id);
-      state.current = null;
+    updateRepliedComment: (state, action) => {
+      const data = action.payload;
+      const index = state.comment.items.findIndex(
+        (item) => item.id === data.comment_id
+      );
+      if (index !== -1) {
+        const index2 = state.comment.items[index].replied_comments.findIndex(
+          (item) => item.id === data.id
+        );
+        if (index2 !== -1)
+          state.comment.items[index].replied_comments[index2] = {
+            ...state.comment.items[index].replied_comments[index2],
+            ...data,
+          };
+      }
+    },
+    deleteComment: (state, action) => {
+      const id = action.payload;
+      state.comment.items = state.comment.items.filter(
+        (item) => item.id !== id
+      );
+    },
+    deleteRepliedComment: (state, action) => {
+      const { commentId, id } = action.payload;
+      const index = state.comment.items.findIndex(
+        (item) => item.id === commentId
+      );
+      if (index !== -1) {
+        state.comment.items[index].replied_comments = state.comment.items[
+          index
+        ].replied_comments.filter((item) => item.id !== id);
+      }
     },
     changePage: (state, action) => {
       state.page = action.payload;
     },
     getCurrentComment: (state, action) => {
       state.current = action.payload;
+    },
+    newRepliedComment: (state, action) => {
+      const data = action.payload;
+      // Tìm vị trí cái comment
+      const index = state.comment.items.findIndex(
+        (item) => item.id === data.comment_id
+      );
+      if (index !== -1) {
+        state.comment.items[index].replied_comments.push(data);
+      }
     },
   },
 });
@@ -42,5 +89,9 @@ export const {
   getCurrentComment,
   updateComment,
   deleteComment,
+  newRepliedComment,
+  updateRepliedComment,
+  deleteRepliedComment,
+  getComment,
 } = commentSlice.actions;
 export default commentSlice.reducer;

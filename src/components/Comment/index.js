@@ -1,12 +1,15 @@
-import { Box, FormControl, TextField, Typography } from "@mui/material";
-import Stars from "../Stars";
-import "moment/locale/vi";
-import { useState } from "react";
-import RepliedComment from "../RepliedComment";
+import { Box, Typography } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
+import { useState } from "react";
+
+import Stars from "../Stars";
+import RepliedComment from "../RepliedComment";
 import { fromNow } from "../../utils";
 import { configAxiosAll } from "../../config/configAxios";
-import { API_REPLIED_COMMENT_URL } from "../../constants";
+import { API_COMMENT_URL, API_REPLIED_COMMENT_URL } from "../../constants";
+import ModalReply from "../ModalReply";
+import { deleteComment, newRepliedComment } from "../../redux/commentSlice";
+import ConfirmDialog from "../ConfirmDialog";
 
 const Comment = ({ comment }) => {
   const user = useSelector((state) => state.auth.currentUser);
@@ -14,22 +17,32 @@ const Comment = ({ comment }) => {
   const dispatch = useDispatch();
 
   const [showReplyForm, setShowReplyForm] = useState(false);
+  const [showDialog, setShowDialog] = useState(false);
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    const formData = new FormData(e.currentTarget);
-    const content = formData.get("relied_comment");
-    const req_replied_comment = {
-      comment_id: comment.id,
-      user_id: user.id,
-      content: content,
-    };
-    const data = await configAxiosAll(user, dispatch).post(
-      `${API_REPLIED_COMMENT_URL}`,
-      req_replied_comment
-    );
-    console.log(data);
-  };
+  async function handleOk(data) {
+    const { content } = data;
+    try {
+      const res = await configAxiosAll(user, dispatch).post(
+        `${API_REPLIED_COMMENT_URL}`,
+        {
+          comment_id: comment.id,
+          content,
+          user_id: user.id,
+        }
+      );
+      dispatch(newRepliedComment({ ...res, user }));
+      if (!showReplyForm) setShowReplyForm(true);
+    } catch (error) {}
+  }
+
+  async function handleDelete() {
+    try {
+      await configAxiosAll(user, dispatch).delete(
+        `${API_COMMENT_URL}/${comment.id}`
+      );
+      dispatch(deleteComment(comment.id));
+    } catch (error) {}
+  }
 
   return (
     <Box fullWidth id={`comment${comment.id}`} className="comment">
@@ -75,6 +88,19 @@ const Comment = ({ comment }) => {
               <Typography ml={1} fontSize={12} color="gray">
                 {comment.createdAt !== comment.updatedAt ? "Đã chỉnh sửa" : ""}
               </Typography>
+              <div
+                className="hover-color-main-color"
+                style={{
+                  fontSize: 12,
+                  marginLeft: 8,
+                  color: "gray",
+                  textTransform: "uppercase",
+                  cursor: "pointer",
+                }}
+                onClick={() => setShowDialog(true)}
+              >
+                Xoá
+              </div>
             </Box>
             {comment.replied_comments &&
               comment.replied_comments.map((item) => {
@@ -86,19 +112,27 @@ const Comment = ({ comment }) => {
                 );
               })}
             {showReplyForm && (
-              <Box display="flex" mt={1} width="100%">
-                <form onSubmit={handleSubmit} style={{ width: "100%" }}>
-                  <FormControl fullWidth>
-                    <TextField
-                      size="small"
-                      name="relied_comment"
-                      id="relied_comment"
-                      defaultValue={""}
-                      placeholder="Nhập phản hồi của bạn"
-                    />
-                  </FormControl>
-                </form>
-              </Box>
+              <ModalReply
+                open={showReplyForm}
+                handleClose={() => setShowReplyForm(false)}
+                title="Phản hồi bình luận"
+                labelOk="Gửi"
+                handleOk={handleOk}
+                isCloseAfterOk={true}
+              />
+            )}
+            {showDialog && (
+              <ConfirmDialog
+                open={showDialog}
+                title="Xác nhận"
+                text={`Bạn có chắc chắn muốn xoá bình luận "${
+                  comment.content.length > 10
+                    ? comment.content.substring(0, 10) + "..."
+                    : comment.content
+                }" này không?`}
+                onConfirm={handleDelete}
+                onClose={() => setShowDialog(false)}
+              />
             )}
           </Box>
         </Box>

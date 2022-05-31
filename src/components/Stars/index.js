@@ -15,7 +15,10 @@ const Stars = ({ fontSize, rate, setRate, isActive }) => {
     >
       {EXAMPLE_STARS_ARRAY.map((item) => {
         return (
-          <li key={item + Math.random()} style={{ color: "var(--star-color)" }}>
+          <li
+            key={item + Math.random()}
+            style={{ color: "var(--star-color)", fontSize: fontSize }}
+          >
             {!isActive && item <= rate && (
               <span>
                 <StarIcon

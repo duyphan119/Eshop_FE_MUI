@@ -52,7 +52,6 @@ const Header = ({ headerRef }) => {
       })();
     }
   }, [user, dispatch]);
-  console.log("headerRef", headerRef);
   return (
     <>
       <Box

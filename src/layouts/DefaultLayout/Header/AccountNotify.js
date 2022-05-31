@@ -1,5 +1,6 @@
 import { Box } from "@mui/material";
 import axios from "axios";
+import { memo } from "react";
 import LogoutIcon from "@mui/icons-material/Logout";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
@@ -82,4 +83,4 @@ const AccountNotify = () => {
   );
 };
 
-export default AccountNotify;
+export default memo(AccountNotify);

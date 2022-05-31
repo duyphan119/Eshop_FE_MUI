@@ -1,4 +1,5 @@
-import { useEffect, useRef, useState } from "react";
+/* eslint-disable react-hooks/exhaustive-deps */
+import { memo, useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import SearchOutlinedIcon from "@mui/icons-material/SearchOutlined";
@@ -36,20 +37,17 @@ const SearchBar = () => {
     return () => {
       clearTimeout(timerId);
     };
-  }, [user, dispatch, q]);
+  }, [q]);
 
   function handleSubmit(e) {
     e.preventDefault();
-    search();
-  }
-
-  function search() {
     inputRef.current = q;
     if (q !== "") {
       setQ("");
       navigate(`/search?q=${inputRef.current}`);
     }
   }
+
   return (
     <div className="header-search">
       <form className="header-form-search" onSubmit={handleSubmit}>
@@ -116,4 +114,4 @@ const SearchBar = () => {
   );
 };
 
-export default SearchBar;
+export default memo(SearchBar);

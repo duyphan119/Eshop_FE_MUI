@@ -480,7 +480,7 @@ const ProductDetail = () => {
             </Box>
           </Grid>
         </Grid>
-        {product && <Comments product={product} />}
+        <Box mb={2}>{product && <Comments product={product} />}</Box>
         {recommendedProduct && recommendedProduct.items.length === 0 ? (
           <></>
         ) : (

@@ -5,12 +5,13 @@ import ChatBubbleOutlineIcon from "@mui/icons-material/ChatBubbleOutline";
 import PersonAddAltIcon from "@mui/icons-material/PersonAddAlt";
 import ReceiptLongIcon from "@mui/icons-material/ReceiptLong";
 import { Grid, Paper, Typography } from "@mui/material";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { configAxiosAll } from "../../config/configAxios";
 import { API_STATISTICS_URL } from "../../constants";
 import { formatThousandDigits, getTotalDaysOfMonth } from "../../utils";
 import ChartDaysInMonth from "./ChartDaysInMonth";
+
 const Statistics = () => {
   const user = useSelector((state) => state.auth.currentUser);
 
@@ -21,6 +22,18 @@ const Statistics = () => {
   const [countUser, setCountUser] = useState([]);
   const [revenueCurrentMonth, setRevenueCurrentMonth] = useState([]);
   const [countComment, setCountComment] = useState([]);
+
+  const calRevenueCurrentMonth = useMemo(() => {
+    if (revenueCurrentMonth.length > 0) {
+      const x = parseInt(
+        revenueCurrentMonth.find((el) => el.month === new Date().getMonth() + 1)
+      );
+      if (x) {
+        return parseInt(x);
+      }
+    }
+    return 0;
+  }, [revenueCurrentMonth]);
 
   useEffect(() => {
     const promises = [];
@@ -72,6 +85,7 @@ const Statistics = () => {
     );
     Promise.allSettled(promises)
       .then((listRes) => {
+        console.log(listRes);
         if (listRes[0].status === "fulfilled") {
           setCountOrder(listRes[0].value);
         }
@@ -102,7 +116,9 @@ const Statistics = () => {
           setCountComment(listRes[4].value);
         }
       })
-      .catch((err) => {});
+      .catch((err) => {
+        console.log(err);
+      });
   }, [user, dispatch]);
 
   return (
@@ -114,13 +130,13 @@ const Statistics = () => {
           value={
             countUser.length > 0
               ? countUser.find((el) => el.month === new Date().getMonth() + 1)
-                  .count
+                  ?.count
               : 0
           }
           comparedValue={
             countUser.length > 1
               ? countUser.find((el) => el.month !== new Date().getMonth() + 1)
-                  .count
+                  ?.count
               : 0
           }
         />
@@ -132,13 +148,13 @@ const Statistics = () => {
           value={
             countOrder.length > 0
               ? countOrder.find((el) => el.month === new Date().getMonth() + 1)
-                  .count
+                  ?.count
               : 0
           }
           comparedValue={
             countOrder.length > 1
               ? countOrder.find((el) => el.month !== new Date().getMonth() + 1)
-                  .count
+                  ?.count
               : 0
           }
         />
@@ -147,15 +163,7 @@ const Statistics = () => {
         <Widget
           icon={<AttachMoneyIcon sx={{ fontSize: 40 }} />}
           title="Doanh thu"
-          value={
-            revenueCurrentMonth.length > 0
-              ? parseInt(
-                  revenueCurrentMonth.find(
-                    (el) => el.month === new Date().getMonth() + 1
-                  ).total
-                )
-              : 0
-          }
+          value={calRevenueCurrentMonth}
           comparedValue={
             revenueCurrentMonth.length > 1
               ? parseInt(
@@ -175,14 +183,14 @@ const Statistics = () => {
             countComment.length > 0
               ? countComment.find(
                   (el) => el.month === new Date().getMonth() + 1
-                ).count
+                )?.count
               : 0
           }
           comparedValue={
             countComment.length > 1
               ? countComment.find(
                   (el) => el.month !== new Date().getMonth() + 1
-                ).count
+                )?.count
               : 0
           }
         />
@@ -194,7 +202,10 @@ const Statistics = () => {
             display: "flex",
             flexDirection: "column",
             height: 360,
+            width: "100%",
+            overflow: "overlay",
           }}
+          className="custom-scrollbar-horizontal"
         >
           <ChartDaysInMonth data={revenuesDaysInMonth} />
         </Paper>

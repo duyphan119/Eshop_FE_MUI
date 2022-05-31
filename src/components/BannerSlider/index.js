@@ -16,6 +16,7 @@ const BannerSlider = ({ banners, settings }) => {
     arrows: false,
     ...settings,
   };
+  console.log("banners sliders re-render");
   return (
     <Slider {..._settings}>
       {banners.map((item, index) => {

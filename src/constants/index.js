@@ -87,3 +87,5 @@ export const LIMIT_ROW_USER = 20;
 export const LIMIT_ROW_ROLE = 20;
 
 export const LIMIT_ROW_BANNER = 10;
+
+export const LIMIT_ROW_COMMENT = 10;

@@ -26,7 +26,11 @@ export const getThumbnailCartItem = (item) => {
   return IMAGE_IS_NOT_AVAILABLE_URL;
 };
 export const formatThousandDigits = (price) => {
-  return price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+  try {
+    return price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+  } catch (error) {
+    return 0;
+  }
 };
 export const formatTimeVN = (time) => {
   return (
@@ -95,11 +99,6 @@ export const calHeightDataGrid = (rowCount) => {
   return rowCount * rowHeight + rowHeaderHeight + borderCount;
 };
 export const getSku = (category_code, product_id, color_code, size_code) => {
-  console.log(
-    `${category_code}${`000${product_id}`.slice(-4)}-${color_code}${
-      size_code === "0" ? "" : `-${size_code}`
-    }`
-  );
   return `${category_code}${`000${product_id}`.slice(-4)}-${color_code}${
     size_code === "0" ? "" : `-${size_code}`
   }`;
