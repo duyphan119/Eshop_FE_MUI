@@ -1,4 +1,4 @@
-# Danh sách công việc cần làm (từ 28-5-2022)
+# Danh sách công việc cần làm (từ 28-5-2022, những ngày trước đó quên không ghi lại)
 
 # 1. hoàn thiện chức năng đề xuất cho bạn ở trang nam, nữ, trẻ em,
 
@@ -30,7 +30,7 @@
 
 # 18. sửa sản phẩm trong dashboard
 
-19. làm thông báo
+# 19. làm thông báo
 
 # 20. tạo skeleton các component nào xài api
 
@@ -47,4 +47,10 @@
 
 # 27. làm dashboard đánh giá
 
-# Nếu còn dư thời gian thì thêm saga vô
+28. phân trang order
+29. sửa thông tin tài khoản
+30. giảm giá danh mục, sản phẩm
+31. thanh toán thì gửi thông báo
+32. responsive
+
+Nếu còn dư thời gian thì thêm saga vô

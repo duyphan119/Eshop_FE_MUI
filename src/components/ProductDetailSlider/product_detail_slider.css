@@ -1,8 +1,8 @@
 .slick-arrow {
   z-index: 1;
   width: 28px;
-  height: 28px;
-  background-color: #1976d2 !important;
+  height: 56px;
+  background-color: #1976d2ac !important;
 }
 .slick-arrow::before {
   opacity: 1;

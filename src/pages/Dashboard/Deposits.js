@@ -5,7 +5,6 @@ import { TitlePaper } from "../../components/Title";
 import { formatThousandDigits, formatTimeVN } from "../../utils";
 
 export default function Deposits({ total }) {
-  console.log(total);
   return (
     <React.Fragment>
       <TitlePaper>Doanh thu hôm nay</TitlePaper>

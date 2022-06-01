@@ -25,11 +25,11 @@ const Statistics = () => {
 
   const calRevenueCurrentMonth = useMemo(() => {
     if (revenueCurrentMonth.length > 0) {
-      const x = parseInt(
-        revenueCurrentMonth.find((el) => el.month === new Date().getMonth() + 1)
+      const x = revenueCurrentMonth.find(
+        (el) => el.month === new Date().getMonth() + 1
       );
       if (x) {
-        return parseInt(x);
+        return parseInt(x.total);
       }
     }
     return 0;

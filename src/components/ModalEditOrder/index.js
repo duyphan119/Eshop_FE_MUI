@@ -34,7 +34,7 @@ const ModalEditOrder = ({
       title={title}
       labelOk={labelOk}
       handleOk={() => {
-        handleOk(total, indexStatus);
+        handleOk({ total, indexStatus });
       }}
       isCloseAfterOk={isCloseAfterOk}
       width={width}

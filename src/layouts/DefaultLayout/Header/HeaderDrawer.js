@@ -1,5 +1,5 @@
-import { memo, useState } from "react";
-import { Link } from "react-router-dom";
+import { memo, useEffect, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import Box from "@mui/material/Box";
 import Drawer from "@mui/material/Drawer";
 import List from "@mui/material/List";
@@ -13,16 +13,23 @@ import LogoutIcon from "@mui/icons-material/Logout";
 import { useTheme } from "@mui/material/styles";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import MenuIcon from "@mui/icons-material/Menu";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import CategoryOutlinedIcon from "@mui/icons-material/CategoryOutlined";
 import config from "../../../config";
+import axios from "axios";
+import { logout } from "../../../redux/authSlice";
+import { API_AUTH_URL } from "../../../constants";
 
 const HeaderDrawer = () => {
   const theme = useTheme();
   const matches = useMediaQuery(theme.breakpoints.up("lg"));
 
+  const dispatch = useDispatch();
+
+  const navigate = useNavigate();
+
   const [state, setState] = useState(false);
-  const genderCategories = useSelector((state) => state.genderCategory.list);
+  const genderCategories = useSelector((state) => state.genderCategory.all);
   const [showGenderCategories, setShowGenderCategories] = useState(false);
 
   const toggleDrawer = (e) => {
@@ -31,6 +38,19 @@ const HeaderDrawer = () => {
     }
     setState(!state);
   };
+
+  function handleLogout() {
+    axios.get(`${API_AUTH_URL}/logout`);
+    dispatch(logout());
+    navigate(config.routes.login);
+    setState(!state);
+  }
+
+  useEffect(() => {
+    if (!state) {
+      setShowGenderCategories(false);
+    }
+  }, [state]);
 
   return (
     <>
@@ -82,16 +102,17 @@ const HeaderDrawer = () => {
               <ListItemText primary="Danh mục" />
             </ListItem>
             {showGenderCategories &&
-              genderCategories.map((genderCategory) => (
+              genderCategories.map((genderCategory, index) => (
                 <Link
                   to={`/${genderCategory.slug}`}
                   style={{
                     textDecoration: "none",
                     color: "inherit",
                   }}
+                  key={index}
                 >
-                  <ListItem button key={genderCategory.slug + Math.random()}>
-                    <ListItemText primary={genderCategory.short_name} />
+                  <ListItem button>
+                    <ListItemText primary={genderCategory.name} />
                   </ListItem>
                 </Link>
               ))}
@@ -109,7 +130,7 @@ const HeaderDrawer = () => {
                 <ListItemText primary="Yêu thích" />
               </ListItem>
             </Link>
-            <ListItem button onClick={() => setState(!state)}>
+            <ListItem button onClick={handleLogout}>
               <ListItemIcon>
                 <LogoutIcon />
               </ListItemIcon>

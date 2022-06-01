@@ -1,6 +1,5 @@
 import { Avatar, Box, Typography } from "@mui/material";
 import List from "@mui/material/List";
-import PersonOutlineIcon from "@mui/icons-material/PersonOutline";
 import { MainListItems } from "./ListItems";
 import { useSelector } from "react-redux";
 const Drawer = ({ items, indexItem, getIndexItem }) => {
@@ -20,9 +19,9 @@ const Drawer = ({ items, indexItem, getIndexItem }) => {
           width: 100,
           height: 100,
         }}
-      >
-        <PersonOutlineIcon style={{ fontSize: "50px" }} />
-      </Avatar>
+        src={user.avatar}
+        alt=""
+      />
       <Typography my={1}>{user.full_name}</Typography>
       <List component="nav" style={{ width: "100%" }}>
         <MainListItems

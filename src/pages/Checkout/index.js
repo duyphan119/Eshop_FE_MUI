@@ -1,5 +1,6 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { Container, Grid } from "@mui/material";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Navigate } from "react-router-dom";
 import config from "../../config";
@@ -61,7 +62,7 @@ const Checkout = () => {
     setTotalPrice(getTotalPage(selectedCartItems));
   }, [selectedCartItems]);
 
-  const handleCheckout = async () => {
+  const handleCheckout = useCallback(async () => {
     if (order) {
       const data = await configAxiosAll(user, dispatch).post(
         `${API_ORDER_URL}`,
@@ -101,7 +102,7 @@ const Checkout = () => {
         })
       );
     }
-  };
+  }, [coupon]);
   if (isSuccessful) return <CheckoutSuccess />;
   else if (!isSuccessful && selectedCartItems.count === 0)
     return <Navigate to={config.routes.cart} />;
@@ -109,10 +110,10 @@ const Checkout = () => {
   return (
     <Container>
       <Grid container spacing={2}>
-        <Grid item xs={8}>
+        <Grid item xs={12} lg={8}>
           <Form order={order} setOrder={setOrder} />
         </Grid>
-        <Grid item xs={4}>
+        <Grid item xs={12} lg={4}>
           <Result
             onCheckout={handleCheckout}
             totalPrice={totalPrice}

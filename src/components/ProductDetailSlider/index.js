@@ -3,17 +3,15 @@ import "slick-carousel/slick/slick-theme.css";
 import "slick-carousel/slick/slick.css";
 import "./product_detail_slider.css";
 const ProductDetailSlider = ({ images }) => {
-  const settings = {
-    dots: true,
+  const _settings = {
+    dots: false,
     slidesToShow: 1,
-    speed: 500,
     slidesToScroll: 1,
-    dotsClass: "dots-slider-slick",
     draggable: true,
     arrows: true,
   };
   return (
-    <Slider {...settings}>
+    <Slider {..._settings}>
       {images.map((item, index) => {
         return (
           <img

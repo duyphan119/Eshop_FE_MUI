@@ -2,6 +2,7 @@ import AddOutlinedIcon from "@mui/icons-material/AddOutlined";
 import DeleteIcon from "@mui/icons-material/Delete";
 import RemoveOutlinedIcon from "@mui/icons-material/RemoveOutlined";
 import {
+  Box,
   Checkbox,
   FormControlLabel,
   Grid,
@@ -79,14 +80,17 @@ const CartItem = ({ item, checked }) => {
         backgroundColor: "#fff",
         marginBottom: "10px",
         paddingBlock: "8px",
+        position: "relative",
       }}
     >
       <Grid
         item
-        lg={7}
+        xs={12}
+        md={7}
         style={{
           display: "flex",
           paddingLeft: "8px",
+          width: "100%",
         }}
       >
         <FormControlLabel
@@ -122,7 +126,6 @@ const CartItem = ({ item, checked }) => {
           <Typography variant="body2">
             {item.detail.color.value} / {item.detail.size.value}
           </Typography>
-
           <Typography variant="body2">
             {hasDiscount && (
               <span style={{ color: "var(--main-color)" }}>
@@ -146,77 +149,78 @@ const CartItem = ({ item, checked }) => {
               {formatThousandDigits(item.detail.product.price)}đ
             </span>
           </Typography>
+          <Box
+            className=""
+            sx={{
+              display: {
+                xs: "flex",
+                md: "none",
+              },
+              justifyContent: "space-between",
+              alignItems: "center",
+              width: "140px",
+              position: "absolute",
+              right: "8px",
+              bottom: "8px",
+            }}
+          >
+            <IconButton
+              color="error"
+              component="span"
+              size="small"
+              onClick={handleDeleteItem}
+            >
+              <DeleteIcon />
+            </IconButton>
+            <div className="cart-item-quantity-wrapper">
+              <button onClick={() => handleUpdateCart(item.quantity - 1)}>
+                <RemoveOutlinedIcon style={{ fontSize: "14px" }} />
+              </button>
+              <input
+                type="text"
+                value={item.quantity}
+                onChange={(e) => handleUpdateCart(e.target.value)}
+              />
+              <button onClick={() => handleUpdateCart(item.quantity + 1)}>
+                <AddOutlinedIcon style={{ fontSize: "14px" }} />
+              </button>
+            </div>
+          </Box>
         </div>
       </Grid>
       <Grid
         item
-        lg={2}
+        xs={2}
         sx={{
-          display: "flex",
+          display: {
+            md: "flex",
+            xs: "none",
+          },
           justifyContent: "center",
         }}
       >
-        <div
-          style={{
-            width: "84px",
-            display: "flex",
-            alignItems: "center",
-            overflow: "hidden",
-            borderRadius: "30px",
-            border: "1px solid #000",
-          }}
-        >
-          <button
-            style={{
-              width: "28px",
-              height: "22px",
-              border: "none",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              backgroundColor: "transparent",
-              borderRight: "1px solid #000",
-              cursor: "pointer",
-            }}
-            onClick={() => handleUpdateCart(item.quantity - 1)}
-          >
+        <div className="cart-item-quantity-wrapper">
+          <button onClick={() => handleUpdateCart(item.quantity - 1)}>
             <RemoveOutlinedIcon style={{ fontSize: "14px" }} />
           </button>
           <input
             type="text"
-            style={{
-              width: "28px",
-              border: "none",
-              outline: "none",
-              textAlign: "center",
-              backgroundColor: "inherit",
-            }}
             value={item.quantity}
             onChange={(e) => handleUpdateCart(e.target.value)}
           />
-          <button
-            style={{
-              width: "28px",
-              height: "22px",
-              border: "none",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              backgroundColor: "transparent",
-              borderLeft: "1px solid #000",
-              cursor: "pointer",
-            }}
-            onClick={() => handleUpdateCart(item.quantity + 1)}
-          >
+          <button onClick={() => handleUpdateCart(item.quantity + 1)}>
             <AddOutlinedIcon style={{ fontSize: "14px" }} />
           </button>
         </div>
       </Grid>
       <Grid
         item
-        lg={2}
+        xs={2}
         sx={{
-          display: "flex",
+          display: {
+            md: "flex",
+            xs: "none",
+          },
           justifyContent: "center",
         }}
       >
@@ -229,8 +233,12 @@ const CartItem = ({ item, checked }) => {
       </Grid>
       <Grid
         item
-        lg={1}
+        xs={1}
         sx={{
+          display: {
+            md: "flex",
+            xs: "none",
+          },
           justifyContent: "center",
           paddingRight: "8px",
         }}

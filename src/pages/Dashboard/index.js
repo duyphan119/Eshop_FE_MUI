@@ -17,7 +17,7 @@ const Dashboard = () => {
   useEffect(() => {
     document.title = "Bảng điều khiển";
   }, []);
-  console.log(`${API_STATISTICS_URL}/revenue?type=hoursInDay`);
+
   useEffect(() => {
     (async function () {
       try {

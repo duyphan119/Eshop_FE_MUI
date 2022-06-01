@@ -4,7 +4,11 @@ import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import Comment from "../Comment";
 import { SocketContext } from "../../context";
-import { API_COMMENT_URL, LIMIT_COMMENT } from "../../constants";
+import {
+  API_COMMENT_URL,
+  API_NOTIFICATION_URL,
+  LIMIT_COMMENT,
+} from "../../constants";
 import { configAxiosAll, configAxiosResponse } from "../../config/configAxios";
 import ModalComment from "../ModalComment";
 import { isShowCollapse, isShowLoadMore } from "../Button";
@@ -61,9 +65,19 @@ const Comments = ({ product }) => {
         );
         setMyComment(res);
       }
+      const notify = await configAxiosAll(user, dispatch).post(
+        `${API_NOTIFICATION_URL}`,
+        {
+          title: `${user.full_name} đã đánh giá sản phẩm`,
+          href: `/dashboard/comment`,
+          isRead: false,
+          sender_id: user.id,
+          notify_type: "comment",
+        }
+      );
       socket.emit("send-notify", {
-        ...reqComment,
         roomId: "admin",
+        ...notify,
       });
     } catch (error) {}
   }

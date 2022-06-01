@@ -171,7 +171,14 @@ const ProductDetail = () => {
 
   return (
     <Box sx={{ minHeight: "100%", paddingBlock: "20px" }}>
-      <Container sx={{ paddingInline: "120px !important" }}>
+      <Container
+        sx={{
+          paddingInline: {
+            lg: "120px !important",
+            xs: "24px !important",
+          },
+        }}
+      >
         <Grid container columnSpacing={3}>
           <Grid
             item
@@ -253,6 +260,7 @@ const ProductDetail = () => {
               </Grid>
             </Grid>
           </Grid>
+          {/* Slider hình ảnh khi ở mobile và tablet */}
           <Grid
             item
             xs={12}
@@ -265,7 +273,7 @@ const ProductDetail = () => {
           >
             <ProductDetailSlider images={product.colors[indexColor].images} />
           </Grid>
-          <Grid item xs={12} md={6}>
+          <Grid item xs={12} lg={6}>
             <Typography
               variant="h6"
               sx={{
@@ -444,14 +452,15 @@ const ProductDetail = () => {
               }}
             >
               <Button
-                variant="outlined"
+                variant="contained"
                 sx={{
                   flex: "1",
                   marginRight: {
                     xs: "0",
                     lg: "2px",
                   },
-                  backgroundColor: "#fff",
+                  backgroundColor: "#fff !important",
+                  color: "var(--main-color)",
                   paddingBlock: "8px",
                 }}
                 onClick={handleAddToCart}

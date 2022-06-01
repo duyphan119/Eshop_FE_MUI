@@ -25,6 +25,12 @@ import ModalEditOrder from "../../components/ModalEditOrder";
 import "ag-grid-community/dist/styles/ag-grid.css";
 import "ag-grid-community/dist/styles/ag-theme-alpine.css";
 import ConfirmDialog from "../../components/ConfirmDialog";
+import {
+  deletedOrder,
+  getCurrentOrder,
+  getOrder,
+  updateOrder,
+} from "../../redux/orderSlice";
 
 const OrderManagement = () => {
   const columns = [
@@ -81,12 +87,13 @@ const OrderManagement = () => {
       valueFormatter: (params) => formatThousandDigits(params.data.total),
     },
     {
-      field: "status.description",
+      field: "status",
       headerName: "Trạng thái",
       width: 130,
       pinned: "right",
       sortable: true,
       filter: true,
+      valueGetter: (params) => params.data.status.description,
     },
     {
       field: "actions",
@@ -103,7 +110,7 @@ const OrderManagement = () => {
           <Tooltip title="Sửa hoá đơn">
             <IconButton
               onClick={() => {
-                setCurrentOrder(params.data);
+                dispatch(getCurrentOrder(params.data));
                 setOpen(true);
               }}
             >
@@ -113,7 +120,7 @@ const OrderManagement = () => {
           <Tooltip title="Xoá hoá đơn">
             <IconButton
               onClick={() => {
-                setCurrentOrder(params.data);
+                dispatch(getCurrentOrder(params.data));
                 setOpenDialog(true);
               }}
             >
@@ -126,17 +133,16 @@ const OrderManagement = () => {
   ];
 
   const user = useSelector((state) => state.auth.currentUser);
+  const order = useSelector((state) => state.order.order);
+  const currentOrder = useSelector((state) => state.order.current);
 
   const dispatch = useDispatch();
 
   const [page, setPage] = useState(1);
-  const [order, setOrder] = useState();
-  const [currentOrder, setCurrentOrder] = useState();
+
   const [open, setOpen] = useState(false);
   const [openDialog, setOpenDialog] = useState(false);
   const [orderStatuses, setOrderStatuses] = useState([]);
-
-  console.log(order);
 
   useEffect(() => {
     (function () {
@@ -153,54 +159,43 @@ const OrderManagement = () => {
 
       Promise.allSettled([promiseOrder, promiseOrderStatus])
         .then((listRes) => {
-          setOrder(listRes[0].value);
+          dispatch(getOrder(listRes[0].value));
           setOrderStatuses(listRes[1].value);
         })
         .catch((err) => {});
     })();
   }, [user, dispatch, page]);
 
-  function handleOk(total, indexStatus) {
+  function handleOk(data) {
+    const { total, indexStatus } = data;
     configAxiosAll(user, dispatch)
       .put(`${API_ORDER_URL}`, {
         ...currentOrder,
         total,
         order_status_id: orderStatuses[indexStatus].id,
       })
-      .then((data) => {
-        const _order = { ...order };
-        const index = _order.items.findIndex((el) => el.id === currentOrder.id);
-        if (index !== -1) {
-          _order.items[index] = {
-            ...currentOrder,
-            total,
-            order_status_id: orderStatuses[indexStatus].id,
-            status: orderStatuses[indexStatus],
-          };
-          setOrder(_order);
-        }
+      .then((res) => {
+        dispatch(updateOrder(res));
       })
       .catch((err) => {});
   }
+
   async function onConfirm() {
     try {
       await configAxiosAll(user, dispatch).delete(
         `${API_ORDER_URL}/${currentOrder.id}`
       );
-      const data = await configAxiosAll(user, dispatch).get(
-        `${API_ORDER_URL}?limit=${LIMIT_ROW_ORDER}&p=${page}`
-      );
-      setOrder(data);
+      dispatch(deletedOrder(currentOrder.id));
     } catch (error) {}
   }
-  console.log(order?.items[0]);
+
   return (
     <Box p={1} bgcolor="#fff">
       <Paper
         sx={{
           width: "100%",
           overflow: "hidden",
-          height: calHeightDataGrid(12),
+          height: calHeightDataGrid(12) + 17,
         }}
       >
         <div

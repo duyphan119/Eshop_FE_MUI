@@ -44,7 +44,7 @@ const Form = ({ order, setOrder }) => {
   return (
     <Box sx={{ pt: 4 }}>
       <Grid container spacing={2}>
-        <Grid item xs={6}>
+        <Grid item xs={12} md={6}>
           <TitleControl>Thông tin giao hàng</TitleControl>
           <FormControl fullWidth sx={{ mt: 2 }}>
             <TextField
@@ -207,7 +207,7 @@ const Form = ({ order, setOrder }) => {
           </FormControl>
         </Grid>
 
-        <Grid item xs={6}>
+        <Grid item xs={12} md={6}>
           <TitleControl>Thanh toán</TitleControl>
           <FormControlLabel
             control={<Checkbox checked={true} />}

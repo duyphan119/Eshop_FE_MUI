@@ -1,16 +1,16 @@
 import MenuIcon from "@mui/icons-material/Menu";
-import NotificationsIcon from "@mui/icons-material/Notifications";
-import { ClickAwayListener, Paper, useMediaQuery } from "@mui/material";
+import { useMediaQuery } from "@mui/material";
 import MuiAppBar from "@mui/material/AppBar";
-import Badge from "@mui/material/Badge";
 import IconButton from "@mui/material/IconButton";
 import { styled, useTheme } from "@mui/material/styles";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import * as React from "react";
-import { Link, useLocation } from "react-router-dom";
+import { useLocation } from "react-router-dom";
+
 import { DRAWER_WIDTH } from "../../../constants";
-import { SocketContext } from "../../../context";
+import NotificationIcon from "./NotificationIcon";
+import "./AppBar.css";
 
 const StyledAppBar = styled(MuiAppBar, {
   shouldForwardProp: (prop) => prop !== "open",
@@ -30,83 +30,13 @@ const StyledAppBar = styled(MuiAppBar, {
   }),
 }));
 
-const notifications = [
-  {
-    id: 1,
-    type: "order",
-    title: "Bạn có đơn hàng mới",
-    href: "/dashboard/order",
-    isRead: false,
-  },
-  {
-    id: 2,
-    type: "comment",
-    title: "Người dùng đã đăng bài đánh giá mới",
-    href: "/dashboard/comment",
-    isRead: true,
-  },
-  {
-    id: 3,
-    type: "order",
-    title: "Bạn có đơn hàng mới",
-    href: "/dashboard/order",
-    isRead: true,
-  },
-  {
-    id: 4,
-    type: "comment",
-    title: "Người dùng đã đăng bài đánh giá mới",
-    href: "/dashboard/comment",
-    isRead: true,
-  },
-  {
-    id: 5,
-    type: "order",
-    title: "Bạn có đơn hàng mới",
-    href: "/dashboard/order",
-    isRead: true,
-  },
-  {
-    id: 6,
-    type: "comment",
-    title: "Người dùng đã đăng bài đánh giá mới",
-    href: "/dashboard/comment",
-    isRead: true,
-  },
-  {
-    id: 7,
-    type: "order",
-    title: "Bạn có đơn hàng mới",
-    href: "/dashboard/order",
-    isRead: true,
-  },
-  {
-    id: 8,
-    type: "comment",
-    title: "Người dùng đã đăng bài đánh giá mới",
-    href: "/dashboard/comment",
-    isRead: true,
-  },
-];
-
 const AppBar = ({ open, toggleDrawer }) => {
   const theme = useTheme();
   const matches = useMediaQuery(theme.breakpoints.up("lg"));
 
-  const socket = React.useContext(SocketContext);
-
   const [title, setTitle] = React.useState("");
-  const [showNotifications, setShowNotifications] = React.useState(false);
 
   const location = useLocation();
-
-  React.useEffect(() => {
-    const handler = (item) => {
-      console.log(item);
-    };
-    socket.on("receive-notify", handler);
-    return () => socket.off("receive-notify", handler);
-  }, [socket]);
 
   React.useEffect(() => {
     let _title;
@@ -130,7 +60,7 @@ const AppBar = ({ open, toggleDrawer }) => {
     document.title = _title;
     setTitle(_title);
   }, [location.pathname]);
-  console.log(matches);
+
   return (
     <StyledAppBar
       position="absolute"
@@ -164,62 +94,10 @@ const AppBar = ({ open, toggleDrawer }) => {
         >
           {title}
         </Typography>
-        <ClickAwayListener
-          onClickAway={() => {
-            setShowNotifications(false);
-          }}
-        >
-          <IconButton
-            color="inherit"
-            sx={{ position: "relative" }}
-            onClick={() => {
-              setShowNotifications(!showNotifications);
-            }}
-          >
-            <Badge badgeContent={4} color="secondary">
-              <NotificationsIcon />
-            </Badge>
-            {showNotifications && (
-              <Paper
-                sx={{
-                  position: "absolute",
-                  right: 0,
-                  top: "100%",
-                  bgcolor: "#fff",
-                  width: 300,
-                  fontSize: 14,
-                  maxHeight: 360,
-                  overflowX: "hidden",
-                  overflowY: "auto",
-                  color: "#000",
-                  boxShadow: " 0 0 2px 0 #666",
-                }}
-                className="custom-scrollbar"
-              >
-                {notifications.map((item, index) => (
-                  <Link
-                    to={item.href}
-                    key={index}
-                    onClick={() => {
-                      setShowNotifications(false);
-                    }}
-                    style={{
-                      display: "flex",
-                      height: 60,
-                      padding: 4,
-                      backgroundColor: item.isRead ? "#fff" : "#eee",
-                    }}
-                  >
-                    {item.title}
-                  </Link>
-                ))}
-              </Paper>
-            )}
-          </IconButton>
-        </ClickAwayListener>
+        <NotificationIcon />
       </Toolbar>
     </StyledAppBar>
   );
 };
 
-export default AppBar;
+export default React.memo(AppBar);

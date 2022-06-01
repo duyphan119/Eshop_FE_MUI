@@ -40,35 +40,41 @@ const Cart = () => {
         <EmptyCart />
       ) : (
         <Container>
-          <Grid container rowSpacing={2} columnSpacing={2}>
+          <Grid container spacing={2}>
             <Grid item xs={12}>
               <TitlePage>Giỏ hàng</TitlePage>
             </Grid>
           </Grid>
+          <Grid container spacing={2} className="cart-header-container">
+            <Grid item xs={6} className="cart-header cart-total-item">
+              {cart.count} Sản phẩm
+            </Grid>
+            <Grid
+              item
+              xs={6}
+              sx={{
+                textAlign: "right",
+              }}
+            >
+              <Link
+                to={`/`}
+                className="cart-header cart-continue-shopping-link"
+              >
+                Tiếp tục mua hàng
+              </Link>
+            </Grid>
+          </Grid>
           <Grid container columnSpacing={2}>
-            <Grid item lg={12}>
-              <Grid container>
-                <Grid item lg={12}>
-                  <Grid container className="cart-header-container">
-                    <Grid item lg={6} className="cart-header cart-total-item">
-                      {cart.count} Sản phẩm
-                    </Grid>
-                    <Grid
-                      item
-                      lg={6}
-                      sx={{
-                        textAlign: "right",
-                      }}
-                    >
-                      <Link
-                        to={`/`}
-                        className="cart-header cart-continue-shopping-link"
-                      >
-                        Tiếp tục mua hàng
-                      </Link>
-                    </Grid>
-                  </Grid>
-                </Grid>
+            <Grid item xs={12}>
+              <Grid
+                container
+                sx={{
+                  display: {
+                    lg: "flex",
+                    xs: "none",
+                  },
+                }}
+              >
                 <Grid item className="cart-checkout" lg={7}>
                   <FormControlLabel
                     control={
@@ -104,9 +110,7 @@ const Cart = () => {
                 );
               })}
             </Grid>
-            <Grid item lg={12} className="cart-result-title">
-              <CartResult />
-            </Grid>
+            <CartResult />
           </Grid>
         </Container>
       )}

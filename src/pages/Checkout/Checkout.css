@@ -1,4 +1,5 @@
 /* Result */
+.order-result-tablet,
 .order-result {
   position: relative;
 }
@@ -21,6 +22,9 @@
   height: 100%;
   width: calc(100% + 11.5px);
   z-index: -1;
+}
+.order-result-item-center {
+  flex: 1;
 }
 .order-result-item {
   font-size: 14px;

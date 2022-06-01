@@ -25,6 +25,7 @@ export const API_STATISTICS_URL = `${SERVER_URL}/v1/api/statistics`;
 export const API_PRODUCT_USER_URL = `${SERVER_URL}/v1/api/product-user`;
 export const API_ROLE_URL = `${SERVER_URL}/v1/api/role`;
 export const API_BANNER_URL = `${SERVER_URL}/v1/api/banner`;
+export const API_NOTIFICATION_URL = `${SERVER_URL}/v1/api/notification`;
 export const API_PROVINCE_URL = "https://provinces.open-api.vn/api/";
 
 export const LIMIT_BEST_SELLER = 10;
@@ -59,7 +60,7 @@ export const DRAWER_WIDTH = 240;
 export const PRODUCTS_CATEGORY_PER_PAGE = 10;
 export const BEST_SELLER_PRODUCTS_PREVIEW = 12;
 export const LIMIT_SEARCH_RESULT = 5;
-export const LIMIT_ROW_PRODUCT = 10;
+export const LIMIT_ROW_PRODUCT = 20;
 export const NEW_PRODUCTS_PREVIEW = 12;
 
 export const LIMIT_ROW_CATEGORY = 10;
@@ -89,3 +90,5 @@ export const LIMIT_ROW_ROLE = 20;
 export const LIMIT_ROW_BANNER = 10;
 
 export const LIMIT_ROW_COMMENT = 10;
+
+export const LIMIT_NOTIFICATION = 10;

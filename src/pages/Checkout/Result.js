@@ -5,16 +5,21 @@ import { Link } from "react-router-dom";
 import { TitleControl } from "../../components/Title";
 import config from "../../config";
 import { formatThousandDigits, getThumbnailCartItem } from "../../utils";
-import { useState } from "react";
+import { useState, memo } from "react";
 import { configAxiosResponse } from "../../config/configAxios";
 import { API_COUPON_URL } from "../../constants";
-const Result = ({ onCheckout, totalPrice, finalPrice, setCoupon, coupon }) => {
+import { useTheme } from "@mui/material/styles";
+import useMediaQuery from "@mui/material/useMediaQuery";
+const Result = ({ onCheckout, totalPrice, finalPrice, setCoupon }) => {
+  const theme = useTheme();
+  const matches = useMediaQuery(theme.breakpoints.up("lg"));
+
   const selectedCartItems = useSelector(
     (state) => state.cart.selectedCartItems
   );
 
   return (
-    <Box pt={4} className="order-result">
+    <Box pt={4} className={matches ? "order-result" : "order-result-tablet"}>
       <TitleControl>Đơn hàng ({selectedCartItems.count} sản phẩm)</TitleControl>
 
       {selectedCartItems.items.map((item, index) => (
@@ -92,7 +97,7 @@ const Coupon = ({ setCoupon }) => {
       }
     } catch (error) {}
   }
-  console.log(code);
+
   return (
     <>
       <Box
@@ -162,4 +167,4 @@ const Item = ({ leftLabel, rightLabel, isLast }) => {
   );
 };
 
-export default Result;
+export default memo(Result);
