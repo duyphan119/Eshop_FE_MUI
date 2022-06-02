@@ -1,3 +1,5 @@
+import html2canvas from "html2canvas";
+import jsPDF from "jspdf";
 import { IMAGE_IS_NOT_AVAILABLE_URL } from "../constants";
 
 export const calculateProductSale = (price, sale) => {
@@ -102,4 +104,25 @@ export const getSku = (category_code, product_id, color_code, size_code) => {
   return `${category_code}${`000${product_id}`.slice(-4)}-${color_code}${
     size_code === "0" ? "" : `-${size_code}`
   }`;
+};
+export const getFinalPrice = (totalPrice, coupon) => {
+  let divide1000 = totalPrice / 1000;
+  if (!coupon) return 0;
+  return (divide1000 - Math.floor((divide1000 * coupon.percent) / 100)) * 1000;
+};
+export const exportComponentToPDF = (id) => {
+  const input = document.getElementById(id);
+
+  input.style.transform = `scale(${896 / input.getBoundingClientRect().width})`;
+  html2canvas(input).then((canvas) => {
+    const imgData = canvas.toDataURL("img/png");
+    const pdf = new jsPDF({
+      orientation: "landscape",
+      unit: "px",
+    });
+
+    pdf.addImage(imgData, "PNG", 1, 1);
+    pdf.save("File.pdf");
+  });
+  input.style.transform = `scale(1)`;
 };

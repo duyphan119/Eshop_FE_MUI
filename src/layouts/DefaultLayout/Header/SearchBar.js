@@ -81,7 +81,7 @@ const SearchBar = () => {
                       return (
                         <li key={item.id + Math.random()}>
                           <Link
-                            to={`/${item.slug}`}
+                            to={`/product/${item.slug}`}
                             className="header-search-result-link"
                           >
                             <img src={getThumbnailProduct(item)} alt="" />

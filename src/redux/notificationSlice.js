@@ -21,8 +21,8 @@ const categorySlice = createSlice({
             items: [
               data,
               ...state.notification.items.splice(
-                state.notification.items.length - 1,
-                1
+                0,
+                state.notification.items.length - 1
               ),
             ],
             limit: LIMIT_NOTIFICATION,

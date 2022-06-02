@@ -73,10 +73,7 @@ const Form = ({ order, setOrder }) => {
               variant="outlined"
               value={order.phoneNumber}
               onChange={(e) =>
-                setOrder((prev) => ({
-                  ...prev,
-                  phoneNumber: e.target.value,
-                }))
+                setOrder({ ...order, phoneNumber: e.target.value })
               }
             />
           </FormControl>
@@ -93,12 +90,7 @@ const Form = ({ order, setOrder }) => {
               size="small"
               value={order.city}
               label="Tỉnh, Thành phố"
-              onChange={(e) =>
-                setOrder((prev) => ({
-                  ...prev,
-                  city: e.target.value,
-                }))
-              }
+              onChange={(e) => setOrder({ ...order, city: e.target.value })}
             >
               {optionsCity.map((item) => {
                 return (
@@ -122,12 +114,7 @@ const Form = ({ order, setOrder }) => {
               value={order.district}
               label="Quận, Huyện"
               disabled={optionsDistrict.length === 0}
-              onChange={(e) =>
-                setOrder((prev) => ({
-                  ...prev,
-                  district: e.target.value,
-                }))
-              }
+              onChange={(e) => setOrder({ ...order, district: e.target.value })}
             >
               {optionsDistrict.map((item) => {
                 return (
@@ -151,12 +138,7 @@ const Form = ({ order, setOrder }) => {
               value={order.ward}
               label="Phường"
               disabled={optionsWards.length === 0}
-              onChange={(e) =>
-                setOrder((prev) => ({
-                  ...prev,
-                  ward: e.target.value,
-                }))
-              }
+              onChange={(e) => setOrder({ ...order, ward: e.target.value })}
             >
               {optionsWards.map((item) => {
                 return (
@@ -178,12 +160,7 @@ const Form = ({ order, setOrder }) => {
               variant="outlined"
               value={order.street}
               disabled={optionsWards.length === 0}
-              onChange={(e) =>
-                setOrder((prev) => ({
-                  ...prev,
-                  street: e.target.value,
-                }))
-              }
+              onChange={(e) => setOrder({ ...order, street: e.target.value })}
             />
           </FormControl>
           <FormControl fullWidth sx={{ mt: 2 }}>
@@ -198,10 +175,7 @@ const Form = ({ order, setOrder }) => {
               value={order.addressNo}
               disabled={optionsWards.length === 0}
               onChange={(e) =>
-                setOrder((prev) => ({
-                  ...prev,
-                  addressNo: e.target.value,
-                }))
+                setOrder({ ...order, addressNo: e.target.value })
               }
             />
           </FormControl>

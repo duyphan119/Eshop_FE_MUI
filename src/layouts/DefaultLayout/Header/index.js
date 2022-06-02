@@ -3,7 +3,7 @@ import FavoriteBorderOutlinedIcon from "@mui/icons-material/FavoriteBorderOutlin
 import ShoppingCartOutlinedIcon from "@mui/icons-material/ShoppingCartOutlined";
 import { Badge, Box, Container, Grid } from "@mui/material";
 import Tooltip from "@mui/material/Tooltip";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import Logo from "../../../components/Logo";
@@ -12,7 +12,11 @@ import {
   configAxiosAll,
   configAxiosResponse,
 } from "../../../config/configAxios";
-import { API_CART_URL, API_PRODUCT_URL } from "../../../constants";
+import {
+  API_BANNER_URL,
+  API_CART_URL,
+  API_PRODUCT_URL,
+} from "../../../constants";
 import { getCart } from "../../../redux/cartSlice";
 import { getWishlist } from "../../../redux/wishlistSlice";
 import AccountNotify from "./AccountNotify";
@@ -26,31 +30,58 @@ const Header = ({ headerRef }) => {
   const wishlist = useSelector((state) => state.wishlist.wishlist);
   const user = useSelector((state) => state.auth.currentUser);
 
+  const [banner, setBanner] = useState();
+
   const dispatch = useDispatch();
 
   useEffect(() => {
+    const promises = [];
+
+    promises.push(
+      new Promise((resolve, reject) => {
+        resolve(
+          configAxiosResponse().get(
+            `${API_BANNER_URL}?position=above-header&page=/&isShow=true`
+          )
+        );
+      })
+    );
+
     if (user) {
-      (async function () {
-        const promiseWishlist = new Promise((resolve, reject) => {
+      promises.push(
+        new Promise((resolve, reject) => {
           resolve(
             configAxiosResponse().get(`${API_PRODUCT_URL}/user/${user.id}`)
           );
-        });
-        const promiseCart = new Promise((resolve, reject) => {
+        })
+      );
+
+      promises.push(
+        new Promise((resolve, reject) => {
           resolve(
             configAxiosAll(user, dispatch).get(
               `${API_CART_URL}/user/${user.id}`
             )
           );
-        });
-        Promise.allSettled([promiseWishlist, promiseCart])
-          .then((values) => {
-            dispatch(getWishlist(values[0].value));
-            dispatch(getCart(values[1].value));
-          })
-          .catch((err) => () => {});
-      })();
+        })
+      );
     }
+
+    Promise.allSettled(promises)
+      .then((listRes) => {
+        if (listRes[0].status === "fulfilled") {
+          setBanner(listRes[0].value[0]);
+        }
+        if (listRes.length > 1) {
+          if (listRes[1].status === "fulfilled") {
+            dispatch(getWishlist(listRes[1].value));
+          }
+          if (listRes[2].status === "fulfilled") {
+            dispatch(getCart(listRes[2].value));
+          }
+        }
+      })
+      .catch((err) => () => {});
   }, [user, dispatch]);
   return (
     <>
@@ -68,19 +99,20 @@ const Header = ({ headerRef }) => {
         }}
         ref={headerRef}
       >
-        <Link to="/thoi-trang-tre-em">
-          <div
-            style={{
-              backgroundImage:
-                "url(https://bizweb.sapocdn.net/100/438/408/themes/863105/assets/bannertop.jpg?1653901597354)",
-              backgroundSize: "cover",
-              backgroundPosition: "center",
-              height: "60px",
-              width: "100%",
-            }}
-          ></div>
-        </Link>
-        <Container sx={{ position: "relative" }}>
+        {banner && (
+          <Link to={banner.href}>
+            <div
+              style={{
+                backgroundImage: `url(${banner.url})`,
+                backgroundSize: "cover",
+                backgroundPosition: "center",
+                height: "60px",
+                width: "100%",
+              }}
+            ></div>
+          </Link>
+        )}
+        <Container sx={{ position: "static" }}>
           <Grid
             container
             sx={{
@@ -90,7 +122,7 @@ const Header = ({ headerRef }) => {
             }}
           >
             <Grid item xs={3} xl={2} lg={2}>
-              <Logo />
+              <Logo style={{ color: "#fff" }} />
             </Grid>
             <Grid
               item

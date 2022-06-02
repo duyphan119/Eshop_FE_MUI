@@ -1,16 +1,12 @@
-import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
-import ArrowUpwardIcon from "@mui/icons-material/ArrowUpward";
-import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
-import ChatBubbleOutlineIcon from "@mui/icons-material/ChatBubbleOutline";
-import PersonAddAltIcon from "@mui/icons-material/PersonAddAlt";
-import ReceiptLongIcon from "@mui/icons-material/ReceiptLong";
-import { Grid, Paper, Typography } from "@mui/material";
-import { useEffect, useMemo, useState } from "react";
+import { Box, Button, Grid, Paper } from "@mui/material";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { configAxiosAll } from "../../config/configAxios";
 import { API_STATISTICS_URL } from "../../constants";
-import { formatThousandDigits, getTotalDaysOfMonth } from "../../utils";
+import { exportComponentToPDF, getTotalDaysOfMonth } from "../../utils";
 import ChartDaysInMonth from "./ChartDaysInMonth";
+import ChartMonthsInYear from "./ChartMonthsInYear";
+import ChartYears from "./ChartYears";
 
 const Statistics = () => {
   const user = useSelector((state) => state.auth.currentUser);
@@ -18,22 +14,8 @@ const Statistics = () => {
   const dispatch = useDispatch();
 
   const [revenuesDaysInMonth, setRevenuesDaysInMonth] = useState([]);
-  const [countOrder, setCountOrder] = useState([]);
-  const [countUser, setCountUser] = useState([]);
-  const [revenueCurrentMonth, setRevenueCurrentMonth] = useState([]);
-  const [countComment, setCountComment] = useState([]);
-
-  const calRevenueCurrentMonth = useMemo(() => {
-    if (revenueCurrentMonth.length > 0) {
-      const x = revenueCurrentMonth.find(
-        (el) => el.month === new Date().getMonth() + 1
-      );
-      if (x) {
-        return parseInt(x.total);
-      }
-    }
-    return 0;
-  }, [revenueCurrentMonth]);
+  const [revenuesMonthsInYear, setRevenuesMonthsInYear] = useState([]);
+  const [revenuesYears, setRevenuesYears] = useState([]);
 
   useEffect(() => {
     const promises = [];
@@ -42,7 +24,16 @@ const Statistics = () => {
       new Promise((resolve, reject) =>
         resolve(
           configAxiosAll(user, dispatch).get(
-            `${API_STATISTICS_URL}/order?type=countCurrentMonth`
+            `${API_STATISTICS_URL}/revenue?type=years`
+          )
+        )
+      )
+    );
+    promises.push(
+      new Promise((resolve, reject) =>
+        resolve(
+          configAxiosAll(user, dispatch).get(
+            `${API_STATISTICS_URL}/revenue?type=monthsInYear`
           )
         )
       )
@@ -56,64 +47,29 @@ const Statistics = () => {
         )
       )
     );
-    promises.push(
-      new Promise((resolve, reject) =>
-        resolve(
-          configAxiosAll(user, dispatch).get(
-            `${API_STATISTICS_URL}/user?type=countCurrentMonth`
-          )
-        )
-      )
-    );
-    promises.push(
-      new Promise((resolve, reject) =>
-        resolve(
-          configAxiosAll(user, dispatch).get(
-            `${API_STATISTICS_URL}/revenue?type=sumCurrentMonth`
-          )
-        )
-      )
-    );
-    promises.push(
-      new Promise((resolve, reject) =>
-        resolve(
-          configAxiosAll(user, dispatch).get(
-            `${API_STATISTICS_URL}/comment?type=countCurrentMonth`
-          )
-        )
-      )
-    );
     Promise.allSettled(promises)
       .then((listRes) => {
-        console.log(listRes);
         if (listRes[0].status === "fulfilled") {
-          setCountOrder(listRes[0].value);
+          setRevenuesYears(listRes[0].value);
         }
         if (listRes[1].status === "fulfilled") {
+          setRevenuesMonthsInYear(listRes[1].value);
+        }
+        if (listRes[2].status === "fulfilled") {
           let _index = -1;
-
           setRevenuesDaysInMonth(
             new Array(getTotalDaysOfMonth()).fill(1).map((item, index) => {
-              _index = listRes[1].value.findIndex((el) => el.day === index + 1);
+              _index = listRes[2].value.findIndex((el) => el.day === index + 1);
               if (_index === -1) {
                 return { day: index + 1, total: 0 };
               } else {
                 return {
                   day: index + 1,
-                  total: listRes[1].value[_index].total,
+                  total: listRes[2].value[_index].total,
                 };
               }
             })
           );
-        }
-        if (listRes[2].status === "fulfilled") {
-          setCountUser(listRes[2].value);
-        }
-        if (listRes[3].status === "fulfilled") {
-          setRevenueCurrentMonth(listRes[3].value);
-        }
-        if (listRes[4].status === "fulfilled") {
-          setCountComment(listRes[4].value);
         }
       })
       .catch((err) => {
@@ -123,156 +79,100 @@ const Statistics = () => {
 
   return (
     <Grid container spacing={3}>
-      <Grid item xs={12} lg={3} md={6}>
-        <Widget
-          icon={<PersonAddAltIcon sx={{ fontSize: 40 }} />}
-          title="Người dùng"
-          value={
-            countUser.length > 0
-              ? countUser.find((el) => el.month === new Date().getMonth() + 1)
-                  ?.count
-              : 0
-          }
-          comparedValue={
-            countUser.length > 1
-              ? countUser.find((el) => el.month !== new Date().getMonth() + 1)
-                  ?.count
-              : 0
-          }
-        />
+      <Grid item xs={4}>
+        <Paper
+          sx={{
+            p: 2,
+          }}
+        >
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              height: 300,
+              width: "100%",
+              overflow: "overlay",
+              p: 1,
+            }}
+            id="chart-years"
+            className="custom-scrollbar-horizontal"
+          >
+            <ChartYears data={revenuesYears} />
+          </Box>
+          <div>
+            <Button
+              variant="contained"
+              onClick={() => exportComponentToPDF("chart-years")}
+              size="small"
+            >
+              Xuất file PDF
+            </Button>
+          </div>
+        </Paper>
       </Grid>
-      <Grid item xs={12} lg={3} md={6}>
-        <Widget
-          icon={<ReceiptLongIcon sx={{ fontSize: 40 }} />}
-          title="Hoá đơn"
-          value={
-            countOrder.length > 0
-              ? countOrder.find((el) => el.month === new Date().getMonth() + 1)
-                  ?.count
-              : 0
-          }
-          comparedValue={
-            countOrder.length > 1
-              ? countOrder.find((el) => el.month !== new Date().getMonth() + 1)
-                  ?.count
-              : 0
-          }
-        />
-      </Grid>
-      <Grid item xs={12} lg={3} md={6}>
-        <Widget
-          icon={<AttachMoneyIcon sx={{ fontSize: 40 }} />}
-          title="Doanh thu"
-          value={calRevenueCurrentMonth}
-          comparedValue={
-            revenueCurrentMonth.length > 1
-              ? parseInt(
-                  revenueCurrentMonth.find(
-                    (el) => el.month !== new Date().getMonth() + 1
-                  ).total
-                )
-              : 0
-          }
-        />
-      </Grid>
-      <Grid item xs={12} lg={3} md={6}>
-        <Widget
-          icon={<ChatBubbleOutlineIcon sx={{ fontSize: 40 }} />}
-          title="Đánh giá"
-          value={
-            countComment.length > 0
-              ? countComment.find(
-                  (el) => el.month === new Date().getMonth() + 1
-                )?.count
-              : 0
-          }
-          comparedValue={
-            countComment.length > 1
-              ? countComment.find(
-                  (el) => el.month !== new Date().getMonth() + 1
-                )?.count
-              : 0
-          }
-        />
+      <Grid item xs={8}>
+        <Paper
+          sx={{
+            p: 2,
+          }}
+        >
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              height: 300,
+              width: "100%",
+              overflow: "overlay",
+              p: 1,
+            }}
+            id="chart-months-in-year"
+            className="custom-scrollbar-horizontal"
+          >
+            <ChartMonthsInYear data={revenuesMonthsInYear} />
+          </Box>
+          <div>
+            <Button
+              variant="contained"
+              onClick={() => exportComponentToPDF("chart-months-in-year")}
+              size="small"
+            >
+              Xuất file PDF
+            </Button>
+          </div>
+        </Paper>
       </Grid>
       <Grid item xs={12}>
         <Paper
           sx={{
             p: 2,
-            display: "flex",
-            flexDirection: "column",
-            height: 360,
-            width: "100%",
-            overflow: "overlay",
           }}
-          className="custom-scrollbar-horizontal"
         >
-          <ChartDaysInMonth data={revenuesDaysInMonth} />
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              height: 360,
+              width: "100%",
+              overflow: "overlay",
+              p: 1,
+            }}
+            id="chart-days-in-month"
+            className="custom-scrollbar-horizontal"
+          >
+            <ChartDaysInMonth data={revenuesDaysInMonth} />
+          </Box>
+          <div>
+            <Button
+              variant="contained"
+              onClick={() => exportComponentToPDF("chart-days-in-month")}
+              size="small"
+            >
+              Xuất file PDF
+            </Button>
+          </div>
         </Paper>
       </Grid>
     </Grid>
-  );
-};
-
-const Widget = ({ icon, title, value, comparedValue }) => {
-  return (
-    <Paper
-      sx={{
-        height: 120,
-        display: "flex",
-        p: 2,
-      }}
-    >
-      <div
-        style={{
-          flex: 1,
-          display: "flex",
-          flexDirection: "column",
-          justifyContent: "space-between",
-        }}
-      >
-        <Typography>{title}</Typography>
-        <Typography sx={{ fontWeight: 600, fontSize: 20 }}>
-          {formatThousandDigits(value)}
-        </Typography>
-        {comparedValue > 0 && value > 0 && (
-          <div
-            style={{
-              fontSize: 14,
-              display: "flex",
-              alignItems: "center",
-              color:
-                value / comparedValue < 1
-                  ? "var(--error-color)"
-                  : "var(--success-color)",
-            }}
-          >
-            {(value / comparedValue).toFixed(2)}
-            {value / comparedValue > 1 && (
-              <ArrowUpwardIcon
-                sx={{ fontSize: 16, transform: "translateY(-1px)" }}
-              />
-            )}
-            {value / comparedValue < 1 && (
-              <ArrowDownwardIcon
-                sx={{ fontSize: 16, transform: "translateY(-1px)" }}
-              />
-            )}
-            <span style={{ color: "#000", fontSize: 12 }}>
-              (so với tháng trước)
-            </span>
-          </div>
-        )}
-      </div>
-      <div
-        style={{
-          display: "flex",
-          alignItems: "center",
-        }}
-      >
-        {icon}
-      </div>
-    </Paper>
   );
 };
 

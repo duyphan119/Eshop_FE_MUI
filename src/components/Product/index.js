@@ -195,16 +195,18 @@ const Product = ({ product }) => {
           </Tooltip>
         )}
       </div>
-      <Link
-        to={`/product/${product.slug}`}
-        className="product-name three-dot three-dot-2 hover-color-main-color"
-        style={{
-          height: "45px",
-          marginTop: "1px",
-        }}
-      >
-        {product.name}
-      </Link>
+      <Tooltip title={product.name}>
+        <Link
+          to={`/product/${product.slug}`}
+          className="product-name three-dot three-dot-2 hover-color-main-color"
+          style={{
+            height: "45px",
+            marginTop: "1px",
+          }}
+        >
+          {product.name}
+        </Link>
+      </Tooltip>
       <Typography variant="body2">
         {product && product.discounts && product.discounts.length > 0 && (
           <span className="product-new-price">
@@ -224,23 +226,15 @@ const Product = ({ product }) => {
       <div className="product-colors-preview">
         {product.colors.map((color, index) =>
           index < PRODUCT_COLORS_PREVIEW ? (
-            <div
-              className="product-color-preview"
-              key={color.id + Math.random()}
-              style={{
-                width: "36px",
-                height: "36px",
-                cursor: "pointer",
-                marginRight: "6px",
-                backgroundImage: `url("${color.images[0].url}")`,
-                backgroundClip: "content-box",
-                backgroundSize: "cover",
-                backgroundPosition: "center",
-                backgroundRepeat: "no-repeat",
-                borderRadius: "50%",
-              }}
-              onClick={() => setIndexColor(index)}
-            ></div>
+            <Tooltip title={`Màu ${color.value.toLowerCase()}`} key={index}>
+              <div
+                className="product-color-preview"
+                style={{
+                  backgroundImage: `url("${color.images[0].url}")`,
+                }}
+                onClick={() => setIndexColor(index)}
+              ></div>
+            </Tooltip>
           ) : (
             <></>
           )

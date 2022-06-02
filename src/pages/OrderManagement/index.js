@@ -1,8 +1,9 @@
-import React, { useEffect, useState } from "react";
-import Paper from "@mui/material/Paper";
+import React, { useEffect, useRef, useState } from "react";
 import { AgGridReact } from "ag-grid-react";
 import { useDispatch, useSelector } from "react-redux";
-import { IconButton, Tooltip, Box } from "@mui/material";
+import { IconButton, Tooltip, Box, Button } from "@mui/material";
+import * as FileSaver from "file-saver";
+import * as XLSX from "xlsx";
 
 import DownloadIcon from "@mui/icons-material/Download";
 import EditIcon from "@mui/icons-material/Edit";
@@ -31,6 +32,7 @@ import {
   getOrder,
   updateOrder,
 } from "../../redux/orderSlice";
+import ModalDownloadOrder from "../../components/ModalDownloadOrder";
 
 const OrderManagement = () => {
   const columns = [
@@ -103,7 +105,12 @@ const OrderManagement = () => {
       cellRenderer: (params) => (
         <>
           <Tooltip title="Xuất hoá đơn">
-            <IconButton>
+            <IconButton
+              onClick={() => {
+                dispatch(getCurrentOrder(params.data));
+                setOpenDownload(true);
+              }}
+            >
               <DownloadIcon />
             </IconButton>
           </Tooltip>
@@ -132,6 +139,8 @@ const OrderManagement = () => {
     },
   ];
 
+  const gridRef = useRef();
+
   const user = useSelector((state) => state.auth.currentUser);
   const order = useSelector((state) => state.order.order);
   const currentOrder = useSelector((state) => state.order.current);
@@ -141,6 +150,7 @@ const OrderManagement = () => {
   const [page, setPage] = useState(1);
 
   const [open, setOpen] = useState(false);
+  const [openDownload, setOpenDownload] = useState(false);
   const [openDialog, setOpenDialog] = useState(false);
   const [orderStatuses, setOrderStatuses] = useState([]);
 
@@ -189,10 +199,44 @@ const OrderManagement = () => {
     } catch (error) {}
   }
 
+  function handleExport() {
+    if (
+      gridRef &&
+      gridRef.current &&
+      gridRef.current.api.getRenderedNodes().length > 0
+    ) {
+      const fileType =
+        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8";
+      const fileExtension = ".xlsx";
+      const ws = XLSX.utils.json_to_sheet(
+        gridRef.current.api.getRenderedNodes().map((item) => ({
+          "Đơn số": item.data.id,
+          "Khách hàng": item.data.user.full_name,
+          "Địa chỉ": item.data.address,
+          "Số điện thoại": item.data.telephone,
+          "Trạng thái": item.data.status.description,
+          "Giảm giá": item.data.coupon.percent + "%",
+          "Ngày tạo": formatTimeVN(item.data.createdAt),
+          "Tổng tiền": item.data.total,
+        }))
+      );
+      const wb = { Sheets: { data: ws }, SheetNames: ["data"] };
+      const excelBuffer = XLSX.write(wb, { bookType: "xlsx", type: "array" });
+      const data = new Blob([excelBuffer], { type: fileType });
+      FileSaver.saveAs(
+        data,
+        "Order " + formatTimeVN(new Date()) + fileExtension
+      );
+    }
+  }
+
   return (
     <Box p={1} bgcolor="#fff">
-      <Paper
-        sx={{
+      <Button variant="contained" onClick={handleExport} sx={{ mb: 1 }}>
+        Xuất file Excel
+      </Button>
+      <div
+        style={{
           width: "100%",
           overflow: "hidden",
           height: calHeightDataGrid(12) + 17,
@@ -205,22 +249,39 @@ const OrderManagement = () => {
           <AgGridReact
             rowData={order && order.items ? order.items : []}
             columnDefs={columns}
+            ref={gridRef}
+            pagination={true}
+            paginationPageSize={order ? order.limit : 0}
           ></AgGridReact>
         </div>
-        {currentOrder && open && (
-          <ModalEditOrder
-            open={open}
-            handleClose={() => setOpen(false)}
-            labelOk="Sửa"
-            title={`Sửa hoá đơn ${currentOrder.id}`}
-            isCloseAfterOk={true}
-            order={currentOrder}
-            width={600}
-            orderStatuses={orderStatuses}
-            handleOk={handleOk}
-          />
-        )}
-      </Paper>
+      </div>
+      {currentOrder && open && (
+        <ModalEditOrder
+          open={open}
+          handleClose={() => setOpen(false)}
+          labelOk="Sửa"
+          title={`Sửa hoá đơn ${currentOrder.id}`}
+          isCloseAfterOk={true}
+          order={currentOrder}
+          width={600}
+          orderStatuses={orderStatuses}
+          handleOk={handleOk}
+        />
+      )}
+      {currentOrder && openDownload && (
+        <ModalDownloadOrder
+          open={openDownload}
+          handleClose={() => setOpenDownload(false)}
+          labelOk="Xuất PDF"
+          title={`Xuất hoá đơn ${currentOrder.id}`}
+          // isCloseAfterOk={true}
+          order={currentOrder}
+          width={896}
+          height="90vh"
+          orderStatuses={orderStatuses}
+          handleOk={handleOk}
+        />
+      )}
       {order && order.total_page && order.total_page > 1 && (
         <Box sx={{ display: "flex", justifyContent: "center", mt: 1 }}>
           <Pagination

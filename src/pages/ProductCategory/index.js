@@ -104,7 +104,6 @@ const ProductsCategory = ({
       } catch (error) {}
     })();
   }, []);
-
   useEffect(() => {
     (async function () {
       try {
@@ -219,11 +218,11 @@ const ProductsCategory = ({
           </Grid>
         </Grid>
         <Grid container>
-          <Grid item lg={12}>
+          <Grid item xs={12}>
             <Grid container>
               <Grid
                 item
-                lg={12}
+                xs={12}
                 sx={{
                   display: "flex",
                   justifyContent: "space-between",
@@ -246,7 +245,7 @@ const ProductsCategory = ({
                 <Sort sortFilter={sort} setSortFilter={setSort} />
               </Grid>
             </Grid>
-            <Grid container columnSpacing={2} rowSpacing={2}>
+            <Grid container spacing={2}>
               {product && product.items && product.items.length === 0 && (
                 <Grid
                   item

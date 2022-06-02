@@ -107,10 +107,11 @@ const NotificationIcon = () => {
           <Paper className="custom-scrollbar notification-wrapper">
             {notification &&
               notification.items.map((item, index) => (
-                <React.Fragment key={index}>
+                <div key={index} style={{ position: "relative" }}>
                   <Link
                     to={item.href}
                     onClick={() => {
+                      setShowNotifications(false);
                       dispatch(updateNotification({ ...item, isRead: true }));
                     }}
                     className="notification-link"
@@ -120,7 +121,7 @@ const NotificationIcon = () => {
                   >
                     <div className="notification-avatar-wrapper">
                       <Avatar
-                        src={user.avatar}
+                        src={item.sender.avatar}
                         alt=""
                         sx={{ width: 60, height: 60 }}
                       />
@@ -147,7 +148,7 @@ const NotificationIcon = () => {
                       </IconButton>
                     </Tooltip>
                   </div>
-                </React.Fragment>
+                </div>
               ))}
           </Paper>
         </ClickAwayListener>

@@ -1,4 +1,12 @@
-import { Box, Button, Container, Grid } from "@mui/material";
+import {
+  Box,
+  Button,
+  Container,
+  FormControl,
+  Grid,
+  MenuItem,
+  Select,
+} from "@mui/material";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useLocation } from "react-router-dom";
@@ -13,6 +21,8 @@ import CategoryIconSkeleton from "../../components/Skeleton/CategoryIcon";
 import ProductSkeleton from "../../components/Skeleton/Product";
 import { TitleCenter } from "../../components/Title";
 import { configAxiosAll, configAxiosResponse } from "../../config/configAxios";
+import { useTheme } from "@mui/material/styles";
+import { useMediaQuery } from "@mui/material";
 import {
   API_BANNER_URL,
   API_PRODUCT_URL,
@@ -21,6 +31,9 @@ import {
 import "./ProductGender.css";
 
 const ProductGender = ({ genderCategory }) => {
+  const theme = useTheme();
+  const matches = useMediaQuery(theme.breakpoints.up("sm"));
+
   const user = useSelector((state) => state.auth.currentUser);
 
   const dispatch = useDispatch();
@@ -31,10 +44,18 @@ const ProductGender = ({ genderCategory }) => {
   const [queryString, setQueryString] = useState(
     `${API_PRODUCT_URL}/gender/${genderCategory.slug}?type=best-seller&limit=${PRODUCTS_PER_PAGE}`
   );
+  const [valueSelect, setValueSelect] = useState(
+    `${API_PRODUCT_URL}/gender/${genderCategory.slug}?type=best-seller&limit=${PRODUCTS_PER_PAGE}`
+  );
 
   const [index, setIndex] = useState(0);
 
   const location = useLocation();
+
+  useEffect(() => {
+    setQueryString(valueSelect);
+    setProduct(null);
+  }, [valueSelect]);
 
   useEffect(() => {
     let array = [];
@@ -53,6 +74,7 @@ const ProductGender = ({ genderCategory }) => {
       setCategories([]);
     }
   }, [genderCategory]);
+
   useEffect(() => {
     (async function () {
       try {
@@ -74,7 +96,7 @@ const ProductGender = ({ genderCategory }) => {
       } catch (error) {}
     })();
   }, [dispatch, queryString, user]);
-
+  console.log(genderCategory);
   function handleClick(i, q) {
     setIndex(i);
     setQueryString(q);
@@ -192,7 +214,13 @@ const ProductGender = ({ genderCategory }) => {
             </Grid>
           </Grid>
           <TitleCenter>Đề xuất cho bạn</TitleCenter>
-          <Box className="category-list" mb={2}>
+          <Box
+            className="category-list"
+            mb={2}
+            sx={{
+              display: matches ? "flex" : "none",
+            }}
+          >
             <Button
               variant={index === 0 ? "contained" : "outlined"}
               onClick={() =>
@@ -235,6 +263,43 @@ const ProductGender = ({ genderCategory }) => {
                 }
               </Button>
             ))}
+          </Box>
+          <Box
+            sx={{
+              display: matches ? "none" : "flex",
+              justifyContent: "center",
+              mb: 2,
+            }}
+          >
+            <FormControl size="small">
+              <Select
+                value={valueSelect}
+                onChange={(e) => setValueSelect(e.target.value)}
+              >
+                <MenuItem
+                  value={`${API_PRODUCT_URL}/gender/${genderCategory.slug}?type=best-seller&limit=${PRODUCTS_PER_PAGE}`}
+                >
+                  BÁN CHẠY NHẤT
+                </MenuItem>
+                <MenuItem
+                  value={`${API_PRODUCT_URL}/gender/${genderCategory.slug}?limit=${PRODUCTS_PER_PAGE}`}
+                >
+                  MỚI NHẤT\that-lung-nam
+                </MenuItem>
+                {genderCategory.group_categories.map((item, i) => (
+                  <MenuItem
+                    key={i}
+                    value={`${API_PRODUCT_URL}/group-category/${item.slug}?limit=${PRODUCTS_PER_PAGE}`}
+                  >
+                    {
+                      item.name
+                        .toUpperCase()
+                        .split(genderCategory.name.toUpperCase())[0]
+                    }
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
           </Box>
           <Grid container spacing={2}>
             {product ? (

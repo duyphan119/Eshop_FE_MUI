@@ -9,7 +9,7 @@ import {
 } from "recharts";
 import { Typography } from "@mui/material";
 
-const ChartDaysInMonth = ({ data }) => {
+const ChartYears = ({ data }) => {
   return (
     <>
       <Typography
@@ -19,8 +19,7 @@ const ChartDaysInMonth = ({ data }) => {
         color="primary"
         gutterBottom
       >
-        Biểu đồ doanh thu tháng {new Date().getMonth() + 1} năm{" "}
-        {new Date().getFullYear()}
+        Biểu đồ doanh thu năm {new Date().getFullYear()}
       </Typography>
       <ResponsiveContainer width="100%" height="100%">
         <BarChart
@@ -32,7 +31,7 @@ const ChartDaysInMonth = ({ data }) => {
             left: 16,
           }}
         >
-          <XAxis dataKey="day" />
+          <XAxis dataKey="year" />
           <YAxis />
           <Tooltip />
           <Bar dataKey="total" fill="var(--main-color)" />
@@ -42,4 +41,4 @@ const ChartDaysInMonth = ({ data }) => {
   );
 };
 
-export default ChartDaysInMonth;
+export default ChartYears;

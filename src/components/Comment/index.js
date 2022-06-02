@@ -103,13 +103,8 @@ const Comment = ({ comment }) => {
               </div>
             </Box>
             {comment.replied_comments &&
-              comment.replied_comments.map((item) => {
-                return (
-                  <RepliedComment
-                    comment={item}
-                    key={item.id + Math.random()}
-                  />
-                );
+              comment.replied_comments.map((item, index) => {
+                return <RepliedComment comment={item} key={index} />;
               })}
             {showReplyForm && (
               <ModalReply

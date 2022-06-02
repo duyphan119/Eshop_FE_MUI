@@ -55,6 +55,9 @@
   justify-content: center;
   flex-direction: column;
 }
-.notification-wrapper:hover .notification-actions {
+.notification-link:hover + .notification-actions {
   display: flex;
+}
+.notification-actions:hover {
+  display: flex !important;
 }

@@ -23,9 +23,12 @@
 
 # 13. Làm logo
 
-14. Làm thêm biểu đồ thống kê
-15. export các bảng, biểu đồ
-16. avatar user
+# 14. Làm thêm biểu đồ thống kê
+
+# 15. export các bảng, biểu đồ
+
+# 16. avatar user
+
 17. add to cart localStorage (khó)
 
 # 18. sửa sản phẩm trong dashboard
@@ -47,10 +50,22 @@
 
 # 27. làm dashboard đánh giá
 
-28. phân trang order
-29. sửa thông tin tài khoản
+# 28. phân trang order
+
+# 29. sửa thông tin tài khoản
+
 30. giảm giá danh mục, sản phẩm
-31. thanh toán thì gửi thông báo
-32. responsive
+
+# 31. thanh toán thì gửi thông báo
+
+# 32. responsive
+
+33. xem thêm trả lời bình luận
+
+# 34. fix lại cái thông báo (lấy tất cả)
+
+35. Giảm giá theo danh mục
+
+36. xem thêm bình luận khi mà ghi dài
 
 Nếu còn dư thời gian thì thêm saga vô

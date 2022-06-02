@@ -1,20 +1,27 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { Container, Grid } from "@mui/material";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useContext, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Navigate } from "react-router-dom";
 import config from "../../config";
 import { configAxiosAll, configAxiosResponse } from "../../config/configAxios";
-import { API_COUPON_URL, API_ORDER_URL } from "../../constants";
+import {
+  API_COUPON_URL,
+  API_NOTIFICATION_URL,
+  API_ORDER_URL,
+} from "../../constants";
 import { getSelectedCartItems } from "../../redux/cartSlice";
 import { showToastMessage } from "../../redux/toastSlice";
-import { getTotalPage } from "../../utils";
+import { getFinalPrice, getTotalPage } from "../../utils";
 import CheckoutSuccess from "../CheckoutSuccess";
 import "./Checkout.css";
 import Form from "./Form";
 import Result from "./Result";
+import { SocketContext } from "../../context";
 
 const Checkout = () => {
+  const socket = useContext(SocketContext);
+
   const user = useSelector((state) => state.auth.currentUser);
   const selectedCartItems = useSelector(
     (state) => state.cart.selectedCartItems
@@ -35,15 +42,7 @@ const Checkout = () => {
   const [isSuccessful, setIsSuccessful] = useState(false);
   const [coupon, setCoupon] = useState();
 
-  const finalPrice = calculatePrice();
-
-  function calculatePrice() {
-    let divide1000 = totalPrice / 1000;
-    if (!coupon) return 0;
-    return (
-      (divide1000 - Math.floor((divide1000 * coupon.percent) / 100)) * 1000
-    );
-  }
+  const finalPrice = getFinalPrice(totalPrice, coupon);
 
   useEffect(() => {
     document.title = "Thanh toán";
@@ -80,6 +79,20 @@ const Checkout = () => {
       if (data) {
         dispatch(getSelectedCartItems({ items: [], count: 0 }));
         setIsSuccessful(true);
+        const notify = await configAxiosAll(user, dispatch).post(
+          `${API_NOTIFICATION_URL}`,
+          {
+            title: `${user.full_name} đã đặt một đơn hàng`,
+            href: `/dashboard/order`,
+            isRead: false,
+            sender_id: user.id,
+            notify_type: "order",
+          }
+        );
+        socket.emit("send-notify", {
+          roomId: "admin",
+          ...notify,
+        });
       } else {
         setIsSuccessful(false);
         dispatch(
@@ -102,7 +115,7 @@ const Checkout = () => {
         })
       );
     }
-  }, [coupon]);
+  }, [coupon, order]);
   if (isSuccessful) return <CheckoutSuccess />;
   else if (!isSuccessful && selectedCartItems.count === 0)
     return <Navigate to={config.routes.cart} />;

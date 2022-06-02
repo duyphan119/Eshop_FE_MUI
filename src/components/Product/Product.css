@@ -130,11 +130,16 @@
   display: flex;
 }
 .product-color-preview {
-  width: 16px;
-  height: 16px;
+  width: 36px;
+  height: 36px;
   border-radius: 50%;
   border: 1px solid lightgray;
-  margin-right: 4px;
+  margin-right: 6px;
+  cursor: pointer;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover;
+  background-clip: content-box;
 }
 .product-colors-preview:last-child {
   margin-right: 0;
