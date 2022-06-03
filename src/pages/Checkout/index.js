@@ -12,7 +12,7 @@ import {
 } from "../../constants";
 import { getSelectedCartItems } from "../../redux/cartSlice";
 import { showToastMessage } from "../../redux/toastSlice";
-import { getFinalPrice, getTotalPage } from "../../utils";
+import { getFinalPrice, getTotalPrice } from "../../utils";
 import CheckoutSuccess from "../CheckoutSuccess";
 import "./Checkout.css";
 import Form from "./Form";
@@ -58,7 +58,7 @@ const Checkout = () => {
     })();
   }, []);
   useEffect(() => {
-    setTotalPrice(getTotalPage(selectedCartItems));
+    setTotalPrice(getTotalPrice(selectedCartItems));
   }, [selectedCartItems]);
 
   const handleCheckout = useCallback(async () => {

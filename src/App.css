@@ -20,6 +20,10 @@
     width: 100%;
   }
 }
+body {
+  margin: 0;
+  font-family: "Noto Sans", sans-serif;
+}
 
 a {
   text-decoration: none;

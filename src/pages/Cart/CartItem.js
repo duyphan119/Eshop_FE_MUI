@@ -9,6 +9,7 @@ import {
   IconButton,
   Typography,
 } from "@mui/material";
+import { useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { configAxiosAll } from "../../config/configAxios";
@@ -19,15 +20,29 @@ import {
   selectCartItem,
   deSelectCartItem,
 } from "../../redux/cartSlice";
-import { formatThousandDigits, getThumbnailCartItem } from "../../utils";
+import {
+  formatThousandDigits,
+  getNewPrice,
+  getThumbnailCartItem,
+} from "../../utils";
 
 const CartItem = ({ item, checked }) => {
   const user = useSelector((state) => state.auth.currentUser);
 
   const dispatch = useDispatch();
 
-  const hasDiscount =
-    item.detail.product.discounts && item.detail.product.discounts.length > 0;
+  const hasDiscount = useMemo(() => {
+    return (
+      item.detail.product.discounts && item.detail.product.discounts.length > 0
+    );
+  }, [item.detail.product.discounts]);
+
+  const hasDiscountCategory = useMemo(() => {
+    return (
+      item.detail.product.category.discounts &&
+      item.detail.product.category.discounts.length > 0
+    );
+  }, [item.detail.product.category.discounts]);
 
   async function handleUpdateCart(value) {
     try {
@@ -127,17 +142,29 @@ const CartItem = ({ item, checked }) => {
             {item.detail.color.value} / {item.detail.size.value}
           </Typography>
           <Typography variant="body2">
-            {hasDiscount && (
+            {hasDiscountCategory ? (
               <span style={{ color: "var(--main-color)" }}>
                 {formatThousandDigits(
-                  item.detail.product.discounts[0].new_price
+                  getNewPrice(
+                    item.detail.product.price,
+                    item.detail.product.category.discounts[0].percent
+                  )
                 )}
                 đ
               </span>
+            ) : (
+              hasDiscount && (
+                <span style={{ color: "var(--main-color)" }}>
+                  {formatThousandDigits(
+                    item.detail.product.discounts[0].new_price
+                  )}
+                  đ
+                </span>
+              )
             )}
             <span
               style={
-                hasDiscount
+                hasDiscountCategory || hasDiscount
                   ? {
                       textDecoration: "line-through",
                       marginLeft: "4px",
@@ -225,7 +252,12 @@ const CartItem = ({ item, checked }) => {
         }}
       >
         {formatThousandDigits(
-          (hasDiscount
+          (hasDiscountCategory
+            ? getNewPrice(
+                item.detail.product.price,
+                item.detail.product.category.discounts[0].percent
+              )
+            : hasDiscount
             ? item.detail.product.discounts[0].new_price
             : item.detail.product.price) * item.quantity
         )}

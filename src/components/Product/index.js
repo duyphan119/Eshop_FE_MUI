@@ -1,7 +1,7 @@
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import FavoriteBorderOutlinedIcon from "@mui/icons-material/FavoriteBorderOutlined";
 import { Box, Tooltip, Typography } from "@mui/material";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { configAxiosAll } from "../../config/configAxios";
@@ -11,7 +11,7 @@ import {
   API_PRODUCT_USER_URL,
   PRODUCT_COLORS_PREVIEW,
 } from "../../constants";
-import { formatThousandDigits } from "../../utils";
+import { formatThousandDigits, getNewPrice } from "../../utils";
 import { showToastMessage } from "../../redux/toastSlice";
 import "./Product.css";
 import { addToWishlist, removeWishlistItem } from "../../redux/wishlistSlice";
@@ -68,7 +68,7 @@ const Product = ({ product }) => {
     }
   }
 
-  const checkIsNewProduct = () => {
+  const checkIsNewProduct = useMemo(() => {
     if (product) {
       const date1 = new Date();
       const date2 = new Date(product.createdAt);
@@ -79,7 +79,7 @@ const Product = ({ product }) => {
       }
     }
     return false;
-  };
+  }, [product]);
   async function handleAddToCart() {
     if (user) {
       const indexSize = product.colors[indexColor].sizes.findIndex(
@@ -140,18 +140,27 @@ const Product = ({ product }) => {
   return (
     <Box className="product">
       <div className="product-tags">
-        {product && product.discounts && product.discounts.length > 0 && (
+        {product &&
+        product.category.discounts &&
+        product.category.discounts.length > 0 ? (
           <div className="product-tag product-tag-sale">
-            -
-            {Math.round(
-              ((product.price - product.discounts[0].new_price) /
-                product.price) *
-                100
-            )}
-            %
+            -{product.category.discounts[0].percent}%
           </div>
+        ) : (
+          product.discounts &&
+          product.discounts.length > 0 && (
+            <div className="product-tag product-tag-sale">
+              -
+              {Math.round(
+                ((product.price - product.discounts[0].new_price) /
+                  product.price) *
+                  100
+              )}
+              %
+            </div>
+          )
         )}
-        {checkIsNewProduct() && (
+        {checkIsNewProduct && (
           <div className="product-tag product-tag-new">Mới</div>
         )}
 
@@ -208,14 +217,29 @@ const Product = ({ product }) => {
         </Link>
       </Tooltip>
       <Typography variant="body2">
-        {product && product.discounts && product.discounts.length > 0 && (
+        {product &&
+        product.category.discounts &&
+        product.category.discounts.length > 0 ? (
           <span className="product-new-price">
-            {formatThousandDigits(product.discounts[0].new_price)}đ
+            {formatThousandDigits(
+              getNewPrice(product.price, product.category.discounts[0].percent)
+            )}
+            đ
           </span>
+        ) : (
+          product.discounts &&
+          product.discounts.length > 0 && (
+            <span className="product-new-price">
+              {formatThousandDigits(product.discounts[0].new_price)}đ
+            </span>
+          )
         )}
         <span
           className={`${
-            product && product.discounts && product.discounts.length > 0
+            product &&
+            ((product.category.discounts &&
+              product.category.discounts.length > 0) ||
+              (product.discounts && product.discounts.length > 0))
               ? "product-old-price"
               : "product-price"
           }`}

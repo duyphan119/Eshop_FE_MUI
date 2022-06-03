@@ -108,6 +108,7 @@ const ProductManagement = () => {
   const [page, setPage] = useState(1);
   const [tab, setTab] = useState(3);
   const [openDialog, setOpenDialog] = useState(false);
+  const [limit, setLimit] = useState(LIMIT_ROW_PRODUCT);
 
   useEffect(() => {
     (function () {
@@ -126,7 +127,7 @@ const ProductManagement = () => {
       const promiseProduct = new Promise((resolve, reject) => {
         resolve(
           configAxiosAll(user, dispatch).get(
-            `${API_PRODUCT_URL}?limit=${LIMIT_ROW_PRODUCT}&include=true&p=${page}`
+            `${API_PRODUCT_URL}?limit=${limit}&include=true&p=${page}`
           )
         );
       });
@@ -147,7 +148,7 @@ const ProductManagement = () => {
         })
         .catch((err) => {});
     })();
-  }, [dispatch, user, page]);
+  }, [dispatch, user, page, limit]);
 
   // console.log(product);
 
@@ -383,14 +384,14 @@ const ProductManagement = () => {
           `${API_PRODUCT_URL}/${currentProduct.id}`
         );
         const data = await configAxiosAll(user, dispatch).get(
-          `${API_PRODUCT_URL}?limit=${LIMIT_ROW_PRODUCT}&include=true&p=${page}`
+          `${API_PRODUCT_URL}?limit=${limit}&include=true&p=${page}`
         );
         setProduct(data);
       }
     } catch (error) {}
   }
 
-  // console.log(product);
+  console.log(limit);
 
   return (
     <>
@@ -431,7 +432,7 @@ const ProductManagement = () => {
           sx={{
             width: "100%",
             overflow: "hidden",
-            height: calHeightDataGrid(10),
+            height: calHeightDataGrid(LIMIT_ROW_PRODUCT),
           }}
         >
           <div
@@ -444,9 +445,13 @@ const ProductManagement = () => {
             ></AgGridReact>
           </div>
         </Paper>
-        {product && product.total_page && product.total_page > 1 && (
-          <Box sx={{ display: "flex", justifyContent: "center", mt: 1 }}>
+        {product && product.total_page && (
+          <Box sx={{ display: "flex", justifyContent: "end", mt: 1 }}>
             <Pagination
+              showRowsPerPage={true}
+              listRowPerPage={[LIMIT_ROW_PRODUCT, 50, 100, 200, 500]}
+              rowsPerPage={limit}
+              onChangeRowsPerPage={setLimit}
               onChange={(e, value) => {
                 setPage(value);
               }}

@@ -34,12 +34,27 @@ export const formatThousandDigits = (price) => {
     return 0;
   }
 };
-export const formatTimeVN = (time) => {
-  return (
-    new Date(time).toLocaleDateString("vi-VN") +
-    " " +
-    new Date(time).toLocaleTimeString("vi-VN")
-  );
+export const formatDateVN = (input) => {
+  const dt = new Date(input);
+  let date = dt.getDate();
+  let month = dt.getMonth() + 1;
+  return `${date < 10 ? "0" + date : date}/${
+    month < 10 ? "0" + month : month
+  }/${dt.getFullYear()}`;
+};
+export const formatTimeVN = (input) => {
+  const dt = new Date(input);
+
+  let hour = dt.getHours();
+  let minute = dt.getMinutes();
+  let second = dt.getSeconds();
+
+  return `${hour < 10 ? "0" + hour : hour}:${
+    minute < 10 ? "0" + minute : minute
+  }:${second < 10 ? "0" + second : second}`;
+};
+export const formatDateTimeVN = (input) => {
+  return `${formatDateVN(input)} ${formatTimeVN(input)}`;
 };
 export const ignoreTimezone = (date) => {
   let tzoffset = new Date().getTimezoneOffset() * 60000;
@@ -70,11 +85,21 @@ export const fromNow = (date) => {
   return "Vài giây trước";
 };
 
-export const getTotalPage = (cart) => {
+export const getTotalPrice = (cart) => {
   let result = 0;
   if (cart) {
     cart.items.forEach((item) => {
       if (
+        item.detail.product.category.discounts &&
+        item.detail.product.category.discounts.length > 0
+      ) {
+        result +=
+          item.quantity *
+          getNewPrice(
+            item.detail.product.price,
+            item.detail.product.category.discounts[0].percent
+          );
+      } else if (
         item.detail.product.discounts &&
         item.detail.product.discounts.length > 0
       ) {
@@ -125,4 +150,14 @@ export const exportComponentToPDF = (id) => {
     pdf.save("File.pdf");
   });
   input.style.transform = `scale(1)`;
+};
+
+export const getNewPrice = (price, percent) => {
+  let result;
+
+  let divide1000 = price / 1000;
+
+  result = Math.floor(divide1000 - (divide1000 * percent) / 100) * 1000;
+
+  return result;
 };

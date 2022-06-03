@@ -96,7 +96,7 @@ const ProductGender = ({ genderCategory }) => {
       } catch (error) {}
     })();
   }, [dispatch, queryString, user]);
-  console.log(genderCategory);
+  console.log(product);
   function handleClick(i, q) {
     setIndex(i);
     setQueryString(q);

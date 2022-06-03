@@ -292,7 +292,7 @@ const ProductDetail = () => {
               />
               <div className="">
                 &nbsp;(
-                {product.rate.count === 0 ? "Chưa có " : product.rate.count}
+                {product.rate.count === 0 ? "Chưa có" : product.rate.count}
                 &nbsp;đánh giá)
               </div>
             </div>

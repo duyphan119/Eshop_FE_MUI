@@ -5,7 +5,7 @@ import { Link } from "react-router-dom";
 import { TitlePaper } from "../../components/Title";
 import { configAxiosAll } from "../../config/configAxios";
 import { API_ORDER_URL, LIMIT_RECENT_ORDERS } from "../../constants";
-import { calHeightDataGrid, formatTimeVN } from "../../utils";
+import { calHeightDataGrid, formatDateTimeVN } from "../../utils";
 
 export default function Orders() {
   const columns = [
@@ -17,7 +17,7 @@ export default function Orders() {
     {
       field: "createdAt",
       headerName: "Thời gian",
-      valueFormatter: (params) => `${formatTimeVN(params.data.createdAt)}`,
+      valueFormatter: (params) => `${formatDateTimeVN(params.data.createdAt)}`,
       width: 160,
     },
     {

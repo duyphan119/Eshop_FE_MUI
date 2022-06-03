@@ -1,5 +1,5 @@
 import { Box, Container, Grid } from "@mui/material";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
 
@@ -41,11 +41,13 @@ const ProductsCategory = ({
   const [product, setProduct] = useState();
   const [colorFilters, setColorFilters] = useState([]);
   const [sizeFilters, setSizeFilters] = useState([]);
-  const [page, setPage] = useState(initPage(p));
+  const [page, setPage] = useState(() => {
+    return initPage(p);
+  });
   const [sort, setSort] = useState({ sortBy, sortType });
   const [queryString, setQueryString] = useState(queryParams.toString());
-  const [filters, setFilters] = useState(
-    (function () {
+  const [filters, setFilters] = useState(() => {
+    return (function () {
       try {
         return {
           color: color ? JSON.parse(color) : [],
@@ -61,8 +63,8 @@ const ProductsCategory = ({
           price: [],
         };
       }
-    })()
-  );
+    })();
+  });
 
   function initPage(_p) {
     try {
@@ -168,7 +170,7 @@ const ProductsCategory = ({
     }
   }, [navigate, sort, location, page, filters, queryParams]);
 
-  function showBreadCrumbs() {
+  const showBreadCrumbs = useMemo(() => {
     let items = [{ text: "Trang chủ", to: "/" }];
     let text = "";
     if (category && groupCategory && genderCategory) {
@@ -207,14 +209,14 @@ const ProductsCategory = ({
     }
 
     return <Breadcrumbs items={items} text={text} />;
-  }
+  }, [category, genderCategory, groupCategory]);
 
   return (
     <Box sx={{ paddingBlock: "20px" }}>
       <Container sx={{ backgroundColor: "#fff" }}>
         <Grid container>
           <Grid item lg={12}>
-            {showBreadCrumbs()}
+            {showBreadCrumbs}
           </Grid>
         </Grid>
         <Grid container>

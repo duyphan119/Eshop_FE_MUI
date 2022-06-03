@@ -11,7 +11,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { TitleAccount } from "../../components/Title";
 import { configAxiosAll } from "../../config/configAxios";
 import { API_ORDER_URL } from "../../constants";
-import { formatThousandDigits, formatTimeVN } from "../../utils";
+import { formatThousandDigits, formatDateTimeVN } from "../../utils";
 
 const ClientOrders = () => {
   const user = useSelector((state) => state.auth.currentUser);
@@ -60,7 +60,7 @@ const ClientOrders = () => {
               <TableRow key={item.id}>
                 <TableCell align="center">{item.id}</TableCell>
                 <TableCell align="center">
-                  {formatTimeVN(item.createdAt)}
+                  {formatDateTimeVN(item.createdAt)}
                 </TableCell>
                 <TableCell align="center">{item.address}</TableCell>
                 <TableCell align="center">{item.telephone}</TableCell>

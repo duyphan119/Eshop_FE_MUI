@@ -10,9 +10,12 @@ import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import ModalCategory from "../../components/ModalCategory";
 import ModalGroupCategory from "../../components/ModalGroupCategory";
+import ModalDiscountGroupCategory from "../../components/ModalDiscountGroupCategory";
+import ModalDiscountGender from "../../components/ModalDiscountGender";
 import { configAxiosAll, configAxiosResponse } from "../../config/configAxios";
 import {
   API_CATEGORY_URL,
+  API_DISCOUNT_CATEGORY_URL,
   API_GENDER_URL,
   API_GROUP_CATEGORY_URL,
   API_UPLOAD_URL,
@@ -26,11 +29,16 @@ import {
   getAll as getAllGroupCategories,
   getCurrentGroupCategory,
 } from "../../redux/groupCategorySlice";
-import { calHeightDataGrid } from "../../utils";
+import {
+  getAllDiscountCategories,
+  getCurrentDiscountCategory,
+} from "../../redux/discountCategorySlice";
+import { calHeightDataGrid, formatDateTimeVN } from "../../utils";
 
 import "ag-grid-community/dist/styles/ag-grid.css";
 import "ag-grid-community/dist/styles/ag-theme-alpine.css";
 import ConfirmDialog from "../../components/ConfirmDialog";
+import ModalDiscountCategory from "../../components/ModalDiscountCategory";
 
 const CategoryManagement = () => {
   const columnGroups = [
@@ -163,6 +171,76 @@ const CategoryManagement = () => {
     },
   ];
 
+  const columnDiscountCategories = [
+    {
+      field: "id",
+      headerName: "ID",
+      flex: 1,
+      sortable: true,
+      filter: true,
+    },
+    {
+      field: "category.name",
+      headerName: "Danh mục",
+      flex: 1,
+      sortable: true,
+      filter: true,
+    },
+    {
+      field: "start",
+      headerName: "Ngày bắt đầu",
+      flex: 1,
+      sortable: true,
+      filter: true,
+      valueFormatter: (params) => formatDateTimeVN(params.data.start),
+    },
+    {
+      field: "end",
+      headerName: "Ngày kết thúc",
+      flex: 1,
+      sortable: true,
+      filter: true,
+      valueFormatter: (params) => formatDateTimeVN(params.data.end),
+    },
+    {
+      field: "percent",
+      headerName: "Phần trăm",
+      flex: 1,
+      sortable: true,
+      filter: true,
+    },
+    {
+      field: "actions",
+      headerName: "",
+      pinned: "right",
+      width: 120,
+      cellRenderer: (params) => (
+        <>
+          <Tooltip title="Sửa giảm giá">
+            <IconButton
+              onClick={() => {
+                dispatch(getCurrentDiscountCategory(params.data));
+                setOpenDiscountCategory(true);
+              }}
+            >
+              <EditIcon />
+            </IconButton>
+          </Tooltip>
+          <Tooltip title="Xoá giảm xoá">
+            <IconButton
+              onClick={() => {
+                dispatch(getCurrentDiscountCategory(params.data));
+                setOpenDialog(true);
+              }}
+            >
+              <DeleteIcon />
+            </IconButton>
+          </Tooltip>
+        </>
+      ),
+    },
+  ];
+
   const user = useSelector((state) => state.auth.currentUser);
   const categories = useSelector((state) => state.category.all);
   const currentCategory = useSelector((state) => state.category.current);
@@ -170,12 +248,19 @@ const CategoryManagement = () => {
   const currentGroupCategory = useSelector(
     (state) => state.groupCategory.current
   );
-
+  const discountCategories = useSelector((state) => state.discountCategory.all);
+  const currentDiscountCategory = useSelector(
+    (state) => state.discountCategory.current
+  );
   const dispatch = useDispatch();
 
   const [openDialog, setOpenDialog] = useState(false);
   const [openGroupCategory, setOpenGroupCategory] = useState(false);
   const [openCategory, setOpenCategory] = useState(false);
+  const [openDiscountCategory, setOpenDiscountCategory] = useState(false);
+  const [openDiscountGroupCategory, setOpenDiscountGroupCategory] =
+    useState(false);
+  const [openDiscountGender, setOpenDiscountGender] = useState(false);
   const [tab, setTab] = useState(1);
 
   useEffect(() => {
@@ -196,11 +281,25 @@ const CategoryManagement = () => {
           resolve(configAxiosResponse().get(`${API_CATEGORY_URL}`))
         )
       );
+      promises.push(
+        new Promise((resolve, reject) =>
+          resolve(configAxiosResponse().get(`${API_DISCOUNT_CATEGORY_URL}`))
+        )
+      );
       Promise.allSettled(promises)
         .then((listRes) => {
-          dispatch(getAllGenderCategories(listRes[0].value));
-          dispatch(getAllGroupCategories(listRes[1].value));
-          dispatch(getAllCategories(listRes[2].value));
+          if (listRes[0].status === "fulfilled") {
+            dispatch(getAllGenderCategories(listRes[0].value));
+          }
+          if (listRes[1].status === "fulfilled") {
+            dispatch(getAllGroupCategories(listRes[1].value));
+          }
+          if (listRes[2].status === "fulfilled") {
+            dispatch(getAllCategories(listRes[2].value));
+          }
+          if (listRes[3].status === "fulfilled") {
+            dispatch(getAllDiscountCategories(listRes[3].value));
+          }
         })
         .catch((err) => {});
     })();
@@ -289,6 +388,82 @@ const CategoryManagement = () => {
         .catch((err) => {});
     }
   }
+  async function getDiscountCategory(data) {
+    const { category, start, end, percent } = data;
+
+    if (currentDiscountCategory) {
+      configAxiosAll(user, dispatch)
+        .put(`${API_DISCOUNT_CATEGORY_URL}`, {
+          id: currentDiscountCategory.id,
+          percent,
+          start,
+          end,
+          category_id: category.id,
+        })
+        .then((res) => {
+          const _discountCategories = [...discountCategories];
+          const index = _discountCategories.findIndex(
+            (el) => el.id === currentDiscountCategory.id
+          );
+          if (index !== -1) {
+            _discountCategories[index] = res;
+            dispatch(getAllDiscountCategories(_discountCategories));
+          }
+        })
+        .catch((err) => {});
+    } else {
+      configAxiosAll(user, dispatch)
+        .post(`${API_DISCOUNT_CATEGORY_URL}`, {
+          percent,
+          start,
+          end,
+          category_id: category.id,
+        })
+        .then((res) => {
+          dispatch(
+            getAllDiscountCategories([
+              { ...res, category },
+              ...discountCategories,
+            ])
+          );
+        })
+        .catch((err) => {});
+    }
+  }
+  async function getDiscountGroupCategory(data) {
+    const { groupCategory, start, end, percent } = data;
+    const list = [];
+    groupCategory.categories.forEach((item) => {
+      list.push({
+        percent,
+        start,
+        end,
+        category_id: item.id,
+      });
+    });
+    configAxiosAll(user, dispatch)
+      .post(`${API_DISCOUNT_CATEGORY_URL}?many=true`, list)
+      .then((res) => {})
+      .catch((err) => {});
+  }
+  async function getDiscountGender(data) {
+    const { genderCategory, start, end, percent } = data;
+    const list = [];
+    genderCategory.group_categories.forEach((item) => {
+      item.categories.forEach((subItem) => {
+        list.push({
+          percent,
+          start,
+          end,
+          category_id: subItem.id,
+        });
+      });
+    });
+    configAxiosAll(user, dispatch)
+      .post(`${API_DISCOUNT_CATEGORY_URL}?many=true`, list)
+      .then((res) => {})
+      .catch((err) => {});
+  }
 
   async function onConfirm() {
     try {
@@ -300,12 +475,20 @@ const CategoryManagement = () => {
           `${API_GROUP_CATEGORY_URL}`
         );
         dispatch(getAllGroupCategories(data));
-      } else {
+      } else if (tab === 1) {
         await configAxiosAll(user, dispatch).delete(
           `${API_CATEGORY_URL}/${currentCategory.id}`
         );
         const data = await configAxiosResponse().get(`${API_CATEGORY_URL}`);
         dispatch(getAllCategories(data));
+      } else if (tab === 2) {
+        await configAxiosAll(user, dispatch).delete(
+          `${API_DISCOUNT_CATEGORY_URL}/${currentDiscountCategory.id}`
+        );
+        const data = await configAxiosResponse().get(
+          `${API_DISCOUNT_CATEGORY_URL}`
+        );
+        dispatch(getAllDiscountCategories(data));
       }
     } catch (error) {}
   }
@@ -320,6 +503,7 @@ const CategoryManagement = () => {
         >
           <Tab label="Nhóm danh mục" {...a11yProps(0)} />
           <Tab label="Danh mục" {...a11yProps(1)} />
+          <Tab label="Giảm giá" {...a11yProps(2)} />
         </Tabs>
       </Box>
       <TabPanel index={0} value={tab}>
@@ -333,6 +517,26 @@ const CategoryManagement = () => {
           startIcon={<AddIcon />}
         >
           Thêm nhóm danh mục
+        </Button>
+        <Button
+          variant="contained"
+          sx={{ mb: 2, ml: 2 }}
+          onClick={() => {
+            setOpenDiscountGender(true);
+          }}
+          startIcon={<AddIcon />}
+        >
+          Thêm giảm giá đối tượng khách hàng
+        </Button>
+        <Button
+          variant="contained"
+          sx={{ mb: 2, ml: 2 }}
+          onClick={() => {
+            setOpenDiscountGroupCategory(true);
+          }}
+          startIcon={<AddIcon />}
+        >
+          Thêm giảm giá theo nhóm danh mục
         </Button>
         <Paper
           sx={{
@@ -367,6 +571,26 @@ const CategoryManagement = () => {
             />
           )}
         </Paper>
+        {openDiscountGroupCategory && (
+          <ModalDiscountGroupCategory
+            open={openDiscountGroupCategory}
+            handleClose={() => setOpenDiscountGroupCategory(false)}
+            labelOk="Thêm"
+            title="Thêm giảm giá"
+            isCloseAfterOk={true}
+            handleOk={getDiscountGroupCategory}
+          />
+        )}
+        {openDiscountGender && (
+          <ModalDiscountGender
+            open={openDiscountGender}
+            handleClose={() => setOpenDiscountGender(false)}
+            labelOk="Thêm"
+            title="Thêm giảm giá"
+            isCloseAfterOk={true}
+            handleOk={getDiscountGender}
+          />
+        )}
       </TabPanel>
       <TabPanel index={1} value={tab}>
         <Button
@@ -410,14 +634,53 @@ const CategoryManagement = () => {
           />
         )}
       </TabPanel>
+      <TabPanel index={2} value={tab}>
+        <Button
+          variant="contained"
+          sx={{ mb: 2 }}
+          onClick={() => {
+            dispatch(getCurrentDiscountCategory(null));
+            setOpenDiscountCategory(true);
+          }}
+          startIcon={<AddIcon />}
+        >
+          Thêm giảm giá
+        </Button>
+        <Paper
+          sx={{
+            width: "100%",
+            height: calHeightDataGrid(10),
+            overflow: "hidden",
+          }}
+        >
+          <div
+            className="ag-theme-alpine"
+            style={{ width: "100%", height: "100%" }}
+          >
+            <AgGridReact
+              rowData={discountCategories}
+              columnDefs={columnDiscountCategories}
+            ></AgGridReact>
+          </div>
+        </Paper>
+        {openDiscountCategory && (
+          <ModalDiscountCategory
+            open={openDiscountCategory}
+            handleClose={() => setOpenDiscountCategory(false)}
+            labelOk={currentDiscountCategory ? "Sửa" : "Thêm"}
+            title={!currentDiscountCategory ? "Thêm giảm giá" : "Sửa giảm giá"}
+            isCloseAfterOk={true}
+            discountCategory={currentDiscountCategory}
+            handleOk={getDiscountCategory}
+          />
+        )}
+      </TabPanel>
       {openDialog && (
         <ConfirmDialog
           open={openDialog}
           onClose={() => setOpenDialog(false)}
           onConfirm={onConfirm}
-          text={`Bạn có chắc chắn muốn xoá ${
-            tab === 0 ? "nhóm" : ""
-          } danh mục này ?`}
+          text={`Bạn có chắc chắn muốn xoá ?`}
         />
       )}
     </>

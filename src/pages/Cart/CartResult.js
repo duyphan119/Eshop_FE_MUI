@@ -1,7 +1,7 @@
 import { Box, Button, Checkbox, FormControlLabel, Grid } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { formatThousandDigits, getTotalPage } from "../../utils";
+import { formatThousandDigits, getTotalPrice } from "../../utils";
 import config from "../../config";
 import { getSelectedCartItems } from "../../redux/cartSlice";
 const CartResult = () => {
@@ -62,8 +62,8 @@ const CartResult = () => {
           </div>
           <Box className="cart-result-right">
             <div className="cart-result-total">
-              Tổng cộng: {formatThousandDigits(getTotalPage(selectedCartItems))}
-              đ
+              Tổng cộng:{" "}
+              {formatThousandDigits(getTotalPrice(selectedCartItems))}đ
             </div>
             <Box
               sx={{

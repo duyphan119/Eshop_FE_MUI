@@ -54,7 +54,7 @@
 
 # 29. sửa thông tin tài khoản
 
-30. giảm giá danh mục, sản phẩm
+30. giảm giá sản phẩm
 
 # 31. thanh toán thì gửi thông báo
 
@@ -64,8 +64,14 @@
 
 # 34. fix lại cái thông báo (lấy tất cả)
 
-35. Giảm giá theo danh mục
+# 35. Giảm giá theo danh mục
 
 36. xem thêm bình luận khi mà ghi dài
+
+37. Yêu thích sản phẩm trong trang chi tiết sản phẩm
+
+38. chế độ dark / light
+
+39. quản lí coupon
 
 Nếu còn dư thời gian thì thêm saga vô

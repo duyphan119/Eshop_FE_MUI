@@ -19,7 +19,7 @@ import {
 import {
   calHeightDataGrid,
   formatThousandDigits,
-  formatTimeVN,
+  formatDateTimeVN,
 } from "../../utils";
 import ModalEditOrder from "../../components/ModalEditOrder";
 
@@ -57,7 +57,7 @@ const OrderManagement = () => {
       width: 170,
       sortable: true,
       filter: true,
-      valueFormatter: (params) => formatTimeVN(params.data.createdAt),
+      valueFormatter: (params) => formatDateTimeVN(params.data.createdAt),
     },
     {
       field: "address",
@@ -153,13 +153,14 @@ const OrderManagement = () => {
   const [openDownload, setOpenDownload] = useState(false);
   const [openDialog, setOpenDialog] = useState(false);
   const [orderStatuses, setOrderStatuses] = useState([]);
+  const [limit, setLimit] = useState(LIMIT_ROW_ORDER);
 
   useEffect(() => {
     (function () {
       const promiseOrder = new Promise((resolve, reject) =>
         resolve(
           configAxiosAll(user, dispatch).get(
-            `${API_ORDER_URL}?limit=${LIMIT_ROW_ORDER}&p=${page}`
+            `${API_ORDER_URL}?limit=${limit}&p=${page}`
           )
         )
       );
@@ -174,7 +175,7 @@ const OrderManagement = () => {
         })
         .catch((err) => {});
     })();
-  }, [user, dispatch, page]);
+  }, [user, dispatch, page, limit]);
 
   function handleOk(data) {
     const { total, indexStatus } = data;
@@ -216,7 +217,7 @@ const OrderManagement = () => {
           "Số điện thoại": item.data.telephone,
           "Trạng thái": item.data.status.description,
           "Giảm giá": item.data.coupon.percent + "%",
-          "Ngày tạo": formatTimeVN(item.data.createdAt),
+          "Ngày tạo": formatDateTimeVN(item.data.createdAt),
           "Tổng tiền": item.data.total,
         }))
       );
@@ -225,7 +226,7 @@ const OrderManagement = () => {
       const data = new Blob([excelBuffer], { type: fileType });
       FileSaver.saveAs(
         data,
-        "Order " + formatTimeVN(new Date()) + fileExtension
+        "Order " + formatDateTimeVN(new Date()) + fileExtension
       );
     }
   }
@@ -239,7 +240,7 @@ const OrderManagement = () => {
         style={{
           width: "100%",
           overflow: "hidden",
-          height: calHeightDataGrid(12) + 17,
+          height: calHeightDataGrid(LIMIT_ROW_ORDER) + 17,
         }}
       >
         <div
@@ -250,8 +251,6 @@ const OrderManagement = () => {
             rowData={order && order.items ? order.items : []}
             columnDefs={columns}
             ref={gridRef}
-            pagination={true}
-            paginationPageSize={order ? order.limit : 0}
           ></AgGridReact>
         </div>
       </div>
@@ -282,9 +281,13 @@ const OrderManagement = () => {
           handleOk={handleOk}
         />
       )}
-      {order && order.total_page && order.total_page > 1 && (
-        <Box sx={{ display: "flex", justifyContent: "center", mt: 1 }}>
+      {order && order.total_page && (
+        <Box sx={{ display: "flex", justifyContent: "end", mt: 1 }}>
           <Pagination
+            showRowsPerPage={true}
+            listRowPerPage={[LIMIT_ROW_ORDER, 50, 100, 200, 500]}
+            rowsPerPage={limit}
+            onChangeRowsPerPage={setLimit}
             onChange={(e, value) => {
               setPage(value);
             }}

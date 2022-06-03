@@ -32,6 +32,8 @@ const Widget = ({ icon, title, value, comparedValue }) => {
               color:
                 value / comparedValue < 1
                   ? "var(--error-color)"
+                  : value / comparedValue === 1
+                  ? "#000"
                   : "var(--success-color)",
             }}
           >
@@ -46,7 +48,9 @@ const Widget = ({ icon, title, value, comparedValue }) => {
                 sx={{ fontSize: 16, transform: "translateY(-1px)" }}
               />
             )}
-            <span style={{ color: "#000", fontSize: 12 }}>(tháng trước)</span>
+            <span style={{ color: "#000", fontSize: 12 }}>
+              &nbsp;(tháng trước)
+            </span>
           </div>
         )}
       </div>

@@ -17,7 +17,7 @@ import { getAll as getAllRoles, getCurrentRole } from "../../redux/roleSlice";
 import Pagination from "../../components/Pagination";
 import "ag-grid-community/dist/styles/ag-grid.css";
 import "ag-grid-community/dist/styles/ag-theme-alpine.css";
-import { calHeightDataGrid, formatTimeVN } from "../../utils";
+import { calHeightDataGrid, formatDateTimeVN } from "../../utils";
 
 const UserManagement = () => {
   const columnRoles = [
@@ -95,7 +95,7 @@ const UserManagement = () => {
       width: 170,
       sortable: true,
       filter: true,
-      valueFormatter: (params) => formatTimeVN(params.data.createdAt),
+      valueFormatter: (params) => formatDateTimeVN(params.data.createdAt),
     },
     {
       field: "actions",
@@ -142,6 +142,7 @@ const UserManagement = () => {
   const [pageUser, setPageUser] = useState(1);
   const [tab, setTab] = useState(1);
   const [openDialog, setOpenDialog] = useState(false);
+  const [limit, setLimit] = useState(LIMIT_ROW_USER);
 
   useEffect(() => {
     const promises = [];
@@ -155,7 +156,7 @@ const UserManagement = () => {
       new Promise((resolve, reject) =>
         resolve(
           configAxiosAll(user, dispatch).get(
-            `${API_USER_URL}?limit=${LIMIT_ROW_USER}&p=${pageUser}`
+            `${API_USER_URL}?limit=${limit}&p=${pageUser}`
           )
         )
       )
@@ -170,7 +171,7 @@ const UserManagement = () => {
         }
       })
       .catch((err) => {});
-  }, [dispatch, user, pageUser]);
+  }, [dispatch, user, pageUser, limit]);
 
   function getRole(data) {
     const { role } = data;
@@ -252,7 +253,7 @@ const UserManagement = () => {
           `${API_USER_URL}/${currentUser.id}`
         );
         const data = await configAxiosAll(user, dispatch).get(
-          `${API_USER_URL}?limit=${LIMIT_ROW_USER}&p=${pageUser}`
+          `${API_USER_URL}?limit=${limit}&p=${pageUser}`
         );
         setDataUser(data);
       }
@@ -326,7 +327,7 @@ const UserManagement = () => {
             sx={{
               width: "100%",
               overflow: "hidden",
-              height: calHeightDataGrid(10),
+              height: calHeightDataGrid(LIMIT_ROW_USER),
             }}
           >
             <div
@@ -351,9 +352,13 @@ const UserManagement = () => {
             )}
           </Paper>
         )}
-        {dataUser && dataUser.total_page && dataUser.total_page > 1 && (
-          <Box display="flex" justifyContent="center" mt={1}>
+        {dataUser && dataUser.total_page && (
+          <Box display="flex" justifyContent="end" mt={1}>
             <Pagination
+              showRowsPerPage={true}
+              listRowPerPage={[LIMIT_ROW_USER, 50, 100, 200, 500]}
+              rowsPerPage={limit}
+              onChangeRowsPerPage={setLimit}
               page={pageUser}
               onChange={(e, value) => setPageUser(value)}
               totalPage={dataUser.total_page}

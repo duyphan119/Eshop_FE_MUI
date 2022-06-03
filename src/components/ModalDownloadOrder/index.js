@@ -3,7 +3,7 @@ import { AgGridReact } from "ag-grid-react";
 import {
   calHeightDataGrid,
   exportComponentToPDF,
-  formatTimeVN,
+  formatDateTimeVN,
 } from "../../utils";
 import Logo from "../Logo";
 import Modal from "../Modal";
@@ -19,11 +19,6 @@ const ModalDownloadOrder = ({
 }) => {
   console.log(order);
   const columns = [
-    {
-      field: "id",
-      headerName: "Mã",
-      flex: 1,
-    },
     {
       field: "detail.product.name",
       headerName: "Sản phẩm",
@@ -62,11 +57,25 @@ const ModalDownloadOrder = ({
               alignItems: "center",
             }}
           >
-            <Logo style={{ color: "var(--main-color)", fontSize: 60 }} />
+            <Logo
+              style={{
+                color: "#fff",
+                backgroundColor: "var(--main-color)",
+                fontSize: 60,
+                padding: "0 6px",
+                width: 80,
+                height: 80,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            />
             <Typography variant="h4">ĐƠN ĐẶT HÀNG</Typography>
 
             <div className="">Số: {order.id}</div>
-            <div className="">Ngày đặt: {formatTimeVN(order.createdAt)}</div>
+            <div className="">
+              Ngày đặt: {formatDateTimeVN(order.createdAt)}
+            </div>
           </div>
         </Grid>
         <Grid item xs={12}>

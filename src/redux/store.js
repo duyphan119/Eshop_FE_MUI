@@ -16,6 +16,7 @@ import userSlice from "./userSlice";
 import roleSlice from "./roleSlice";
 import bannerSlice from "./bannerSlice";
 import notificationSlice from "./notificationSlice";
+import discountCategorySlice from "./discountCategorySlice";
 
 const store = configureStore({
   reducer: {
@@ -36,6 +37,7 @@ const store = configureStore({
     wishlist: wishlistSlice,
     banner: bannerSlice,
     notification: notificationSlice,
+    discountCategory: discountCategorySlice,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({

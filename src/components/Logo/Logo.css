@@ -3,3 +3,24 @@
   display: flex;
   align-items: center;
 }
+.logo {
+  position: relative;
+  padding-left: 21px;
+  font-size: 24px;
+}
+.logo::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 0;
+  transform: translateY(-50%);
+  width: 20px;
+  height: 24px;
+  background: radial-gradient(closest-side at 50%, var(--main-color), #fff);
+  color: var(--main-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-top-right-radius: 50px;
+  border-bottom-right-radius: 50px;
+}

@@ -9,7 +9,11 @@ import { configAxiosAll } from "../../../config/configAxios";
 import { API_CART_ITEM_URL } from "../../../constants";
 import { removeCartItem } from "../../../redux/cartSlice";
 import { showToastMessage } from "../../../redux/toastSlice";
-import { formatThousandDigits, getThumbnailCartItem } from "../../../utils";
+import {
+  formatThousandDigits,
+  getNewPrice,
+  getThumbnailCartItem,
+} from "../../../utils";
 
 const CartNotify = () => {
   const cart = useSelector((state) => state.cart.cart);
@@ -49,9 +53,12 @@ const CartNotify = () => {
         <>
           <div className="cart-notify-list">
             {cart.items.map((item) => {
+              const hasDiscountCategory =
+                item.detail.product.category.discounts &&
+                item.detail.product.category.discounts.length > 0;
               const hasDiscount =
                 item.detail.product.discounts &&
-                item.detail.product.discounts.length;
+                item.detail.product.discounts.length > 0;
               return (
                 <div key={Math.random()} className="cart-notify-item">
                   <img src={getThumbnailCartItem(item)} alt="" />
@@ -63,7 +70,17 @@ const CartNotify = () => {
                       {item.detail.color.value} / {item.detail.size.value}
                     </Typography>
                     <Typography variant="body2">
-                      {hasDiscount ? (
+                      {hasDiscountCategory ? (
+                        <span style={{ color: "var(--main-color)" }}>
+                          {formatThousandDigits(
+                            getNewPrice(
+                              item.detail.product.price,
+                              item.detail.product.category.discounts[0].percent
+                            )
+                          )}
+                          đ
+                        </span>
+                      ) : hasDiscount ? (
                         <span style={{ color: "var(--main-color)" }}>
                           {formatThousandDigits(
                             item.detail.product.discounts[0].new_price
@@ -75,7 +92,7 @@ const CartNotify = () => {
                       )}
                       <span
                         style={
-                          hasDiscount
+                          hasDiscountCategory || hasDiscount
                             ? {
                                 textDecoration: "line-through",
                                 marginLeft: "4px",
