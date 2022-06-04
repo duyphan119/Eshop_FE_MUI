@@ -10,11 +10,17 @@ const initialState = {
     items: [],
     count: 0,
   },
+  modal: {
+    open: false,
+  },
 };
 const cartSlice = createSlice({
   name: "cart",
   initialState: initialState,
   reducers: {
+    showModalAddToCart: (state, action) => {
+      state.modal.open = action.payload;
+    },
     getCart: (state, action) => {
       state.cart = action.payload;
       localStorage.setItem(LOCALSTORAGE_CART_NAME, JSON.stringify(state.cart));
@@ -95,5 +101,6 @@ export const {
   getSelectedCartItems,
   selectCartItem,
   deSelectCartItem,
+  showModalAddToCart,
 } = cartSlice.actions;
 export default cartSlice.reducer;

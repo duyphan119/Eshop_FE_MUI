@@ -40,6 +40,7 @@ export const EXAMPLE_STARS_ARRAY = [1, 2, 3, 4, 5];
 export const EXAMPLE_STARS_ARRAY_REVERSE = [5, 4, 3, 2, 1];
 export const PRODUCTS_PER_PAGE = 10;
 export const PRODUCTS_SLIDER_VERTICAL = 5;
+export const PRODUCTS_SLIDER_VERTICAL_MODAL_ADD_TO_CART = 4;
 export const PRODUCT_COLORS_PREVIEW = 5;
 export const LIMIT_RECOMMEND_PRODUCT = 10;
 export const LIMIT_RECENT_ORDERS = 5;

@@ -74,4 +74,8 @@
 
 39. quản lí coupon
 
+40. validate tất cả các form
+
+# 41. modal add to cart
+
 Nếu còn dư thời gian thì thêm saga vô

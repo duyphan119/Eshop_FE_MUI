@@ -11,6 +11,7 @@ import { socket, SocketContext } from "./context";
 import { publicRoutes, adminRoutes } from "./routes";
 import "./App.css";
 import NavigateScrollToTop from "./components/NavigateScrollToTop";
+import ModalAddToCart from "./components/ModalAddToCart";
 function ErrorFallback({ error, resetErrorBoundary }) {
   return (
     <div
@@ -77,6 +78,7 @@ function App() {
           {user && showRoutes(adminRoutes)}
         </Routes>
         <Toast />
+        <ModalAddToCart />
       </SocketContext.Provider>
     </ErrorBoundary>
   );

@@ -45,7 +45,7 @@ const CartNotify = () => {
         );
       });
   };
-
+  console.log(cart);
   return (
     <Box className="cart-notify">
       {cart?.items?.length === 0 && <EmptyCart />}
