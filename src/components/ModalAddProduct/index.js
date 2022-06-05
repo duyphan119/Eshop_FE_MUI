@@ -2,6 +2,7 @@ import {
   Box,
   Button,
   Chip,
+  Divider,
   FormControl,
   Grid,
   InputLabel,
@@ -9,9 +10,13 @@ import {
   Select,
   TextField,
 } from "@mui/material";
+import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
+import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { Editor } from "@tinymce/tinymce-react";
 import { Fragment, useState } from "react";
 import { useSelector } from "react-redux";
+import { formatDateVN, formatThousandDigits } from "../../utils";
 import Modal from "../Modal";
 const ModalAddProduct = ({
   open,
@@ -34,12 +39,18 @@ const ModalAddProduct = ({
     product ? product.description : ""
   );
   const [indexCategory, setIndexCategory] = useState(
-    categories.length > 0 ? 0 : -1
+    product
+      ? categories.length > 0 &&
+          categories.findIndex((el) => el.id === product.category.id)
+      : categories.length > 0
+      ? 0
+      : -1
   );
   const [indexColor, setIndexColor] = useState(0);
   const [indexSize, setIndexSize] = useState(0);
   const [indexMaterial, setIndexMaterial] = useState(0);
   const [deleteMaterials, setDeleteMaterials] = useState([]);
+  const [deleteDiscounts, setDeleteDiscounts] = useState([]);
   const [deleteImages, setDeleteImages] = useState([]);
   const [amount, setAmount] = useState(0);
   const [price, setPrice] = useState(product ? product.price : "");
@@ -73,6 +84,7 @@ const ModalAddProduct = ({
         })()
       : []
   );
+  const [discounts, setDiscounts] = useState(product ? product.discounts : []);
   const [images, setImages] = useState([]);
   const [productImages, setProductImages] = useState(
     product
@@ -85,6 +97,9 @@ const ModalAddProduct = ({
         })()
       : []
   );
+  const [newPrice, setNewPrice] = useState(0);
+  const [start, setStart] = useState(new Date());
+  const [finish, setFinish] = useState(new Date());
 
   function getDetail(detail) {
     const _details = [...details];
@@ -126,6 +141,20 @@ const ModalAddProduct = ({
 
     setImages(_images);
   }
+  function getDiscount() {
+    const data = { start, finish, new_price: newPrice };
+    const _discounts = [...discounts];
+
+    const index = _discounts.findIndex(
+      (d) => formatDateVN(d.start) === formatDateVN(start)
+    );
+    if (index !== -1) {
+      _discounts[index] = { ..._discounts[index], ...data };
+    } else {
+      _discounts.push(data);
+    }
+    setDiscounts(_discounts);
+  }
 
   return (
     <>
@@ -145,6 +174,8 @@ const ModalAddProduct = ({
             images,
             deleteMaterials,
             deleteImages,
+            discounts,
+            deleteDiscounts,
           });
         }}
         isCloseAfterOk={isCloseAfterOk}
@@ -152,7 +183,7 @@ const ModalAddProduct = ({
         height={height}
       >
         <Grid container spacing={2} my={1}>
-          <Grid item xs={5}>
+          <Grid item xs={4}>
             {categories.length > 0 && (
               <FormControl sx={{ marginBottom: "8px" }} size="small" fullWidth>
                 <InputLabel id="category">Danh mục</InputLabel>
@@ -202,7 +233,7 @@ const ModalAddProduct = ({
               }}
             />
           </Grid>
-          <Grid item xs={7}>
+          <Grid item xs={8}>
             <Grid container spacing={2}>
               <Grid item xs={7}>
                 {colors.length > 0 && (
@@ -461,7 +492,7 @@ const ModalAddProduct = ({
                 >
                   Chọn chất liệu này
                 </Button>
-                <Box sx={{ mt: 1 }}>
+                <Box sx={{ my: 1 }}>
                   {materials.map((item, index) => (
                     <Chip
                       sx={{
@@ -480,12 +511,82 @@ const ModalAddProduct = ({
                           ]);
                         }
                         setMaterials(
-                          [...materials].filter((el) => el.id !== item.id)
+                          [...materials].filter((el, inx) => inx !== index)
                         );
                       }}
                     />
                   ))}
                 </Box>
+                <Divider sx={{ mb: 1 }} />
+                <FormControl sx={{ mb: 1 }} fullWidth>
+                  <TextField
+                    size="small"
+                    inputProps={{ inputMode: "numeric", pattern: "[0-9]*" }}
+                    label="Giá mới"
+                    value={newPrice}
+                    onChange={(e) => setNewPrice(parseInt(e.target.value))}
+                  />
+                </FormControl>
+                <FormControl sx={{ mb: 1 }} fullWidth>
+                  <LocalizationProvider dateAdapter={AdapterDateFns}>
+                    <DatePicker
+                      label="Ngày bắt đầu"
+                      value={start}
+                      onChange={(newValue) => {
+                        setStart(newValue);
+                      }}
+                      renderInput={(params) => (
+                        <TextField {...params} size="small" />
+                      )}
+                    />
+                  </LocalizationProvider>
+                </FormControl>
+                <FormControl sx={{ mb: 1 }} fullWidth>
+                  <LocalizationProvider dateAdapter={AdapterDateFns}>
+                    <DatePicker
+                      label="Ngày kết thúc"
+                      value={finish}
+                      onChange={(newValue) => {
+                        setFinish(newValue);
+                      }}
+                      renderInput={(params) => (
+                        <TextField {...params} size="small" />
+                      )}
+                    />
+                  </LocalizationProvider>
+                </FormControl>
+                <Button
+                  sx={{ mb: 1 }}
+                  size="small"
+                  variant="outlined"
+                  onClick={() => getDiscount()}
+                >
+                  Áp dụng giảm giá này
+                </Button>
+                {discounts.map((item, index) => (
+                  <Chip
+                    sx={{
+                      marginRight: "2px",
+                      marginBottom: "2px",
+                    }}
+                    key={index}
+                    size="small"
+                    label={`${formatDateVN(item.start)} -
+                     ${formatDateVN(item.finish)} -
+                      ${formatThousandDigits(item.new_price)}`}
+                    variant="outlined"
+                    onDelete={() => {
+                      if (product) {
+                        if (item.id) {
+                          setDeleteDiscounts([...deleteDiscounts, item.id]);
+                        }
+                      }
+                      setDiscounts(
+                        [...discounts].filter((el, inx) => index !== inx)
+                      );
+                    }}
+                  />
+                ))}
               </Grid>
             </Grid>
           </Grid>

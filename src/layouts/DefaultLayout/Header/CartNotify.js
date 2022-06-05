@@ -75,7 +75,10 @@ const CartNotify = () => {
                           {formatThousandDigits(
                             getNewPrice(
                               item.detail.product.price,
-                              item.detail.product.category.discounts[0].percent
+                              item.detail.product.category.discounts[
+                                item.detail.product.category.discounts.length -
+                                  1
+                              ].percent
                             )
                           )}
                           đ
@@ -83,7 +86,9 @@ const CartNotify = () => {
                       ) : hasDiscount ? (
                         <span style={{ color: "var(--main-color)" }}>
                           {formatThousandDigits(
-                            item.detail.product.discounts[0].new_price
+                            item.detail.product.discounts[
+                              item.detail.product.discounts.length - 1
+                            ].new_price
                           )}
                           đ
                         </span>

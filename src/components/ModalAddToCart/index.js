@@ -181,7 +181,7 @@ const ModalAddToCart = () => {
                       verticalSwiping: true,
                       slidesToScroll: 1,
                       initialSlide: 0,
-                      className: "slick-vertical-slider",
+                      className: "slick-vertical-slider-modal",
                       prevArrow: <SlickArrowLeft />,
                       nextArrow: <SlickArrowRight />,
                     }}
@@ -268,7 +268,10 @@ const ModalAddToCart = () => {
               <Typography variant="body2">
                 {hasDiscount && (
                   <span style={{ color: "var(--main-color)" }}>
-                    {formatThousandDigits(product.discounts[0].new_price)}đ
+                    {formatThousandDigits(
+                      product.discounts[product.discounts.length - 1].new_price
+                    )}
+                    đ
                   </span>
                 )}
                 <span
@@ -381,7 +384,7 @@ const ModalAddToCart = () => {
                 })}
               </Box>
               <Box sx={{ mt: 2, mb: 2 }}>
-                <Box className="product-quantity-wrapper">
+                <Box className="product-quantity-modal-wrapper">
                   <button onClick={() => handleChangeQuantity(quantity - 1)}>
                     <RemoveOutlinedIcon sx={{ fontSize: 14 }} />
                   </button>

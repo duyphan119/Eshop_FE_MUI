@@ -8,7 +8,7 @@
 .custom-slider .slick-list .slick-track {
   margin: 0;
 }
-.slick-vertical {
+.slick-vertical-slider {
   height: 520px;
   padding-top: 26px;
 }
@@ -82,4 +82,24 @@
 .product-rate {
   display: flex;
   align-items: center;
+}
+.product-name {
+  position: relative;
+  padding-right: 40px;
+}
+.add-to-favorite {
+  position: absolute;
+  right: 4px;
+  top: 4px;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 1px solid gray;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+.id-loved {
+  color: red;
 }

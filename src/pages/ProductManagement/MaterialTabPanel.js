@@ -1,5 +1,5 @@
 import { Button, IconButton, Paper, Tooltip } from "@mui/material";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import EditIcon from "@mui/icons-material/Edit";
 import AddIcon from "@mui/icons-material/Add";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -25,6 +25,15 @@ const MaterialTabPanel = () => {
 
   const [open, setOpen] = useState(false);
   const [openDialog, setOpenDialog] = useState(false);
+
+  useEffect(() => {
+    configAxiosResponse()
+      .get(`${API_MATERIAL_URL}`)
+      .then((res) => {
+        dispatch(getAll(res));
+      })
+      .catch((err) => {});
+  }, [dispatch]);
 
   const columns = [
     {

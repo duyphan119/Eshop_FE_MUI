@@ -2,7 +2,16 @@ import AddOutlinedIcon from "@mui/icons-material/AddOutlined";
 import KeyboardArrowDownOutlinedIcon from "@mui/icons-material/KeyboardArrowDownOutlined";
 import KeyboardArrowUpOutlinedIcon from "@mui/icons-material/KeyboardArrowUpOutlined";
 import RemoveOutlinedIcon from "@mui/icons-material/RemoveOutlined";
-import { Box, Button, Container, Grid, Typography } from "@mui/material";
+import FavoriteBorderOutlinedIcon from "@mui/icons-material/FavoriteBorderOutlined";
+import FavoriteIcon from "@mui/icons-material/Favorite";
+import {
+  Box,
+  Button,
+  Container,
+  Grid,
+  Tooltip,
+  Typography,
+} from "@mui/material";
 import { useContext, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
@@ -12,6 +21,7 @@ import "slick-carousel/slick/slick.css";
 import {
   API_CART_ITEM_URL,
   API_PRODUCT_URL,
+  API_PRODUCT_USER_URL,
   LIMIT_RECOMMEND_PRODUCT,
   PRODUCTS_SLIDER_VERTICAL,
 } from "../../constants";
@@ -19,6 +29,7 @@ import { configAxiosAll } from "../../config/configAxios";
 import { showToastMessage } from "../../redux/toastSlice";
 import { addToCart } from "../../redux/cartSlice";
 import "./ProductDetail.css";
+import Breadcrumbs from "../../components/Breadcrumbs";
 import { formatThousandDigits } from "../../utils";
 import { addToLatest } from "../../redux/productSlice";
 import ProductDetailSlider from "../../components/ProductDetailSlider";
@@ -27,6 +38,7 @@ import { SocketContext } from "../../context";
 import Product from "../../components/Product";
 import ProductSkeleton from "../../components/Skeleton/Product";
 import Stars from "../../components/Stars";
+import { addToWishlist, removeWishlistItem } from "../../redux/wishlistSlice";
 const SlickArrowLeft = ({ currentSlide, slideCount, ...props }) => (
   <button
     {...props}
@@ -58,6 +70,7 @@ const ProductDetail = () => {
   const socket = useContext(SocketContext);
 
   const user = useSelector((state) => state.auth.currentUser);
+  const wishlist = useSelector((state) => state.wishlist.wishlist);
 
   const dispatch = useDispatch();
 
@@ -68,6 +81,7 @@ const ProductDetail = () => {
   const [indexSize, setIndexSize] = useState(0);
   const [quantity, setQuantity] = useState(1);
   const [msgQuantity, setMsgQuantity] = useState("");
+  const [productUser, setProductUser] = useState();
 
   const params = useParams();
   const { product_slug } = params;
@@ -99,6 +113,14 @@ const ProductDetail = () => {
       setRecommendedProduct(data2);
     })();
   }, [dispatch, product_slug, user]);
+
+  useEffect(() => {
+    if (product) {
+      setProductUser(
+        wishlist.findIndex((item) => item.id === product.id) !== -1
+      );
+    }
+  }, [product, wishlist]);
 
   const handleChangeQuantity = (value) => {
     try {
@@ -167,6 +189,42 @@ const ProductDetail = () => {
   // };
 
   // const averageRating = calculateAverageRating();
+  async function handleAddToFavoriteList() {
+    if (user) {
+      try {
+        if (!productUser) {
+          await configAxiosAll(user, dispatch).post(`${API_PRODUCT_USER_URL}`, {
+            product_id: product.id,
+            user_id: user.id,
+          });
+          dispatch(addToWishlist(product));
+          dispatch(
+            showToastMessage({
+              type: "success",
+              text: "Đã thêm vào danh sách yêu thích",
+              isOpen: true,
+            })
+          );
+        } else {
+          await configAxiosAll(user, dispatch).delete(
+            `${API_PRODUCT_USER_URL}/product/${product.id}`
+          );
+          dispatch(removeWishlistItem(product.id));
+          dispatch(
+            showToastMessage({
+              type: "success",
+              text: "Đã xoá khỏi danh sách yêu thích",
+              isOpen: true,
+            })
+          );
+        }
+        setProductUser(!productUser);
+      } catch (error) {
+        console.log(error);
+      }
+    }
+  }
+
   if (!product) return "";
 
   return (
@@ -174,11 +232,34 @@ const ProductDetail = () => {
       <Container
         sx={{
           paddingInline: {
-            lg: "120px !important",
+            lg: "100px !important",
             xs: "24px !important",
           },
         }}
       >
+        <Box sx={{ mb: 1 }}>
+          <Breadcrumbs
+            items={[
+              {
+                to: "/",
+                text: "Trang chủ",
+              },
+              {
+                to: `/${product.category.group_category.gender.slug}`,
+                text: product.category.group_category.gender.name,
+              },
+              {
+                to: `/${product.category.group_category.slug}`,
+                text: product.category.group_category.name,
+              },
+              {
+                to: `/${product.category.slug}`,
+                text: product.category.name,
+              },
+            ]}
+            text={product.name}
+          />
+        </Box>
         <Grid container columnSpacing={3}>
           <Grid
             item
@@ -274,14 +355,32 @@ const ProductDetail = () => {
             <ProductDetailSlider images={product.colors[indexColor].images} />
           </Grid>
           <Grid item xs={12} lg={6}>
-            <Typography
-              variant="h6"
-              sx={{
-                fontWeight: "600",
-              }}
-            >
-              {product.name}
-            </Typography>
+            <div className="product-name">
+              <Typography
+                variant="h6"
+                sx={{
+                  fontWeight: "600",
+                }}
+              >
+                {product.name}
+              </Typography>
+              <div
+                className="add-to-favorite"
+                onClick={handleAddToFavoriteList}
+              >
+                {productUser ? (
+                  <Tooltip title="Huỷ bỏ yêu thích">
+                    <FavoriteIcon
+                      sx={{ fontSize: 20, color: "var(--error-color)" }}
+                    />
+                  </Tooltip>
+                ) : (
+                  <Tooltip title="Yêu thích">
+                    <FavoriteBorderOutlinedIcon sx={{ fontSize: 20 }} />
+                  </Tooltip>
+                )}
+              </div>
+            </div>
             <div className="product-rate">
               <Stars
                 rate={
@@ -307,7 +406,10 @@ const ProductDetail = () => {
             <Typography variant="body1">
               {hasDiscount && (
                 <span style={{ color: "var(--main-color)" }}>
-                  {formatThousandDigits(product.discounts[0].new_price)}đ
+                  {formatThousandDigits(
+                    product.discounts[product.discounts.length - 1].new_price
+                  )}
+                  đ
                 </span>
               )}
               <span

@@ -35,7 +35,7 @@ export const formatThousandDigits = (price) => {
   }
 };
 export const formatDateVN = (input) => {
-  const dt = new Date(input);
+  const dt = new Date(input.toString());
   let date = dt.getDate();
   let month = dt.getMonth() + 1;
   return `${date < 10 ? "0" + date : date}/${
@@ -43,7 +43,7 @@ export const formatDateVN = (input) => {
   }/${dt.getFullYear()}`;
 };
 export const formatTimeVN = (input) => {
-  const dt = new Date(input);
+  const dt = new Date(input.toString());
 
   let hour = dt.getHours();
   let minute = dt.getMinutes();
@@ -103,7 +103,11 @@ export const getTotalPrice = (cart) => {
         item.detail.product.discounts &&
         item.detail.product.discounts.length > 0
       ) {
-        result += item.quantity * item.detail.product.discounts[0].new_price;
+        result +=
+          item.quantity *
+          item.detail.product.discounts[
+            item.detail.product.discounts.length - 1
+          ].new_price;
       } else {
         result += item.quantity * item.detail.product.price;
       }
@@ -160,4 +164,12 @@ export const getNewPrice = (price, percent) => {
   result = Math.floor(divide1000 - (divide1000 * percent) / 100) * 1000;
 
   return result;
+};
+export const validateTelephone = (telephone) => {
+  try {
+    if (/(03|05|07|08|09|01[2|6|8|9])+([0-9]{8})\b/.test(telephone)) {
+      return true;
+    }
+  } catch (error) {}
+  return false;
 };

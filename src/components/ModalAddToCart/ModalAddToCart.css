@@ -8,33 +8,33 @@
 .custom-slider .slick-list .slick-track {
   margin: 0;
 }
-.slick-vertical {
+.slick-vertical-slider-modal {
   height: 384px;
   padding-top: 26px;
 }
-.slick-vertical-slider .slick-arrow {
+.slick-vertical-slider-modal .slick-arrow {
   position: absolute;
   right: 1px;
   width: calc(100% - 10px);
   height: 24px;
   left: unset;
 }
-.slick-vertical-slider .slick-arrow::before {
+.slick-vertical-slider-modal .slick-arrow::before {
   content: none;
 }
-.slick-vertical-slider .slick-next {
+.slick-vertical-slider-modal .slick-next {
   top: calc(100% - 12px);
 }
-.slick-vertical-slider .slick-prev {
+.slick-vertical-slider-modal .slick-prev {
   top: 12px;
 }
-.slick-vertical-slider {
+.slick-vertical-slider-modal {
   position: static;
 }
-.slick-vertical-slider .slick-arrow svg {
+.slick-vertical-slider-modal .slick-arrow svg {
   color: #fff;
 }
-.product-quantity-wrapper {
+.product-quantity-modal-wrapper {
   width: 92px;
   display: flex;
   align-items: center;
@@ -42,7 +42,7 @@
   border-radius: 30px;
   border: 1px solid #000;
 }
-.product-quantity-wrapper button {
+.product-quantity-modal-wrapper button {
   width: 28px;
   height: 20px;
   border: none;
@@ -52,13 +52,13 @@
   background-color: transparent;
   cursor: pointer;
 }
-.product-quantity-wrapper button:first-child {
+.product-quantity-modal-wrapper button:first-child {
   border-right: 1px solid #000;
 }
-.product-quantity-wrapper button:last-child {
+.product-quantity-modal-wrapper button:last-child {
   border-left: 1px solid #000;
 }
-.product-quantity-wrapper input {
+.product-quantity-modal-wrapper input {
   width: 36px;
   border: none;
   outline: none;

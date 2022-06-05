@@ -61,6 +61,7 @@ export const LIMIT_ROW_USER = 10;
 export const LIMIT_ROW_ROLE = 20;
 export const LIMIT_ROW_BANNER = 10;
 export const LIMIT_ROW_COMMENT = 10;
+export const LIMIT_ROW_COUPON = 10;
 export const LIMIT_NOTIFICATION = 10;
 export const PDF_WIDTH_LANDSCAPE = 896;
 export const LIMIT_DISCOUNT_CATEGORY = 10;

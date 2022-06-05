@@ -76,6 +76,9 @@ const orderSlice = createSlice({
     changePage: (state, action) => {
       state.page = action.payload;
     },
+    changeLimit: (state, action) => {
+      state.limit = action.payload;
+    },
     getCurrentOrder: (state, action) => {
       state.current = action.payload;
     },
@@ -83,6 +86,7 @@ const orderSlice = createSlice({
 });
 export const {
   getOrders,
+  changeLimit,
   getCurrentOrder,
   changePage,
   updateOrder,

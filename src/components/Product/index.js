@@ -77,60 +77,7 @@ const Product = ({ product }) => {
     }
     return false;
   }, [product]);
-  // async function handleAddToCart() {
-  //   if (user) {
-  //     const indexSize = product.colors[indexColor].sizes.findIndex(
-  //       (el) => el.amount > 0
-  //     );
-  //     if (indexSize === -1) {
-  //       dispatch(
-  //         showToastMessage({
-  //           text: "Sản phẩm thuộc màu này hiện đã hết",
-  //           type: "info",
-  //           isOpen: true,
-  //         })
-  //       );
-  //     } else {
-  //       if (1 > product.colors[indexColor].sizes[indexSize].amount) {
-  //         dispatch(
-  //           showToastMessage({
-  //             text: "Số lượng không hợp lệ",
-  //             type: "info",
-  //             isOpen: true,
-  //           })
-  //         );
-  //       } else {
-  //         try {
-  //           const data = await configAxiosAll(user, dispatch).post(
-  //             `${API_CART_ITEM_URL}`,
-  //             {
-  //               product_detail_id:
-  //                 product.colors[indexColor].sizes[indexSize].detail_id,
-  //               quantity: 1,
-  //               cart_id: user.cart.id,
-  //             }
-  //           );
-  //           dispatch(addToCart(data));
-  //           dispatch(
-  //             showToastMessage({
-  //               type: "success",
-  //               text: "Thêm thành công",
-  //               isOpen: true,
-  //             })
-  //           );
-  //         } catch (error) {}
-  //       }
-  //     }
-  //   } else {
-  //     dispatch(
-  //       showToastMessage({
-  //         text: "Bạn cần phải đăng nhập để thêm giỏ hàng",
-  //         type: "info",
-  //         isOpen: true,
-  //       })
-  //     );
-  //   }
-  // }
+
   if (!product || product?.colors?.length === 0) {
     return "";
   }
@@ -149,7 +96,8 @@ const Product = ({ product }) => {
             <div className="product-tag product-tag-sale">
               -
               {Math.round(
-                ((product.price - product.discounts[0].new_price) /
+                ((product.price -
+                  product.discounts[product.discounts.length - 1].new_price) /
                   product.price) *
                   100
               )}
@@ -233,7 +181,10 @@ const Product = ({ product }) => {
           product.discounts &&
           product.discounts.length > 0 && (
             <span className="product-new-price">
-              {formatThousandDigits(product.discounts[0].new_price)}đ
+              {formatThousandDigits(
+                product.discounts[product.discounts.length - 1].new_price
+              )}
+              đ
             </span>
           )
         )}

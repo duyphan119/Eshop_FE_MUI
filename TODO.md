@@ -72,7 +72,7 @@
 
 38. chế độ dark / light
 
-39. quản lí coupon
+# 39. quản lí coupon
 
 40. validate tất cả các form
 

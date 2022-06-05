@@ -1,4 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
+import { LIMIT_ROW_PRODUCT } from "../constants";
 const initLatest = JSON.parse(localStorage.getItem("shop-of-duy:latest"));
 const initialState = {
   list: null,
@@ -6,6 +7,9 @@ const initialState = {
   current: null,
   searchResult: [],
   latest: initLatest ? initLatest : [],
+  page: 1,
+  limit: LIMIT_ROW_PRODUCT,
+  product: null,
 };
 const productSlice = createSlice({
   name: "product",
@@ -14,6 +18,10 @@ const productSlice = createSlice({
     getProducts: (state, action) => {
       state.list = [...action.payload];
     },
+    getProduct: (state, action) => {
+      state.product = action.payload;
+    },
+
     getSortedProducts: (state, action) => {
       console.log(action.payload);
     },
@@ -71,10 +79,17 @@ const productSlice = createSlice({
       state.latest = [newItem, ...state.latest];
       localStorage.setItem("shop-of-duy:latest", JSON.stringify(state.latest));
     },
+    changePage: (state, action) => {
+      state.page = action.payload;
+    },
+    changeLimit: (state, action) => {
+      state.limit = action.payload;
+    },
   },
 });
 export const {
   getProducts,
+  getProduct,
   getSortedProducts,
   getFavoriteList,
   removeFavoriteItem,
@@ -85,5 +100,7 @@ export const {
   newRepliedComment,
   getSearchResult,
   addToLatest,
+  changePage,
+  changeLimit,
 } = productSlice.actions;
 export default productSlice.reducer;

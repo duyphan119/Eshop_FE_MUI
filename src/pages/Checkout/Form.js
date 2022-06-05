@@ -48,6 +48,7 @@ const Form = ({ order, setOrder }) => {
           <TitleControl>Thông tin giao hàng</TitleControl>
           <FormControl fullWidth sx={{ mt: 2 }}>
             <TextField
+              disabled={true}
               inputProps={{
                 style: { fontSize: 14 },
               }}
@@ -71,6 +72,7 @@ const Form = ({ order, setOrder }) => {
               size="small"
               label="Số điện thoại liện hệ"
               variant="outlined"
+              required
               value={order.phoneNumber}
               onChange={(e) =>
                 setOrder({ ...order, phoneNumber: e.target.value })
@@ -85,6 +87,7 @@ const Form = ({ order, setOrder }) => {
               Tỉnh, Thành phố
             </InputLabel>
             <Select
+              required
               className="fz-14"
               labelId="city"
               size="small"
@@ -109,6 +112,7 @@ const Form = ({ order, setOrder }) => {
               Quận, Huyện
             </InputLabel>
             <Select
+              required
               labelId="district"
               className="fz-14"
               value={order.district}
@@ -133,6 +137,7 @@ const Form = ({ order, setOrder }) => {
               Phường
             </InputLabel>
             <Select
+              required
               labelId="ward"
               className="fz-14"
               value={order.ward}
@@ -151,6 +156,7 @@ const Form = ({ order, setOrder }) => {
           </FormControl>
           <FormControl fullWidth sx={{ mt: 2 }}>
             <TextField
+              required
               inputProps={{
                 style: { fontSize: 14 },
               }}
@@ -165,6 +171,7 @@ const Form = ({ order, setOrder }) => {
           </FormControl>
           <FormControl fullWidth sx={{ mt: 2 }}>
             <TextField
+              required
               inputProps={{
                 style: { fontSize: 14 },
               }}

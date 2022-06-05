@@ -12,7 +12,7 @@ import {
 } from "../../constants";
 import { getSelectedCartItems } from "../../redux/cartSlice";
 import { showToastMessage } from "../../redux/toastSlice";
-import { getFinalPrice, getTotalPrice } from "../../utils";
+import { getFinalPrice, getTotalPrice, validateTelephone } from "../../utils";
 import CheckoutSuccess from "../CheckoutSuccess";
 import "./Checkout.css";
 import Form from "./Form";
@@ -62,49 +62,63 @@ const Checkout = () => {
   }, [selectedCartItems]);
 
   const handleCheckout = useCallback(async () => {
-    if (order) {
-      const data = await configAxiosAll(user, dispatch).post(
-        `${API_ORDER_URL}`,
-        {
-          user_id: user.id,
-          cart_id: user.cart.id,
-          cart: selectedCartItems,
-          address: `${order.addressNo} ${order.street} ${order.ward}, ${order.district}, ${order.city}`,
-          total: finalPrice,
-          telephone: order.phoneNumber,
-          full_name: order.fullName,
-          coupon_id: coupon.id,
-        }
-      );
-      if (data) {
-        dispatch(getSelectedCartItems({ items: [], count: 0 }));
-        setIsSuccessful(true);
-        const notify = await configAxiosAll(user, dispatch).post(
-          `${API_NOTIFICATION_URL}`,
-          {
-            title: `${user.full_name} đã đặt một đơn hàng`,
-            href: `/dashboard/order`,
-            isRead: false,
-            sender_id: user.id,
-            notify_type: "order",
+    try {
+      if (order) {
+        if (validateTelephone(order.phoneNumber)) {
+          const data = await configAxiosAll(user, dispatch).post(
+            `${API_ORDER_URL}`,
+            {
+              user_id: user.id,
+              cart_id: user.cart.id,
+              cart: selectedCartItems,
+              address: `${order.addressNo} ${order.street} ${order.ward}, ${order.district}, ${order.city}`,
+              total: finalPrice,
+              telephone: order.phoneNumber,
+              full_name: order.fullName,
+              coupon_id: coupon.id,
+            }
+          );
+          if (data) {
+            dispatch(getSelectedCartItems({ items: [], count: 0 }));
+            setIsSuccessful(true);
+            const notify = await configAxiosAll(user, dispatch).post(
+              `${API_NOTIFICATION_URL}`,
+              {
+                title: `${user.full_name} đã đặt một đơn hàng`,
+                href: `/dashboard/order`,
+                isRead: false,
+                sender_id: user.id,
+                notify_type: "order",
+              }
+            );
+            socket.emit("send-notify", {
+              roomId: "admin",
+              ...notify,
+            });
           }
-        );
-        socket.emit("send-notify", {
-          roomId: "admin",
-          ...notify,
-        });
+        } else {
+          setIsSuccessful(false);
+          dispatch(
+            showToastMessage({
+              type: "info",
+              text: "Số điện thoại không hợp lệ",
+              title: "Thông tin",
+              isOpen: true,
+            })
+          );
+        }
       } else {
         setIsSuccessful(false);
         dispatch(
           showToastMessage({
             type: "error",
-            text: "Đặt hàng thất bại",
+            text: "Vui lòng chọn đầy đủ thông tin",
             title: "Thất bại",
             isOpen: true,
           })
         );
       }
-    } else {
+    } catch (error) {
       setIsSuccessful(false);
       dispatch(
         showToastMessage({
@@ -117,8 +131,8 @@ const Checkout = () => {
     }
   }, [coupon, order]);
   if (isSuccessful) return <CheckoutSuccess />;
-  else if (!isSuccessful && selectedCartItems.count === 0)
-    return <Navigate to={config.routes.cart} />;
+  // if (!isSuccessful && selectedCartItems.count === 0)
+  //   return <Navigate to={config.routes.cart} />;
 
   return (
     <Container>

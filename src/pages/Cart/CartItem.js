@@ -156,7 +156,9 @@ const CartItem = ({ item, checked }) => {
               hasDiscount && (
                 <span style={{ color: "var(--main-color)" }}>
                   {formatThousandDigits(
-                    item.detail.product.discounts[0].new_price
+                    item.detail.product.discounts[
+                      item.detail.product.discounts.length - 1
+                    ].new_price
                   )}
                   đ
                 </span>
@@ -258,7 +260,9 @@ const CartItem = ({ item, checked }) => {
                 item.detail.product.category.discounts[0].percent
               )
             : hasDiscount
-            ? item.detail.product.discounts[0].new_price
+            ? item.detail.product.discounts[
+                item.detail.product.discounts.length - 1
+              ].new_price
             : item.detail.product.price) * item.quantity
         )}
         đ

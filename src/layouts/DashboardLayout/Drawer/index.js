@@ -8,7 +8,7 @@ import { styled, useTheme } from "@mui/material/styles";
 import Toolbar from "@mui/material/Toolbar";
 import * as React from "react";
 import { DRAWER_WIDTH } from "../../../constants";
-import { MainListItems, SecondaryListItems } from "./ListItems";
+import { MainListItems } from "./ListItems";
 const StyledDrawer = styled(MuiDrawer, {
   shouldForwardProp: (prop) => prop !== "open",
 })(({ theme, open }) => ({
@@ -53,11 +53,7 @@ const Drawer = ({ open, toggleDrawer }) => {
         </IconButton>
       </Toolbar>
       <Divider />
-      <List component="nav">
-        {MainListItems}
-        <Divider sx={{ my: 1 }} />
-        {SecondaryListItems}
-      </List>
+      <List component="nav">{MainListItems}</List>
     </StyledDrawer>
   );
 };
