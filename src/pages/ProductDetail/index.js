@@ -4,6 +4,8 @@ import KeyboardArrowUpOutlinedIcon from "@mui/icons-material/KeyboardArrowUpOutl
 import RemoveOutlinedIcon from "@mui/icons-material/RemoveOutlined";
 import FavoriteBorderOutlinedIcon from "@mui/icons-material/FavoriteBorderOutlined";
 import FavoriteIcon from "@mui/icons-material/Favorite";
+import StraightenIcon from "@mui/icons-material/Straighten";
+import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import {
   Box,
   Button,
@@ -39,6 +41,8 @@ import Product from "../../components/Product";
 import ProductSkeleton from "../../components/Skeleton/Product";
 import Stars from "../../components/Stars";
 import { addToWishlist, removeWishlistItem } from "../../redux/wishlistSlice";
+import ModalSizeGuide from "./ModalSizeGuide";
+import SizeGuide from "./SizeGuide";
 const SlickArrowLeft = ({ currentSlide, slideCount, ...props }) => (
   <button
     {...props}
@@ -82,6 +86,8 @@ const ProductDetail = () => {
   const [quantity, setQuantity] = useState(1);
   const [msgQuantity, setMsgQuantity] = useState("");
   const [productUser, setProductUser] = useState();
+  const [openModalSizeGuide, setOpenModalSizeGuide] = useState(false);
+  const [openSizeGuide, setOpenSizeGuide] = useState(false);
 
   const params = useParams();
   const { product_slug } = params;
@@ -224,7 +230,7 @@ const ProductDetail = () => {
       }
     }
   }
-
+  console.log(product);
   if (!product) return "";
 
   return (
@@ -473,9 +479,52 @@ const ProductDetail = () => {
               })}
             </div>
             {product.colors[indexColor].sizes[indexSize].code !== "0" && (
-              <Typography variant="body1" sx={{ mt: 2 }}>
-                Kích cỡ: {product.colors[indexColor].sizes[indexSize].value}
-              </Typography>
+              <Box
+                sx={{
+                  mt: 2,
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                }}
+              >
+                <Typography variant="body1">
+                  Kích cỡ: {product.colors[indexColor].sizes[indexSize].value}
+                </Typography>
+                {product.category.guides.length > 0 && (
+                  <>
+                    <div
+                      onClick={() => setOpenSizeGuide(!openSizeGuide)}
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        cursor: "pointer",
+                        userSelect: "none",
+                      }}
+                    >
+                      <StraightenIcon sx={{ color: "var(--main-color)" }} />
+                      Hướng dẫn chọn size
+                      <KeyboardArrowDownIcon />
+                    </div>
+                    <Typography
+                      variant="body1"
+                      sx={{
+                        textDecoration: "underline",
+                        color: "var(--main-color)",
+                        cursor: "pointer",
+                      }}
+                      onClick={() => setOpenModalSizeGuide(true)}
+                    >
+                      Bảng chọn size
+                    </Typography>
+                  </>
+                )}
+              </Box>
+            )}
+            {openSizeGuide && (
+              <SizeGuide
+                handleClose={() => setOpenSizeGuide(false)}
+                guides={product.category.guides}
+              />
             )}
 
             <Box
@@ -662,6 +711,13 @@ const ProductDetail = () => {
               ))}
         </Grid>
       </Container>
+      {openModalSizeGuide && (
+        <ModalSizeGuide
+          handleClose={() => setOpenModalSizeGuide(false)}
+          open={openModalSizeGuide}
+          category={product.category}
+        />
+      )}
     </Box>
   );
 };

@@ -1,20 +1,18 @@
-import { Button, IconButton, Paper, Tooltip } from "@mui/material";
-import { useEffect, useState } from "react";
-import EditIcon from "@mui/icons-material/Edit";
 import AddIcon from "@mui/icons-material/Add";
 import DeleteIcon from "@mui/icons-material/Delete";
+import EditIcon from "@mui/icons-material/Edit";
+import { Button, IconButton, Paper, Tooltip } from "@mui/material";
+import "ag-grid-community/dist/styles/ag-grid.css";
+import "ag-grid-community/dist/styles/ag-theme-alpine.css";
 import { AgGridReact } from "ag-grid-react";
+import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-
-import { getAll, getCurrentSize } from "../../redux/sizeSlice";
-import { calHeightDataGrid } from "../../utils";
+import ConfirmDialog from "../../components/ConfirmDialog";
 import ModalSize from "../../components/ModalSize";
 import { configAxiosAll, configAxiosResponse } from "../../config/configAxios";
 import { API_SIZE_URL } from "../../constants";
-import ConfirmDialog from "../../components/ConfirmDialog";
-
-import "ag-grid-community/dist/styles/ag-grid.css";
-import "ag-grid-community/dist/styles/ag-theme-alpine.css";
+import { getAll, getCurrentSize } from "../../redux/sizeSlice";
+import { calHeightDataGrid } from "../../utils";
 
 const SizeTabPanel = () => {
   const user = useSelector((state) => state.auth.currentUser);
@@ -25,14 +23,6 @@ const SizeTabPanel = () => {
 
   const [open, setOpen] = useState(false);
   const [openDialog, setOpenDialog] = useState(false);
-  useEffect(() => {
-    configAxiosResponse()
-      .get(`${API_SIZE_URL}`)
-      .then((res) => {
-        dispatch(getAll(res));
-      })
-      .catch((err) => {});
-  }, [dispatch]);
 
   const columns = [
     {

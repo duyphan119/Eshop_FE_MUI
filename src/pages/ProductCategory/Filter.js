@@ -3,7 +3,13 @@ import FilterAltOutlinedIcon from "@mui/icons-material/FilterAltOutlined";
 import { Badge, Box, Button, Typography } from "@mui/material";
 import ClickAwayListener from "@mui/material/ClickAwayListener";
 import { useState } from "react";
-const Filter = ({ filters, setFilters, colorFilters, sizeFilters }) => {
+const Filter = ({
+  filters,
+  setFilters,
+  colorFilters,
+  sizeFilters,
+  materialFilters,
+}) => {
   const [min, setMin] = useState(0);
   const [max, setMax] = useState(1000000);
 
@@ -42,6 +48,24 @@ const Filter = ({ filters, setFilters, colorFilters, sizeFilters }) => {
     setFilters({ ...newFilters });
   };
 
+  // Lọc theo chất liệu
+  const handleSelectMaterialFilter = (item, isActive) => {
+    let newFilters = { ...filters };
+    if (isActive) {
+      // Bỏ chọn
+      newFilters.material = newFilters.material.filter((el) => el !== item);
+    } else {
+      // Chọn
+      const index = newFilters.material.findIndex((el) => el === item);
+      if (index === -1) {
+        newFilters.material.push(item);
+      } else {
+        newFilters.material = newFilters.material.filter((el) => el !== item);
+      }
+    }
+    setFilters({ ...newFilters });
+  };
+
   // Lọc theo kích cỡ
   const handleSelectSizeFilter = (item, isActive) => {
     let newFilters = { ...filters };
@@ -60,6 +84,7 @@ const Filter = ({ filters, setFilters, colorFilters, sizeFilters }) => {
     let result = 0;
     if (filters.size.length > 0) result += filters.size.length;
     if (filters.color.length > 0) result += filters.color.length;
+    if (filters.material.length > 0) result += filters.material.length;
     if (filters.price.length > 0) result += 1;
     return result;
   };
@@ -84,6 +109,7 @@ const Filter = ({ filters, setFilters, colorFilters, sizeFilters }) => {
             </div>
             {(filters.color.length !== 0 ||
               filters.size.length !== 0 ||
+              filters.material.length !== 0 ||
               filters.price.length !== 0) && (
               <>
                 <Typography
@@ -102,6 +128,16 @@ const Filter = ({ filters, setFilters, colorFilters, sizeFilters }) => {
                       <ClearOutlinedIcon />
                     </li>
                   )}
+                  {filters.material.map((item, index) => {
+                    return (
+                      <li
+                        key={Math.random()}
+                        onClick={() => handleSelectMaterialFilter(item, true)}
+                      >
+                        {item} <ClearOutlinedIcon />
+                      </li>
+                    );
+                  })}
                   {filters.color.map((item, index) => {
                     return (
                       <li
@@ -157,6 +193,29 @@ const Filter = ({ filters, setFilters, colorFilters, sizeFilters }) => {
                 />
               </form>
             </div>
+            <Typography
+              variant="body2"
+              sx={{
+                marginTop: "10px",
+                fontWeight: "600",
+              }}
+            >
+              Chát liệu
+            </Typography>
+            <ul className="filter-product-material">
+              {materialFilters.map((item) => {
+                let isActive = filters.material.find((el) => el === item);
+                return (
+                  <li
+                    key={Math.random()}
+                    className={`${isActive ? "active" : ""}`}
+                    onClick={() => handleSelectMaterialFilter(item, isActive)}
+                  >
+                    {item}
+                  </li>
+                );
+              })}
+            </ul>
             <Typography
               variant="body2"
               sx={{

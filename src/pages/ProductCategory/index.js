@@ -9,6 +9,7 @@ import Pagination from "../../components/Pagination";
 import Filter from "./Filter";
 import {
   API_COLOR_URL,
+  API_MATERIAL_URL,
   API_SIZE_URL,
   PRODUCTS_PER_PAGE,
 } from "../../constants";
@@ -41,6 +42,7 @@ const ProductsCategory = ({
   const [product, setProduct] = useState();
   const [colorFilters, setColorFilters] = useState([]);
   const [sizeFilters, setSizeFilters] = useState([]);
+  const [materialFilters, setMaterialFilters] = useState([]);
   const [page, setPage] = useState(() => {
     return initPage(p);
   });
@@ -96,12 +98,20 @@ const ProductsCategory = ({
             resolve(configAxiosResponse().get(`${API_SIZE_URL}`));
           })
         );
+        promises.push(
+          new Promise((resolve, reject) => {
+            resolve(configAxiosResponse().get(`${API_MATERIAL_URL}`));
+          })
+        );
         const listRes = await Promise.allSettled(promises);
         if (listRes[0].status === "fulfilled") {
           setColorFilters(listRes[0].value);
         }
-        if (listRes[0].status === "fulfilled") {
+        if (listRes[1].status === "fulfilled") {
           setSizeFilters(listRes[1].value);
+        }
+        if (listRes[2].status === "fulfilled") {
+          setMaterialFilters(listRes[2].value);
         }
       } catch (error) {}
     })();
@@ -127,8 +137,9 @@ const ProductsCategory = ({
       queryParams.set("sortBy", sort.sortBy);
       queryParams.set("sortType", sort.sortType);
       otherQueryParams.sortBy = sort.sortBy;
+      otherQueryParams.sortType = sort.sortType;
       if (
-        sort.sortType.toLowerCase() !== "asc" ||
+        sort.sortType.toLowerCase() !== "asc" &&
         sort.sortType.toLowerCase() !== "desc"
       ) {
         otherQueryParams.sortType = "desc";
@@ -238,6 +249,7 @@ const ProductsCategory = ({
                     setFilters={setFilters}
                     colorFilters={colorFilters.map((item) => item.value)}
                     sizeFilters={sizeFilters.map((item) => item.value)}
+                    materialFilters={materialFilters.map((item) => item.value)}
                   />
                   {product?.items?.length > 0 && (
                     <span>{product?.total_result} mặt hàng</span>

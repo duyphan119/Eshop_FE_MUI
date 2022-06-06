@@ -1,10 +1,9 @@
 import { AgGridReact } from "ag-grid-react";
 import * as React from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { TitlePaper } from "../../components/Title";
-import { configAxiosAll } from "../../config/configAxios";
-import { API_ORDER_URL, LIMIT_RECENT_ORDERS } from "../../constants";
+import { LIMIT_RECENT_ORDERS } from "../../constants";
 import { calHeightDataGrid, formatDateTimeVN } from "../../utils";
 
 export default function Orders() {
@@ -47,20 +46,7 @@ export default function Orders() {
     },
   ];
 
-  const user = useSelector((state) => state.auth.currentUser);
-
-  const dispatch = useDispatch();
-
-  const [orders, setOrders] = React.useState([]);
-
-  React.useEffect(() => {
-    (async function () {
-      const data = await configAxiosAll(user, dispatch).get(
-        `${API_ORDER_URL}?limit=${LIMIT_RECENT_ORDERS}`
-      );
-      setOrders(data.items);
-    })();
-  }, [dispatch, user]);
+  const orders = useSelector((state) => state.order.recentOrders);
 
   return (
     <React.Fragment>

@@ -37,6 +37,7 @@
 .filter-product-close:hover {
   color: #f11;
 }
+.filter-product-material,
 .filter-product-size,
 .filter-product-color,
 .filter-product-result-selected {
@@ -63,6 +64,7 @@
   margin-left: 5px;
   border-color: var(--main-color);
 }
+.filter-product-material li,
 .filter-product-color li,
 .filter-product-size li {
   cursor: pointer;
@@ -77,16 +79,19 @@
   min-width: 40px;
 }
 .filter-product-result-selected li:last-child,
+.filter-product-material li:last-child,
 .filter-product-color li:last-child,
 .filter-product-size li:last-child {
   margin-right: 0;
 }
+.filter-product-material li,
 .filter-product-color li,
 .filter-product-size li {
   cursor: pointer;
   margin: 2px 0;
   margin-right: 10px;
 }
+.filter-product-material li.active,
 .filter-product-color li.active,
 .filter-product-size li.active {
   border-color: var(--main-color);

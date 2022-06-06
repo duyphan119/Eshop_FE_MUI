@@ -10,13 +10,17 @@ const initialState = {
   page: 1,
   limit: LIMIT_ROW_PRODUCT,
   product: null,
+  bestSellersDashboard: [],
 };
 const productSlice = createSlice({
   name: "product",
   initialState: initialState,
   reducers: {
     getProducts: (state, action) => {
-      state.list = [...action.payload];
+      state.list = action.payload;
+    },
+    getBestSellersDashboard: (state, action) => {
+      state.bestSellersDashboard = action.payload;
     },
     getProduct: (state, action) => {
       state.product = action.payload;
@@ -26,7 +30,7 @@ const productSlice = createSlice({
       console.log(action.payload);
     },
     getFavoriteList: (state, action) => {
-      state.favoriteList = [...action.payload];
+      state.favoriteList = action.payload;
     },
     removeFavoriteItem: (state, action) => {
       state.favoriteList = state.favoriteList.filter(
@@ -102,5 +106,6 @@ export const {
   addToLatest,
   changePage,
   changeLimit,
+  getBestSellersDashboard,
 } = productSlice.actions;
 export default productSlice.reducer;

@@ -25,6 +25,7 @@ const _Modal = ({
           p: 2,
           overflowY: "auto",
           overflowX: "hidden",
+          outline: "none !important",
         }}
       >
         <Typography variant="h5" mb={1}>

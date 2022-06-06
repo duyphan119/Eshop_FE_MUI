@@ -8,10 +8,18 @@ import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
 import InventoryIcon from "@mui/icons-material/Inventory";
 import Widget from "../../components/Widget";
 import { configAxiosAll } from "../../config/configAxios";
-import { API_STATISTICS_URL } from "../../constants";
+import {
+  API_ORDER_URL,
+  API_PRODUCT_URL,
+  API_STATISTICS_URL,
+  LIMIT_RECENT_ORDERS,
+} from "../../constants";
 import Chart from "./Chart";
 import Deposits from "./Deposits";
 import Orders from "./Orders";
+import BestSellers from "./BestSellers";
+import { getRecentOrders } from "../../redux/orderSlice";
+import { getBestSellersDashboard } from "../../redux/productSlice";
 
 const Dashboard = () => {
   const user = useSelector((state) => state.auth.currentUser);
@@ -45,59 +53,43 @@ const Dashboard = () => {
     const promises = [];
 
     promises.push(
-      new Promise((resolve, reject) =>
-        resolve(
-          configAxiosAll(user, dispatch).get(
-            `${API_STATISTICS_URL}/order?type=countCurrentMonth`
-          )
-        )
+      configAxiosAll(user, dispatch).get(
+        `${API_STATISTICS_URL}/order?type=countCurrentMonth`
       )
     );
 
     promises.push(
-      new Promise((resolve, reject) =>
-        resolve(
-          configAxiosAll(user, dispatch).get(
-            `${API_STATISTICS_URL}/user?type=countCurrentMonth`
-          )
-        )
+      configAxiosAll(user, dispatch).get(
+        `${API_STATISTICS_URL}/user?type=countCurrentMonth`
       )
     );
     promises.push(
-      new Promise((resolve, reject) =>
-        resolve(
-          configAxiosAll(user, dispatch).get(
-            `${API_STATISTICS_URL}/revenue?type=sumCurrentMonth`
-          )
-        )
+      configAxiosAll(user, dispatch).get(
+        `${API_STATISTICS_URL}/revenue?type=sumCurrentMonth`
       )
     );
     promises.push(
-      new Promise((resolve, reject) =>
-        resolve(
-          configAxiosAll(user, dispatch).get(
-            `${API_STATISTICS_URL}/comment?type=countCurrentMonth`
-          )
-        )
+      configAxiosAll(user, dispatch).get(
+        `${API_STATISTICS_URL}/comment?type=countCurrentMonth`
       )
     );
     promises.push(
-      new Promise((resolve, reject) =>
-        resolve(
-          configAxiosAll(user, dispatch).get(
-            `${API_STATISTICS_URL}/product?type=countCurrentMonth`
-          )
-        )
+      configAxiosAll(user, dispatch).get(
+        `${API_STATISTICS_URL}/product?type=countCurrentMonth`
       )
     );
     promises.push(
-      new Promise((resolve, reject) =>
-        resolve(
-          configAxiosAll(user, dispatch).get(
-            `${API_STATISTICS_URL}/revenue?type=hoursInDay`
-          )
-        )
+      configAxiosAll(user, dispatch).get(
+        `${API_STATISTICS_URL}/revenue?type=hoursInDay`
       )
+    );
+    promises.push(
+      configAxiosAll(user, dispatch).get(
+        `${API_ORDER_URL}?limit=${LIMIT_RECENT_ORDERS}`
+      )
+    );
+    promises.push(
+      configAxiosAll(user, dispatch).get(`${API_PRODUCT_URL}?type=best-seller`)
     );
     Promise.allSettled(promises)
       .then((listRes) => {
@@ -133,6 +125,12 @@ const Dashboard = () => {
           });
 
           setRevenueHoursInDay(arr);
+        }
+        if (listRes[6].status === "fulfilled") {
+          dispatch(getRecentOrders(listRes[6].value.items));
+        }
+        if (listRes[7].status === "fulfilled") {
+          dispatch(getBestSellersDashboard(listRes[7].value.items));
         }
       })
       .catch((err) => {
@@ -346,6 +344,11 @@ const Dashboard = () => {
       <Grid item xs={12}>
         <Paper sx={{ p: 2, display: "flex", flexDirection: "column" }}>
           <Orders />
+        </Paper>
+      </Grid>
+      <Grid item xs={8}>
+        <Paper sx={{ p: 2, display: "flex", flexDirection: "column" }}>
+          <BestSellers />
         </Paper>
       </Grid>
     </Grid>

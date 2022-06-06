@@ -146,55 +146,43 @@ const ProductTabPanel = () => {
         const promises = [];
         if (details.length > 0) {
           promises.push(
-            new Promise((resolve, reject) =>
-              resolve(
-                configAxiosAll(user, dispatch).put(
-                  `${API_PRODUCT_DETAIL_URL}?many=true`,
-                  {
-                    details: details.map((item) => ({
-                      id: item.detail_id,
-                      color_id: item.color.id,
-                      size_id: item.size.id,
-                      amount: item.amount,
-                      product_id: currentProduct.id,
-                      sku: getSku(
-                        category.code,
-                        currentProduct.id,
-                        item.code.code,
-                        item.size.code
-                      ),
-                    })),
-                  }
-                )
-              )
+            configAxiosAll(user, dispatch).put(
+              `${API_PRODUCT_DETAIL_URL}?many=true`,
+              {
+                details: details.map((item) => ({
+                  id: item.detail_id,
+                  color_id: item.color.id,
+                  size_id: item.size.id,
+                  amount: item.amount,
+                  product_id: currentProduct.id,
+                  sku: getSku(
+                    category.code,
+                    currentProduct.id,
+                    item.code.code,
+                    item.size.code
+                  ),
+                })),
+              }
             )
           );
         }
         if (materials.length > 0) {
           promises.push(
-            new Promise((resolve, reject) =>
-              resolve(
-                configAxiosAll(user, dispatch).put(
-                  `${API_PRODUCT_MATERIAL_URL}?many=true`,
-                  {
-                    materials: materials.map((item) => ({
-                      id: item.product_material_id,
-                      material_id: item.id,
-                      product_id: _product.id,
-                    })),
-                  }
-                )
-              )
+            configAxiosAll(user, dispatch).put(
+              `${API_PRODUCT_MATERIAL_URL}?many=true`,
+              {
+                materials: materials.map((item) => ({
+                  id: item.product_material_id,
+                  material_id: item.id,
+                  product_id: _product.id,
+                })),
+              }
             )
           );
           promises.push(
-            new Promise((resolve, reject) =>
-              resolve(
-                configAxiosAll(user, dispatch).delete(
-                  `${API_PRODUCT_MATERIAL_URL}?many=true`,
-                  { data: deleteMaterials }
-                )
-              )
+            configAxiosAll(user, dispatch).delete(
+              `${API_PRODUCT_MATERIAL_URL}?many=true`,
+              { data: deleteMaterials }
             )
           );
         }
@@ -216,59 +204,43 @@ const ProductTabPanel = () => {
         }
         if (images.length > 0) {
           promises.push(
-            new Promise((resolve, reject) =>
-              resolve(
-                configAxiosAll(user, dispatch).post(
-                  `${API_IMAGE_URL}?many=true`,
-                  urlList.map((url, index) => ({
-                    product_id: _product.id,
-                    url: url.secure_url,
-                    color_id: productImages[index].color.id,
-                  }))
-                )
-              )
+            configAxiosAll(user, dispatch).post(
+              `${API_IMAGE_URL}?many=true`,
+              urlList.map((url, index) => ({
+                product_id: _product.id,
+                url: url.secure_url,
+                color_id: productImages[index].color.id,
+              }))
             )
           );
         }
         if (discounts.length > 0) {
           promises.push(
-            new Promise((resolve, reject) =>
-              resolve(
-                configAxiosAll(user, dispatch).post(
-                  `${API_DISCOUNT_URL}?many=true`,
-                  discounts.map((discount, index) => ({
-                    ...discount,
-                    product_id: currentProduct.id,
-                    start: formatDateVN(discount.start),
-                  }))
-                )
-              )
+            configAxiosAll(user, dispatch).post(
+              `${API_DISCOUNT_URL}?many=true`,
+              discounts.map((discount, index) => ({
+                ...discount,
+                product_id: currentProduct.id,
+                start: formatDateVN(discount.start),
+              }))
             )
           );
         }
         if (deleteImages.length > 0) {
           promises.push(
-            new Promise((resolve, reject) =>
-              resolve(
-                configAxiosAll(user, dispatch).delete(
-                  `${API_IMAGE_URL}?many=true`,
-                  {
-                    data: deleteImages.map((img, index) => img.id),
-                  }
-                )
-              )
+            configAxiosAll(user, dispatch).delete(
+              `${API_IMAGE_URL}?many=true`,
+              {
+                data: deleteImages.map((img, index) => img.id),
+              }
             )
           );
         }
         if (deleteDiscounts.length > 0) {
           promises.push(
-            new Promise((resolve, reject) =>
-              resolve(
-                configAxiosAll(user, dispatch).delete(`${API_DISCOUNT_URL}`, {
-                  data: deleteDiscounts,
-                })
-              )
-            )
+            configAxiosAll(user, dispatch).delete(`${API_DISCOUNT_URL}`, {
+              data: deleteDiscounts,
+            })
           );
         }
         const a = await Promise.allSettled(promises);
@@ -303,71 +275,55 @@ const ProductTabPanel = () => {
         const promises = [];
         if (materials.length > 0) {
           promises.push(
-            new Promise((resolve, reject) =>
-              resolve(
-                configAxiosAll(user, dispatch).post(
-                  `${API_PRODUCT_MATERIAL_URL}?many=true`,
-                  materials.map((item) => ({
-                    material_id: item.id,
-                    product_id: _product.id,
-                  }))
-                )
-              )
+            configAxiosAll(user, dispatch).post(
+              `${API_PRODUCT_MATERIAL_URL}?many=true`,
+              materials.map((item) => ({
+                material_id: item.id,
+                product_id: _product.id,
+              }))
             )
           );
         }
         if (details.length > 0) {
           promises.push(
-            new Promise((resolve, reject) =>
-              resolve(
-                configAxiosAll(user, dispatch).post(
-                  `${API_PRODUCT_DETAIL_URL}?many=true`,
-                  details.map((item) => ({
-                    color_id: item.color.id,
-                    size_id: item.size.id,
-                    amount: item.amount,
-                    product_id: _product.id,
-                    sku: getSku(
-                      category.code,
-                      _product.id,
-                      item.color.code,
-                      item.size.code
-                    ),
-                  }))
-                )
-              )
+            configAxiosAll(user, dispatch).post(
+              `${API_PRODUCT_DETAIL_URL}?many=true`,
+              details.map((item) => ({
+                color_id: item.color.id,
+                size_id: item.size.id,
+                amount: item.amount,
+                product_id: _product.id,
+                sku: getSku(
+                  category.code,
+                  _product.id,
+                  item.color.code,
+                  item.size.code
+                ),
+              }))
             )
           );
         }
         if (images.length > 0) {
           promises.push(
-            new Promise((resolve, reject) =>
-              resolve(
-                configAxiosAll(user, dispatch).post(
-                  `${API_IMAGE_URL}?many=true`,
-                  urlList.map((url, index) => ({
-                    product_id: _product.id,
-                    url: url.secure_url,
-                    color_id: productImages[index].color.id,
-                  }))
-                )
-              )
+            configAxiosAll(user, dispatch).post(
+              `${API_IMAGE_URL}?many=true`,
+              urlList.map((url, index) => ({
+                product_id: _product.id,
+                url: url.secure_url,
+                color_id: productImages[index].color.id,
+              }))
             )
           );
         }
         if (discounts.length > 0) {
           promises.push(
-            new Promise((resolve, reject) =>
-              resolve(
-                configAxiosAll(user, dispatch).post(
-                  `${API_DISCOUNT_URL}?many=true`,
-                  discounts.map((item) => ({
-                    ...item,
-                    product_id: _product.id,
-                    start: formatDateVN(item.start),
-                  }))
-                )
-              )
+            configAxiosAll(user, dispatch).post(
+              `${API_DISCOUNT_URL}?many=true`,
+              discounts.map((item) => ({
+                ...item,
+                product_id: _product.id,
+                start: formatDateVN(item.start),
+              }))
             )
           );
         }

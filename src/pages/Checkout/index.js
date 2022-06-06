@@ -2,7 +2,7 @@
 import { Container, Grid } from "@mui/material";
 import { useCallback, useContext, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Navigate } from "react-router-dom";
+import { Navigate, useNavigate } from "react-router-dom";
 import config from "../../config";
 import { configAxiosAll, configAxiosResponse } from "../../config/configAxios";
 import {
@@ -10,14 +10,13 @@ import {
   API_NOTIFICATION_URL,
   API_ORDER_URL,
 } from "../../constants";
+import { SocketContext } from "../../context";
 import { getSelectedCartItems } from "../../redux/cartSlice";
 import { showToastMessage } from "../../redux/toastSlice";
 import { getFinalPrice, getTotalPrice, validateTelephone } from "../../utils";
-import CheckoutSuccess from "../CheckoutSuccess";
 import "./Checkout.css";
 import Form from "./Form";
 import Result from "./Result";
-import { SocketContext } from "../../context";
 
 const Checkout = () => {
   const socket = useContext(SocketContext);
@@ -29,6 +28,8 @@ const Checkout = () => {
 
   const dispatch = useDispatch();
 
+  const navigate = useNavigate();
+
   const [order, setOrder] = useState({
     addressNo: "",
     city: "",
@@ -39,7 +40,6 @@ const Checkout = () => {
     fullName: user ? user.full_name : "",
   });
   const [totalPrice, setTotalPrice] = useState(0);
-  const [isSuccessful, setIsSuccessful] = useState(false);
   const [coupon, setCoupon] = useState();
 
   const finalPrice = getFinalPrice(totalPrice, coupon);
@@ -53,7 +53,7 @@ const Checkout = () => {
         const data = await configAxiosResponse().get(
           `${API_COUPON_URL}?percent=0`
         );
-        setCoupon(data[0]);
+        setCoupon(data.items[0]);
       } catch (error) {}
     })();
   }, []);
@@ -64,7 +64,7 @@ const Checkout = () => {
   const handleCheckout = useCallback(async () => {
     try {
       if (order) {
-        if (validateTelephone(order.phoneNumber)) {
+        if (validateTelephone(order.phoneNumber) && finalPrice !== 0) {
           const data = await configAxiosAll(user, dispatch).post(
             `${API_ORDER_URL}`,
             {
@@ -80,7 +80,6 @@ const Checkout = () => {
           );
           if (data) {
             dispatch(getSelectedCartItems({ items: [], count: 0 }));
-            setIsSuccessful(true);
             const notify = await configAxiosAll(user, dispatch).post(
               `${API_NOTIFICATION_URL}`,
               {
@@ -95,9 +94,9 @@ const Checkout = () => {
               roomId: "admin",
               ...notify,
             });
+            navigate(config.routes.checkoutSuccess);
           }
         } else {
-          setIsSuccessful(false);
           dispatch(
             showToastMessage({
               type: "info",
@@ -108,7 +107,6 @@ const Checkout = () => {
           );
         }
       } else {
-        setIsSuccessful(false);
         dispatch(
           showToastMessage({
             type: "error",
@@ -119,7 +117,7 @@ const Checkout = () => {
         );
       }
     } catch (error) {
-      setIsSuccessful(false);
+      console.log(error);
       dispatch(
         showToastMessage({
           type: "error",
@@ -130,9 +128,8 @@ const Checkout = () => {
       );
     }
   }, [coupon, order]);
-  if (isSuccessful) return <CheckoutSuccess />;
-  // if (!isSuccessful && selectedCartItems.count === 0)
-  //   return <Navigate to={config.routes.cart} />;
+  if (selectedCartItems.count === 0)
+    return <Navigate to={config.routes.cart} />;
 
   return (
     <Container>

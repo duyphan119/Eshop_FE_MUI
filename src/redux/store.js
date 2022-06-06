@@ -1,47 +1,49 @@
 import { configureStore } from "@reduxjs/toolkit";
-import authSlice from "./authSlice";
-import cartSlice from "./cartSlice";
-import categorySlice from "./categorySlice";
-import groupCategorySlice from "./groupCategorySlice";
-import productSlice from "./productSlice";
-import toastSlice from "./toastSlice";
-import orderSlice from "./orderSlice";
-import genderCategorySlice from "./genderCategorySlice";
-import sizeSlice from "./sizeSlice";
-import colorSlice from "./colorSlice";
-import materialSlice from "./materialSlice";
-import commentSlice from "./commentSlice";
-import wishlistSlice from "./wishlistSlice";
-import userSlice from "./userSlice";
-import roleSlice from "./roleSlice";
-import bannerSlice from "./bannerSlice";
-import notificationSlice from "./notificationSlice";
-import discountCategorySlice from "./discountCategorySlice";
-import couponSlice from "./couponSlice";
-import orderStatusSlice from "./orderStatusSlice";
+import authReducer from "./authSlice";
+import cartReducer from "./cartSlice";
+import categoryReducer from "./categorySlice";
+import groupCategoryReducer from "./groupCategorySlice";
+import productReducer from "./productSlice";
+import toastReducer from "./toastSlice";
+import orderReducer from "./orderSlice";
+import genderCategoryReducer from "./genderCategorySlice";
+import sizeReducer from "./sizeSlice";
+import colorReducer from "./colorSlice";
+import materialReducer from "./materialSlice";
+import commentReducer from "./commentSlice";
+import wishlistReducer from "./wishlistSlice";
+import userReducer from "./userSlice";
+import roleReducer from "./roleSlice";
+import bannerReducer from "./bannerSlice";
+import notificationReducer from "./notificationSlice";
+import discountCategoryReducer from "./discountCategorySlice";
+import couponReducer from "./couponSlice";
+import orderStatusReducer from "./orderStatusSlice";
+import sizeGuideReducer from "./sizeGuideSlice";
 
 const store = configureStore({
   reducer: {
-    category: categorySlice,
-    auth: authSlice,
-    toast: toastSlice,
-    product: productSlice,
-    cart: cartSlice,
-    groupCategory: groupCategorySlice,
-    order: orderSlice,
-    genderCategory: genderCategorySlice,
-    size: sizeSlice,
-    color: colorSlice,
-    material: materialSlice,
-    comment: commentSlice,
-    role: roleSlice,
-    user: userSlice,
-    wishlist: wishlistSlice,
-    banner: bannerSlice,
-    notification: notificationSlice,
-    discountCategory: discountCategorySlice,
-    coupon: couponSlice,
-    orderStatus: orderStatusSlice,
+    category: categoryReducer,
+    auth: authReducer,
+    toast: toastReducer,
+    product: productReducer,
+    cart: cartReducer,
+    groupCategory: groupCategoryReducer,
+    order: orderReducer,
+    genderCategory: genderCategoryReducer,
+    size: sizeReducer,
+    color: colorReducer,
+    material: materialReducer,
+    comment: commentReducer,
+    role: roleReducer,
+    user: userReducer,
+    wishlist: wishlistReducer,
+    banner: bannerReducer,
+    notification: notificationReducer,
+    discountCategory: discountCategoryReducer,
+    coupon: couponReducer,
+    orderStatus: orderStatusReducer,
+    sizeGuide: sizeGuideReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({

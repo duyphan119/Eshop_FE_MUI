@@ -7,6 +7,7 @@ const initialState = {
   current: null,
   totalPage: 0,
   order: null,
+  recentOrders: [],
 };
 const orderSlice = createSlice({
   name: "order",
@@ -14,6 +15,9 @@ const orderSlice = createSlice({
   reducers: {
     getOrder: (state, action) => {
       state.order = action.payload;
+    },
+    getRecentOrders: (state, action) => {
+      state.recentOrders = action.payload;
     },
     newOrder: (state, action) => {
       const data = action.payload;
@@ -93,5 +97,6 @@ export const {
   getOrder,
   deletedOrder,
   newOrder,
+  getRecentOrders,
 } = orderSlice.actions;
 export default orderSlice.reducer;

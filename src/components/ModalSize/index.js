@@ -40,7 +40,7 @@ const ModalSize = ({
       </FormControl>
       <FormControl fullWidth sx={{ my: 1 }}>
         <TextField
-          label="SKU"
+          label="Viết tắt"
           value={code}
           onChange={(e) => setCode(e.target.value)}
           required

@@ -1,14 +1,43 @@
 import { Box, Tab, Tabs } from "@mui/material";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import ColorTabPanel from "./ColorTabPanel";
 import MaterialTabPanel from "./MaterialTabPanel";
 import SizeTabPanel from "./SizeTabPanel";
 import ProductTabPanel from "./ProductTabPanel";
+import { configAxiosResponse } from "../../config/configAxios";
+import { API_COLOR_URL, API_MATERIAL_URL, API_SIZE_URL } from "../../constants";
+import { useDispatch } from "react-redux";
+import { getAll as getAllColors } from "../../redux/colorSlice";
+import { getAll as getAllSizes } from "../../redux/sizeSlice";
+import { getAll as getAllMaterials } from "../../redux/materialSlice";
 
 const ProductManagement = () => {
   const [tab, setTab] = useState(3);
 
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    const promises = [];
+
+    promises.push(configAxiosResponse().get(`${API_COLOR_URL}`));
+    promises.push(configAxiosResponse().get(`${API_SIZE_URL}`));
+    promises.push(configAxiosResponse().get(`${API_MATERIAL_URL}`));
+
+    Promise.allSettled(promises)
+      .then((listRes) => {
+        if (listRes[0].status === "fulfilled") {
+          dispatch(getAllColors(listRes[0].value));
+        }
+        if (listRes[1].status === "fulfilled") {
+          dispatch(getAllSizes(listRes[1].value));
+        }
+        if (listRes[2].status === "fulfilled") {
+          dispatch(getAllMaterials(listRes[2].value));
+        }
+      })
+      .catch((err) => {});
+  }, [dispatch]);
   return (
     <>
       <Box sx={{ borderBottom: 1, borderColor: "divider", bgcolor: "#fff" }}>

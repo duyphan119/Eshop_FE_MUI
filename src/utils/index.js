@@ -173,3 +173,26 @@ export const validateTelephone = (telephone) => {
   } catch (error) {}
   return false;
 };
+export const formatHeightGuide = (min, max) => {
+  let minFirst = Math.floor(min / 100);
+  let maxFirst = Math.floor(max / 100);
+  let minLast = min % 100;
+  let maxLast = max % 100;
+
+  if (min === 0) {
+    return `Dưới ${maxFirst}m${maxLast}`;
+  } else if (max === 0) {
+    return `Trên ${minFirst}m${minLast}`;
+  } else {
+    return `${minFirst}m${minLast} - ${maxFirst}m${maxLast}`;
+  }
+};
+export const formatWeightGuide = (min, max) => {
+  if (min === 0) {
+    return `Dưới ${max}kg`;
+  } else if (max === 0) {
+    return `Trên ${min}kg`;
+  } else {
+    return `${min}kg - ${max}kg`;
+  }
+};

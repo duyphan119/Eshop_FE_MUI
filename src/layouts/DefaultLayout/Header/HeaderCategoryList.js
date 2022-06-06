@@ -4,7 +4,7 @@ import { memo, useEffect } from "react";
 import { Box, Container, Grid } from "@mui/material";
 import { configAxiosResponse } from "../../../config/configAxios";
 import { API_GENDER_URL } from "../../../constants";
-import { getAll } from "../../../redux/genderCategorySlice";
+import { getAllGenderCategories } from "../../../redux/genderCategorySlice";
 const HeaderCategoryList = () => {
   const genderCategories = useSelector((state) => state.genderCategory.all);
 
@@ -13,7 +13,7 @@ const HeaderCategoryList = () => {
   useEffect(() => {
     (async function () {
       const data = await configAxiosResponse().get(`${API_GENDER_URL}`);
-      dispatch(getAll(data));
+      dispatch(getAllGenderCategories(data));
     })();
   }, [dispatch]);
 
