@@ -57,6 +57,7 @@ const ColorTabPanel = () => {
         <>
           <Tooltip title="Sửa màu sắc">
             <IconButton
+              color="secondary"
               onClick={() => {
                 dispatch(getCurrentColor(params.data));
                 setOpen(true);
@@ -67,6 +68,7 @@ const ColorTabPanel = () => {
           </Tooltip>
           <Tooltip title="Xoá màu sắc">
             <IconButton
+              color="error"
               onClick={() => {
                 dispatch(getCurrentColor(params.data));
                 setOpenDialog(true);

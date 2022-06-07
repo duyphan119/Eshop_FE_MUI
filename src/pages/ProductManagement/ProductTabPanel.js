@@ -75,6 +75,7 @@ const ProductTabPanel = () => {
         <>
           <Tooltip title="Sửa sản phẩm">
             <IconButton
+              color="secondary"
               onClick={() => {
                 dispatch(getCurrentProduct(params.data));
                 setOpen(true);
@@ -85,6 +86,7 @@ const ProductTabPanel = () => {
           </Tooltip>
           <Tooltip title="Xoá sản phẩm">
             <IconButton
+              color="error"
               onClick={() => {
                 dispatch(getCurrentProduct(params.data));
                 setOpenDialog(true);

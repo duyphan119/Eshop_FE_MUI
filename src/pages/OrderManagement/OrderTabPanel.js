@@ -116,6 +116,7 @@ const OrderTabPanel = () => {
           </Tooltip>
           <Tooltip title="Sửa hoá đơn">
             <IconButton
+              color="secondary"
               onClick={() => {
                 dispatch(getCurrentOrder(params.data));
                 setOpen(true);
@@ -126,6 +127,7 @@ const OrderTabPanel = () => {
           </Tooltip>
           <Tooltip title="Xoá hoá đơn">
             <IconButton
+              color="error"
               onClick={() => {
                 dispatch(getCurrentOrder(params.data));
                 setOpenDialog(true);

@@ -55,6 +55,7 @@ const SizeTabPanel = () => {
         <>
           <Tooltip title="Sửa kích cỡ">
             <IconButton
+              color="secondary"
               onClick={() => {
                 dispatch(getCurrentSize(params.data));
                 setOpen(true);
@@ -65,6 +66,7 @@ const SizeTabPanel = () => {
           </Tooltip>{" "}
           <Tooltip title="Xoá kích cỡ">
             <IconButton
+              color="error"
               onClick={() => {
                 dispatch(getCurrentSize(params.data));
                 setOpenDialog(true);

@@ -49,6 +49,7 @@ const GenderTabPanel = () => {
         <>
           <Tooltip title="Sửa đối tượng khách hàng">
             <IconButton
+              color="secondary"
               onClick={() => {
                 dispatch(getCurrentGenderCategory(params.data));
                 setOpenGender(true);
@@ -59,6 +60,7 @@ const GenderTabPanel = () => {
           </Tooltip>
           <Tooltip title="Xoá đối tượng khách hàng">
             <IconButton
+              color="error"
               onClick={() => {
                 dispatch(getCurrentGenderCategory(params.data));
                 setOpenDialog(true);

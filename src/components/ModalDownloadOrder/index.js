@@ -59,15 +59,8 @@ const ModalDownloadOrder = ({
           >
             <Logo
               style={{
-                color: "#fff",
-                backgroundColor: "var(--main-color)",
+                color: "var(--main-color)",
                 fontSize: 60,
-                padding: "0 6px",
-                width: 80,
-                height: 80,
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
               }}
             />
             <Typography variant="h4">ĐƠN ĐẶT HÀNG</Typography>

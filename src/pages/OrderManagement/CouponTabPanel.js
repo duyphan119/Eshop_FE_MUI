@@ -75,6 +75,7 @@ const CouponTabPanel = () => {
         <>
           <Tooltip title="Sửa giảm giá">
             <IconButton
+              color="secondary"
               onClick={() => {
                 dispatch(getCurrentCoupon(params.data));
                 setOpen(true);
@@ -85,6 +86,7 @@ const CouponTabPanel = () => {
           </Tooltip>
           <Tooltip title="Xoá giảm giá">
             <IconButton
+              color="error"
               onClick={() => {
                 dispatch(getCurrentCoupon(params.data));
                 setOpenDialog(true);

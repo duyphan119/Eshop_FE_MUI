@@ -44,6 +44,7 @@ const UserManagement = () => {
         <>
           <Tooltip title="Sửa quyền">
             <IconButton
+              color="secondary"
               onClick={() => {
                 dispatch(getCurrentRole(params.data));
                 setOpenUser(true);
@@ -54,6 +55,7 @@ const UserManagement = () => {
           </Tooltip>
           <Tooltip title="Xoá quyền">
             <IconButton
+              color="error"
               onClick={() => {
                 dispatch(getCurrentRole(params.data));
                 setOpenDialog(true);
@@ -70,29 +72,28 @@ const UserManagement = () => {
     {
       field: "id",
       headerName: "ID",
-      width: 90,
+      flex: 1,
       sortable: true,
       filter: true,
-      pinned: "left",
     },
     {
       field: "full_name",
       headerName: "Họ và tên",
-      width: 200,
+      flex: 3,
       sortable: true,
       filter: true,
     },
     {
       field: "email",
       headerName: "Địa chỉ email",
-      width: 300,
+      flex: 3,
       sortable: true,
       filter: true,
     },
     {
       field: "createdAt",
       headerName: "Thời gian tạo",
-      width: 170,
+      flex: 2,
       sortable: true,
       filter: true,
       valueFormatter: (params) => formatDateTimeVN(params.data.createdAt),
@@ -106,6 +107,7 @@ const UserManagement = () => {
         <>
           <Tooltip title="Sửa người dùng">
             <IconButton
+              color="secondary"
               onClick={() => {
                 setCurrentUser(params.data);
                 setOpenUser(true);
@@ -116,6 +118,7 @@ const UserManagement = () => {
           </Tooltip>
           <Tooltip title="Xoá người dùng">
             <IconButton
+              color="error"
               onClick={() => {
                 setCurrentUser(params.data);
                 setOpenDialog(true);
@@ -331,7 +334,7 @@ const UserManagement = () => {
             }}
           >
             <div
-              className="ag-theme-alpine"
+              className="ag-theme-alpine user-management"
               style={{ width: "100%", height: "100%" }}
             >
               <AgGridReact

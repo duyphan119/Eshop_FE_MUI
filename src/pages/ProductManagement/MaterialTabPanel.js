@@ -50,6 +50,7 @@ const MaterialTabPanel = () => {
         <>
           <Tooltip title="Sửa chất liệu">
             <IconButton
+              color="secondary"
               onClick={() => {
                 dispatch(getCurrentMaterial(params.data));
                 setOpen(true);
@@ -60,6 +61,7 @@ const MaterialTabPanel = () => {
           </Tooltip>
           <Tooltip title="Xoá chất liệu">
             <IconButton
+              color="error"
               onClick={() => {
                 dispatch(getCurrentMaterial(params.data));
                 setOpenDialog(true);

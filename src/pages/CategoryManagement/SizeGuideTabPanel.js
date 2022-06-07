@@ -76,6 +76,7 @@ const SizeGuideTabPanel = () => {
         <>
           <Tooltip title="Sửa hướng dẫn">
             <IconButton
+              color="secondary"
               onClick={() => {
                 dispatch(getCurrentSizeGuide(params.data));
                 setOpen(true);
@@ -86,6 +87,7 @@ const SizeGuideTabPanel = () => {
           </Tooltip>
           <Tooltip title="Xoá hướng dẫn">
             <IconButton
+              color="error"
               onClick={() => {
                 dispatch(getCurrentSizeGuide(params.data));
                 setOpenDialog(true);

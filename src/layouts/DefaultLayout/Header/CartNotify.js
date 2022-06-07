@@ -111,6 +111,7 @@ const CartNotify = () => {
                     </Typography>
                   </div>
                   <div
+                    color="error"
                     className="cart-notify-item-remove"
                     onClick={() => handleDeleteItem(item)}
                   >

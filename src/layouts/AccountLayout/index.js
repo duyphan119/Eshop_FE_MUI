@@ -11,33 +11,34 @@ import { Container, Grid, Box, Typography } from "@mui/material";
 import Drawer from "./Drawer";
 import Breadcrumbs from "../../components/Breadcrumbs";
 import { useLocation } from "react-router-dom";
+import config from "../../config";
 const items = [
   {
-    to: "/account",
+    to: config.routes.account,
     title: "Thông tin tài khoản",
     breadcrumb: "Tài khoản",
     icon: AccountBoxOutlinedIcon,
   },
   {
-    to: "/account/order",
+    to: config.routes.accountOrder,
     title: "Đơn hàng của tôi",
     breadcrumb: "Đơn hàng",
     icon: ReceiptIcon,
   },
   {
-    to: "/account/latest",
+    to: config.routes.accountLatest,
     title: "Đã xem gần đây",
     breadcrumb: "Gần đây",
     icon: HistoryIcon,
   },
   {
-    to: "/account/favorite",
+    to: config.routes.accountFavorite,
     title: "Sản phẩm yêu thích",
     breadcrumb: "Yêu thích",
     icon: FavoriteIcon,
   },
   {
-    to: "/account/change-password",
+    to: config.routes.changePassword,
     title: "Đổi mật khẩu",
     breadcrumb: "Tài khoản",
     icon: LockResetIcon,

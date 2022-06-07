@@ -77,6 +77,7 @@ const CategoryTabPanel = () => {
         <>
           <Tooltip title="Sửa danh mục">
             <IconButton
+              color="secondary"
               onClick={() => {
                 dispatch(getCurrentCategory(params.data));
                 setOpen(true);
@@ -87,6 +88,7 @@ const CategoryTabPanel = () => {
           </Tooltip>
           <Tooltip title="Xoá danh mục">
             <IconButton
+              color="error"
               onClick={() => {
                 dispatch(getCurrentCategory(params.data));
                 setOpenDialog(true);

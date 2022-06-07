@@ -89,6 +89,7 @@ const BannerManagement = () => {
         <>
           <Tooltip title="Sửa banner">
             <IconButton
+              color="secondary"
               onClick={() => {
                 setCurrent(params.data);
                 setOpen(true);
@@ -99,6 +100,7 @@ const BannerManagement = () => {
           </Tooltip>
           <Tooltip title="Xoá banner">
             <IconButton
+              color="error"
               onClick={() => {
                 setCurrent(params.data);
                 setOpenDialog(true);

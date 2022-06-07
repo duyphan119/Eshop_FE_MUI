@@ -68,6 +68,7 @@ const DiscountCategoryTabPanel = () => {
         <>
           <Tooltip title="Sửa giảm giá">
             <IconButton
+              color="secondary"
               onClick={() => {
                 dispatch(getCurrentDiscountCategory(params.data));
                 setOpen(true);
@@ -78,6 +79,7 @@ const DiscountCategoryTabPanel = () => {
           </Tooltip>
           <Tooltip title="Xoá giảm xoá">
             <IconButton
+              color="error"
               onClick={() => {
                 dispatch(getCurrentDiscountCategory(params.data));
                 setOpenDialog(true);

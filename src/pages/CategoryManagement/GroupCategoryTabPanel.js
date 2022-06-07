@@ -56,6 +56,7 @@ const GroupCategoryTabPanel = () => {
         <>
           <Tooltip title="Sửa nhóm danh mục">
             <IconButton
+              color="secondary"
               onClick={() => {
                 dispatch(getCurrentGroupCategory(params.data));
                 setOpenGroupCategory(true);
@@ -66,6 +67,7 @@ const GroupCategoryTabPanel = () => {
           </Tooltip>
           <Tooltip title="Xoá nhóm danh mục">
             <IconButton
+              color="error"
               onClick={() => {
                 dispatch(getCurrentGroupCategory(params.data));
                 setOpenDialog(true);

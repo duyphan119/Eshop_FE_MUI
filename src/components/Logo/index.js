@@ -5,7 +5,7 @@ import "./Logo.css";
 const Logo = ({ style }) => {
   return (
     <Link to={config.routes.home} style={style} className="logo-link">
-      <div className="logo">uy</div>
+      <div className="logo">Duy</div>
     </Link>
   );
 };

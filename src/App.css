@@ -123,3 +123,6 @@ ul {
 .cursor-pointer {
   cursor: pointer;
 }
+.ag-header {
+  background-color: var(--main-color-light) !important;
+}
