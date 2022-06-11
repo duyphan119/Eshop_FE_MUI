@@ -21,7 +21,7 @@ import UserManagement from "../pages/UserManagement";
 import CommentManagement from "../pages/CommentManagement";
 import Statistics from "../pages/Statistcs";
 import CategoryManagement from "../pages/CategoryManagement";
-import BannerManagement from "../pages/BannerManagement";
+import WebsiteManagement from "../pages/WebsiteManagement";
 import config from "../config";
 import ChangePassword from "../pages/ChangePassword";
 export const publicRoutes = [
@@ -131,8 +131,8 @@ export const adminRoutes = [
     layout: DashboardLayout,
   },
   {
-    path: config.routes.bannerManagement,
-    component: BannerManagement,
+    path: config.routes.websiteManagement,
+    component: WebsiteManagement,
     layout: DashboardLayout,
   },
 ];

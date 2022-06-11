@@ -1,15 +1,15 @@
-import { Badge, Box, Button, FormControl, TextField } from "@mui/material";
-import { useSelector } from "react-redux";
 import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
+import { Badge, Box, Button, FormControl, TextField } from "@mui/material";
+import { useTheme } from "@mui/material/styles";
+import useMediaQuery from "@mui/material/useMediaQuery";
+import { memo, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { TitleControl } from "../../components/Title";
 import config from "../../config";
+import { configAxiosAll } from "../../config/configAxios";
+import { API_USER_COUPON_URL } from "../../constants";
 import { formatThousandDigits, getThumbnailCartItem } from "../../utils";
-import { useState, memo } from "react";
-import { configAxiosResponse } from "../../config/configAxios";
-import { API_COUPON_URL } from "../../constants";
-import { useTheme } from "@mui/material/styles";
-import useMediaQuery from "@mui/material/useMediaQuery";
 const Result = ({ onCheckout, totalPrice, finalPrice, setCoupon }) => {
   const theme = useTheme();
   const matches = useMediaQuery(theme.breakpoints.up("lg"));
@@ -84,13 +84,17 @@ const Coupon = ({ setCoupon }) => {
   const [code, setCode] = useState("");
   const [msg, setMsg] = useState({ type: "", text: "" });
 
+  const user = useSelector((state) => state.auth.currentUser);
+
+  const dispatch = useDispatch();
+
   async function handleCheck() {
     try {
-      const data = await configAxiosResponse().get(
-        `${API_COUPON_URL}?code=${code}`
+      const data = await configAxiosAll(user, dispatch).get(
+        `${API_USER_COUPON_URL}?code=${code}`
       );
       if (data && data.length > 0) {
-        setCoupon(data[0]);
+        setCoupon(data[0].coupon);
         setMsg({ type: "", text: "Mã giảm giá hợp lệ" });
       } else {
         setMsg({ type: "error", text: "Mã giảm giá không hợp lệ" });

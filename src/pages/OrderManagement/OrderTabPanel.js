@@ -106,6 +106,7 @@ const OrderTabPanel = () => {
         <>
           <Tooltip title="Xuất hoá đơn">
             <IconButton
+              color="success"
               onClick={() => {
                 dispatch(getCurrentOrder(params.data));
                 setOpenDownload(true);

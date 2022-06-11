@@ -3,6 +3,7 @@ import "ag-grid-community/dist/styles/ag-grid.css";
 import "ag-grid-community/dist/styles/ag-theme-alpine.css";
 import React, { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
+import TabPanel from "../../components/TabPanel";
 import { configAxiosResponse } from "../../config/configAxios";
 import {
   API_CATEGORY_URL,
@@ -71,16 +72,12 @@ const CategoryManagement = () => {
   return (
     <>
       <Box sx={{ borderBottom: 1, borderColor: "divider", bgcolor: "#fff" }}>
-        <Tabs
-          value={tab}
-          onChange={(e, value) => setTab(value)}
-          aria-label="basic tabs example"
-        >
-          <Tab label="Đối tượng khách hàng" {...a11yProps(0)} />
-          <Tab label="Nhóm danh mục" {...a11yProps(1)} />
-          <Tab label="Danh mục" {...a11yProps(2)} />
-          <Tab label="Giảm giá" {...a11yProps(3)} />
-          <Tab label="Hướng dẫn chọn kích cỡ" {...a11yProps(4)} />
+        <Tabs value={tab} onChange={(e, value) => setTab(value)}>
+          <Tab label="Đối tượng khách hàng" />
+          <Tab label="Nhóm danh mục" />
+          <Tab label="Danh mục" />
+          <Tab label="Giảm giá" />
+          <Tab label="Hướng dẫn chọn kích cỡ" />
         </Tabs>
       </Box>
       <TabPanel index={0} value={tab}>
@@ -101,29 +98,5 @@ const CategoryManagement = () => {
     </>
   );
 };
-function a11yProps(index) {
-  return {
-    id: `simple-tab-${index}`,
-    "aria-controls": `simple-tabpanel-${index}`,
-  };
-}
-function TabPanel(props) {
-  const { children, value, index, ...other } = props;
 
-  return (
-    <div
-      role="tabpanel"
-      hidden={value !== index}
-      id={`simple-tabpanel-${index}`}
-      aria-labelledby={`simple-tab-${index}`}
-      {...other}
-    >
-      {value === index && (
-        <Box sx={{ p: 1, bgcolor: "#fff" }}>
-          <>{children}</>
-        </Box>
-      )}
-    </div>
-  );
-}
 export default CategoryManagement;

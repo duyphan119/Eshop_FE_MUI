@@ -56,7 +56,8 @@ const CouponTabPanel = () => {
       flex: 3,
       sortable: true,
       filter: true,
-      valueFormatter: (params) => formatDateVN(params.data.start),
+      valueFormatter: (params) =>
+        params.data.start ? formatDateVN(params.data.start) : "",
     },
     {
       field: "finish",
@@ -64,7 +65,8 @@ const CouponTabPanel = () => {
       flex: 3,
       sortable: true,
       filter: true,
-      valueFormatter: (params) => formatDateVN(params.data.finish),
+      valueFormatter: (params) =>
+        params.data.finish ? formatDateVN(params.data.finish) : "",
     },
     {
       field: "actions",
@@ -103,6 +105,8 @@ const CouponTabPanel = () => {
   const user = useSelector((state) => state.auth.currentUser);
   const coupon = useSelector((state) => state.coupon.coupon);
   const current = useSelector((state) => state.coupon.current);
+
+  console.log(coupon);
 
   const dispatch = useDispatch();
 

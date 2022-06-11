@@ -38,32 +38,18 @@ const Header = ({ headerRef }) => {
     const promises = [];
 
     promises.push(
-      new Promise((resolve, reject) => {
-        resolve(
-          configAxiosResponse().get(
-            `${API_BANNER_URL}?position=above-header&page=/&isShow=true`
-          )
-        );
-      })
+      configAxiosResponse().get(
+        `${API_BANNER_URL}?position=above-header&page=/&isShow=true`
+      )
     );
 
-    if (user) {
+    if (user && user.id) {
       promises.push(
-        new Promise((resolve, reject) => {
-          resolve(
-            configAxiosResponse().get(`${API_PRODUCT_URL}/user/${user.id}`)
-          );
-        })
+        configAxiosResponse().get(`${API_PRODUCT_URL}/user/${user.id}`)
       );
 
       promises.push(
-        new Promise((resolve, reject) => {
-          resolve(
-            configAxiosAll(user, dispatch).get(
-              `${API_CART_URL}/user/${user.id}`
-            )
-          );
-        })
+        configAxiosAll(user, dispatch).get(`${API_CART_URL}/user/${user.id}`)
       );
     }
 

@@ -32,8 +32,6 @@ const CommentManagement = () => {
 
   const dispatch = useDispatch();
 
-  console.log(comment);
-
   useEffect(() => {
     configAxiosAll(user, dispatch)
       .get(`${API_COMMENT_URL}`, { params: { limit: LIMIT_ROW_COMMENT } })
@@ -213,7 +211,7 @@ const Comment = ({ item }) => {
           {/* Icon View Detail */}
           <Link
             className="view-link hover-color-main-color"
-            to={`/product/${item.product && item.product.slug}`}
+            to={`/${item.product && item.product.slug}`}
           >
             <Tooltip title="Xem chi tiết sản phẩm">
               <OpenInNewIcon />
@@ -323,7 +321,7 @@ const RepliedComments = ({ item, comment }) => {
       </div>
       <Link
         className="view-link hover-color-main-color"
-        to={`/product/${comment.product && comment.product.slug}`}
+        to={`/${comment.product && comment.product.slug}`}
       >
         <Tooltip title="Xem chi tiết sản phẩm">
           <OpenInNewIcon />

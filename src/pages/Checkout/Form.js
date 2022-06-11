@@ -1,6 +1,7 @@
 import {
   Box,
   Checkbox,
+  Divider,
   FormControl,
   FormControlLabel,
   Grid,
@@ -185,6 +186,17 @@ const Form = ({ order, setOrder }) => {
                 setOrder({ ...order, addressNo: e.target.value })
               }
             />
+          </FormControl>
+          <Divider sx={{ mt: 2 }} />
+          <FormControl fullWidth sx={{ mt: 2 }}>
+            <textarea
+              placeholder="Ghi chú"
+              rows={4}
+              value={order.description}
+              onChange={(e) =>
+                setOrder({ ...order, description: e.target.value })
+              }
+            ></textarea>
           </FormControl>
         </Grid>
 

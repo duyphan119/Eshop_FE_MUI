@@ -120,7 +120,7 @@ const Product = ({ product }) => {
             : "0",
         }}
       >
-        <Link to={`/product/${product.slug}`} className="product-img-link">
+        <Link to={`/${product.slug}`} className="product-img-link">
           <img
             src={product?.colors[indexColor]?.images[0]?.url}
             alt={product?.name}
@@ -157,7 +157,7 @@ const Product = ({ product }) => {
       </div>
       <Tooltip title={product.name}>
         <Link
-          to={`/product/${product.slug}`}
+          to={`/${product.slug}`}
           className="product-name three-dot three-dot-2 hover-color-main-color"
           style={{
             height: "45px",

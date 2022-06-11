@@ -44,7 +44,7 @@ const Login = () => {
       <CssBaseline />
       <Box
         sx={{
-          marginTop: 8,
+          my: 8,
           display: "flex",
           flexDirection: "column",
           alignItems: "center",
@@ -116,10 +116,26 @@ const Login = () => {
           </Button>
           <Grid container>
             <Grid item xs>
-              <Link to="/">Quên mật khẩu?</Link>
+              <Link
+                to="/"
+                style={{
+                  textDecoration: "underline",
+                  color: "var(--main-color)",
+                }}
+              >
+                Quên mật khẩu?
+              </Link>
             </Grid>
             <Grid item>
-              <Link to="/register">{"Chưa có tài khoản? Đăng ký"}</Link>
+              <Link
+                to="/register"
+                style={{
+                  textDecoration: "underline",
+                  color: "var(--main-color)",
+                }}
+              >
+                Chưa có tài khoản? Đăng ký
+              </Link>
             </Grid>
           </Grid>
         </Box>

@@ -12,6 +12,7 @@ import { publicRoutes, adminRoutes } from "./routes";
 import "./App.css";
 import NavigateScrollToTop from "./components/NavigateScrollToTop";
 import ModalAddToCart from "./components/ModalAddToCart";
+import { checkIsAdmin } from "./utils";
 function ErrorFallback({ error, resetErrorBoundary }) {
   return (
     <div
@@ -75,7 +76,7 @@ function App() {
         </Box>
         <Routes>
           {showRoutes(publicRoutes)}
-          {user && showRoutes(adminRoutes)}
+          {checkIsAdmin(user) && showRoutes(adminRoutes)}
         </Routes>
         <Toast />
         <ModalAddToCart />

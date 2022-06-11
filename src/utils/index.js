@@ -1,6 +1,7 @@
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
 import { IMAGE_IS_NOT_AVAILABLE_URL } from "../constants";
+import jwtDecode from "jwt-decode";
 
 export const calculateProductSale = (price, sale) => {
   return (price / 1000 - Math.floor(((price / 1000) * sale) / 100)) * 1000;
@@ -195,4 +196,13 @@ export const formatWeightGuide = (min, max) => {
   } else {
     return `${min}kg - ${max}kg`;
   }
+};
+export const checkIsAdmin = (user) => {
+  try {
+    const decoded = jwtDecode(user.access_token);
+    if (decoded && decoded.role && decoded.role === "admin") {
+      return true;
+    }
+  } catch (error) {}
+  return false;
 };

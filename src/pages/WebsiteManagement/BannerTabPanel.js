@@ -1,28 +1,35 @@
 import AddIcon from "@mui/icons-material/Add";
 import CancelIcon from "@mui/icons-material/Cancel";
 import CheckBoxIcon from "@mui/icons-material/CheckBox";
+import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import { Box, Button, IconButton, Tooltip } from "@mui/material";
 import Paper from "@mui/material/Paper";
-import DeleteIcon from "@mui/icons-material/Delete";
-
+import "ag-grid-community/dist/styles/ag-grid.css";
+import "ag-grid-community/dist/styles/ag-theme-alpine.css";
 import { AgGridReact } from "ag-grid-react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import ConfirmDialog from "../../components/ConfirmDialog";
 import ModalBanner from "../../components/ModalBanner";
+import Pagination from "../../components/Pagination";
 import { configAxiosAll, configAxiosResponse } from "../../config/configAxios";
 import {
   API_BANNER_URL,
   API_UPLOAD_URL,
   LIMIT_ROW_BANNER,
 } from "../../constants";
+import {
+  changeLimit,
+  changePage,
+  deleteBanner,
+  getCurrentBanner,
+  newBanner,
+  updateBanner,
+} from "../../redux/bannerSlice";
 import { calHeightDataGrid } from "../../utils";
-import Pagination from "../../components/Pagination";
-import ConfirmDialog from "../../components/ConfirmDialog";
 
-import "ag-grid-community/dist/styles/ag-grid.css";
-import "ag-grid-community/dist/styles/ag-theme-alpine.css";
-const BannerManagement = () => {
+const BannerTabPanel = () => {
   const columns = [
     {
       field: "id",
@@ -91,7 +98,7 @@ const BannerManagement = () => {
             <IconButton
               color="secondary"
               onClick={() => {
-                setCurrent(params.data);
+                dispatch(getCurrentBanner(params.data));
                 setOpen(true);
               }}
             >
@@ -102,7 +109,7 @@ const BannerManagement = () => {
             <IconButton
               color="error"
               onClick={() => {
-                setCurrent(params.data);
+                dispatch(getCurrentBanner(params.data));
                 setOpenDialog(true);
               }}
             >
@@ -113,26 +120,16 @@ const BannerManagement = () => {
       ),
     },
   ];
-
   const user = useSelector((state) => state.auth.currentUser);
+  const banner = useSelector((state) => state.banner.banner);
+  const current = useSelector((state) => state.banner.current);
+  const page = useSelector((state) => state.banner.page);
+  const limit = useSelector((state) => state.banner.limit);
 
   const dispatch = useDispatch();
 
-  const [banner, setBanner] = useState();
-  const [current, setCurrent] = useState();
   const [open, setOpen] = useState(false);
-  const [page, setPage] = useState(1);
   const [openDialog, setOpenDialog] = useState(false);
-
-  useEffect(() => {
-    configAxiosResponse()
-      .get(`${API_BANNER_URL}?limit=${LIMIT_ROW_BANNER}&p=${page}`)
-      .then((data) => {
-        setBanner(data);
-      })
-      .catch((err) => {});
-  }, [page]);
-
   async function getData(data) {
     const { file, position, href, isShow, page } = data;
     let urlList;
@@ -146,26 +143,17 @@ const BannerManagement = () => {
         );
       }
       if (current) {
-        const updated = await configAxiosAll(user, dispatch).put(
-          `${API_BANNER_URL}`,
-          {
-            id: current.id,
-            position,
-            href,
-            isShow,
-            page,
-            url:
-              urlList && urlList.length > 0
-                ? urlList[0].secure_url
-                : current.url,
-          }
-        );
-        const _banners = [...banner.items];
-        const index = _banners.findIndex((el) => el.id === current.id);
-        if (index !== -1) {
-          _banners[index] = updated;
-          setBanner({ ...banner, items: _banners });
-        }
+        const req = {
+          id: current.id,
+          position,
+          href,
+          isShow,
+          page,
+          url:
+            urlList && urlList.length > 0 ? urlList[0].secure_url : current.url,
+        };
+        await configAxiosAll(user, dispatch).put(`${API_BANNER_URL}`, req);
+        dispatch(updateBanner({ ...current, ...req }));
       } else {
         const created = await configAxiosAll(user, dispatch).post(
           `${API_BANNER_URL}`,
@@ -177,12 +165,7 @@ const BannerManagement = () => {
             url: urlList && urlList.length > 0 ? urlList[0].secure_url : null,
           }
         );
-        setBanner({
-          ...banner,
-          items: [created, ...banner.items],
-          total_result: banner.total_result + 1,
-          total_page: (banner.total_result + 1) / banner.limit,
-        });
+        dispatch(newBanner(created));
       }
     } catch (error) {}
   }
@@ -193,22 +176,22 @@ const BannerManagement = () => {
         await configAxiosAll(user, dispatch).delete(
           `${API_BANNER_URL}/${current.id}`
         );
-        const data = await configAxiosResponse().get(
+        await configAxiosResponse().get(
           `${API_BANNER_URL}?limit=${LIMIT_ROW_BANNER}&p=${page}`
         );
-        setBanner(data);
+        dispatch(deleteBanner(current.id));
       }
     } catch (error) {}
   }
 
   return (
     <>
-      <Paper sx={{ width: "100%", p: 2 }}>
+      <Box p={1} bgcolor="#fff">
         <Button
           variant="contained"
           sx={{ mb: 2 }}
           onClick={() => {
-            setCurrent(null);
+            dispatch(getCurrentBanner(null));
             setOpen(true);
           }}
           startIcon={<AddIcon />}
@@ -216,11 +199,11 @@ const BannerManagement = () => {
           Thêm banner
         </Button>
         {banner && (
-          <Paper
-            sx={{
+          <div
+            style={{
               width: "100%",
-              height: calHeightDataGrid(10),
               overflow: "hidden",
+              height: calHeightDataGrid(LIMIT_ROW_BANNER),
             }}
           >
             <div
@@ -244,18 +227,22 @@ const BannerManagement = () => {
                 handleOk={getData}
               />
             )}
-          </Paper>
+          </div>
         )}
         {banner && banner.total_page && banner.total_page > 1 && (
           <Box display="flex" justifyContent="center" mt={1}>
             <Pagination
+              showRowsPerPage={true}
+              listRowPerPage={[LIMIT_ROW_BANNER, 50, 100, 200, 500]}
+              rowsPerPage={limit}
+              onChangeRowsPerPage={(l) => dispatch(changeLimit(l))}
               page={page}
               totalPage={banner.total_page}
-              onChange={(e, value) => setPage(value)}
+              onChange={(e, value) => dispatch(changePage(value))}
             />
           </Box>
         )}
-      </Paper>
+      </Box>
       {openDialog && (
         <ConfirmDialog
           open={openDialog}
@@ -268,4 +255,4 @@ const BannerManagement = () => {
   );
 };
 
-export default BannerManagement;
+export default BannerTabPanel;

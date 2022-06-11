@@ -38,34 +38,23 @@ const Home = () => {
       try {
         const promises = [];
         promises.push(
-          new Promise((resolve, reject) => {
-            resolve(
-              configAxiosResponse().get(
-                `${API_BANNER_URL}?position=under-header&page=/&isShow=true`
-              )
-            );
-          })
+          configAxiosResponse().get(
+            `${API_BANNER_URL}?position=under-header&page=/&isShow=true`
+          )
         );
         promises.push(
-          new Promise((resolve, reject) => {
-            resolve(
-              configAxiosAll(user, dispatch).get(
-                `${API_PRODUCT_URL}?type=best-seller&limit=${limit}`
-              )
-            );
-          })
+          configAxiosAll(user, dispatch).get(
+            `${API_PRODUCT_URL}?type=best-seller&limit=${limit}`
+          )
         );
         promises.push(
-          new Promise((resolve, reject) => {
-            resolve(
-              configAxiosAll(user, dispatch).get(
-                `${API_PRODUCT_URL}?include=true&limit=${LIMIT_NEW_PRODUCT}`
-              )
-            );
-          })
+          configAxiosAll(user, dispatch).get(
+            `${API_PRODUCT_URL}?include=true&limit=${LIMIT_NEW_PRODUCT}`
+          )
         );
 
         const listRes = await Promise.allSettled(promises);
+        console.log(listRes);
         if (listRes[0].status === "fulfilled") {
           setBanners(listRes[0].value);
         } else {

@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { LIMIT_ROW_ORDER } from "../constants";
+import { LIMIT_ROW_ORDER, LIMIT_CLIENT_ORDER } from "../constants";
 const initialState = {
   list: [],
   page: 1,
@@ -8,6 +8,10 @@ const initialState = {
   totalPage: 0,
   order: null,
   recentOrders: [],
+  clientOrder: null,
+  pageClient: 1,
+  limitClient: LIMIT_CLIENT_ORDER,
+  currentClient: null,
 };
 const orderSlice = createSlice({
   name: "order",
@@ -16,8 +20,70 @@ const orderSlice = createSlice({
     getOrder: (state, action) => {
       state.order = action.payload;
     },
+    getClientOrder: (state, action) => {
+      state.clientOrder = action.payload;
+    },
     getRecentOrders: (state, action) => {
       state.recentOrders = action.payload;
+    },
+    newClientOrder: (state, action) => {
+      const data = action.payload;
+      if (state.clientOrder.items) {
+        const index = state.clientOrder.items.findIndex(
+          (item) => item.id === data.id
+        );
+        if (index === -1) {
+          state.clientOrder = {
+            items: [
+              data,
+              ...state.clientOrder.items.splice(
+                state.clientOrder.items.length - 1,
+                1
+              ),
+            ],
+            limit: LIMIT_CLIENT_ORDER,
+            total_result: state.clientOrder.items.length + 1,
+            total_page: Math.ceil(
+              (state.clientOrder.items.length + 1) / LIMIT_CLIENT_ORDER
+            ),
+          };
+        } else {
+          state.clientOrder.items[index] = {
+            ...state.clientOrder.items[index],
+            ...data,
+          };
+        }
+      } else {
+        state.order = {
+          items: [data],
+          limit: LIMIT_ROW_ORDER,
+          total_result: 1,
+          total_page: 1,
+        };
+      }
+    },
+    updateClientOrder: (state, action) => {
+      const newItem = action.payload;
+      const index = state.clientOrder.items.findIndex(
+        (item) => item.id === newItem.id
+      );
+      if (index !== -1) {
+        state.clientOrder.items[index] = {
+          ...state.clientOrder.items[index],
+          ...newItem,
+        };
+      }
+    },
+    deletedClientOrder: (state, action) => {
+      const id = action.payload;
+      state.clientOrder = {
+        items: [...state.clientOrder.items].filter((item) => item.id !== id),
+        total_result: state.clientOrder.items.length - 1,
+        total_page: Math.ceil(
+          (state.clientOrder.items.length - 1) / LIMIT_CLIENT_ORDER
+        ),
+        limit: LIMIT_CLIENT_ORDER,
+      };
     },
     newOrder: (state, action) => {
       const data = action.payload;
@@ -86,17 +152,25 @@ const orderSlice = createSlice({
     getCurrentOrder: (state, action) => {
       state.current = action.payload;
     },
+    getCurrentClientOrder: (state, action) => {
+      state.currentClient = action.payload;
+    },
   },
 });
 export const {
   getOrders,
+  getCurrentClientOrder,
+  getClientOrder,
   changeLimit,
   getCurrentOrder,
   changePage,
   updateOrder,
+  updateClientOrder,
   getOrder,
   deletedOrder,
   newOrder,
+  deletedClientOrder,
+  newClientOrder,
   getRecentOrders,
 } = orderSlice.actions;
 export default orderSlice.reducer;

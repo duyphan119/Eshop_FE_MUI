@@ -193,7 +193,6 @@ const ProductTabPanel = () => {
         let urlList = [];
         images.forEach((image) => {
           image.files.forEach((file) => {
-            console.log(file);
             formData.append("images", file);
             productImages.push({ color: image.color });
           });

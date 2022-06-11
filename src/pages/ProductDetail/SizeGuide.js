@@ -31,7 +31,6 @@ const SizeGuide = ({ handleClose, guides }) => {
         indexWeight = index;
       }
     });
-    console.log(indexHeight);
     if (indexHeight === -1 || indexHeight === -1) {
       return NOT_FOUND;
     } else {

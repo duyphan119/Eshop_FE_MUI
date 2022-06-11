@@ -11,6 +11,7 @@ import { useDispatch } from "react-redux";
 import { getAll as getAllColors } from "../../redux/colorSlice";
 import { getAll as getAllSizes } from "../../redux/sizeSlice";
 import { getAll as getAllMaterials } from "../../redux/materialSlice";
+import TabPanel from "../../components/TabPanel";
 
 const ProductManagement = () => {
   const [tab, setTab] = useState(3);
@@ -46,10 +47,10 @@ const ProductManagement = () => {
           onChange={(e, value) => setTab(value)}
           aria-label="basic tabs example"
         >
-          <Tab label="Chất liệu" {...a11yProps(0)} />
-          <Tab label="Màu sắc" {...a11yProps(1)} />
-          <Tab label="Kích cỡ" {...a11yProps(2)} />
-          <Tab label="Sản phẩm" {...a11yProps(3)} />
+          <Tab label="Chất liệu" />
+          <Tab label="Màu sắc" />
+          <Tab label="Kích cỡ" />
+          <Tab label="Sản phẩm" />
         </Tabs>
       </Box>
       <TabPanel index={0} value={tab}>
@@ -67,30 +68,5 @@ const ProductManagement = () => {
     </>
   );
 };
-function a11yProps(index) {
-  return {
-    id: `simple-tab-${index}`,
-    "aria-controls": `simple-tabpanel-${index}`,
-  };
-}
-function TabPanel(props) {
-  const { children, value, index, ...other } = props;
-
-  return (
-    <div
-      role="tabpanel"
-      hidden={value !== index}
-      id={`simple-tabpanel-${index}`}
-      aria-labelledby={`simple-tab-${index}`}
-      {...other}
-    >
-      {value === index && (
-        <Box sx={{ p: 1, bgcolor: "#fff" }}>
-          <>{children}</>
-        </Box>
-      )}
-    </div>
-  );
-}
 
 export default ProductManagement;

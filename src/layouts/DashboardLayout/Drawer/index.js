@@ -6,6 +6,7 @@ import InventoryIcon from "@mui/icons-material/Inventory";
 import ModeCommentIcon from "@mui/icons-material/ModeComment";
 import PeopleIcon from "@mui/icons-material/People";
 import ReceiptIcon from "@mui/icons-material/Receipt";
+import WebIcon from "@mui/icons-material/Web";
 import { Box, Tooltip, useMediaQuery } from "@mui/material";
 import Divider from "@mui/material/Divider";
 import MuiDrawer from "@mui/material/Drawer";
@@ -70,6 +71,11 @@ const items = [
     to: config.routes.orderManagement,
     icon: ReceiptIcon,
   },
+  // {
+  //   text: "Website",
+  //   to: config.routes.websiteManagement,
+  //   icon: WebIcon,
+  // },
   {
     text: "Thống kê",
     to: config.routes.statistics,

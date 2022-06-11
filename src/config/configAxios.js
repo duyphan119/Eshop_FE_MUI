@@ -1,7 +1,7 @@
 import axios from "axios";
 import jwtDecode from "jwt-decode";
 import { apiRefreshToken } from "../api/apiAuth";
-import { refreshToken } from "../redux/authSlice";
+import { logout, refreshToken } from "../redux/authSlice";
 export const configAxios = (user, dispatch) => {
   const instance = axios.create({
     withCredentials: true,
@@ -44,21 +44,25 @@ export const configAxiosAll = (user, dispatch) => {
   instance.interceptors.request.use(
     async (config) => {
       if (user) {
-        const decodeToken = jwtDecode(user.access_token).exp * 1000;
+        if (user.access_token) {
+          const decodeToken = jwtDecode(user.access_token).exp * 1000;
 
-        if (isNaN(decodeToken) || decodeToken < new Date().getTime()) {
-          const data = await apiRefreshToken(dispatch);
-          if (data.access_token) {
-            dispatch(refreshToken(data.access_token));
-            config.headers["authorization"] = `Bearer ${data.access_token}`;
+          if (isNaN(decodeToken) || decodeToken < new Date().getTime()) {
+            const data = await apiRefreshToken(dispatch);
+            if (data.access_token) {
+              dispatch(refreshToken(data.access_token));
+              config.headers["authorization"] = `Bearer ${data.access_token}`;
+            }
+          } else {
+            config.headers["authorization"] = `Bearer ${user.access_token}`;
           }
         } else {
-          config.headers["authorization"] = `Bearer ${user.access_token}`;
+          dispatch(logout());
         }
       }
       return config;
     },
-    (err) => Promise.reject(err)
+    (err) => {}
   );
   instance.interceptors.response.use((res) => {
     return res.data;

@@ -93,7 +93,7 @@ const Dashboard = () => {
     );
     Promise.allSettled(promises)
       .then((listRes) => {
-        console.log(listRes);
+        console.log(`${API_STATISTICS_URL}/revenue?type=hoursInDay`);
         if (listRes[0].status === "fulfilled") {
           setCountOrder(listRes[0].value);
         }

@@ -1,13 +1,15 @@
-import { useParams } from "react-router-dom";
+import { useMemo } from "react";
 import { useSelector } from "react-redux";
-import ProductGender from "../../pages/ProductGender";
-import ProductsCategory from "../../pages/ProductCategory";
+import { useParams } from "react-router-dom";
 import { API_PRODUCT_URL } from "../../constants";
+import ProductsCategory from "../../pages/ProductCategory";
+import ProductDetail from "../../pages/ProductDetail";
+import ProductGender from "../../pages/ProductGender";
 const SwitchCategoryProduct = () => {
   const { category_slug } = useParams();
   const genderCategories = useSelector((state) => state.genderCategory.all);
 
-  function switchPages() {
+  const switchPages = useMemo(() => {
     for (const genderCategory of genderCategories) {
       if (genderCategory.slug === category_slug) {
         return <ProductGender genderCategory={genderCategory} />;
@@ -53,11 +55,18 @@ const SwitchCategoryProduct = () => {
           title="Tất cả sản phẩm"
         />
       );
+    } else {
+      if (genderCategories.length > 0) {
+        return (
+          <ProductDetail query={`${API_PRODUCT_URL}/slug/${category_slug}`} />
+        );
+      } else {
+        return "";
+      }
     }
-    return "";
-  }
+  }, [category_slug, genderCategories]);
 
-  return <div>{switchPages()}</div>;
+  return <div>{switchPages}</div>;
 };
 
 export default SwitchCategoryProduct;

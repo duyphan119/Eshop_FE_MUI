@@ -76,6 +76,7 @@ const Checkout = () => {
               telephone: order.phoneNumber,
               full_name: order.fullName,
               coupon_id: coupon.id,
+              description: order.description,
             }
           );
           if (data) {

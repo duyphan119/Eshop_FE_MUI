@@ -12,7 +12,6 @@ const ModalComment = ({
 }) => {
   const [rate, setRate] = useState(comment ? comment.rate : 1);
   const [content, setContent] = useState(comment ? comment.content : "");
-  console.log(comment);
   return (
     <Modal
       open={open}

@@ -35,11 +35,8 @@ export const apiGetProductsByGroupCategorySlug = async (
   dispatch
 ) => {
   try {
-    console.log(query);
     let queryString = `${API_URL}/group-category/${groupCategorySlug}${query}`;
-    console.log(queryString);
     const data = await configAxiosAll(user, dispatch).get(queryString);
-    console.log(data);
     return data;
   } catch (error) {
     console.log(error);

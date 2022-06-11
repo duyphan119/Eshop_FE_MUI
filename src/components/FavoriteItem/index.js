@@ -80,11 +80,7 @@ const FavoriteItem = ({ item }) => {
   return (
     <Box display="flex" justifyContent="space-between" width="100%" p={1}>
       <Box display="flex">
-        <Link
-          to={`/product/${item.slug}`}
-          className=""
-          style={{ marginRight: "8px" }}
-        >
+        <Link to={`/${item.slug}`} className="" style={{ marginRight: "8px" }}>
           <img
             src={
               item.colors[indexColor].images &&
@@ -97,7 +93,7 @@ const FavoriteItem = ({ item }) => {
         </Link>
         <Box className="">
           <Link
-            to={`/product/${item.slug}`}
+            to={`/${item.slug}`}
             className="hover-color-main-color three-dot three-dot-1"
           >
             {item.name}

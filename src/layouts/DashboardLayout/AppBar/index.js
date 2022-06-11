@@ -52,8 +52,8 @@ const AppBar = ({ open, toggleDrawer }) => {
       _title = "Báo cáo, thống kê";
     } else if (location.pathname === "/dashboard/category") {
       _title = "Quản lý danh mục";
-    } else if (location.pathname === "/dashboard/banner") {
-      _title = "Quản lý banner";
+    } else if (location.pathname === "/dashboard/website") {
+      _title = "Quản lý website";
     } else if (location.pathname === "/dashboard") {
       _title = "Bảng điều khiển";
     }

@@ -70,7 +70,7 @@ const SlickArrowRight = ({ currentSlide, slideCount, ...props }) => (
     <KeyboardArrowDownOutlinedIcon />
   </button>
 );
-const ProductDetail = () => {
+const ProductDetail = ({ query }) => {
   const socket = useContext(SocketContext);
 
   const user = useSelector((state) => state.auth.currentUser);
@@ -103,9 +103,7 @@ const ProductDetail = () => {
 
   useEffect(() => {
     (async function () {
-      const data = await configAxiosAll(user, dispatch).get(
-        `${API_PRODUCT_URL}/slug/${product_slug}`
-      );
+      const data = await configAxiosAll(user, dispatch).get(query);
       document.title = data.name;
       setProduct(data);
       dispatch(addToLatest(data));
@@ -113,12 +111,9 @@ const ProductDetail = () => {
       const data2 = await configAxiosAll(user, dispatch).get(
         `${API_PRODUCT_URL}/category/${data.category.slug}?exceptId=${data.id}&limit=${LIMIT_RECOMMEND_PRODUCT}`
       );
-      console.log(
-        `${API_PRODUCT_URL}/category/${data.category.slug}?exceptId=${data.id}&limit=${LIMIT_RECOMMEND_PRODUCT}`
-      );
       setRecommendedProduct(data2);
     })();
-  }, [dispatch, product_slug, user]);
+  }, [dispatch, product_slug, user, query]);
 
   useEffect(() => {
     if (product) {
@@ -230,7 +225,6 @@ const ProductDetail = () => {
       }
     }
   }
-  console.log(product);
   if (!product) return "";
 
   return (
