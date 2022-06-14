@@ -11,18 +11,18 @@ export default function Orders() {
     {
       field: "id",
       headerName: "Đơn số",
-      width: 90,
+      width: 80,
     },
     {
       field: "createdAt",
       headerName: "Thời gian",
       valueFormatter: (params) => `${formatDateTimeVN(params.data.createdAt)}`,
-      width: 160,
+      width: 180,
     },
     {
       field: "address",
       headerName: "Địa chỉ",
-      width: 560,
+      width: 500,
     },
     {
       field: "telephone",
@@ -30,19 +30,15 @@ export default function Orders() {
       width: 120,
     },
     {
-      field: "coupon.percent",
-      headerName: "Giảm giá",
-      width: 100,
-    },
-    {
-      field: "total",
+      field: "totalPrice",
       headerName: "Tổng",
       width: 90,
     },
     {
-      field: "status.description",
+      field: "status",
       headerName: "Trạng thái",
-      flex: 1,
+      width: 120,
+      pinned: "right",
     },
   ];
 
@@ -65,7 +61,20 @@ export default function Orders() {
             sideBar={{
               toolPanels: ["filters", "columns"],
             }}
-            rowData={orders}
+            // rowData={orders}
+            rowData={[
+              {
+                id: 1,
+                address:
+                  "115/21 Hoàng Hoa Thám, Phường 2, Thành phố Tân An, tỉnh Long An",
+                telephone: "0385981197",
+                deliveryPrice: 0,
+                tempPrice: 570000,
+                totalPrice: 570000,
+                status: "Đã giao",
+                createdAt: "2022-06-14 15:15:34",
+              },
+            ]}
             columnDefs={columns}
           ></AgGridReact>
         </div>

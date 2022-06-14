@@ -8,7 +8,6 @@ import Register from "../pages/Register";
 import Cart from "../pages/Cart";
 import ProductDetail from "../pages/ProductDetail";
 import Dashboard from "../pages/Dashboard";
-import ProductManagement from "../pages/ProductManagement";
 import Checkout from "../pages/Checkout";
 import CheckoutSuccess from "../pages/CheckoutSuccess";
 import AccountInfo from "../pages/AccountInfo";
@@ -16,14 +15,25 @@ import ClientOrders from "../pages/ClientOrders";
 import Favorite from "../pages/Favorite";
 import Latest from "../pages/Latest";
 import { AccountLayout, ContentLayout, DashboardLayout } from "../layouts";
-import OrderManagement from "../pages/OrderManagement";
-import UserManagement from "../pages/UserManagement";
-import CommentManagement from "../pages/CommentManagement";
+
 import Statistics from "../pages/Statistcs";
-import CategoryManagement from "../pages/CategoryManagement";
 import WebsiteManagement from "../pages/WebsiteManagement";
 import config from "../config";
 import ChangePassword from "../pages/ChangePassword";
+import {
+  GroupCategoryManagement,
+  CategoryManagement,
+  OrderManagement,
+  UserManagement,
+  CommentManagement,
+  ProductManagement,
+  ColorManagement,
+  SizeManagement,
+  RoleManagement,
+  CouponManagement,
+  DiscountManagement,
+  GroupProductManagement,
+} from "../pages/Management";
 export const publicRoutes = [
   {
     path: config.routes.home,
@@ -48,7 +58,6 @@ export const publicRoutes = [
   {
     path: config.routes.checkout,
     component: Checkout,
-    layout: ContentLayout,
   },
   {
     path: config.routes.checkoutSuccess,
@@ -111,13 +120,43 @@ export const adminRoutes = [
     layout: DashboardLayout,
   },
   {
+    path: config.routes.colorManagement,
+    component: ColorManagement,
+    layout: DashboardLayout,
+  },
+  {
+    path: config.routes.sizeManagement,
+    component: SizeManagement,
+    layout: DashboardLayout,
+  },
+  {
+    path: config.routes.discountManagement,
+    component: DiscountManagement,
+    layout: DashboardLayout,
+  },
+  {
     path: config.routes.orderManagement,
     component: OrderManagement,
     layout: DashboardLayout,
   },
   {
+    path: config.routes.couponManagement,
+    component: CouponManagement,
+    layout: DashboardLayout,
+  },
+  {
     path: config.routes.userManagement,
     component: UserManagement,
+    layout: DashboardLayout,
+  },
+  {
+    path: config.routes.roleManagement,
+    component: RoleManagement,
+    layout: DashboardLayout,
+  },
+  {
+    path: config.routes.groupProductManagement,
+    component: GroupProductManagement,
     layout: DashboardLayout,
   },
   {
@@ -133,6 +172,11 @@ export const adminRoutes = [
   {
     path: config.routes.websiteManagement,
     component: WebsiteManagement,
+    layout: DashboardLayout,
+  },
+  {
+    path: config.routes.groupCategoryManagement,
+    component: GroupCategoryManagement,
     layout: DashboardLayout,
   },
 ];

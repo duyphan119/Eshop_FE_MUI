@@ -23,16 +23,22 @@ const ChartYears = ({ data }) => {
       </Typography>
       <ResponsiveContainer width="100%" height="100%">
         <BarChart
-          data={data}
+          // data={data}
+          data={[
+            {
+              year: "2022",
+              total: 570,
+            },
+          ]}
           margin={{
             top: 16,
             right: 16,
             bottom: 0,
-            left: 16,
+            left: 0,
           }}
         >
           <XAxis dataKey="year" />
-          <YAxis />
+          <YAxis unit="k" />
           <Tooltip />
           <Bar dataKey="total" fill="var(--main-color)" />
         </BarChart>

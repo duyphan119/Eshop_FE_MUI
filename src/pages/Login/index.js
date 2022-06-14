@@ -16,6 +16,10 @@ import FacebookIcon from "@mui/icons-material/Facebook";
 import { API_AUTH_URL, SERVER_URL } from "../../constants";
 import { login } from "../../redux/authSlice";
 import { configAxiosResponse } from "../../config/configAxios";
+import top_banner from "../../assets/imgs/hannah-morgan-39891.webp";
+import { Divider } from "@mui/material";
+import Breadcrumbs from "../../components/Breadcrumbs";
+import "./Login.css";
 const Login = () => {
   const dispatch = useDispatch();
 
@@ -40,29 +44,52 @@ const Login = () => {
   }, []);
 
   return (
-    <Container component="main" maxWidth="xs">
-      <CssBaseline />
+    <>
+      <div
+        style={{
+          backgroundImage: `url(${top_banner})`,
+          height: 230,
+          width: "100%",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          flexDirection: "column",
+        }}
+      >
+        <div style={{ fontSize: 36 }}>Đăng nhập</div>
+        <Breadcrumbs
+          sx={{ textTransform: "uppercase", mt: 2, fontSize: 12 }}
+          items={[
+            {
+              text: "Trang chủ",
+              to: "/",
+            },
+            {
+              text: "Tài khoản",
+            },
+          ]}
+        />
+      </div>
       <Box
         sx={{
-          my: 8,
+          my: 4,
           display: "flex",
           flexDirection: "column",
           alignItems: "center",
         }}
       >
-        <Avatar sx={{ m: 1, bgcolor: "secondary.main" }}>
-          <LockOutlinedIcon />
-        </Avatar>
-        <Typography component="h1" variant="h5">
-          Đăng nhập
-        </Typography>
         <Box
           component="form"
           onSubmit={handleSubmit(onSubmit)}
           noValidate
-          sx={{ mt: 1 }}
+          sx={{
+            mt: 1,
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+          }}
         >
-          <TextField
+          <input
             {...register("email", {
               required: "Trường này không được để trống",
               pattern: {
@@ -70,77 +97,43 @@ const Login = () => {
                 message: "Địa chỉ email không hợp lệ",
               },
             })}
-            fullWidth
-            label="Địa chỉ email"
-            error={errors.email}
-            helperText={errors.email && errors.email.message}
+            className="login-input"
+            placeholder="Địa chỉ email"
           />
-          <TextField
+          <input
             {...register("password", {
               required: "Trường này không được để trống",
               minLength: { value: 6, message: "Mật khẩu ít nhất 6 kí tự" },
             })}
             fullWidth
-            sx={{ mt: 2 }}
+            style={{ marginTop: 16 }}
             type="password"
-            label="Mật khẩu"
-            error={errors.password}
-            helperText={errors.password && errors.password.message}
+            placeholder="Mật khẩu"
+            className="login-input"
           />
-          <Button type="submit" fullWidth variant="contained" sx={{ mt: 3 }}>
-            Đăng nhập
-          </Button>
-          <Button
-            variant="outlined"
-            fullWidth
-            type="button"
-            startIcon={<GoogleIcon />}
-            sx={{ mt: 2 }}
-            onClick={() => {
-              window.open(`${SERVER_URL}/v1/api/auth/google`, "_self");
+          <div className="login-btn-submit">
+            <button type="submit">Đăng nhập</button>
+          </div>
+          <div
+            style={{
+              height: 1,
+              backgroundColor: "gray",
+              width: 180,
+              marginBlock: 32,
             }}
-          >
-            Đăng nhập với Google
-          </Button>
-          <Button
-            variant="outlined"
-            type="button"
-            fullWidth
-            startIcon={<FacebookIcon />}
-            sx={{ mt: 2, mb: 1 }}
-            onClick={() => {
-              window.open(`${SERVER_URL}/v1/api/auth/facebook`, "_self");
-            }}
-          >
-            Đăng nhập với Facebook
-          </Button>
-          <Grid container>
-            <Grid item xs>
-              <Link
-                to="/"
-                style={{
-                  textDecoration: "underline",
-                  color: "var(--main-color)",
-                }}
-              >
-                Quên mật khẩu?
-              </Link>
-            </Grid>
-            <Grid item>
-              <Link
-                to="/register"
-                style={{
-                  textDecoration: "underline",
-                  color: "var(--main-color)",
-                }}
-              >
-                Chưa có tài khoản? Đăng ký
-              </Link>
-            </Grid>
-          </Grid>
+          ></div>
+          <Link to={`/`} className="hover-color-main-color login-action-link">
+            Về trang chủ
+          </Link>
+          <Link to={`/`} className="hover-color-main-color login-action-link">
+            Đăng ký
+          </Link>
+          <Link to={`/`} className="hover-color-main-color login-action-link">
+            Quên mật khẩu
+          </Link>
         </Box>
       </Box>
-    </Container>
+    </>
   );
 };
 export default Login;

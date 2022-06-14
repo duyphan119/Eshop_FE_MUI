@@ -3,7 +3,12 @@ import { LIMIT_ROW_COUPON } from "../constants";
 const initialState = {
   current: null,
   all: [],
-  coupon: null,
+  coupon: {
+    items: [],
+    totalResult: 0,
+    totalPage: 0,
+    limit: LIMIT_ROW_COUPON,
+  },
   page: 1,
   limit: LIMIT_ROW_COUPON,
 };

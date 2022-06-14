@@ -1,16 +1,17 @@
 import { Link } from "react-router-dom";
-import { Typography, Breadcrumbs } from "@mui/material";
-const _Breadcrumbs = ({ items, text }) => {
+import { Breadcrumbs } from "@mui/material";
+const _Breadcrumbs = ({ items, sx }) => {
   return (
-    <Breadcrumbs fontSize="14px">
-      {items.map((item, index) => (
-        <Link to={item.to} key={index} className="hover-color-main-color">
-          {item.text}
-        </Link>
-      ))}
-      <Typography fontSize="14px" color="var(--main-color)">
-        {text}
-      </Typography>
+    <Breadcrumbs sx={sx} fontSize="14px">
+      {items.map((item, index) =>
+        item.to ? (
+          <Link to={item.to} key={index} className="hover-color-main-color">
+            {item.text}
+          </Link>
+        ) : (
+          <>{item.text}</>
+        )
+      )}
     </Breadcrumbs>
   );
 };

@@ -1,5 +1,5 @@
 :root {
-  --main-color: #1976d2;
+  --main-color: #6299fe;
   --success-color: #43a047;
   --warning-color: #ffcf33;
   --main-color-light: #85c0ff;
@@ -124,5 +124,5 @@ ul {
   cursor: pointer;
 }
 .ag-header {
-  background-color: var(--main-color-light) !important;
+  background-color: var(--main-color) !important;
 }

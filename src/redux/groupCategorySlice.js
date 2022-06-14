@@ -1,7 +1,16 @@
 import { createSlice } from "@reduxjs/toolkit";
+import { LIMIT_ROW_GROUP_CATEGORY } from "../constants";
 const initialState = {
   current: null,
   all: [],
+  groupCategory: {
+    items: [],
+    totalResult: 0,
+    totalPage: 0,
+    limit: LIMIT_ROW_GROUP_CATEGORY,
+  },
+  page: 1,
+  limit: LIMIT_ROW_GROUP_CATEGORY,
 };
 const groupCategorySlice = createSlice({
   name: "groupCategory",
@@ -9,6 +18,9 @@ const groupCategorySlice = createSlice({
   reducers: {
     getAllGroupCategories: (state, action) => {
       state.all = action.payload;
+    },
+    getGroupCategory: (state, action) => {
+      state.groupCategory = action.payload;
     },
     addGroupCategory: (state, action) => {
       state.all = [action.payload, ...state.all];
@@ -28,6 +40,12 @@ const groupCategorySlice = createSlice({
     getCurrentGroupCategory: (state, action) => {
       state.current = action.payload;
     },
+    changePage: (state, action) => {
+      state.page = action.payload;
+    },
+    changeLimit: (state, action) => {
+      state.limit = action.payload;
+    },
   },
 });
 export const {
@@ -36,5 +54,8 @@ export const {
   updateGroupCategory,
   getCurrentGroupCategory,
   deleteGroupCategory,
+  getGroupCategory,
+  changePage,
+  changeLimit,
 } = groupCategorySlice.actions;
 export default groupCategorySlice.reducer;

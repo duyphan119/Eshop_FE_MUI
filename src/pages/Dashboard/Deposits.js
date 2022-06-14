@@ -9,7 +9,7 @@ export default function Deposits({ total }) {
     <React.Fragment>
       <TitlePaper>Doanh thu hôm nay</TitlePaper>
       <Typography component="p" variant="h4">
-        {formatThousandDigits(total)}đ
+        {formatThousandDigits(total)} ₫
       </Typography>
       <Typography color="text.secondary" sx={{ flex: 1 }}>
         {formatDateTimeVN(new Date()).split(" ")[0]}

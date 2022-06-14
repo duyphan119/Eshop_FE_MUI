@@ -20,6 +20,8 @@ import discountCategoryReducer from "./discountCategorySlice";
 import couponReducer from "./couponSlice";
 import orderStatusReducer from "./orderStatusSlice";
 import sizeGuideReducer from "./sizeGuideSlice";
+import groupProductReducer from "./groupProductSlice";
+import discountReducer from "./discountSlice";
 
 const store = configureStore({
   reducer: {
@@ -44,6 +46,8 @@ const store = configureStore({
     coupon: couponReducer,
     orderStatus: orderStatusReducer,
     sizeGuide: sizeGuideReducer,
+    groupProduct: groupProductReducer,
+    discount: discountReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({

@@ -1,11 +1,24 @@
+import { Box } from "@mui/material";
 import { Link } from "react-router-dom";
 import config from "../../config";
 
-import "./Logo.css";
-const Logo = ({ style }) => {
+const Logo = ({ style, sx }) => {
   return (
-    <Link to={config.routes.home} style={style} className="logo-link">
-      <div className="logo">Duy</div>
+    <Link to={config.routes.home} style={style}>
+      <Box
+        sx={{
+          height: 100,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          fontSize: 40,
+          fontWeight: 600,
+          textTransform: "uppercase",
+          ...sx,
+        }}
+      >
+        Duy.P
+      </Box>
     </Link>
   );
 };

@@ -35,31 +35,37 @@
   color: #fff;
 }
 .product-quantity-wrapper {
-  width: 108px;
+  width: 72px;
   display: flex;
   align-items: center;
   overflow: hidden;
-  border-radius: 30px;
   border: 1px solid #000;
 }
-.product-quantity-wrapper button {
-  width: 36px;
-  height: 30px;
-  border: none;
+.product-quantity-btn-wrapper {
+  display: flex;
+  flex-direction: column;
+  border-left: 1px solid #000;
+  height: 32px;
+}
+.product-quantity-btn-wrapper button {
+  width: 24px;
+  height: 16px;
+  font-size: 10px;
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: transparent;
   cursor: pointer;
+  background-color: inherit;
+  border: none;
 }
 .product-quantity-wrapper button:first-child {
-  border-right: 1px solid #000;
+  border-bottom: 0.5px solid #000;
 }
 .product-quantity-wrapper button:last-child {
-  border-left: 1px solid #000;
+  border-top: 0.5px solid #000;
 }
 .product-quantity-wrapper input {
-  width: 36px;
+  width: 48px;
   border: none;
   outline: none;
   text-align: center;

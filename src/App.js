@@ -7,7 +7,6 @@ import { ErrorBoundary } from "react-error-boundary";
 
 import { DefaultLayout } from "./layouts";
 import Toast from "./components/Toast";
-import { socket, SocketContext } from "./context";
 import { publicRoutes, adminRoutes } from "./routes";
 import "./App.css";
 import NavigateScrollToTop from "./components/NavigateScrollToTop";
@@ -30,10 +29,6 @@ function ErrorFallback({ error, resetErrorBoundary }) {
 }
 function App() {
   const user = useSelector((state) => state.auth.currentUser);
-
-  useEffect(() => {
-    socket.emit("join-room", "admin");
-  }, []);
 
   function showRoutes(routes) {
     return routes.map((router, index) => {
@@ -62,25 +57,26 @@ function App() {
         // reset the state of your app so the error doesn't happen again
       }}
     >
-      <SocketContext.Provider value={socket}>
-        <NavigateScrollToTop />
-        <Box
-          sx={{
-            display: {
-              md: "block",
-              xs: "none",
-            },
-          }}
-        >
-          <ScrollToTop smooth color="var(--main-color)" />
-        </Box>
-        <Routes>
-          {showRoutes(publicRoutes)}
-          {checkIsAdmin(user) && showRoutes(adminRoutes)}
-        </Routes>
-        <Toast />
-        <ModalAddToCart />
-      </SocketContext.Provider>
+      {/* <SocketContext.Provider value={socket}> */}
+      <NavigateScrollToTop />
+      <Box
+        sx={{
+          display: {
+            md: "block",
+            xs: "none",
+          },
+        }}
+      >
+        <ScrollToTop smooth color="var(--main-color)" />
+      </Box>
+      <Routes>
+        {showRoutes(publicRoutes)}
+        {/* {checkIsAdmin(user) && showRoutes(adminRoutes)} */}
+        {showRoutes(adminRoutes)}
+      </Routes>
+      <Toast />
+      <ModalAddToCart />
+      {/* </SocketContext.Provider> */}
     </ErrorBoundary>
   );
 }

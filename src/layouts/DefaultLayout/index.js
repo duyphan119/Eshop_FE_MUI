@@ -1,8 +1,14 @@
 import { useEffect, useRef, useState } from "react";
 import Footer from "./Footer";
 import Header from "./Header";
+import { useTheme } from "@mui/material/styles";
+import { Box, Grid, useMediaQuery } from "@mui/material";
+import Sidebar from "./Sidebar";
 
 const DefaultLayout = ({ children }) => {
+  const theme = useTheme();
+  const matches = useMediaQuery(theme.breakpoints.up("lg"));
+
   const headerRef = useRef();
   const [style, setStyle] = useState({});
   useEffect(() => {
@@ -19,7 +25,20 @@ const DefaultLayout = ({ children }) => {
       }px`,
     });
   }, []);
-  return (
+  return matches ? (
+    <Box overflowX="hidden">
+      <Sidebar />
+      <Box
+        sx={{
+          width: "100%",
+          paddingLeft: "20%",
+        }}
+      >
+        {children}
+        <Footer />
+      </Box>
+    </Box>
+  ) : (
     <div style={style}>
       <Header headerRef={headerRef} />
       {children}

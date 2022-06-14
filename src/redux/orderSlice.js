@@ -6,7 +6,12 @@ const initialState = {
   limit: LIMIT_ROW_ORDER,
   current: null,
   totalPage: 0,
-  order: null,
+  order: {
+    items: [],
+    totalPage: 0,
+    totalResult: 0,
+    limit: LIMIT_ROW_ORDER,
+  },
   recentOrders: [],
   clientOrder: null,
   pageClient: 1,
@@ -139,10 +144,6 @@ const orderSlice = createSlice({
         limit: LIMIT_ROW_ORDER,
       };
     },
-    getOrders: (state, action) => {
-      state.list = action.payload.items;
-      state.totalPage = action.payload.total_page;
-    },
     changePage: (state, action) => {
       state.page = action.payload;
     },
@@ -154,6 +155,10 @@ const orderSlice = createSlice({
     },
     getCurrentClientOrder: (state, action) => {
       state.currentClient = action.payload;
+    },
+    getOrders: (state, action) => {
+      state.list = action.payload.items;
+      state.totalPage = action.payload.total_page;
     },
   },
 });

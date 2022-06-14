@@ -1,7 +1,12 @@
-import { Box, Container, Grid } from "@mui/material";
+import { Box, Container, Divider, Grid } from "@mui/material";
 import { useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
+import {
+  Link,
+  useLocation,
+  useNavigate,
+  useSearchParams,
+} from "react-router-dom";
 
 import Product from "../../components/Product";
 import Breadcrumbs from "../../components/Breadcrumbs";
@@ -128,6 +133,7 @@ const ProductsCategory = ({
       } catch (error) {}
     })();
   }, [dispatch, filters, query, queryString, user]);
+
   useEffect(() => {
     let url;
     const otherQueryParams = {};
@@ -223,27 +229,77 @@ const ProductsCategory = ({
   }, [category, genderCategory, groupCategory]);
 
   return (
-    <Box sx={{ paddingBlock: "20px" }}>
-      <Container sx={{ backgroundColor: "#fff" }}>
-        <Grid container>
-          <Grid item lg={12}>
-            {showBreadCrumbs}
-          </Grid>
-        </Grid>
-        <Grid container>
-          <Grid item xs={12}>
-            <Grid container>
-              <Grid
-                item
-                xs={12}
-                sx={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "center",
-                  paddingBlock: "10px",
-                }}
-              >
-                <div style={{ display: "flex", alignItems: "center" }}>
+    <>
+      <Box px={4} py={4}>
+        {groupCategory && (
+          <Box
+            textAlign="center"
+            textTransform="uppercase"
+            fontSize={28}
+            py={2}
+          >
+            {groupCategory.name}
+          </Box>
+        )}
+        <Divider />
+        <Box display="flex" alignItems="center" justifyContent="center" px={4}>
+          {groupCategory &&
+            groupCategory.categories.map((item, index) => {
+              return (
+                <Box
+                  key={index}
+                  textTransform="uppercase"
+                  m={1}
+                  borderLeft={index === 0 ? "" : "1px solid gray"}
+                  sx={{
+                    "&:hover": {
+                      textDecoration: "underline",
+                      color: "var(--main-color)",
+                    },
+                  }}
+                >
+                  <Link to={`/${item.slug}`} style={{ cursor: "pointer" }}>
+                    {item.name}
+                  </Link>
+                </Box>
+              );
+            })}
+          {category &&
+            category.groupProducts.map((item, index) => {
+              return (
+                <Box
+                  key={index}
+                  m={1}
+                  borderLeft={index === 0 ? "" : "1px solid gray"}
+                  sx={{
+                    "&:hover": {
+                      textDecoration: "underline",
+                      color: "var(--main-color)",
+                    },
+                  }}
+                >
+                  <Link to={`/${item.slug}`} style={{ cursor: "pointer" }}>
+                    {item.name}
+                  </Link>
+                </Box>
+              );
+            })}
+        </Box>
+        <Divider />
+        <Box mt={3}>
+          <Grid container>
+            <Grid item xs={12}>
+              <Grid container>
+                <Grid
+                  item
+                  xs={12}
+                  sx={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                    paddingBlock: "10px",
+                  }}
+                >
                   <Filter
                     filters={filters}
                     setFilters={setFilters}
@@ -251,79 +307,60 @@ const ProductsCategory = ({
                     sizeFilters={sizeFilters.map((item) => item.value)}
                     materialFilters={materialFilters.map((item) => item.value)}
                   />
-                  {product?.items?.length > 0 && (
-                    <span>{product?.total_result} mặt hàng</span>
-                  )}
-                </div>
-
-                <Sort sortFilter={sort} setSortFilter={setSort} />
+                  <Sort sortFilter={sort} setSortFilter={setSort} />
+                </Grid>
               </Grid>
-            </Grid>
-            <Grid container spacing={2}>
-              {product && product.items && product.items.length === 0 && (
-                <Grid
-                  item
-                  lg={12}
-                  sx={{
-                    marginBottom: "8px",
-                  }}
-                >
-                  <div
-                    style={{
-                      backgroundColor: "#ff9e49",
-                      paddingBlock: "10px",
+              <Grid container spacing={4}>
+                {product && product.items && product.items.length === 0 && (
+                  <Grid
+                    item
+                    lg={12}
+                    sx={{
+                      marginBottom: "8px",
                     }}
                   >
-                    Không có mặt hàng trong danh mục này
-                  </div>
-                </Grid>
-              )}
-              {product &&
-                product.items &&
-                product.items.length !== 0 &&
-                product.items.map((product) => {
-                  return (
-                    <Grid
-                      key={product.slug}
-                      item
-                      xs={6}
-                      sm={4}
-                      md={3}
-                      sx={{
-                        flexBasis: {
-                          lg: "20% !important",
-                        },
-                        maxWidth: {
-                          lg: "20% !important",
-                        },
-                        marginBottom: "8px",
+                    <div
+                      style={{
+                        backgroundColor: "#ff9e49",
+                        paddingBlock: "10px",
                       }}
                     >
-                      <Product product={product} />
-                    </Grid>
-                  );
-                })}
-              {product && product.total_page > 1 && (
-                <Grid
-                  item
-                  xs={12}
-                  sx={{
-                    display: "flex",
-                    justifyContent: "center",
-                  }}
-                >
-                  <Pagination
-                    page={page}
-                    onChange={(e, value) => setPage(value)}
-                    totalPage={product.total_page}
-                  />
-                </Grid>
-              )}
+                      Không có mặt hàng trong danh mục này
+                    </div>
+                  </Grid>
+                )}
+                {product &&
+                  product.items &&
+                  product.items.length !== 0 &&
+                  product.items.map((product) => {
+                    return (
+                      <Grid key={product.slug} item xs={6} sm={4} md={3}>
+                        <Product product={product} />
+                      </Grid>
+                    );
+                  })}
+                {product && product.total_page > 1 && (
+                  <Grid
+                    item
+                    xs={12}
+                    sx={{
+                      display: "flex",
+                      justifyContent: "center",
+                    }}
+                  >
+                    <Pagination
+                      page={page}
+                      onChange={(e, value) => setPage(value)}
+                      totalPage={product.total_page}
+                    />
+                  </Grid>
+                )}
+              </Grid>
             </Grid>
           </Grid>
-        </Grid>
-      </Container>
-    </Box>
+        </Box>
+      </Box>
+    </>
   );
 };
 

@@ -73,7 +73,7 @@
   border-bottom: 20px solid #ff0800;
 }
 .product-img-wrapper {
-  max-height: 320px;
+  max-height: 360px;
   overflow: hidden;
   position: relative;
 }
@@ -153,5 +153,8 @@
   color: var(--main-color);
 }
 .product-price {
-  color: var(--main-color);
+  text-align: center;
+  display: block;
+  font-size: 16px;
+  margin-top: 8px;
 }

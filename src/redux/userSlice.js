@@ -3,7 +3,12 @@ import { LIMIT_ROW_USER } from "../constants";
 const initialState = {
   all: [],
   current: null,
-  user: null,
+  user: {
+    items: [],
+    totalResult: 0,
+    totalPage: 0,
+    limit: LIMIT_ROW_USER,
+  },
   limit: LIMIT_ROW_USER,
   page: 1,
 };

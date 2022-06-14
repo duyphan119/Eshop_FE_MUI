@@ -6,6 +6,12 @@ const initialState = {
   limit: LIMIT_ROW_SIZE,
   current: null,
   all: [],
+  size: {
+    items: [],
+    totalResult: 0,
+    totalPage: 0,
+    limit: LIMIT_ROW_SIZE,
+  },
 };
 const sizeSlice = createSlice({
   name: "size",
@@ -16,6 +22,9 @@ const sizeSlice = createSlice({
     },
     getAllSizes: (state, action) => {
       state.list = action.payload;
+    },
+    getSize: (state, action) => {
+      state.size = action.payload;
     },
     addSize: (state, action) => {
       state.list = [action.payload, ...state.list];
@@ -34,6 +43,9 @@ const sizeSlice = createSlice({
     changePage: (state, action) => {
       state.page = action.payload;
     },
+    changeLimit: (state, action) => {
+      state.limit = action.payload;
+    },
     getCurrentSize: (state, action) => {
       state.current = action.payload;
     },
@@ -42,6 +54,8 @@ const sizeSlice = createSlice({
 export const {
   getAllSizes,
   addSize,
+  getSize,
+  changeLimit,
   changePage,
   getCurrentSize,
   updateSize,

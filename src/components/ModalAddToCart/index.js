@@ -285,7 +285,7 @@ const ModalAddToCart = () => {
                       : {}
                   }
                 >
-                  {formatThousandDigits(product.price)}đ
+                  {formatThousandDigits(product.price)} ₫
                 </span>
               </Typography>
               <Typography variant="body2">

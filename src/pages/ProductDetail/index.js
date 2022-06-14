@@ -1,7 +1,7 @@
-import AddOutlinedIcon from "@mui/icons-material/AddOutlined";
+import ArrowDropUpRoundedIcon from "@mui/icons-material/ArrowDropUpRounded";
 import KeyboardArrowDownOutlinedIcon from "@mui/icons-material/KeyboardArrowDownOutlined";
 import KeyboardArrowUpOutlinedIcon from "@mui/icons-material/KeyboardArrowUpOutlined";
-import RemoveOutlinedIcon from "@mui/icons-material/RemoveOutlined";
+import ArrowDropDownRoundedIcon from "@mui/icons-material/ArrowDropDownRounded";
 import FavoriteBorderOutlinedIcon from "@mui/icons-material/FavoriteBorderOutlined";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import StraightenIcon from "@mui/icons-material/Straighten";
@@ -11,6 +11,8 @@ import {
   Button,
   Container,
   Grid,
+  Tab,
+  Tabs,
   Tooltip,
   Typography,
 } from "@mui/material";
@@ -36,13 +38,14 @@ import { formatThousandDigits } from "../../utils";
 import { addToLatest } from "../../redux/productSlice";
 import ProductDetailSlider from "../../components/ProductDetailSlider";
 import Comments from "../../components/Comments";
-import { SocketContext } from "../../context";
+// import { SocketContext } from "../../context";
 import Product from "../../components/Product";
 import ProductSkeleton from "../../components/Skeleton/Product";
 import Stars from "../../components/Stars";
 import { addToWishlist, removeWishlistItem } from "../../redux/wishlistSlice";
 import ModalSizeGuide from "./ModalSizeGuide";
 import SizeGuide from "./SizeGuide";
+import TabPanel from "../../components/TabPanel";
 const SlickArrowLeft = ({ currentSlide, slideCount, ...props }) => (
   <button
     {...props}
@@ -71,7 +74,7 @@ const SlickArrowRight = ({ currentSlide, slideCount, ...props }) => (
   </button>
 );
 const ProductDetail = ({ query }) => {
-  const socket = useContext(SocketContext);
+  // const socket = useContext(SocketContext);
 
   const user = useSelector((state) => state.auth.currentUser);
   const wishlist = useSelector((state) => state.wishlist.wishlist);
@@ -88,6 +91,7 @@ const ProductDetail = ({ query }) => {
   const [productUser, setProductUser] = useState();
   const [openModalSizeGuide, setOpenModalSizeGuide] = useState(false);
   const [openSizeGuide, setOpenSizeGuide] = useState(false);
+  const [tab, setTab] = useState(0);
 
   const params = useParams();
   const { product_slug } = params;
@@ -95,23 +99,24 @@ const ProductDetail = ({ query }) => {
   const hasDiscount =
     product && product.discounts && product.discounts.length > 0;
 
-  useEffect(() => {
-    if (product) {
-      socket.emit("join-room", product.slug);
-    }
-  }, [socket, product]);
-
+  // useEffect(() => {
+  //   if (product) {
+  //     socket.emit("join-room", product.slug);
+  //   }
+  // }, [socket, product]);
   useEffect(() => {
     (async function () {
       const data = await configAxiosAll(user, dispatch).get(query);
       document.title = data.name;
-      setProduct(data);
+      setProduct(data.item);
       dispatch(addToLatest(data));
-      setIndexSize(data.colors[0].sizes.findIndex((item) => item.amount > 0));
-      const data2 = await configAxiosAll(user, dispatch).get(
-        `${API_PRODUCT_URL}/category/${data.category.slug}?exceptId=${data.id}&limit=${LIMIT_RECOMMEND_PRODUCT}`
+      setIndexSize(
+        data.item.colors[0].sizes.findIndex((item) => item.amount > 0)
       );
-      setRecommendedProduct(data2);
+      // const data2 = await configAxiosAll(user, dispatch).get(
+      //   `${API_PRODUCT_URL}/group-product/${data.item.groupProduct.slug}?exceptId=${data.item.id}&limit=${LIMIT_RECOMMEND_PRODUCT}`
+      // );
+      // setRecommendedProduct(data2);
     })();
   }, [dispatch, product_slug, user, query]);
 
@@ -161,10 +166,8 @@ const ProductDetail = ({ query }) => {
         const data = await configAxiosAll(user, dispatch).post(
           `${API_CART_ITEM_URL}`,
           {
-            product_detail_id:
-              product.colors[indexColor].sizes[indexSize].detail_id,
+            detailId: product.colors[indexColor].sizes[indexSize].detailId,
             quantity,
-            cart_id: user.cart.id,
           }
         );
         dispatch(addToCart(data));
@@ -225,45 +228,37 @@ const ProductDetail = ({ query }) => {
       }
     }
   }
+  console.log({ product });
   if (!product) return "";
 
   return (
-    <Box sx={{ minHeight: "100%", paddingBlock: "20px" }}>
-      <Container
-        sx={{
-          paddingInline: {
-            lg: "100px !important",
-            xs: "24px !important",
-          },
-        }}
-      >
-        <Box sx={{ mb: 1 }}>
-          <Breadcrumbs
-            items={[
-              {
-                to: "/",
-                text: "Trang chủ",
-              },
-              {
-                to: `/${product.category.group_category.gender.slug}`,
-                text: product.category.group_category.gender.name,
-              },
-              {
-                to: `/${product.category.group_category.slug}`,
-                text: product.category.group_category.name,
-              },
-              {
-                to: `/${product.category.slug}`,
-                text: product.category.name,
-              },
-            ]}
-            text={product.name}
-          />
-        </Box>
+    <Box sx={{ minHeight: "100%" }}>
+      <Box mb={1} py={3} px={6} bgcolor="lightgrey">
+        <Breadcrumbs
+          items={[
+            {
+              to: "/",
+              text: "Trang chủ",
+            },
+            {
+              to: `/${product.groupProduct.category.groupCategory.slug}`,
+              text: product.groupProduct.category.groupCategory.name,
+            },
+            {
+              to: `/${product.groupProduct.category.slug}`,
+              text: product.groupProduct.category.name,
+            },
+            {
+              text: product.groupProduct.name,
+            },
+          ]}
+        />
+      </Box>
+      <Box py={5} pl={5} pr={8}>
         <Grid container columnSpacing={3}>
           <Grid
             item
-            lg={6}
+            lg={4}
             sx={{
               display: {
                 xs: "none",
@@ -271,99 +266,20 @@ const ProductDetail = ({ query }) => {
               },
             }}
           >
-            <Grid container columnSpacing={1}>
-              <Grid
-                item
-                xs={2}
-                sx={{
-                  overflow: "hidden",
-                  height: "520px",
-                  display: "flex",
-                  justifyContent: "center",
-                  alignItems: "center",
-                  position: "relative",
-                }}
-              >
-                <Slider
-                  {...{
-                    dot: true,
-                    vertical: true,
-                    arrows:
-                      product?.colors[indexColor].images.length >
-                      PRODUCTS_SLIDER_VERTICAL
-                        ? true
-                        : false,
-                    slidesToShow:
-                      product?.colors[indexColor].images.length >
-                      PRODUCTS_SLIDER_VERTICAL
-                        ? PRODUCTS_SLIDER_VERTICAL
-                        : product?.colors[indexColor].images.length,
-                    verticalSwiping: true,
-                    slidesToScroll: 1,
-                    initialSlide: 0,
-                    className: "slick-vertical-slider",
-                    prevArrow: <SlickArrowLeft />,
-                    nextArrow: <SlickArrowRight />,
-                  }}
-                >
-                  {product?.colors[indexColor].images.map((item, index) => {
-                    return (
-                      <img
-                        key={index}
-                        src={item.url}
-                        alt={""}
-                        height={88}
-                        onClick={() =>
-                          setIndexImage(
-                            product?.colors[indexColor].images.findIndex(
-                              (el) => el.url === item.url
-                            )
-                          )
-                        }
-                      />
-                    );
-                  })}
-                </Slider>
-              </Grid>
-              <Grid
-                item
-                lg={10}
-                sx={{
-                  display: "flex",
-                  flexDirection: "column",
-                }}
-              >
-                <img
-                  src={product?.colors[indexColor]?.images[indexImage]?.url}
-                  alt={product.name}
-                  height="520"
-                />
-              </Grid>
-            </Grid>
+            <Box width="100%">
+              <img src={product.avatar} alt="" width="100%" />
+            </Box>
           </Grid>
-          {/* Slider hình ảnh khi ở mobile và tablet */}
-          <Grid
-            item
-            xs={12}
-            sx={{
-              paddingBlock: "20px",
-              display: {
-                lg: "none",
-              },
-            }}
-          >
-            <ProductDetailSlider images={product.colors[indexColor].images} />
-          </Grid>
-          <Grid item xs={12} lg={6}>
+          <Grid item xs={12} lg={8}>
             <div className="product-name">
-              <Typography
-                variant="h6"
-                sx={{
-                  fontWeight: "600",
+              <div
+                style={{
+                  fontSize: 32,
+                  textTransform: "uppercase",
                 }}
               >
                 {product.name}
-              </Typography>
+              </div>
               <div
                 className="add-to-favorite"
                 onClick={handleAddToFavoriteList}
@@ -384,15 +300,16 @@ const ProductDetail = ({ query }) => {
             <div className="product-rate">
               <Stars
                 rate={
-                  product.rate.total_rate && product.rate.count > 0
-                    ? product.rate.total_rate / product.rate.count
-                    : 0
+                  // product.rate.total_rate && product.rate.count > 0
+                  //   ? product.rate.total_rate / product.rate.count
+                  //   : 0
+                  5
                 }
               />
               <div className="">
                 &nbsp;(
-                {product.rate.count === 0 ? "Chưa có" : product.rate.count}
-                &nbsp;đánh giá)
+                {/* {product.rate.count === 0 ? "Chưa có" : product.rate.count} */}
+                0 &nbsp;đánh giá)
               </div>
             </div>
             {/* <Box display="flex" alignItems="center">
@@ -403,32 +320,30 @@ const ProductDetail = ({ query }) => {
                 : `${product.comments.length} lượt đánh giá`}
             </Typography>
           </Box> */}
-            <Typography variant="body1">
-              {hasDiscount && (
+            <div style={{ fontSize: 24 }}>
+              {/* {hasDiscount && (
                 <span style={{ color: "var(--main-color)" }}>
                   {formatThousandDigits(
                     product.discounts[product.discounts.length - 1].new_price
                   )}
                   đ
                 </span>
-              )}
+              )} */}
               <span
                 style={
-                  hasDiscount
-                    ? {
-                        textDecoration: "line-through",
-                        marginLeft: "4px",
-                        color: "gray",
-                      }
-                    : {}
+                  // hasDiscount
+                  //   ? {
+                  //       textDecoration: "line-through",
+                  //       marginLeft: "4px",
+                  //       color: "gray",
+                  //     }
+                  //   :
+                  { color: "red" }
                 }
               >
-                {formatThousandDigits(product.price)}đ
+                {formatThousandDigits(product.initPrice)} ₫
               </span>
-            </Typography>
-            <Typography variant="body1">
-              SKU: {product?.colors[indexColor].sizes[indexSize].sku}
-            </Typography>
+            </div>
             <Typography variant="body1" sx={{ mt: 2 }}>
               Màu sắc: {product?.colors[indexColor].value}
             </Typography>
@@ -442,7 +357,7 @@ const ProductDetail = ({ query }) => {
                   <div
                     key={index}
                     style={{
-                      backgroundImage: `url("${item.images[0].url}")`,
+                      backgroundImage: `url(${item.avatar})`,
                       width: "60px",
                       height: "60px",
                       cursor: "pointer",
@@ -457,7 +372,6 @@ const ProductDetail = ({ query }) => {
                       backgroundPosition: "center",
                       backgroundRepeat: "no-repeat",
                       padding: "3px",
-                      borderRadius: "50%",
                     }}
                     onClick={() => {
                       setIndexImage(0);
@@ -472,110 +386,111 @@ const ProductDetail = ({ query }) => {
                 );
               })}
             </div>
-            {product.colors[indexColor].sizes[indexSize].code !== "0" && (
-              <Box
-                sx={{
-                  mt: 2,
+            {/* {product.category.guides.length > 0 && (
+              <div
+                onClick={() => setOpenSizeGuide(!openSizeGuide)}
+                style={{
                   display: "flex",
-                  justifyContent: "space-between",
                   alignItems: "center",
+                  cursor: "pointer",
+                  userSelect: "none",
+                  marginTop: "16px",
                 }}
               >
-                <Typography variant="body1">
-                  Kích cỡ: {product.colors[indexColor].sizes[indexSize].value}
-                </Typography>
-                {product.category.guides.length > 0 && (
-                  <>
-                    <div
-                      onClick={() => setOpenSizeGuide(!openSizeGuide)}
-                      style={{
-                        display: "flex",
-                        alignItems: "center",
-                        cursor: "pointer",
-                        userSelect: "none",
-                      }}
-                    >
-                      <StraightenIcon sx={{ color: "var(--main-color)" }} />
-                      Hướng dẫn chọn size
-                      <KeyboardArrowDownIcon />
-                    </div>
-                    <Typography
-                      variant="body1"
-                      sx={{
-                        textDecoration: "underline",
-                        color: "var(--main-color)",
-                        cursor: "pointer",
-                      }}
-                      onClick={() => setOpenModalSizeGuide(true)}
-                    >
-                      Bảng chọn size
-                    </Typography>
-                  </>
-                )}
-              </Box>
-            )}
-            {openSizeGuide && (
+                <StraightenIcon sx={{ color: "var(--main-color)" }} />
+                Hướng dẫn chọn size
+                <KeyboardArrowDownIcon />
+              </div>
+            )} */}
+            {/* {openSizeGuide && (
               <SizeGuide
                 handleClose={() => setOpenSizeGuide(false)}
                 guides={product.category.guides}
               />
-            )}
-
-            <Box
-              style={{
-                display: "flex",
-              }}
-            >
-              {product.colors[indexColor].sizes.map((item, index) => {
-                if (item.code === "0") return "";
-                return (
-                  <div
-                    key={item.id}
-                    style={{
-                      width: "40px",
-                      height: "40px",
-                      cursor: item.amount === 0 ? "default" : "pointer",
-                      border: `1px solid ${
-                        index === indexSize ? "var(--main-color)" : "#000"
-                      }`,
-                      userSelect: "none",
-                      marginRight: "4px",
-                      padding: "3px",
+            )} */}
+            <Box display="flex">
+              <Box>
+                {product.colors[indexColor].sizes[indexSize].code !== "0" && (
+                  <Box
+                    sx={{
+                      mt: 2,
                       display: "flex",
                       alignItems: "center",
-                      justifyContent: "center",
-                      backgroundColor: ` ${
-                        index === indexSize
-                          ? "var(--main-color)"
-                          : "transparent"
-                      }`,
-                      position: "relative",
                     }}
-                    onClick={() => {
-                      if (item.amount > 0) {
-                        setIndexSize(index);
-                      }
-                    }}
-                    className={`${item.amount === 0 ? "size-stuck" : ""}`}
                   >
-                    {item.value}
+                    <Typography variant="body1">Kích cỡ:</Typography>
+                  </Box>
+                )}
+                <Box
+                  style={{
+                    display: "flex",
+                  }}
+                >
+                  {product.colors[indexColor].sizes.map((item, index) => {
+                    if (item.code === "0") return "";
+                    return (
+                      <div
+                        key={item.id}
+                        style={{
+                          width: "24px",
+                          height: "24px",
+                          cursor: item.amount === 0 ? "default" : "pointer",
+                          border: `1px solid ${
+                            index === indexSize ? "var(--main-color)" : "#000"
+                          }`,
+                          userSelect: "none",
+                          marginRight: "4px",
+                          padding: "3px",
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          backgroundColor: ` ${
+                            index === indexSize
+                              ? "var(--main-color)"
+                              : "transparent"
+                          }`,
+                          position: "relative",
+                          fontSize: 10,
+                        }}
+                        onClick={() => {
+                          if (item.amount > 0) {
+                            setIndexSize(index);
+                          }
+                        }}
+                        className={`${item.amount === 0 ? "size-stuck" : ""}`}
+                      >
+                        {item.value}
+                      </div>
+                    );
+                  })}
+                </Box>
+              </Box>
+              <Box ml={6}>
+                <Box
+                  sx={{
+                    mt: 2,
+                    display: "flex",
+                    alignItems: "center",
+                  }}
+                >
+                  <Typography variant="body1">Số lượng:</Typography>
+                </Box>
+                <Box className="product-quantity-wrapper">
+                  <input
+                    type="text"
+                    value={quantity}
+                    onChange={(e) => handleChangeQuantity(e.target.value)}
+                  />
+                  <div className="product-quantity-btn-wrapper">
+                    <button onClick={() => handleChangeQuantity(quantity + 1)}>
+                      <ArrowDropUpRoundedIcon />
+                    </button>
+
+                    <button onClick={() => handleChangeQuantity(quantity - 1)}>
+                      <ArrowDropDownRoundedIcon />
+                    </button>
                   </div>
-                );
-              })}
-            </Box>
-            <Box sx={{ mt: 2, mb: 2 }}>
-              <Box className="product-quantity-wrapper">
-                <button onClick={() => handleChangeQuantity(quantity - 1)}>
-                  <RemoveOutlinedIcon />
-                </button>
-                <input
-                  type="text"
-                  value={quantity}
-                  onChange={(e) => handleChangeQuantity(e.target.value)}
-                />
-                <button onClick={() => handleChangeQuantity(quantity + 1)}>
-                  <AddOutlinedIcon />
-                </button>
+                </Box>
               </Box>
             </Box>
             {msgQuantity !== "" && (
@@ -597,7 +512,6 @@ const ProductDetail = ({ query }) => {
               }}
             >
               <Button
-                variant="contained"
                 sx={{
                   flex: "1",
                   marginRight: {
@@ -605,86 +519,91 @@ const ProductDetail = ({ query }) => {
                     lg: "2px",
                   },
                   backgroundColor: "#fff !important",
-                  color: "var(--main-color)",
                   paddingBlock: "8px",
+                  border: "2px solid red",
+                  borderRadius: "0",
+                  color: "red",
                 }}
                 onClick={handleAddToCart}
               >
                 Thêm vào giỏ hàng
               </Button>
               <Button
-                variant="contained"
                 sx={{
                   flex: "1",
                   marginLeft: {
                     xs: "0",
                     lg: "2px",
                   },
+                  backgroundColor: "#fff !important",
                   paddingBlock: "8px",
+                  border: "2px solid #000",
+                  borderRadius: "0",
+                  color: "#000",
                 }}
               >
                 Mua ngay
               </Button>
             </Box>
-            <Box>
-              <h3>Đặc điểm sản phẩm</h3>
-              <div
-                dangerouslySetInnerHTML={{ __html: product.description }}
-              ></div>
-            </Box>
           </Grid>
         </Grid>
-        <Box mb={2}>{product && <Comments product={product} />}</Box>
-        {recommendedProduct && recommendedProduct.items.length === 0 ? (
-          <></>
-        ) : (
-          <Grid container columnSpacing={2} rowSpacing={2}>
-            <Grid
-              item
-              md={12}
-              sx={{
-                textAlign: "center",
-                marginBlock: "5px",
-              }}
+      </Box>
+      <Tabs
+        value={tab}
+        onChange={(e, value) => setTab(value)}
+        sx={{
+          ".MuiTab-root.Mui-selected": {
+            color: "#000 ",
+          },
+          ".MuiTabs-indicator": {
+            bgcolor: "#000",
+          },
+        }}
+      >
+        <Tab label="Mô tả" />
+        <Tab label="Đánh giá" />
+      </Tabs>
+      <TabPanel index={0} value={tab}>
+        <Box p={2}>
+          {product?.colors[indexColor]?.images?.map((item, index) => (
+            <img key={index} alt="" src={item.url} width="100%" />
+          ))}
+        </Box>
+      </TabPanel>
+      <TabPanel index={1} value={tab}>
+        b
+      </TabPanel>
+      {/* <Box mb={2}>{product && <Comments product={product} />}</Box> */}
+      {recommendedProduct && recommendedProduct.items.length === 0 ? (
+        <></>
+      ) : (
+        <Grid container columnSpacing={2} rowSpacing={2}>
+          <Grid
+            item
+            md={12}
+            sx={{
+              textAlign: "center",
+              marginBlock: "5px",
+            }}
+          >
+            <Typography
+              variant="h6"
+              textTransform="uppercase"
+              color="var(--main-color)"
             >
-              <Typography
-                variant="h6"
-                textTransform="uppercase"
-                color="var(--main-color)"
-              >
-                Có thể bạn muốn mua
-              </Typography>
-            </Grid>
+              Có thể bạn muốn mua
+            </Typography>
           </Grid>
-        )}
+        </Grid>
+      )}
 
-        <Grid container spacing={2}>
-          {recommendedProduct
-            ? recommendedProduct.items.length > 0 &&
-              recommendedProduct.items.map((product) => {
-                return (
-                  <Grid
-                    key={product.slug}
-                    item
-                    xs={6}
-                    sm={4}
-                    md={3}
-                    sx={{
-                      flexBasis: {
-                        lg: "20% !important",
-                      },
-                      maxWidth: {
-                        lg: "20% !important",
-                      },
-                      marginBlock: "5px",
-                    }}
-                  >
-                    <Product product={product} />
-                  </Grid>
-                );
-              })
-            : new Array(LIMIT_RECOMMEND_PRODUCT).fill(1).map((item, index) => (
+      <Grid container spacing={2}>
+        {recommendedProduct
+          ? recommendedProduct.items.length > 0 &&
+            recommendedProduct.items.map((product) => {
+              return (
                 <Grid
+                  key={product.slug}
                   item
                   xs={6}
                   sm={4}
@@ -698,13 +617,32 @@ const ProductDetail = ({ query }) => {
                     },
                     marginBlock: "5px",
                   }}
-                  key={index}
                 >
-                  <ProductSkeleton />
+                  <Product product={product} />
                 </Grid>
-              ))}
-        </Grid>
-      </Container>
+              );
+            })
+          : new Array(LIMIT_RECOMMEND_PRODUCT).fill(1).map((item, index) => (
+              <Grid
+                item
+                xs={6}
+                sm={4}
+                md={3}
+                sx={{
+                  flexBasis: {
+                    lg: "20% !important",
+                  },
+                  maxWidth: {
+                    lg: "20% !important",
+                  },
+                  marginBlock: "5px",
+                }}
+                key={index}
+              >
+                <ProductSkeleton />
+              </Grid>
+            ))}
+      </Grid>
       {openModalSizeGuide && (
         <ModalSizeGuide
           handleClose={() => setOpenModalSizeGuide(false)}

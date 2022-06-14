@@ -26,7 +26,7 @@ const Product = ({ product }) => {
   const productRef = useRef();
 
   useEffect(() => {
-    setProductUser(wishlist.findIndex((item) => item.id === product.id) !== -1);
+    // setProductUser(wishlist.findIndex((item) => item.id === product.id) !== -1);
   }, [product.id, wishlist]);
 
   async function handleAddToFavoriteList() {
@@ -84,7 +84,7 @@ const Product = ({ product }) => {
   return (
     <Box className="product">
       <div className="product-tags">
-        {product &&
+        {/* {product &&
         product.category.discounts &&
         product.category.discounts.length > 0 ? (
           <div className="product-tag product-tag-sale">
@@ -107,24 +107,21 @@ const Product = ({ product }) => {
         )}
         {checkIsNewProduct && (
           <div className="product-tag product-tag-new">Mới</div>
-        )}
+        )} */}
 
         {/* <div className="product-tag product-tag-hot">Hot</div> */}
       </div>
       <div
         className="product-img-wrapper"
         ref={productRef}
-        style={{
-          height: productRef.current
-            ? `${(productRef.current.getBoundingClientRect().width * 3) / 2}px`
-            : "0",
-        }}
+        // style={{
+        // height: productRef.current
+        //   ? `${(productRef.current.getBoundingClientRect().width * 3) / 2}px`
+        //   : "0",
+        // }}
       >
         <Link to={`/${product.slug}`} className="product-img-link">
-          <img
-            src={product?.colors[indexColor]?.images[0]?.url}
-            alt={product?.name}
-          />
+          <img src={product?.avatar} alt={product?.name} />
         </Link>
         <div
           className="product-add-to-cart-btn"
@@ -155,7 +152,7 @@ const Product = ({ product }) => {
           </Tooltip>
         )}
       </div>
-      <Tooltip title={product.name}>
+      {/* <Tooltip title={product.name}>
         <Link
           to={`/${product.slug}`}
           className="product-name three-dot three-dot-2 hover-color-main-color"
@@ -166,9 +163,9 @@ const Product = ({ product }) => {
         >
           {product.name}
         </Link>
-      </Tooltip>
+      </Tooltip> */}
       <Typography variant="body2">
-        {product &&
+        {/* {product &&
         product.category.discounts &&
         product.category.discounts.length > 0 ? (
           <span className="product-new-price">
@@ -187,21 +184,22 @@ const Product = ({ product }) => {
               đ
             </span>
           )
-        )}
+        )} */}
         <span
-          className={`${
-            product &&
-            ((product.category.discounts &&
-              product.category.discounts.length > 0) ||
-              (product.discounts && product.discounts.length > 0))
-              ? "product-old-price"
-              : "product-price"
-          }`}
+          // className={`${
+          //   product &&
+          //   ((product.category.discounts &&
+          //     product.category.discounts.length > 0) ||
+          //     (product.discounts && product.discounts.length > 0))
+          //     ? "product-old-price"
+          //     : "product-price"
+          // }`}
+          className="product-price"
         >
-          {formatThousandDigits(product.price)}đ
+          {formatThousandDigits(product.initPrice)} ₫
         </span>
       </Typography>
-      <div className="product-colors-preview">
+      {/* <div className="product-colors-preview">
         {product.colors.map((color, index) =>
           index < PRODUCT_COLORS_PREVIEW ? (
             <Tooltip title={`Màu ${color.value.toLowerCase()}`} key={index}>
@@ -217,7 +215,7 @@ const Product = ({ product }) => {
             <></>
           )
         )}
-      </div>
+      </div> */}
     </Box>
   );
 };

@@ -103,7 +103,7 @@ const FavoriteItem = ({ item }) => {
             mt={1}
             style={{ color: "var(--main-color)", fontSize: "14px" }}
           >
-            {formatThousandDigits(item.price)}đ
+            {formatThousandDigits(item.price)} ₫
           </Box>
           <Box className="" display="flex" mt={1}>
             {item.colors.map((color, index) => (

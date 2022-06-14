@@ -89,7 +89,7 @@ const SearchBar = () => {
                               <div className="three-dot three-dot-2">
                                 {item.name}
                               </div>
-                              <div>{formatThousandDigits(item.price)}đ</div>
+                              <div>{formatThousandDigits(item.price)} ₫</div>
                             </div>
                           </Link>
                         </li>

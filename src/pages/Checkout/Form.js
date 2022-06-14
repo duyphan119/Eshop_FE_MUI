@@ -18,10 +18,10 @@ const Form = ({ order, setOrder }) => {
   const [optionsCity, setOptionsCity] = useState([]);
   const [optionsDistrict, setOptionsDistricts] = useState([]);
   const [optionsWards, setOptionsWards] = useState([]);
-
   useEffect(() => {
     (async function () {
       const res = await axios.get(`${API_PROVINCE_URL}?depth=3`);
+      console.log({ res });
       setOptionsCity(res.data);
     })();
   }, []);
@@ -43,172 +43,138 @@ const Form = ({ order, setOrder }) => {
   }, [order.district, optionsDistrict]);
 
   return (
-    <Box sx={{ pt: 4 }}>
-      <Grid container spacing={2}>
-        <Grid item xs={12} md={6}>
+    <Grid container spacing={1}>
+      <Grid item xs={12} md={6} pr={2}>
+        <Box p={2}>
           <TitleControl>Thông tin giao hàng</TitleControl>
-          <FormControl fullWidth sx={{ mt: 2 }}>
-            <TextField
-              disabled={true}
-              inputProps={{
-                style: { fontSize: 14 },
-              }}
-              size="small"
-              label="Họ tên"
-              variant="outlined"
-              value={order.fullName}
-              onChange={(e) =>
-                setOrder((prev) => ({
-                  ...prev,
-                  fullName: e.target.value,
-                }))
-              }
-            />
-          </FormControl>
-          <FormControl fullWidth sx={{ mt: 2 }}>
-            <TextField
-              inputProps={{
-                style: { fontSize: 14 },
-              }}
-              size="small"
-              label="Số điện thoại liện hệ"
-              variant="outlined"
-              required
-              value={order.phoneNumber}
-              onChange={(e) =>
-                setOrder({ ...order, phoneNumber: e.target.value })
-              }
-            />
-          </FormControl>
-          <FormControl fullWidth sx={{ mt: 2 }} size="small">
-            <InputLabel
-              id="city"
-              sx={{ bgcolor: "#fff", padding: "0 8px 0 3px" }}
-            >
-              Tỉnh, Thành phố
-            </InputLabel>
-            <Select
-              required
-              className="fz-14"
-              labelId="city"
-              size="small"
-              value={order.city}
-              label="Tỉnh, Thành phố"
-              onChange={(e) => setOrder({ ...order, city: e.target.value })}
-            >
-              {optionsCity.map((item) => {
-                return (
-                  <MenuItem value={item.name} key={item.name}>
-                    {item.name}
-                  </MenuItem>
-                );
-              })}
-            </Select>
-          </FormControl>
-          <FormControl fullWidth sx={{ mt: 2 }} size="small">
-            <InputLabel
-              id="district"
-              sx={{ bgcolor: "#fff", padding: "0 8px 0 3px" }}
-            >
-              Quận, Huyện
-            </InputLabel>
-            <Select
-              required
-              labelId="district"
-              className="fz-14"
-              value={order.district}
-              label="Quận, Huyện"
-              disabled={optionsDistrict.length === 0}
-              onChange={(e) => setOrder({ ...order, district: e.target.value })}
-            >
-              {optionsDistrict.map((item) => {
-                return (
-                  <MenuItem value={item.name} key={item.name}>
-                    {item.name}
-                  </MenuItem>
-                );
-              })}
-            </Select>
-          </FormControl>
-          <FormControl fullWidth sx={{ mt: 2 }} size="small">
-            <InputLabel
-              id="ward"
-              sx={{ bgcolor: "#fff", padding: "0 8px 0 3px" }}
-            >
-              Phường
-            </InputLabel>
-            <Select
-              required
-              labelId="ward"
-              className="fz-14"
-              value={order.ward}
-              label="Phường"
-              disabled={optionsWards.length === 0}
-              onChange={(e) => setOrder({ ...order, ward: e.target.value })}
-            >
-              {optionsWards.map((item) => {
-                return (
-                  <MenuItem value={item.name} key={item.name}>
-                    {item.name}
-                  </MenuItem>
-                );
-              })}
-            </Select>
-          </FormControl>
-          <FormControl fullWidth sx={{ mt: 2 }}>
-            <TextField
-              required
-              inputProps={{
-                style: { fontSize: 14 },
-              }}
-              size="small"
-              id="street"
-              label="Tên đường"
-              variant="outlined"
-              value={order.street}
-              disabled={optionsWards.length === 0}
-              onChange={(e) => setOrder({ ...order, street: e.target.value })}
-            />
-          </FormControl>
-          <FormControl fullWidth sx={{ mt: 2 }}>
-            <TextField
-              required
-              inputProps={{
-                style: { fontSize: 14 },
-              }}
-              size="small"
-              id="addressNo"
-              label="Số nhà"
-              variant="outlined"
-              value={order.addressNo}
-              disabled={optionsWards.length === 0}
-              onChange={(e) =>
-                setOrder({ ...order, addressNo: e.target.value })
-              }
-            />
-          </FormControl>
-          <Divider sx={{ mt: 2 }} />
-          <FormControl fullWidth sx={{ mt: 2 }}>
-            <textarea
-              placeholder="Ghi chú"
-              rows={4}
-              value={order.description}
-              onChange={(e) =>
-                setOrder({ ...order, description: e.target.value })
-              }
-            ></textarea>
-          </FormControl>
-        </Grid>
-
-        <Grid item xs={12} md={6}>
-          <TitleControl>Thanh toán</TitleControl>
-          <FormControlLabel
-            control={<Checkbox checked={true} />}
-            label="Thanh toán khi giao hàng"
-          />
-        </Grid>
+          <Grid container spacing={1}>
+            <Grid item xs={7}>
+              <div className="form-group">
+                <label htmlFor="fullName">Họ và Tên</label>
+                <input
+                  value={order.fullName}
+                  onChange={(e) =>
+                    setOrder({ ...order, fullName: e.target.value })
+                  }
+                  id="fullName"
+                  type="text"
+                  placeholder="Họ Tên"
+                />
+              </div>
+            </Grid>
+            <Grid item xs={5}>
+              <div className="form-group">
+                <label htmlFor="telephone">Số điện thoại</label>
+                <input
+                  id="telephone"
+                  value={order.telephone}
+                  onChange={(e) =>
+                    setOrder({ ...order, telephone: e.target.value })
+                  }
+                  type="text"
+                  placeholder="Số điện thoại"
+                />
+              </div>
+            </Grid>
+            <Grid item xs={12}>
+              <div className="form-group">
+                <label htmlFor="city">Địa chỉ</label>
+                <input
+                  id="city"
+                  value={order.street}
+                  onChange={(e) =>
+                    setOrder({ ...order, street: e.target.value })
+                  }
+                  type="text"
+                  placeholder="Địa chỉ"
+                />
+              </div>
+            </Grid>
+            <Grid item xs={12}>
+              <div className="form-group">
+                <label htmlFor="city">Tỉnh / Thành phố</label>
+                <select
+                  value={order.city}
+                  onChange={(e) => setOrder({ ...order, city: e.target.value })}
+                >
+                  <option>Chọn Tỉnh / Thành phố</option>
+                  {optionsCity.map((item, index) => (
+                    <option value={item.name} key={index}>
+                      {item.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </Grid>
+            <Grid item xs={12}>
+              <div className="form-group">
+                <label htmlFor="district">Quận / Huyện</label>
+                <select>
+                  <option
+                    value={order.district}
+                    onChange={(e) =>
+                      setOrder({ ...order, district: e.target.value })
+                    }
+                  >
+                    Quận / Huyện
+                  </option>
+                  {optionsDistrict.map((item, index) => (
+                    <option value={item.name} key={index}>
+                      {item.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </Grid>
+            <Grid item xs={12}>
+              <div className="form-group">
+                <label htmlFor="ward">Phường / Xã</label>
+                <select
+                  value={order.ward}
+                  onChange={(e) => setOrder({ ...order, ward: e.target.value })}
+                >
+                  <option>Chọn Phường / Xã</option>{" "}
+                  {optionsWards.map((item, index) => (
+                    <option value={item.name} key={index}>
+                      {item.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </Grid>
+            <Grid item xs={12}>
+              <div className="form-group">
+                <label htmlFor="street">Ghi chú</label>
+                <textarea
+                  value={order.description}
+                  onChange={(e) =>
+                    setOrder({ ...order, description: e.target.value })
+                  }
+                  rows={4}
+                  placeholder="Ghi chú đơn hàng"
+                ></textarea>
+              </div>
+            </Grid>
+          </Grid>
+        </Box>
       </Grid>
-    </Box>
+
+      <Grid item xs={12} md={6} sx={{ position: "relative" }}>
+        <Box p={2}>
+          <Divider orientation="vertical" />
+          <TitleControl>Phương thức thanh toán</TitleControl>
+          <div className="form-group-checkbox">
+            <input type="checkbox" id="payment-method" />
+            <label htmlFor="payment-method">
+              Thanh toán tiền mặt khi nhận hàng (COD)
+            </label>
+          </div>
+        </Box>
+        <div style={{ position: "absolute", top: 0, left: 0 }}>
+          <Divider orientation="vertical" />
+        </div>
+      </Grid>
+    </Grid>
   );
 };
 

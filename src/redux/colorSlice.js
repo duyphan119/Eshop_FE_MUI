@@ -6,6 +6,12 @@ const initialState = {
   limit: LIMIT_ROW_COLOR,
   current: null,
   all: [],
+  color: {
+    items: [],
+    totalResult: 0,
+    totalPage: 0,
+    limit: LIMIT_ROW_COLOR,
+  },
 };
 const colorSlice = createSlice({
   name: "color",
@@ -13,6 +19,9 @@ const colorSlice = createSlice({
   reducers: {
     getAll: (state, action) => {
       state.all = action.payload;
+    },
+    getColor: (state, action) => {
+      state.color = action.payload;
     },
     getAllColors: (state, action) => {
       state.list = action.payload;
@@ -33,6 +42,9 @@ const colorSlice = createSlice({
     changePage: (state, action) => {
       state.page = action.payload;
     },
+    changeLimit: (state, action) => {
+      state.limit = action.payload;
+    },
     getCurrentColor: (state, action) => {
       state.current = action.payload;
     },
@@ -40,7 +52,9 @@ const colorSlice = createSlice({
 });
 export const {
   getAllColors,
+  changeLimit,
   addColor,
+  getColor,
   changePage,
   getCurrentColor,
   updateColor,

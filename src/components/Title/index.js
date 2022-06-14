@@ -42,7 +42,7 @@ export function TitleCenter(props) {
     <Typography
       component="h2"
       variant="h6"
-      color="primary"
+      color="#000"
       gutterBottom
       textAlign="center"
       textTransform="uppercase"

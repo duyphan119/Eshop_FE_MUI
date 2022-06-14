@@ -36,6 +36,7 @@ export const formatThousandDigits = (price) => {
   }
 };
 export const formatDateVN = (input) => {
+  if (!input) return "";
   const dt = new Date(input.toString());
   let date = dt.getDate();
   let month = dt.getMonth() + 1;
@@ -44,6 +45,7 @@ export const formatDateVN = (input) => {
   }/${dt.getFullYear()}`;
 };
 export const formatTimeVN = (input) => {
+  if (!input) return "";
   const dt = new Date(input.toString());
 
   let hour = dt.getHours();
@@ -90,28 +92,29 @@ export const getTotalPrice = (cart) => {
   let result = 0;
   if (cart) {
     cart.items.forEach((item) => {
-      if (
-        item.detail.product.category.discounts &&
-        item.detail.product.category.discounts.length > 0
-      ) {
-        result +=
-          item.quantity *
-          getNewPrice(
-            item.detail.product.price,
-            item.detail.product.category.discounts[0].percent
-          );
-      } else if (
-        item.detail.product.discounts &&
-        item.detail.product.discounts.length > 0
-      ) {
-        result +=
-          item.quantity *
-          item.detail.product.discounts[
-            item.detail.product.discounts.length - 1
-          ].new_price;
-      } else {
-        result += item.quantity * item.detail.product.price;
-      }
+      // if (
+      //   item.detail.product.category.discounts &&
+      //   item.detail.product.category.discounts.length > 0
+      // ) {
+      //   result +=
+      //     item.quantity *
+      //     getNewPrice(
+      //       item.detail.product.price,
+      //       item.detail.product.category.discounts[0].percent
+      //     );
+      // } else if (
+      //   item.detail.product.discounts &&
+      //   item.detail.product.discounts.length > 0
+      // ) {
+      //   result +=
+      //     item.quantity *
+      //     item.detail.product.discounts[
+      //       item.detail.product.discounts.length - 1
+      //     ].new_price;
+      // } else {
+      //   result += item.quantity * item.detail.product.price;
+      // }
+      result += item.quantity * item.detail.product.initPrice;
     });
   }
   return result;

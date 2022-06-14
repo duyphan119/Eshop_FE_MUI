@@ -4,9 +4,9 @@ export function isShowLoadMore(obj, limit, onClick) {
   if (obj && obj.items && obj.items.length > 0) {
     if (obj.items.length >= limit && obj.total_page > 1) {
       return (
-        <Button variant="contained" onClick={onClick}>
+        <MyButton variant="contained" onClick={onClick}>
           Xem thêm
-        </Button>
+        </MyButton>
       );
     }
   }
@@ -17,9 +17,9 @@ export function isShowCollapse(obj, limit, onClick) {
   if (obj && obj.items && obj.items.length > 0) {
     if (obj.total_page === 1 && obj.items.length > limit) {
       return (
-        <Button variant="contained" onClick={onClick}>
+        <MyButton variant="contained" onClick={onClick}>
           Thu gọn
-        </Button>
+        </MyButton>
       );
     }
   }
@@ -28,7 +28,23 @@ export function isShowCollapse(obj, limit, onClick) {
 export const ButtonLink = ({ link, label }) => {
   return (
     <Link to={link}>
-      <Button variant="contained">{label} </Button>
+      <MyButton variant="contained">{label} </MyButton>
     </Link>
+  );
+};
+
+export const MyButton = (props) => {
+  return (
+    <Button
+      {...props}
+      sx={{
+        backgroundColor: "#000",
+        "&:hover": { backgroundColor: "#fff", color: "#000" },
+        px: 4,
+        ...props.sx,
+      }}
+    >
+      {props.children}
+    </Button>
   );
 };

@@ -159,18 +159,19 @@ const Dashboard = () => {
         <Widget
           icon={<PersonAddAltIcon sx={{ fontSize: 40 }} />}
           title="Người dùng"
-          value={
-            countUser.length > 0
-              ? countUser.find((el) => el.month === new Date().getMonth() + 1)
-                  ?.count
-              : 0
-          }
-          comparedValue={
-            countUser.length > 1
-              ? countUser.find((el) => el.month !== new Date().getMonth() + 1)
-                  ?.count
-              : 0
-          }
+          value={2}
+          // value={
+          //   countUser.length > 0
+          //     ? countUser.find((el) => el.month === new Date().getMonth() + 1)
+          //         ?.count
+          //     : 0
+          // }
+          // comparedValue={
+          //   countUser.length > 1
+          //     ? countUser.find((el) => el.month !== new Date().getMonth() + 1)
+          //         ?.count
+          //     : 0
+          // }
         />
       </Grid>
       <Grid
@@ -192,18 +193,19 @@ const Dashboard = () => {
         <Widget
           icon={<ReceiptLongIcon sx={{ fontSize: 40 }} />}
           title="Hoá đơn"
-          value={
-            countOrder.length > 0
-              ? countOrder.find((el) => el.month === new Date().getMonth() + 1)
-                  ?.count
-              : 0
-          }
-          comparedValue={
-            countOrder.length > 1
-              ? countOrder.find((el) => el.month !== new Date().getMonth() + 1)
-                  ?.count
-              : 0
-          }
+          value={1}
+          // value={
+          //   countOrder.length > 0
+          //     ? countOrder.find((el) => el.month === new Date().getMonth() + 1)
+          //         ?.count
+          //     : 0
+          // }
+          // comparedValue={
+          //   countOrder.length > 1
+          //     ? countOrder.find((el) => el.month !== new Date().getMonth() + 1)
+          //         ?.count
+          //     : 0
+          // }
         />
       </Grid>
       <Grid
@@ -225,16 +227,17 @@ const Dashboard = () => {
         <Widget
           icon={<AttachMoneyIcon sx={{ fontSize: 40 }} />}
           title="Doanh thu"
-          value={calRevenueCurrentMonth}
-          comparedValue={
-            revenueCurrentMonth.length > 1
-              ? parseInt(
-                  revenueCurrentMonth.find(
-                    (el) => el.month !== new Date().getMonth() + 1
-                  ).total
-                )
-              : 0
-          }
+          value={570000}
+          // value={calRevenueCurrentMonth}
+          // comparedValue={
+          //   revenueCurrentMonth.length > 1
+          //     ? parseInt(
+          //         revenueCurrentMonth.find(
+          //           (el) => el.month !== new Date().getMonth() + 1
+          //         ).total
+          //       )
+          //     : 0
+          // }
         />
       </Grid>
       <Grid
@@ -256,20 +259,21 @@ const Dashboard = () => {
         <Widget
           icon={<ChatBubbleOutlineIcon sx={{ fontSize: 40 }} />}
           title="Đánh giá"
-          value={
-            countComment.length > 0
-              ? countComment.find(
-                  (el) => el.month === new Date().getMonth() + 1
-                )?.count
-              : 0
-          }
-          comparedValue={
-            countComment.length > 1
-              ? countComment.find(
-                  (el) => el.month !== new Date().getMonth() + 1
-                )?.count
-              : 0
-          }
+          value={1}
+          // value={
+          //   countComment.length > 0
+          //     ? countComment.find(
+          //         (el) => el.month === new Date().getMonth() + 1
+          //       )?.count
+          //     : 0
+          // }
+          // comparedValue={
+          //   countComment.length > 1
+          //     ? countComment.find(
+          //         (el) => el.month !== new Date().getMonth() + 1
+          //       )?.count
+          //     : 0
+          // }
         />
       </Grid>
       <Grid
@@ -291,20 +295,21 @@ const Dashboard = () => {
         <Widget
           icon={<InventoryIcon sx={{ fontSize: 40 }} />}
           title="Sản phẩm"
-          value={
-            countProduct.length > 0
-              ? countProduct.find(
-                  (el) => el.month === new Date().getMonth() + 1
-                )?.count
-              : 0
-          }
-          comparedValue={
-            countProduct.length > 1
-              ? countProduct.find(
-                  (el) => el.month !== new Date().getMonth() + 1
-                )?.count
-              : 0
-          }
+          value={2}
+          // value={
+          //   countProduct.length > 0
+          //     ? countProduct.find(
+          //         (el) => el.month === new Date().getMonth() + 1
+          //       )?.count
+          //     : 0
+          // }
+          // comparedValue={
+          //   countProduct.length > 1
+          //     ? countProduct.find(
+          //         (el) => el.month !== new Date().getMonth() + 1
+          //       )?.count
+          //     : 0
+          // }
         />
       </Grid>
       {/* Chart */}
@@ -320,7 +325,55 @@ const Dashboard = () => {
           }}
           className="custom-scrollbar-horizontal"
         >
-          <Chart data={revenueHoursInDay} />
+          <Chart
+            // data={revenueHoursInDay}
+            data={[
+              {
+                hour: "0-2",
+                total: 0,
+              },
+              {
+                hour: "2-4",
+                total: 0,
+              },
+              {
+                hour: "4-6",
+                total: 0,
+              },
+              {
+                hour: "8-10",
+                total: 0,
+              },
+              {
+                hour: "10-12",
+                total: 0,
+              },
+              {
+                hour: "12-14",
+                total: 0,
+              },
+              {
+                hour: "14-16",
+                total: 570000,
+              },
+              {
+                hour: "16-18",
+                total: 0,
+              },
+              {
+                hour: "18-20",
+                total: 0,
+              },
+              {
+                hour: "20-22",
+                total: 0,
+              },
+              {
+                hour: "22-24",
+                total: 0,
+              },
+            ]}
+          />
         </Paper>
       </Grid>
       {/* Recent Deposits */}
@@ -334,9 +387,10 @@ const Dashboard = () => {
           }}
         >
           <Deposits
-            total={revenueHoursInDay.reduce((prev, cur) => {
-              return prev + cur.total;
-            }, 0)}
+            // total={revenueHoursInDay.reduce((prev, cur) => {
+            //   return prev + cur.total;
+            // }, 0)}
+            total={570000}
           />
         </Paper>
       </Grid>

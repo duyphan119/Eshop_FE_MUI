@@ -105,7 +105,7 @@ const CartNotify = () => {
                             : {}
                         }
                       >
-                        {formatThousandDigits(item.detail.product.price)}đ
+                        {formatThousandDigits(item.detail.product.price)} ₫
                       </span>
                     </Typography>
                   </div>

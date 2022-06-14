@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { Container, Grid } from "@mui/material";
+import { Box, Container, Grid } from "@mui/material";
 import { useCallback, useContext, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Navigate, useNavigate } from "react-router-dom";
@@ -10,7 +10,7 @@ import {
   API_NOTIFICATION_URL,
   API_ORDER_URL,
 } from "../../constants";
-import { SocketContext } from "../../context";
+// import { SocketContext } from "../../context";
 import { getSelectedCartItems } from "../../redux/cartSlice";
 import { showToastMessage } from "../../redux/toastSlice";
 import { getFinalPrice, getTotalPrice, validateTelephone } from "../../utils";
@@ -19,12 +19,10 @@ import Form from "./Form";
 import Result from "./Result";
 
 const Checkout = () => {
-  const socket = useContext(SocketContext);
+  // const socket = useContext(SocketContext);
 
   const user = useSelector((state) => state.auth.currentUser);
-  const selectedCartItems = useSelector(
-    (state) => state.cart.selectedCartItems
-  );
+  const cart = useSelector((state) => state.cart.cart);
 
   const dispatch = useDispatch();
 
@@ -47,55 +45,56 @@ const Checkout = () => {
   useEffect(() => {
     document.title = "Thanh toán";
   }, []);
+  // useEffect(() => {
+  //   (async function () {
+  //     try {
+  //       const data = await configAxiosResponse().get(
+  //         `${API_COUPON_URL}?percent=0`
+  //       );
+  //       setCoupon(data.items[0]);
+  //     } catch (error) {}
+  //   })();
+  // }, []);
   useEffect(() => {
-    (async function () {
-      try {
-        const data = await configAxiosResponse().get(
-          `${API_COUPON_URL}?percent=0`
-        );
-        setCoupon(data.items[0]);
-      } catch (error) {}
-    })();
-  }, []);
-  useEffect(() => {
-    setTotalPrice(getTotalPrice(selectedCartItems));
-  }, [selectedCartItems]);
+    setTotalPrice(getTotalPrice(cart));
+  }, [cart]);
 
   const handleCheckout = useCallback(async () => {
     try {
       if (order) {
-        if (validateTelephone(order.phoneNumber) && finalPrice !== 0) {
+        if (validateTelephone(order.telephone) && finalPrice !== 0) {
           const data = await configAxiosAll(user, dispatch).post(
             `${API_ORDER_URL}`,
             {
-              user_id: user.id,
-              cart_id: user.cart.id,
-              cart: selectedCartItems,
-              address: `${order.addressNo} ${order.street} ${order.ward}, ${order.district}, ${order.city}`,
+              userId: user.id,
+              cart: cart,
+              address: `${order.street} ${order.ward}, ${order.district}, ${order.city}`,
               total: finalPrice,
-              telephone: order.phoneNumber,
-              full_name: order.fullName,
-              coupon_id: coupon.id,
+              deliveryPrice: 0,
+              tempPrice: totalPrice,
+              telephone: order.telephone,
+              fullName: order.fullName,
+              couponId: coupon.id,
               description: order.description,
             }
           );
           if (data) {
-            dispatch(getSelectedCartItems({ items: [], count: 0 }));
-            const notify = await configAxiosAll(user, dispatch).post(
-              `${API_NOTIFICATION_URL}`,
-              {
-                title: `${user.full_name} đã đặt một đơn hàng`,
-                href: `/dashboard/order`,
-                isRead: false,
-                sender_id: user.id,
-                notify_type: "order",
-              }
-            );
-            socket.emit("send-notify", {
-              roomId: "admin",
-              ...notify,
-            });
-            navigate(config.routes.checkoutSuccess);
+            //dispatch(getSelectedCartItems({ items: [], count: 0 }));
+            // const notify = await configAxiosAll(user, dispatch).post(
+            //   `${API_NOTIFICATION_URL}`,
+            //   {
+            //     title: `${user.full_name} đã đặt một đơn hàng`,
+            //     href: `/dashboard/order`,
+            //     isRead: false,
+            //     sender_id: user.id,
+            //     notify_type: "order",
+            //   }
+            // );
+            // socket.emit("send-notify", {
+            //   roomId: "admin",
+            //   ...notify,
+            // });
+            //navigate(config.routes.checkoutSuccess);
           }
         } else {
           dispatch(
@@ -129,11 +128,14 @@ const Checkout = () => {
       );
     }
   }, [coupon, order]);
-  if (selectedCartItems.count === 0)
-    return <Navigate to={config.routes.cart} />;
+  // if (selectedCartItems.count === 0)
+  //   return <Navigate to={config.routes.cart} />;
 
   return (
-    <Container>
+    <Box px={6} py={3}>
+      <Box sx={{ borderBottom: "1px solid #000", pb: 3, fontSize: 20 }}>
+        Thanh toán giỏ hàng
+      </Box>
       <Grid container spacing={2}>
         <Grid item xs={12} lg={8}>
           <Form order={order} setOrder={setOrder} />
@@ -148,7 +150,7 @@ const Checkout = () => {
           />
         </Grid>
       </Grid>
-    </Container>
+    </Box>
   );
 };
 

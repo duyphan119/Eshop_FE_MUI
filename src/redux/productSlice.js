@@ -9,7 +9,12 @@ const initialState = {
   latest: initLatest ? initLatest : [],
   page: 1,
   limit: LIMIT_ROW_PRODUCT,
-  product: null,
+  product: {
+    items: [],
+    totalResult: 0,
+    totalPage: 0,
+    limit: LIMIT_ROW_PRODUCT,
+  },
   bestSellersDashboard: [],
 };
 const productSlice = createSlice({

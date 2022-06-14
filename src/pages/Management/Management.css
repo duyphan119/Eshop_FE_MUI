@@ -1,0 +1,25 @@
+.management-btn-add {
+  border: 1px solid #000;
+  background-color: #000;
+  color: #fff;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 4px;
+
+  font-size: 14px;
+
+  margin-bottom: 8px;
+
+  cursor: pointer;
+}
+.management-btn-add svg {
+  margin-right: 4px;
+}
+
+.management-btn-add:hover {
+  color: #000;
+  background-color: #fff;
+}

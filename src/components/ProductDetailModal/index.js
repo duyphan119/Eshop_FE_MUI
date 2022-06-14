@@ -38,7 +38,7 @@ const ProductDetailModal = ({ open, handleClose, item }) => {
           <li style={{ display: "flex", marginTop: "8px" }}>
             <div style={{ width: "108px" }}>Giá bán: </div>
             <div style={{ flex: "1" }}>
-              {item?.price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")}đ
+              {item?.price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")} ₫
             </div>
           </li>
         </ul>

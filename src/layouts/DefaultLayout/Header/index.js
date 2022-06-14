@@ -72,7 +72,7 @@ const Header = ({ headerRef }) => {
   return (
     <>
       <Box
-        bgcolor="var(--main-color)"
+        bgcolor="#fff"
         sx={{
           position: {
             xs: "absolute",
@@ -108,7 +108,7 @@ const Header = ({ headerRef }) => {
             }}
           >
             <Grid item xs={3} xl={2} lg={2}>
-              <Logo style={{ color: "#fff" }} />
+              <Logo style={{ color: "#000" }} />
             </Grid>
             <Grid
               item

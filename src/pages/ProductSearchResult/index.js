@@ -6,6 +6,9 @@ import { isShowCollapse, isShowLoadMore } from "../../components/Button";
 import { API_PRODUCT_URL, LIMIT_PRODUCT_SEARCH_RESULT } from "../../constants";
 import { configAxiosAll } from "../../config/configAxios";
 import Product from "../../components/Product";
+import Breadcrumbs from "../../components/Breadcrumbs";
+import pageHeaderImg from "../../assets/imgs/search/bg-page-header.webp";
+import config from "../../config";
 
 const ProductSearchResult = () => {
   const user = useSelector((state) => state.auth.currentUser);
@@ -25,63 +28,65 @@ const ProductSearchResult = () => {
   useEffect(() => {
     (async function () {
       const data = await configAxiosAll(user, dispatch).get(
-        `${API_PRODUCT_URL}/search?include=true&q=${q}&limit=${limit}`
+        `${API_PRODUCT_URL}?include=true&q=${q}&limit=${limit}`
       );
       setProduct(data);
     })();
   }, [q, limit, user, dispatch]);
 
   return (
-    <Box sx={{ paddingBlock: "20px" }}>
-      <Container>
-        <Grid container>
-          <Grid item xs={12}>
-            <Typography variant="h4" sx={{ marginBottom: "10px" }}>
-              {product?.total_result} KẾT QUẢ VỚI TỪ KHOÁ "{q}"
-            </Typography>
-          </Grid>
-        </Grid>
-        <Grid container columnSpacing={2}>
-          {product && product.items && product.items.length === 0 && (
-            <Grid item xs={12}>
-              <div className="no-result">Không tìm thấy kết quả</div>
-            </Grid>
-          )}
-          {product &&
-            product.items &&
-            product.items.length !== 0 &&
-            product.items.map((product) => {
-              return (
-                <Grid
-                  key={product.slug}
-                  item
-                  xs={6}
-                  sm={4}
-                  md={3}
-                  sx={{
-                    flexBasis: {
-                      lg: "20% !important",
-                    },
-                    maxWidth: {
-                      lg: "20% !important",
-                    },
-                    marginBlock: "5px",
-                  }}
-                >
-                  <Product product={product} />
-                </Grid>
-              );
-            })}
-        </Grid>
-        <Box textAlign="center" my={1}>
-          {isShowLoadMore(product, LIMIT_PRODUCT_SEARCH_RESULT, () =>
-            setLimit(limit + LIMIT_PRODUCT_SEARCH_RESULT)
-          )}
-          {isShowCollapse(product, LIMIT_PRODUCT_SEARCH_RESULT, () =>
-            setLimit(LIMIT_PRODUCT_SEARCH_RESULT)
-          )}
+    <Box>
+      <div
+        style={{
+          backgroundImage: `url(${pageHeaderImg})`,
+          width: "100%",
+          height: 260,
+          display: "flex",
+          justifyContent: "center",
+          flexDirection: "column",
+          paddingInline: 32,
+        }}
+      >
+        <div style={{ fontSize: 40 }}>TÌM KIẾM VỚI: "{q}"</div>
+        <Box pl={2}>
+          <Breadcrumbs
+            items={[
+              {
+                text: "TRANG CHỦ",
+                to: config.routes.home,
+              },
+              {
+                text: "TÌM KIẾM",
+              },
+            ]}
+          />
         </Box>
-      </Container>
+      </div>
+
+      <Box p={4}>
+        <Box fontWeight="600" fontSize={30} pb={2}>
+          KẾT QUẢ TÌM KIẾM TỪ KHOÁ VỚI: "{q}"
+        </Box>
+        <Box p={2}>
+          <Grid container spacing={4}>
+            {product && product.items && product.items.length === 0 && (
+              <Grid item xs={12}>
+                <div className="no-result">Không tìm thấy kết quả</div>
+              </Grid>
+            )}
+            {product &&
+              product.items &&
+              product.items.length !== 0 &&
+              product.items.map((product) => {
+                return (
+                  <Grid key={product.slug} item xs={6} sm={4} md={3}>
+                    <Product product={product} />
+                  </Grid>
+                );
+              })}
+          </Grid>
+        </Box>
+      </Box>
     </Box>
   );
 };

@@ -23,10 +23,6 @@ const HeaderCategoryList = () => {
         return (
           <li className="header-category-list-item" key={genderCategory.slug}>
             <Link
-              style={{
-                textDecoration: "none",
-                color: "#fff",
-              }}
               className="header-category-list-item-link"
               to={`/${genderCategory.slug}`}
             >

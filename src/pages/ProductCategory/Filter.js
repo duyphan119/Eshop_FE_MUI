@@ -1,8 +1,9 @@
 import ClearOutlinedIcon from "@mui/icons-material/ClearOutlined";
-import FilterAltOutlinedIcon from "@mui/icons-material/FilterAltOutlined";
+
 import { Badge, Box, Button, Typography } from "@mui/material";
 import ClickAwayListener from "@mui/material/ClickAwayListener";
 import { useState } from "react";
+import filter_icon from "../../assets/svg/svgexport-8.svg";
 const Filter = ({
   filters,
   setFilters,
@@ -96,7 +97,13 @@ const Filter = ({
           color="info"
           onClick={() => setOpen(!open)}
         >
-          <FilterAltOutlinedIcon />
+          <img
+            alt=""
+            src={filter_icon}
+            width="20px"
+            height="20px"
+            style={{ transform: "translateY(2px)", marginRight: "4px" }}
+          />
           Lọc
         </Badge>
         {open && (
@@ -124,7 +131,7 @@ const Filter = ({
                 <ul className="filter-product-result-selected">
                   {filters.price.length > 1 && (
                     <li onClick={handleDeselectPriceFilter}>
-                      {`Từ ${filters.price[0]}đ - ${filters.price[1]}đ`}
+                      {`Từ ${filters.price[0]} ₫ - ${filters.price[1]} ₫`}
                       <ClearOutlinedIcon />
                     </li>
                   )}

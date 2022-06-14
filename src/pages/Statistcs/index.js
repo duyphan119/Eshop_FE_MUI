@@ -101,9 +101,16 @@ const Statistics = () => {
           </Box>
           <div>
             <Button
-              variant="contained"
               onClick={() => exportComponentToPDF("chart-years")}
-              size="small"
+              sx={{
+                bgcolor: "#000",
+                color: "#fff",
+                border: "1px solid #000",
+                "&:hover": {
+                  color: "#000",
+                  bgcolor: "#fff",
+                },
+              }}
             >
               Xuất file PDF
             </Button>
@@ -132,9 +139,16 @@ const Statistics = () => {
           </Box>
           <div>
             <Button
-              variant="contained"
               onClick={() => exportComponentToPDF("chart-months-in-year")}
-              size="small"
+              sx={{
+                bgcolor: "#000",
+                color: "#fff",
+                border: "1px solid #000",
+                "&:hover": {
+                  color: "#000",
+                  bgcolor: "#fff",
+                },
+              }}
             >
               Xuất file PDF
             </Button>
@@ -163,9 +177,16 @@ const Statistics = () => {
           </Box>
           <div>
             <Button
-              variant="contained"
               onClick={() => exportComponentToPDF("chart-days-in-month")}
-              size="small"
+              sx={{
+                bgcolor: "#000",
+                color: "#fff",
+                border: "1px solid #000",
+                "&:hover": {
+                  color: "#000",
+                  bgcolor: "#fff",
+                },
+              }}
             >
               Xuất file PDF
             </Button>
