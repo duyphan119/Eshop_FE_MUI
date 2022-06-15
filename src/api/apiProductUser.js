@@ -1,7 +1,7 @@
 import { configAxiosAll } from "../config/configAxios";
 import * as constants from "../constants";
 import { newFavoriteItem, removeFavoriteItem } from "../redux/productSlice";
-import { showToastMessage } from "../redux/toastSlice";
+import { showToast } from "../redux/toastSlice";
 const API_URL = `${constants.SERVER_URL}/v1/api/product-user`;
 export const apiAddToFavoriteList = async (user, data, dispatch) => {
   try {
@@ -11,7 +11,7 @@ export const apiAddToFavoriteList = async (user, data, dispatch) => {
     );
     dispatch(newFavoriteItem(favoriteItem));
     dispatch(
-      showToastMessage({
+      showToast({
         type: "success",
         text: "Thêm vào danh sách yêu thích thành công",
         isOpen: true,
@@ -20,7 +20,7 @@ export const apiAddToFavoriteList = async (user, data, dispatch) => {
   } catch (error) {
     console.log(error);
     dispatch(
-      showToastMessage({
+      showToast({
         type: "error",
         text: "Thêm vào danh sách yêu thích thất bại",
         isOpen: true,
@@ -35,7 +35,7 @@ export const apiRemoveFavoriteItem = async (user, data, dispatch) => {
     );
     dispatch(removeFavoriteItem({ product_id: data.product_id }));
     dispatch(
-      showToastMessage({
+      showToast({
         type: "success",
         text: "Xoá khỏi danh sách yêu thích thành công",
         isOpen: true,
@@ -44,7 +44,7 @@ export const apiRemoveFavoriteItem = async (user, data, dispatch) => {
   } catch (error) {
     console.log(error);
     dispatch(
-      showToastMessage({
+      showToast({
         type: "error",
         text: "Xoá khỏi danh sách yêu thích thất bại",
         isOpen: true,

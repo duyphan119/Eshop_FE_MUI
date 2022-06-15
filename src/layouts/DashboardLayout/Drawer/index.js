@@ -24,6 +24,7 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import Logo from "../../../components/Logo";
 import config from "../../../config";
 import { DRAWER_WIDTH } from "../../../constants";
+import detailIcon from "../../../assets/imgs/detail.png";
 const StyledDrawer = styled(MuiDrawer, {
   shouldForwardProp: (prop) => prop !== "open",
 })(({ theme, open }) => ({
@@ -57,21 +58,21 @@ const Drawer = ({ open, toggleDrawer }) => {
     {
       text: "Bảng điều khiển",
       to: config.routes.dashboard,
-      icon: DashboardIcon,
+      icon: <DashboardIcon sx={{ fontSize: 20 }} />,
     },
     {
       text: "Danh mục",
-      icon: CategoryIcon,
+      icon: <CategoryIcon sx={{ fontSize: 20 }} />,
       children: [
         {
           text: "Nhóm danh mục",
           to: config.routes.groupCategoryManagement,
-          icon: WidgetsIcon,
+          icon: <WidgetsIcon sx={{ fontSize: 20 }} />,
         },
         {
           text: "Danh mục",
           to: config.routes.categoryManagement,
-          icon: CategoryIcon,
+          icon: <CategoryIcon sx={{ fontSize: 20 }} />,
         },
       ],
       isShowChildren:
@@ -80,32 +81,37 @@ const Drawer = ({ open, toggleDrawer }) => {
     },
     {
       text: "Sản phẩm",
-      icon: InventoryIcon,
+      icon: <InventoryIcon sx={{ fontSize: 20 }} />,
       children: [
         {
           text: "Màu sắc",
           to: config.routes.colorManagement,
-          icon: ColorLensIcon,
+          icon: <ColorLensIcon sx={{ fontSize: 20 }} />,
         },
         {
           text: "Kích cỡ",
           to: config.routes.sizeManagement,
-          icon: StraightenIcon,
+          icon: <StraightenIcon sx={{ fontSize: 20 }} />,
         },
         {
           text: "Nhóm sản phẩm",
           to: config.routes.groupProductManagement,
-          icon: WidgetsIcon,
+          icon: <WidgetsIcon sx={{ fontSize: 20 }} />,
         },
         {
           text: "Sản phẩm",
           to: config.routes.productManagement,
-          icon: InventoryIcon,
+          icon: <InventoryIcon sx={{ fontSize: 20 }} />,
+        },
+        {
+          text: "Chi tiết sản phẩm",
+          to: config.routes.productDetailManagement,
+          icon: <img alt="" src={detailIcon} width="20" height="20" />,
         },
         {
           text: "Giảm giá",
           to: config.routes.discountManagement,
-          icon: DiscountIcon,
+          icon: <DiscountIcon sx={{ fontSize: 20 }} />,
         },
       ],
       isShowChildren:
@@ -118,21 +124,21 @@ const Drawer = ({ open, toggleDrawer }) => {
     {
       text: "Bình luận",
       to: config.routes.commentManagement,
-      icon: ModeCommentIcon,
+      icon: <ModeCommentIcon sx={{ fontSize: 20 }} />,
     },
     {
       text: "Người dùng",
-      icon: PeopleIcon,
+      icon: <PeopleIcon sx={{ fontSize: 20 }} />,
       children: [
         {
           text: "Quyền",
           to: config.routes.roleManagement,
-          icon: PermIdentityIcon,
+          icon: <PermIdentityIcon sx={{ fontSize: 20 }} />,
         },
         {
           text: "Người dùng",
           to: config.routes.userManagement,
-          icon: PeopleIcon,
+          icon: <PeopleIcon sx={{ fontSize: 20 }} />,
         },
       ],
       isShowChildren:
@@ -141,17 +147,17 @@ const Drawer = ({ open, toggleDrawer }) => {
     },
     {
       text: "Đơn hàng",
-      icon: ReceiptIcon,
+      icon: <ReceiptIcon sx={{ fontSize: 20 }} />,
       children: [
         {
           text: "Ưu đãi",
           to: config.routes.couponManagement,
-          icon: RedeemIcon,
+          icon: <RedeemIcon sx={{ fontSize: 20 }} />,
         },
         {
           text: "Đơn hàng",
           to: config.routes.orderManagement,
-          icon: ReceiptIcon,
+          icon: <ReceiptIcon sx={{ fontSize: 20 }} />,
         },
       ],
       isShowChildren:
@@ -161,7 +167,7 @@ const Drawer = ({ open, toggleDrawer }) => {
     {
       text: "Thống kê",
       to: config.routes.statistics,
-      icon: BarChartIcon,
+      icon: <BarChartIcon sx={{ fontSize: 20 }} />,
     },
   ]);
 
@@ -201,7 +207,7 @@ const Drawer = ({ open, toggleDrawer }) => {
             sx={{ height: 64, ml: 1 }}
           />
           <IconButton onClick={toggleDrawer}>
-            <ChevronLeftIcon />
+            <ChevronLeftIcon sx={{ fontSize: 20 }} />
           </IconButton>
         </Toolbar>
         <div
@@ -214,7 +220,6 @@ const Drawer = ({ open, toggleDrawer }) => {
         >
           <Divider />
           {items.map((item, index) => {
-            const Icon = item.icon;
             return (
               <Box key={index}>
                 <Box
@@ -249,16 +254,18 @@ const Drawer = ({ open, toggleDrawer }) => {
                       }}
                     >
                       <div style={{ display: "flex", alignItems: "center" }}>
-                        <Icon />
+                        {item.icon}
                         <div style={{ marginLeft: theme.spacing(2) }}>
                           {item.text}
                         </div>
                       </div>
-                      {item.children && <KeyboardArrowDownIcon />}
+                      {item.children && (
+                        <KeyboardArrowDownIcon sx={{ fontSize: 20 }} />
+                      )}
                     </div>
                   ) : (
                     <Tooltip title={item.text} placement="right">
-                      <Icon />
+                      {item.icon}
                     </Tooltip>
                   )}
                 </Box>
@@ -266,7 +273,6 @@ const Drawer = ({ open, toggleDrawer }) => {
                   {item.children &&
                     item.isShowChildren &&
                     item.children.map((element, index) => {
-                      const Icon = element.icon;
                       return (
                         <Link to={element.to} key={index}>
                           <Box
@@ -293,10 +299,10 @@ const Drawer = ({ open, toggleDrawer }) => {
                             }}
                           >
                             {open ? (
-                              <Icon sx={{ fontSize: 20 }} />
+                              element.icon
                             ) : (
                               <Tooltip title={element.text} placement="right">
-                                <Icon />
+                                {element.icon}
                               </Tooltip>
                             )}
 

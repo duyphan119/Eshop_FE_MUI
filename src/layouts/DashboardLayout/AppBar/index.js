@@ -71,6 +71,12 @@ const AppBar = ({ open, toggleDrawer }) => {
       _title = "Quản lý quyền";
     } else if (location.pathname === config.routes.couponManagement) {
       _title = "Quản lý ưu đãi";
+    } else if (location.pathname === config.routes.productDetailManagement) {
+      _title = "Quản lý chi tiết sản phẩm";
+    } else if (location.pathname === config.routes.productAdd) {
+      _title = "Thêm sản phẩm";
+    } else if (location.pathname === config.routes.productEdit) {
+      _title = "Sửa sản phẩm";
     }
     document.title = _title;
     setTitle(_title);

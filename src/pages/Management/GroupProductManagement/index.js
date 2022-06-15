@@ -12,7 +12,7 @@ import Pagination from "../../../components/Pagination";
 import "ag-grid-community/dist/styles/ag-grid.css";
 import "ag-grid-community/dist/styles/ag-theme-alpine.css";
 import { useEffect } from "react";
-import { configAxiosResponse } from "../../../config/configAxios";
+import { axiosRes } from "../../../config/configAxios";
 import { useDispatch, useSelector } from "react-redux";
 import {
   changeLimit,
@@ -132,7 +132,7 @@ const GroupProductManagement = () => {
   useEffect(() => {
     const promises = [];
     promises.push(
-      configAxiosResponse().get(
+      axiosRes().get(
         `${API_GROUP_PRODUCT_URL}?limit=${LIMIT_ROW_GROUP_PRODUCT}&p=${page}`
       )
     );

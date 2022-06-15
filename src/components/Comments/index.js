@@ -9,7 +9,7 @@ import {
   API_NOTIFICATION_URL,
   LIMIT_COMMENT,
 } from "../../constants";
-import { configAxiosAll, configAxiosResponse } from "../../config/configAxios";
+import { configAxiosAll, axiosRes } from "../../config/configAxios";
 import ModalComment from "../ModalComment";
 import { isShowCollapse, isShowLoadMore } from "../Button";
 import { getComment } from "../../redux/commentSlice";
@@ -29,11 +29,11 @@ const Comments = ({ product }) => {
   useEffect(() => {
     (async function () {
       try {
-        const data1 = await configAxiosResponse().get(
+        const data1 = await axiosRes().get(
           `${API_COMMENT_URL}/product/${product.id}?limit=${limit}`
         );
         dispatch(getComment(data1));
-        const data2 = await configAxiosResponse().get(
+        const data2 = await axiosRes().get(
           `${API_COMMENT_URL}/user/${user.id}/product/${product.id}`
         );
         setMyComment(data2);

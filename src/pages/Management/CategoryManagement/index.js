@@ -9,7 +9,7 @@ import Pagination from "../../../components/Pagination";
 import "ag-grid-community/dist/styles/ag-grid.css";
 import "ag-grid-community/dist/styles/ag-theme-alpine.css";
 import { useEffect } from "react";
-import { configAxiosResponse } from "../../../config/configAxios";
+import { axiosRes } from "../../../config/configAxios";
 import { useDispatch, useSelector } from "react-redux";
 import {
   changeLimit,
@@ -123,7 +123,7 @@ const CategoryManagement = () => {
   useEffect(() => {
     const promises = [];
     promises.push(
-      configAxiosResponse().get(
+      axiosRes().get(
         `${API_CATEGORY_URL}?limit=${LIMIT_ROW_CATEGORY}&p=${page}`
       )
     );

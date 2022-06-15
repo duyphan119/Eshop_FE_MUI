@@ -9,7 +9,7 @@ import Pagination from "../../../components/Pagination";
 import "ag-grid-community/dist/styles/ag-grid.css";
 import "ag-grid-community/dist/styles/ag-theme-alpine.css";
 import { useEffect } from "react";
-import { configAxiosResponse } from "../../../config/configAxios";
+import { axiosRes } from "../../../config/configAxios";
 import { useDispatch, useSelector } from "react-redux";
 import { changeLimit, changePage, getColor } from "../../../redux/colorSlice";
 const ColorManagement = () => {
@@ -78,9 +78,7 @@ const ColorManagement = () => {
   useEffect(() => {
     const promises = [];
     promises.push(
-      configAxiosResponse().get(
-        `${API_COLOR_URL}?limit=${LIMIT_ROW_COLOR}&p=${page}`
-      )
+      axiosRes().get(`${API_COLOR_URL}?limit=${LIMIT_ROW_COLOR}&p=${page}`)
     );
     Promise.allSettled(promises)
       .then((listRes) => {

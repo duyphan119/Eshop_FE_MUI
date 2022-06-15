@@ -13,7 +13,7 @@ import { useDispatch, useSelector } from "react-redux";
 import ConfirmDialog from "../../components/ConfirmDialog";
 import ModalBanner from "../../components/ModalBanner";
 import Pagination from "../../components/Pagination";
-import { configAxiosAll, configAxiosResponse } from "../../config/configAxios";
+import { configAxiosAll, axiosRes } from "../../config/configAxios";
 import {
   API_BANNER_URL,
   API_UPLOAD_URL,
@@ -137,10 +137,7 @@ const BannerTabPanel = () => {
       if (file) {
         let formData = new FormData();
         formData.append("images", file);
-        urlList = await configAxiosResponse().post(
-          `${API_UPLOAD_URL}`,
-          formData
-        );
+        urlList = await axiosRes().post(`${API_UPLOAD_URL}`, formData);
       }
       if (current) {
         const req = {
@@ -176,7 +173,7 @@ const BannerTabPanel = () => {
         await configAxiosAll(user, dispatch).delete(
           `${API_BANNER_URL}/${current.id}`
         );
-        await configAxiosResponse().get(
+        await axiosRes().get(
           `${API_BANNER_URL}?limit=${LIMIT_ROW_BANNER}&p=${page}`
         );
         dispatch(deleteBanner(current.id));

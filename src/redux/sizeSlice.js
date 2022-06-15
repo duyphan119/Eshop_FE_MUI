@@ -27,13 +27,12 @@ const sizeSlice = createSlice({
       state.size = action.payload;
     },
     addSize: (state, action) => {
-      state.list = [action.payload, ...state.list];
-      state.page = 1;
+      state.list.push(action.payload);
     },
     updateSize: (state, action) => {
       const newSize = action.payload;
       const index = state.list.findIndex((item) => item.id === newSize.id);
-      state.list[index] = newSize;
+      state.list[index] = { ...state.list[index], ...newSize };
       state.current = null;
     },
     deleteSize: (state) => {

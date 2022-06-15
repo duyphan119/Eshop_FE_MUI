@@ -9,7 +9,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { getAll, getCurrentMaterial } from "../../redux/materialSlice";
 import { calHeightDataGrid } from "../../utils";
 import ModalMaterial from "../../components/ModalMaterial";
-import { configAxiosAll, configAxiosResponse } from "../../config/configAxios";
+import { configAxiosAll, axiosRes } from "../../config/configAxios";
 import { API_MATERIAL_URL } from "../../constants";
 import ConfirmDialog from "../../components/ConfirmDialog";
 
@@ -107,7 +107,7 @@ const MaterialTabPanel = () => {
       await configAxiosAll(user, dispatch).delete(
         `${API_MATERIAL_URL}/${current.id}`
       );
-      const data = await configAxiosResponse().get(`${API_MATERIAL_URL}`);
+      const data = await axiosRes().get(`${API_MATERIAL_URL}`);
       dispatch(getAll(data));
     } catch (error) {}
   }

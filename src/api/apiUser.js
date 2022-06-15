@@ -1,7 +1,7 @@
 import { updateUser } from "../redux/authSlice";
 import * as constants from "../constants";
 import { configAxios } from "../config/configAxios";
-import { showToastMessage } from "../redux/toastSlice";
+import { showToast } from "../redux/toastSlice";
 const API_URL = `${constants.SERVER_URL}/v1/api/user`;
 export const apiUpdateUser = async (user, dispatch) => {
   try {
@@ -10,7 +10,7 @@ export const apiUpdateUser = async (user, dispatch) => {
     });
     dispatch(updateUser(user));
     dispatch(
-      showToastMessage({
+      showToast({
         isOpen: true,
         text: "Cập nhật thành công",
         title: "Thành công",
@@ -20,7 +20,7 @@ export const apiUpdateUser = async (user, dispatch) => {
   } catch (error) {
     console.log(error);
     dispatch(
-      showToastMessage({
+      showToast({
         isOpen: true,
         text: "Cập nhật thất bại",
         title: "Thất bại",

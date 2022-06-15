@@ -9,7 +9,7 @@ import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import ConfirmDialog from "../../components/ConfirmDialog";
 import ModalSize from "../../components/ModalSize";
-import { configAxiosAll, configAxiosResponse } from "../../config/configAxios";
+import { configAxiosAll, axiosRes } from "../../config/configAxios";
 import { API_SIZE_URL } from "../../constants";
 import { getAll, getCurrentSize } from "../../redux/sizeSlice";
 import { calHeightDataGrid } from "../../utils";
@@ -112,7 +112,7 @@ const SizeTabPanel = () => {
       await configAxiosAll(user, dispatch).delete(
         `${API_SIZE_URL}/${current.id}`
       );
-      const data = await configAxiosResponse().get(`${API_SIZE_URL}`);
+      const data = await axiosRes().get(`${API_SIZE_URL}`);
       dispatch(getAll(data));
     } catch (error) {}
   }

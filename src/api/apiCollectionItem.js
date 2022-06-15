@@ -2,7 +2,7 @@ import axios from "axios";
 import { configAxios, configAxiosAll } from "../config/configAxios";
 import * as constants from "../constants";
 import { getProducts } from "../redux/productSlice";
-import { showToastMessage } from "../redux/toastSlice";
+import { showToast } from "../redux/toastSlice";
 import { apiCreateImageProduct } from "./apiImagesProduct";
 import { apiCreateSize } from "./apiSize";
 const API_URL = `${constants.SERVER_URL}/v1/api/collection-item`;
@@ -63,7 +63,7 @@ export const apiCreateProduct = async (data, dispatch) => {
       }
     }
     dispatch(
-      showToastMessage({
+      showToast({
         type: "success",
         text: "Thêm thành công",
         title: "Thành công",
@@ -73,7 +73,7 @@ export const apiCreateProduct = async (data, dispatch) => {
   } catch (error) {
     console.log(error);
     dispatch(
-      showToastMessage({
+      showToast({
         type: "error",
         text: "Thêm thất bại",
         title: "Thất bại",

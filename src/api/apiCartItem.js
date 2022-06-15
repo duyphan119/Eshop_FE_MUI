@@ -1,7 +1,7 @@
 import { configAxios, configAxiosAll } from "../config/configAxios";
 import * as constants from "../constants";
 import { addToCart, removeCartItem, updateCart } from "../redux/cartSlice";
-import { showToastMessage } from "../redux/toastSlice";
+import { showToast } from "../redux/toastSlice";
 const API_URL = `${constants.SERVER_URL}/v1/api/cart-item`;
 export const apiMergeCart = async (user, cart, dispatch) => {
   try {
@@ -23,7 +23,7 @@ export const apiAddToCart = async (user, item, dispatch) => {
       });
       dispatch(addToCart(data));
       dispatch(
-        showToastMessage({
+        showToast({
           type: "success",
           text: "Thêm thành công",
           isOpen: true,
@@ -32,7 +32,7 @@ export const apiAddToCart = async (user, item, dispatch) => {
     } else {
       console.log(user);
       dispatch(
-        showToastMessage({
+        showToast({
           type: "error",
           text: "Thêm thất bại",
           isOpen: true,
@@ -42,7 +42,7 @@ export const apiAddToCart = async (user, item, dispatch) => {
   } catch (error) {
     console.log(error);
     dispatch(
-      showToastMessage({
+      showToast({
         type: "error",
         text: "Thêm thất bại",
         isOpen: true,
@@ -67,7 +67,7 @@ export const apiRemoveCartItem = async (user, cartItemId, dispatch) => {
     await configAxios(user, dispatch).delete(`${API_URL}/${cartItemId}`);
     dispatch(removeCartItem(cartItemId));
     dispatch(
-      showToastMessage({
+      showToast({
         type: "success",
         text: "Xoá thành công",
         isOpen: true,
@@ -76,7 +76,7 @@ export const apiRemoveCartItem = async (user, cartItemId, dispatch) => {
   } catch (error) {
     console.log(error);
     dispatch(
-      showToastMessage({
+      showToast({
         type: "error",
         text: "Xoá thất bại",
         isOpen: true,

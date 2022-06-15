@@ -10,7 +10,7 @@ import Pagination from "../../../components/Pagination";
 import "ag-grid-community/dist/styles/ag-grid.css";
 import "ag-grid-community/dist/styles/ag-theme-alpine.css";
 import { useEffect } from "react";
-import { configAxiosResponse } from "../../../config/configAxios";
+import { axiosRes } from "../../../config/configAxios";
 import { useDispatch, useSelector } from "react-redux";
 import { changeLimit, changePage, getOrder } from "../../../redux/orderSlice";
 const OrderManagement = () => {
@@ -134,9 +134,7 @@ const OrderManagement = () => {
   useEffect(() => {
     const promises = [];
     promises.push(
-      configAxiosResponse().get(
-        `${API_ORDER_URL}?limit=${LIMIT_ROW_ORDER}&p=${page}`
-      )
+      axiosRes().get(`${API_ORDER_URL}?limit=${LIMIT_ROW_ORDER}&p=${page}`)
     );
     Promise.allSettled(promises)
       .then((listRes) => {

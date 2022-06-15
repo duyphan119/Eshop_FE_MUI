@@ -14,7 +14,7 @@ import {
 } from "../../constants";
 import { addToCart, showModalAddToCart } from "../../redux/cartSlice";
 import { addToLatest } from "../../redux/productSlice";
-import { showToastMessage } from "../../redux/toastSlice";
+import { showToast } from "../../redux/toastSlice";
 import { formatThousandDigits } from "../../utils";
 import Modal from "../Modal";
 import ProductDetailSlider from "../ProductDetailSlider";
@@ -101,7 +101,7 @@ const ModalAddToCart = () => {
   async function handleAddToCart() {
     if (quantity > product.colors[indexColor].sizes[indexSize].amount) {
       dispatch(
-        showToastMessage({
+        showToast({
           text: "Số lượng không hợp lệ",
           type: "info",
           isOpen: true,
@@ -120,7 +120,7 @@ const ModalAddToCart = () => {
         );
         dispatch(addToCart(data));
         dispatch(
-          showToastMessage({
+          showToast({
             type: "success",
             text: "Thêm thành công",
             isOpen: true,

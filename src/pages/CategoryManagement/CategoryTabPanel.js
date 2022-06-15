@@ -9,7 +9,7 @@ import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import ConfirmDialog from "../../components/ConfirmDialog";
 import ModalCategory from "../../components/ModalCategory";
-import { configAxiosAll, configAxiosResponse } from "../../config/configAxios";
+import { configAxiosAll, axiosRes } from "../../config/configAxios";
 import {
   API_CATEGORY_URL,
   API_UPLOAD_URL,
@@ -116,10 +116,7 @@ const CategoryTabPanel = () => {
       if (file) {
         let formData = new FormData();
         formData.append("images", file);
-        urlList = await configAxiosResponse().post(
-          `${API_UPLOAD_URL}`,
-          formData
-        );
+        urlList = await axiosRes().post(`${API_UPLOAD_URL}`, formData);
       }
       let res;
       if (currentCategory) {
@@ -157,7 +154,7 @@ const CategoryTabPanel = () => {
       await configAxiosAll(user, dispatch).delete(
         `${API_CATEGORY_URL}/${currentCategory.id}`
       );
-      const data = await configAxiosResponse().get(`${API_CATEGORY_URL}`);
+      const data = await axiosRes().get(`${API_CATEGORY_URL}`);
       dispatch(getAllCategories(data));
     } catch (error) {}
   }

@@ -9,7 +9,7 @@ import Pagination from "../../../components/Pagination";
 import "ag-grid-community/dist/styles/ag-grid.css";
 import "ag-grid-community/dist/styles/ag-theme-alpine.css";
 import { useEffect } from "react";
-import { configAxiosResponse } from "../../../config/configAxios";
+import { axiosRes } from "../../../config/configAxios";
 import { useDispatch, useSelector } from "react-redux";
 import { changeLimit, changePage, getRole } from "../../../redux/roleSlice";
 const RoleManagement = () => {
@@ -76,9 +76,7 @@ const RoleManagement = () => {
   useEffect(() => {
     const promises = [];
     promises.push(
-      configAxiosResponse().get(
-        `${API_ROLE_URL}?limit=${LIMIT_ROW_ROLE}&p=${page}`
-      )
+      axiosRes().get(`${API_ROLE_URL}?limit=${LIMIT_ROW_ROLE}&p=${page}`)
     );
     Promise.allSettled(promises)
       .then((listRes) => {

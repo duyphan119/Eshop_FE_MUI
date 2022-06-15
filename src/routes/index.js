@@ -1,10 +1,10 @@
 // import Home from "../components/Dashboard/Home/Home";
 import SwitchCategoryProduct from "../components/SwitchCategoryProduct";
 import Home from "../pages/Home";
-import Login from "../pages/Login";
+import { Login } from "../pages/Login";
 import NotFound from "../pages/NotFound";
 import ProductSearchResult from "../pages/ProductSearchResult";
-import Register from "../pages/Register";
+import { Register } from "../pages/Register";
 import Cart from "../pages/Cart";
 import ProductDetail from "../pages/ProductDetail";
 import Dashboard from "../pages/Dashboard";
@@ -27,6 +27,7 @@ import {
   UserManagement,
   CommentManagement,
   ProductManagement,
+  ProductDetailManagement,
   ColorManagement,
   SizeManagement,
   RoleManagement,
@@ -34,6 +35,7 @@ import {
   DiscountManagement,
   GroupProductManagement,
 } from "../pages/Management";
+import { FormAddUpdateProduct } from "../pages/FormAddUpdateData";
 export const publicRoutes = [
   {
     path: config.routes.home,
@@ -120,6 +122,11 @@ export const adminRoutes = [
     layout: DashboardLayout,
   },
   {
+    path: config.routes.productDetailManagement,
+    component: ProductDetailManagement,
+    layout: DashboardLayout,
+  },
+  {
     path: config.routes.colorManagement,
     component: ColorManagement,
     layout: DashboardLayout,
@@ -177,6 +184,16 @@ export const adminRoutes = [
   {
     path: config.routes.groupCategoryManagement,
     component: GroupCategoryManagement,
+    layout: DashboardLayout,
+  },
+  {
+    path: config.routes.productAdd,
+    component: FormAddUpdateProduct,
+    layout: DashboardLayout,
+  },
+  {
+    path: config.routes.productEdit,
+    component: FormAddUpdateProduct,
     layout: DashboardLayout,
   },
 ];

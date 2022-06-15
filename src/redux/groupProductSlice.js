@@ -19,6 +19,9 @@ const groupProductSlice = createSlice({
     getGroupProduct: (state, action) => {
       state.groupProduct = action.payload;
     },
+    getAllGroupProducts: (state, action) => {
+      state.all = action.payload;
+    },
     addGroupProduct: (state, action) => {},
     updateGroupProduct: (state, action) => {},
     deleteCategory: (state) => {},
@@ -41,5 +44,6 @@ export const {
   deleteGroupProduct,
   changePage,
   changeLimit,
+  getAllGroupProducts,
 } = groupProductSlice.actions;
 export default groupProductSlice.reducer;

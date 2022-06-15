@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { configAxiosAll } from "../../config/configAxios";
 import { API_PRODUCT_USER_URL, API_CART_ITEM_URL } from "../../constants";
-import { showToastMessage } from "../../redux/toastSlice";
+import { showToast } from "../../redux/toastSlice";
 import { removeWishlistItem } from "../../redux/wishlistSlice";
 import { addToCart } from "../../redux/cartSlice";
 import { formatThousandDigits } from "../../utils";
@@ -25,7 +25,7 @@ const FavoriteItem = ({ item }) => {
       .then(() => {
         dispatch(removeWishlistItem(item.id));
         dispatch(
-          showToastMessage({
+          showToast({
             isOpen: true,
             text: "Đã xoá khỏi danh sách yêu thích",
             type: "success",
@@ -38,7 +38,7 @@ const FavoriteItem = ({ item }) => {
   async function handleAddToCart() {
     if (1 > item.colors[indexColor].sizes[indexSize].amount) {
       dispatch(
-        showToastMessage({
+        showToast({
           text: "Số lượng không hợp lệ",
           type: "info",
           isOpen: true,
@@ -54,7 +54,7 @@ const FavoriteItem = ({ item }) => {
         .then((data) => {
           dispatch(addToCart(data));
           dispatch(
-            showToastMessage({
+            showToast({
               isOpen: true,
               text: "Thêm vào giỏ hàng thành công",
               type: "success",
@@ -64,7 +64,7 @@ const FavoriteItem = ({ item }) => {
         .catch((err) => {
           if (err?.response?.data?.message === "stuck") {
             dispatch(
-              showToastMessage({
+              showToast({
                 text: "Sản phẩm đã hết",
                 type: "info",
                 isOpen: true,

@@ -27,12 +27,12 @@ const colorSlice = createSlice({
       state.list = action.payload;
     },
     addColor: (state, action) => {
-      state.list = [action.payload, ...state.list];
+      state.list.push(action.payload);
     },
     updateColor: (state, action) => {
       const newColor = action.payload;
       const index = state.list.findIndex((item) => item.id === newColor.id);
-      state.list[index] = newColor;
+      state.list[index] = { ...state.list[index], ...newColor };
       state.current = null;
     },
     deleteColor: (state) => {

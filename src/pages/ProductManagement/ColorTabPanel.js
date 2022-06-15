@@ -9,7 +9,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { getAll, getCurrentColor } from "../../redux/colorSlice";
 import { calHeightDataGrid } from "../../utils";
 import ModalColor from "../../components/ModalColor";
-import { configAxiosAll, configAxiosResponse } from "../../config/configAxios";
+import { configAxiosAll, axiosRes } from "../../config/configAxios";
 import { API_COLOR_URL } from "../../constants";
 
 import "ag-grid-community/dist/styles/ag-grid.css";
@@ -117,7 +117,7 @@ const ColorTabPanel = () => {
       await configAxiosAll(user, dispatch).delete(
         `${API_COLOR_URL}/${current.id}`
       );
-      const data = await configAxiosResponse().get(`${API_COLOR_URL}`);
+      const data = await axiosRes().get(`${API_COLOR_URL}`);
       dispatch(getAll(data));
     } catch (error) {}
   }

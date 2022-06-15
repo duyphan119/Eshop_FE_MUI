@@ -9,7 +9,7 @@ import Pagination from "../../../components/Pagination";
 import "ag-grid-community/dist/styles/ag-grid.css";
 import "ag-grid-community/dist/styles/ag-theme-alpine.css";
 import { useEffect } from "react";
-import { configAxiosResponse } from "../../../config/configAxios";
+import { axiosRes } from "../../../config/configAxios";
 import { useDispatch, useSelector } from "react-redux";
 import { changeLimit, changePage, getUser } from "../../../redux/userSlice";
 const UserManagement = () => {
@@ -108,9 +108,7 @@ const UserManagement = () => {
   useEffect(() => {
     const promises = [];
     promises.push(
-      configAxiosResponse().get(
-        `${API_USER_URL}?limit=${LIMIT_ROW_USER}&p=${page}`
-      )
+      axiosRes().get(`${API_USER_URL}?limit=${LIMIT_ROW_USER}&p=${page}`)
     );
     Promise.allSettled(promises)
       .then((listRes) => {

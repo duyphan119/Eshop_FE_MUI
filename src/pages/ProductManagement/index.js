@@ -5,7 +5,7 @@ import ColorTabPanel from "./ColorTabPanel";
 import MaterialTabPanel from "./MaterialTabPanel";
 import SizeTabPanel from "./SizeTabPanel";
 import ProductTabPanel from "./ProductTabPanel";
-import { configAxiosResponse } from "../../config/configAxios";
+import { axiosRes } from "../../config/configAxios";
 import { API_COLOR_URL, API_MATERIAL_URL, API_SIZE_URL } from "../../constants";
 import { useDispatch } from "react-redux";
 import { getAll as getAllColors } from "../../redux/colorSlice";
@@ -21,9 +21,9 @@ const ProductManagement = () => {
   useEffect(() => {
     const promises = [];
 
-    promises.push(configAxiosResponse().get(`${API_COLOR_URL}`));
-    promises.push(configAxiosResponse().get(`${API_SIZE_URL}`));
-    promises.push(configAxiosResponse().get(`${API_MATERIAL_URL}`));
+    promises.push(axiosRes().get(`${API_COLOR_URL}`));
+    promises.push(axiosRes().get(`${API_SIZE_URL}`));
+    promises.push(axiosRes().get(`${API_MATERIAL_URL}`));
 
     Promise.allSettled(promises)
       .then((listRes) => {

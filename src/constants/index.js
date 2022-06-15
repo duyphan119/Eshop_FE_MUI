@@ -74,3 +74,4 @@ export const LIMIT_ROW_DISCOUNT = 10;
 export const LIMIT_ROW_USER_COUPON = 10;
 export const LIMIT_CLIENT_ORDER = 10;
 export const LIMIT_ROW_GROUP_PRODUCT = 10;
+export const LIMIT_ROW_PRODUCT_DETAIL = 10;

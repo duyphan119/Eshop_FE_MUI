@@ -8,7 +8,7 @@ import config from "../../../config";
 import { configAxiosAll } from "../../../config/configAxios";
 import { API_CART_ITEM_URL } from "../../../constants";
 import { removeCartItem } from "../../../redux/cartSlice";
-import { showToastMessage } from "../../../redux/toastSlice";
+import { showToast } from "../../../redux/toastSlice";
 import {
   formatThousandDigits,
   getNewPrice,
@@ -28,7 +28,7 @@ const CartNotify = () => {
       .then((res) => {
         dispatch(removeCartItem(item));
         dispatch(
-          showToastMessage({
+          showToast({
             type: "success",
             text: "Xoá thành công",
             isOpen: true,
@@ -37,7 +37,7 @@ const CartNotify = () => {
       })
       .catch((err) => {
         dispatch(
-          showToastMessage({
+          showToast({
             type: "error",
             text: "Xoá thất bại",
             isOpen: true,

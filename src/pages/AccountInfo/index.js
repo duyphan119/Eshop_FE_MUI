@@ -10,7 +10,7 @@ import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { TitleAccount } from "../../components/Title";
-import { configAxiosAll, configAxiosResponse } from "../../config/configAxios";
+import { configAxiosAll, axiosRes } from "../../config/configAxios";
 import { API_UPLOAD_URL, API_USER_URL } from "../../constants";
 import { login } from "../../redux/authSlice";
 
@@ -41,10 +41,7 @@ const AccountInfo = () => {
       if (file) {
         const formData = new FormData();
         formData.append("images", file);
-        const urlList = await configAxiosResponse().post(
-          `${API_UPLOAD_URL}`,
-          formData
-        );
+        const urlList = await axiosRes().post(`${API_UPLOAD_URL}`, formData);
         reqData.avatar = urlList[0].secure_url;
       }
       await configAxiosAll(user, dispatch).put(`${API_USER_URL}`, {

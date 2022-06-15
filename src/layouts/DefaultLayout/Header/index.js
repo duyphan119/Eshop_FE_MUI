@@ -8,10 +8,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import Logo from "../../../components/Logo";
 import config from "../../../config";
-import {
-  configAxiosAll,
-  configAxiosResponse,
-} from "../../../config/configAxios";
+import { configAxiosAll, axiosRes } from "../../../config/configAxios";
 import {
   API_BANNER_URL,
   API_CART_URL,
@@ -38,15 +35,13 @@ const Header = ({ headerRef }) => {
     const promises = [];
 
     promises.push(
-      configAxiosResponse().get(
+      axiosRes().get(
         `${API_BANNER_URL}?position=above-header&page=/&isShow=true`
       )
     );
 
     if (user && user.id) {
-      promises.push(
-        configAxiosResponse().get(`${API_PRODUCT_URL}/user/${user.id}`)
-      );
+      promises.push(axiosRes().get(`${API_PRODUCT_URL}/user/${user.id}`));
 
       promises.push(
         configAxiosAll(user, dispatch).get(`${API_CART_URL}/user/${user.id}`)

@@ -18,7 +18,7 @@ import {
   API_SIZE_URL,
   PRODUCTS_PER_PAGE,
 } from "../../constants";
-import { configAxiosAll, configAxiosResponse } from "../../config/configAxios";
+import { configAxiosAll, axiosRes } from "../../config/configAxios";
 import Sort from "./Sort";
 import "./ProductCategory.css";
 const ProductsCategory = ({
@@ -95,17 +95,17 @@ const ProductsCategory = ({
         const promises = [];
         promises.push(
           new Promise((resolve, reject) => {
-            resolve(configAxiosResponse().get(`${API_COLOR_URL}`));
+            resolve(axiosRes().get(`${API_COLOR_URL}`));
           })
         );
         promises.push(
           new Promise((resolve, reject) => {
-            resolve(configAxiosResponse().get(`${API_SIZE_URL}`));
+            resolve(axiosRes().get(`${API_SIZE_URL}`));
           })
         );
         promises.push(
           new Promise((resolve, reject) => {
-            resolve(configAxiosResponse().get(`${API_MATERIAL_URL}`));
+            resolve(axiosRes().get(`${API_MATERIAL_URL}`));
           })
         );
         const listRes = await Promise.allSettled(promises);

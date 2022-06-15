@@ -54,11 +54,12 @@ const Home = () => {
         // );
         promises.push(
           configAxiosAll(user, dispatch).get(
-            `${API_PRODUCT_URL}?include=true&limit=${LIMIT_NEW_PRODUCT}`
+            `${API_PRODUCT_URL}?limit=${LIMIT_NEW_PRODUCT}`
           )
         );
 
         const listRes = await Promise.allSettled(promises);
+        console.log(listRes);
         if (listRes[0].status === "fulfilled") {
           setNewestProduct(listRes[0].value);
         }

@@ -12,7 +12,7 @@ import Logo from "../../../components/Logo";
 import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect } from "react";
-import { configAxiosResponse } from "../../../config/configAxios";
+import { axiosRes } from "../../../config/configAxios";
 import { API_CART_URL, API_GROUP_CATEGORY_URL } from "../../../constants";
 import { getAllGroupCategories } from "../../../redux/groupCategorySlice";
 import { getCart } from "../../../redux/cartSlice";
@@ -25,8 +25,8 @@ const Sidebar = (props) => {
 
   useEffect(() => {
     const promises = [];
-    promises.push(configAxiosResponse().get(`${API_CART_URL}/user/2`));
-    promises.push(configAxiosResponse().get(`${API_GROUP_CATEGORY_URL}`));
+    promises.push(axiosRes().get(`${API_CART_URL}/user/2`));
+    promises.push(axiosRes().get(`${API_GROUP_CATEGORY_URL}`));
     Promise.allSettled(promises)
       .then((listRes) => {
         if (listRes[0].status === "fulfilled") {

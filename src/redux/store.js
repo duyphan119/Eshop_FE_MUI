@@ -22,13 +22,14 @@ import orderStatusReducer from "./orderStatusSlice";
 import sizeGuideReducer from "./sizeGuideSlice";
 import groupProductReducer from "./groupProductSlice";
 import discountReducer from "./discountSlice";
-
+import productDetailReducer from "./productDetailSlice";
 const store = configureStore({
   reducer: {
     category: categoryReducer,
     auth: authReducer,
     toast: toastReducer,
     product: productReducer,
+    productDetail: productDetailReducer,
     cart: cartReducer,
     groupCategory: groupCategoryReducer,
     order: orderReducer,

@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { memo, useEffect } from "react";
 import { Box, Container, Grid } from "@mui/material";
-import { configAxiosResponse } from "../../../config/configAxios";
+import { axiosRes } from "../../../config/configAxios";
 import { API_GENDER_URL } from "../../../constants";
 import { getAllGenderCategories } from "../../../redux/genderCategorySlice";
 const HeaderCategoryList = () => {
@@ -12,7 +12,7 @@ const HeaderCategoryList = () => {
 
   useEffect(() => {
     (async function () {
-      const data = await configAxiosResponse().get(`${API_GENDER_URL}`);
+      const data = await axiosRes().get(`${API_GENDER_URL}`);
       dispatch(getAllGenderCategories(data));
     })();
   }, [dispatch]);

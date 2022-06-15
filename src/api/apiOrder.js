@@ -1,7 +1,7 @@
 import { configAxios, configAxiosAll } from "../config/configAxios";
 import * as constants from "../constants";
 import { getCart } from "../redux/cartSlice";
-import { showToastMessage } from "../redux/toastSlice";
+import { showToast } from "../redux/toastSlice";
 const API_URL = `${constants.SERVER_URL}/v1/api/order`;
 
 export const apiCreateOrder = async (user, data, dispatch) => {
@@ -9,7 +9,7 @@ export const apiCreateOrder = async (user, data, dispatch) => {
     const data1 = await configAxiosAll(user, dispatch).post(`${API_URL}`, data);
     dispatch(getCart([]));
     dispatch(
-      showToastMessage({
+      showToast({
         type: "success",
         text: "Đặt hàng thành công",
         title: "Thành công",
@@ -20,7 +20,7 @@ export const apiCreateOrder = async (user, data, dispatch) => {
   } catch (error) {
     console.log(error);
     dispatch(
-      showToastMessage({
+      showToast({
         type: "error",
         text: "Đặt hàng thất bại",
         title: "Thất bại",

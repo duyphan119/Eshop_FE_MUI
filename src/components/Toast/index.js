@@ -7,12 +7,12 @@ const Toast = () => {
   useEffect(() => {
     if (toastMessage.text !== "") {
       toast[toastMessage.type](toastMessage.text, {
-        position: "bottom-right",
-        autoClose: 1234,
-        hideProgressBar: false,
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: true,
         closeOnClick: true,
-        pauseOnHover: false,
-        draggable: false,
+        pauseOnHover: true,
+        draggable: true,
         progress: undefined,
       });
     }
@@ -22,15 +22,15 @@ const Toast = () => {
   } else {
     return (
       <ToastContainer
-        position="bottom-right"
-        autoClose={2345}
-        hideProgressBar={false}
-        newestOnTop={false}
+        position="top-right"
+        autoClose={3000}
+        hideProgressBar
+        newestOnTop
         closeOnClick
         rtl={false}
-        pauseOnFocusLoss={false}
-        draggable={false}
-        pauseOnHover={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
       />
     );
   }

@@ -4,7 +4,7 @@ import "ag-grid-community/dist/styles/ag-theme-alpine.css";
 import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import TabPanel from "../../components/TabPanel";
-import { configAxiosResponse } from "../../config/configAxios";
+import { axiosRes } from "../../config/configAxios";
 import { API_BANNER_URL, LIMIT_ROW_BANNER } from "../../constants";
 import { getBanner } from "../../redux/bannerSlice";
 import BannerTabPanel from "./BannerTabPanel";
@@ -15,7 +15,7 @@ const WebsiteManagement = () => {
   const [tab, setTab] = useState(0);
 
   useEffect(() => {
-    configAxiosResponse()
+    axiosRes()
       .get(`${API_BANNER_URL}?limit=${LIMIT_ROW_BANNER}&p=${1}`)
       .then((data) => {
         dispatch(getBanner(data));

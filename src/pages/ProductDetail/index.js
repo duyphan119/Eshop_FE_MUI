@@ -30,7 +30,7 @@ import {
   PRODUCTS_SLIDER_VERTICAL,
 } from "../../constants";
 import { configAxiosAll } from "../../config/configAxios";
-import { showToastMessage } from "../../redux/toastSlice";
+import { showToast } from "../../redux/toastSlice";
 import { addToCart } from "../../redux/cartSlice";
 import "./ProductDetail.css";
 import Breadcrumbs from "../../components/Breadcrumbs";
@@ -155,7 +155,7 @@ const ProductDetail = ({ query }) => {
   async function handleAddToCart() {
     if (quantity > product.colors[indexColor].sizes[indexSize].amount) {
       dispatch(
-        showToastMessage({
+        showToast({
           text: "Số lượng không hợp lệ",
           type: "info",
           isOpen: true,
@@ -172,7 +172,7 @@ const ProductDetail = ({ query }) => {
         );
         dispatch(addToCart(data));
         dispatch(
-          showToastMessage({
+          showToast({
             type: "success",
             text: "Thêm thành công",
             isOpen: true,
@@ -203,7 +203,7 @@ const ProductDetail = ({ query }) => {
           });
           dispatch(addToWishlist(product));
           dispatch(
-            showToastMessage({
+            showToast({
               type: "success",
               text: "Đã thêm vào danh sách yêu thích",
               isOpen: true,
@@ -215,7 +215,7 @@ const ProductDetail = ({ query }) => {
           );
           dispatch(removeWishlistItem(product.id));
           dispatch(
-            showToastMessage({
+            showToast({
               type: "success",
               text: "Đã xoá khỏi danh sách yêu thích",
               isOpen: true,

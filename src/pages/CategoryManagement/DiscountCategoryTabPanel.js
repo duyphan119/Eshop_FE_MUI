@@ -9,7 +9,7 @@ import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import ConfirmDialog from "../../components/ConfirmDialog";
 import ModalDiscountCategory from "../../components/ModalDiscountCategory";
-import { configAxiosAll, configAxiosResponse } from "../../config/configAxios";
+import { configAxiosAll, axiosRes } from "../../config/configAxios";
 import {
   API_DISCOUNT_CATEGORY_URL,
   LIMIT_ROW_DISCOUNT_CATEGORY,
@@ -107,9 +107,7 @@ const DiscountCategoryTabPanel = () => {
       await configAxiosAll(user, dispatch).delete(
         `${API_DISCOUNT_CATEGORY_URL}/${currentDiscountCategory.id}`
       );
-      const data = await configAxiosResponse().get(
-        `${API_DISCOUNT_CATEGORY_URL}`
-      );
+      const data = await axiosRes().get(`${API_DISCOUNT_CATEGORY_URL}`);
       dispatch(getAllDiscountCategories(data));
     } catch (error) {}
   }

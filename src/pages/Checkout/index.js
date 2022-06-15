@@ -4,7 +4,7 @@ import { useCallback, useContext, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Navigate, useNavigate } from "react-router-dom";
 import config from "../../config";
-import { configAxiosAll, configAxiosResponse } from "../../config/configAxios";
+import { configAxiosAll, axiosRes } from "../../config/configAxios";
 import {
   API_COUPON_URL,
   API_NOTIFICATION_URL,
@@ -12,7 +12,7 @@ import {
 } from "../../constants";
 // import { SocketContext } from "../../context";
 import { getSelectedCartItems } from "../../redux/cartSlice";
-import { showToastMessage } from "../../redux/toastSlice";
+import { showToast } from "../../redux/toastSlice";
 import { getFinalPrice, getTotalPrice, validateTelephone } from "../../utils";
 import "./Checkout.css";
 import Form from "./Form";
@@ -48,7 +48,7 @@ const Checkout = () => {
   // useEffect(() => {
   //   (async function () {
   //     try {
-  //       const data = await configAxiosResponse().get(
+  //       const data = await axiosRes().get(
   //         `${API_COUPON_URL}?percent=0`
   //       );
   //       setCoupon(data.items[0]);
@@ -98,7 +98,7 @@ const Checkout = () => {
           }
         } else {
           dispatch(
-            showToastMessage({
+            showToast({
               type: "info",
               text: "Số điện thoại không hợp lệ",
               title: "Thông tin",
@@ -108,7 +108,7 @@ const Checkout = () => {
         }
       } else {
         dispatch(
-          showToastMessage({
+          showToast({
             type: "error",
             text: "Vui lòng chọn đầy đủ thông tin",
             title: "Thất bại",
@@ -119,7 +119,7 @@ const Checkout = () => {
     } catch (error) {
       console.log(error);
       dispatch(
-        showToastMessage({
+        showToast({
           type: "error",
           text: "Vui lòng chọn đầy đủ thông tin",
           title: "Thất bại",

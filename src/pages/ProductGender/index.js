@@ -20,7 +20,7 @@ import BannerSkeleton from "../../components/Skeleton/Banner";
 import CategoryIconSkeleton from "../../components/Skeleton/CategoryIcon";
 import ProductSkeleton from "../../components/Skeleton/Product";
 import { TitleCenter } from "../../components/Title";
-import { configAxiosAll, configAxiosResponse } from "../../config/configAxios";
+import { configAxiosAll, axiosRes } from "../../config/configAxios";
 import { useTheme } from "@mui/material/styles";
 import { useMediaQuery } from "@mui/material";
 import {
@@ -78,7 +78,7 @@ const ProductGender = ({ genderCategory }) => {
   useEffect(() => {
     (async function () {
       try {
-        const data = await configAxiosResponse().get(
+        const data = await axiosRes().get(
           `${API_BANNER_URL}?page=${location.pathname}&position=under-header&isShow=true`
         );
         setBanners(data);

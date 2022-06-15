@@ -13,7 +13,7 @@ import ConfirmDialog from "../../components/ConfirmDialog";
 import ModalDownloadOrder from "../../components/ModalDownloadOrder";
 import ModalEditOrder from "../../components/ModalEditOrder";
 import Pagination from "../../components/Pagination";
-import { configAxiosAll, configAxiosResponse } from "../../config/configAxios";
+import { configAxiosAll, axiosRes } from "../../config/configAxios";
 import {
   API_ORDER_STATUS_URL,
   API_ORDER_URL,
@@ -157,7 +157,7 @@ const OrderTabPanel = () => {
   const [openDialog, setOpenDialog] = useState(false);
 
   useEffect(() => {
-    configAxiosResponse()
+    axiosRes()
       .get(`${API_ORDER_STATUS_URL}`)
       .then((res) => dispatch(getAllOrderStatuses(res)))
       .catch((err) => {});

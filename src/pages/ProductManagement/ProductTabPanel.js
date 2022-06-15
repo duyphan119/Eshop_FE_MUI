@@ -12,7 +12,7 @@ import { useDispatch, useSelector } from "react-redux";
 import ConfirmDialog from "../../components/ConfirmDialog";
 import ModalAddProduct from "../../components/ModalAddProduct";
 import Pagination from "../../components/Pagination";
-import { configAxiosAll, configAxiosResponse } from "../../config/configAxios";
+import { configAxiosAll, axiosRes } from "../../config/configAxios";
 import {
   API_DISCOUNT_URL,
   API_IMAGE_URL,
@@ -198,10 +198,7 @@ const ProductTabPanel = () => {
           });
         });
         if (images.length > 0) {
-          urlList = await configAxiosResponse().post(
-            `${API_UPLOAD_URL}`,
-            formData
-          );
+          urlList = await axiosRes().post(`${API_UPLOAD_URL}`, formData);
         }
         if (images.length > 0) {
           promises.push(
@@ -267,10 +264,7 @@ const ProductTabPanel = () => {
         });
         let urlList = [];
         if (images.length > 0) {
-          urlList = await configAxiosResponse().post(
-            `${API_UPLOAD_URL}`,
-            formData
-          );
+          urlList = await axiosRes().post(`${API_UPLOAD_URL}`, formData);
         }
 
         const promises = [];
@@ -330,7 +324,7 @@ const ProductTabPanel = () => {
         }
         await Promise.allSettled(promises);
       }
-      const newProduct = await configAxiosResponse().get(
+      const newProduct = await axiosRes().get(
         `${API_PRODUCT_URL}/slug/${
           currentProduct ? currentProduct.slug : _product.slug
         }`

@@ -4,7 +4,7 @@ import "ag-grid-community/dist/styles/ag-theme-alpine.css";
 import React, { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import TabPanel from "../../components/TabPanel";
-import { configAxiosResponse } from "../../config/configAxios";
+import { axiosRes } from "../../config/configAxios";
 import {
   API_CATEGORY_URL,
   API_DISCOUNT_CATEGORY_URL,
@@ -34,16 +34,14 @@ const CategoryManagement = () => {
   useEffect(() => {
     (function () {
       const promises = [];
-      promises.push(configAxiosResponse().get(`${API_GENDER_URL}`));
-      promises.push(configAxiosResponse().get(`${API_GROUP_CATEGORY_URL}`));
-      promises.push(configAxiosResponse().get(`${API_CATEGORY_URL}`));
-      promises.push(configAxiosResponse().get(`${API_DISCOUNT_CATEGORY_URL}`));
+      promises.push(axiosRes().get(`${API_GENDER_URL}`));
+      promises.push(axiosRes().get(`${API_GROUP_CATEGORY_URL}`));
+      promises.push(axiosRes().get(`${API_CATEGORY_URL}`));
+      promises.push(axiosRes().get(`${API_DISCOUNT_CATEGORY_URL}`));
       promises.push(
-        configAxiosResponse().get(
-          `${API_SIZE_GUIDE_URL}?limit=${LIMIT_ROW_SIZE_GUIDE}`
-        )
+        axiosRes().get(`${API_SIZE_GUIDE_URL}?limit=${LIMIT_ROW_SIZE_GUIDE}`)
       );
-      promises.push(configAxiosResponse().get(`${API_SIZE_URL}`));
+      promises.push(axiosRes().get(`${API_SIZE_URL}`));
       Promise.allSettled(promises)
         .then((listRes) => {
           if (listRes[0].status === "fulfilled") {

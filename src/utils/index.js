@@ -127,16 +127,19 @@ export const getTotalDaysOfMonth = () => {
   return new Date(year, month, 0).getDate();
 };
 
-export const calHeightDataGrid = (rowCount) => {
-  const rowHeight = 41;
-  const rowHeaderHeight = 48;
-  const borderCount = rowCount + 3;
-  return rowCount * rowHeight + rowHeaderHeight + borderCount;
+export const calHeightDataGrid = (
+  rowCount,
+  rowHeight = 41,
+  rowHeaderHeight = 56,
+  paginationHeight = 56
+) => {
+  return rowCount * rowHeight + rowHeaderHeight + paginationHeight;
 };
-export const getSku = (category_code, product_id, color_code, size_code) => {
-  return `${category_code}${`000${product_id}`.slice(-4)}-${color_code}${
-    size_code === "0" ? "" : `-${size_code}`
-  }`;
+export const getSku = (groupProduct, product, color, size) => {
+  if (!groupProduct || !product || !color || !size) return "";
+  return `${groupProduct.shortName}${`000${product.id}`.slice(-4)}-${
+    color.shortValue
+  }${!size.shortValue ? "" : `-${size.shortValue}`}`;
 };
 export const getFinalPrice = (totalPrice, coupon) => {
   let divide1000 = totalPrice / 1000;
@@ -208,4 +211,43 @@ export const checkIsAdmin = (user) => {
     }
   } catch (error) {}
   return false;
+};
+export const validateNumber = (input) => {
+  try {
+    let parseInput = parseInt(input);
+    if (!isNaN(parseInput)) {
+      return true;
+    }
+  } catch (error) {}
+  return false;
+};
+export const toSlug = (str) => {
+  // Chuyển hết sang chữ thường
+  str = str.toLowerCase();
+
+  // xóa dấu
+  str = str.replace(/(à|á|ạ|ả|ã|â|ầ|ấ|ậ|ẩ|ẫ|ă|ằ|ắ|ặ|ẳ|ẵ)/g, "a");
+  str = str.replace(/(è|é|ẹ|ẻ|ẽ|ê|ề|ế|ệ|ể|ễ)/g, "e");
+  str = str.replace(/(ì|í|ị|ỉ|ĩ)/g, "i");
+  str = str.replace(/(ò|ó|ọ|ỏ|õ|ô|ồ|ố|ộ|ổ|ỗ|ơ|ờ|ớ|ợ|ở|ỡ)/g, "o");
+  str = str.replace(/(ù|ú|ụ|ủ|ũ|ư|ừ|ứ|ự|ử|ữ)/g, "u");
+  str = str.replace(/(ỳ|ý|ỵ|ỷ|ỹ)/g, "y");
+  str = str.replace(/(đ)/g, "d");
+
+  str = str.replace(/(\s+-\s+)/g, "-");
+
+  // Xóa ký tự đặc biệt
+  str = str.replace(/([^0-9a-z-\s])/g, "");
+
+  // Xóa khoảng trắng thay bằng ký tự -
+  str = str.replace(/(\s+)/g, "-");
+
+  // xóa phần dự - ở đầu
+  str = str.replace(/^-+/g, "");
+
+  // xóa phần dư - ở cuối
+  str = str.replace(/-+$/g, "");
+
+  // return
+  return str;
 };

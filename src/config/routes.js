@@ -23,10 +23,13 @@ const routes = {
   roleManagement: "/dashboard/role",
   couponManagement: "/dashboard/coupon",
   websiteManagement: "/dashboard/website",
+  productDetailManagement: "/dashboard/product-detail",
   statistics: "/dashboard/statistics",
   productCategory: "/:category_slug",
   search: "/search",
   changePassword: "/account/change-password",
+  productAdd: "/dashboard/product/add",
+  productEdit: "/dashboard/product/edit/:id",
 };
 
 export default routes;

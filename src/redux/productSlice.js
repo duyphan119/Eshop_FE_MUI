@@ -2,7 +2,7 @@ import { createSlice } from "@reduxjs/toolkit";
 import { LIMIT_ROW_PRODUCT } from "../constants";
 const initLatest = JSON.parse(localStorage.getItem("shop-of-duy:latest"));
 const initialState = {
-  list: null,
+  list: [],
   favoriteList: [],
   current: null,
   searchResult: [],
@@ -21,7 +21,7 @@ const productSlice = createSlice({
   name: "product",
   initialState: initialState,
   reducers: {
-    getProducts: (state, action) => {
+    getAllProducts: (state, action) => {
       state.list = action.payload;
     },
     getBestSellersDashboard: (state, action) => {
@@ -30,7 +30,21 @@ const productSlice = createSlice({
     getProduct: (state, action) => {
       state.product = action.payload;
     },
-
+    addProduct: (state, action) => {
+      console.log(action.payload);
+      state.list.push(action.payload);
+    },
+    updateProduct: (state, action) => {
+      const data = action.payload;
+      const index = state.list.findIndex((item) => item.id === data.id);
+      if (index !== -1) {
+        state.list[index] = { ...state.list[index], ...data };
+      }
+    },
+    deleteProduct: (state, action) => {
+      const id = action.payload;
+      state.list.filter((item) => item.id !== id);
+    },
     getSortedProducts: (state, action) => {
       console.log(action.payload);
     },
@@ -97,7 +111,8 @@ const productSlice = createSlice({
   },
 });
 export const {
-  getProducts,
+  getAllProducts,
+  addProduct,
   getProduct,
   getSortedProducts,
   getFavoriteList,
@@ -112,5 +127,7 @@ export const {
   changePage,
   changeLimit,
   getBestSellersDashboard,
+  deleteProduct,
+  updateProduct,
 } = productSlice.actions;
 export default productSlice.reducer;

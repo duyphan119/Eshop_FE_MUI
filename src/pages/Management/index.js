@@ -11,3 +11,4 @@ export { default as RoleManagement } from "./RoleManagement";
 export { default as OrderManagement } from "./OrderManagement";
 export { default as CouponManagement } from "./CouponManagement";
 export { default as CommentManagement } from "./CommentManagement";
+export { default as ProductDetailManagement } from "./ProductDetailManagement";

@@ -9,7 +9,7 @@ import { configAxiosAll } from "../../config/configAxios";
 import { API_PRODUCT_USER_URL, PRODUCT_COLORS_PREVIEW } from "../../constants";
 import { showModalAddToCart } from "../../redux/cartSlice";
 import { getCurrentProduct } from "../../redux/productSlice";
-import { showToastMessage } from "../../redux/toastSlice";
+import { showToast } from "../../redux/toastSlice";
 import { addToWishlist, removeWishlistItem } from "../../redux/wishlistSlice";
 import { formatThousandDigits, getNewPrice } from "../../utils";
 import "./Product.css";
@@ -39,7 +39,7 @@ const Product = ({ product }) => {
           });
           dispatch(addToWishlist(product));
           dispatch(
-            showToastMessage({
+            showToast({
               type: "success",
               text: "Đã thêm vào danh sách yêu thích",
               isOpen: true,
@@ -51,7 +51,7 @@ const Product = ({ product }) => {
           );
           dispatch(removeWishlistItem(product.id));
           dispatch(
-            showToastMessage({
+            showToast({
               type: "success",
               text: "Đã xoá khỏi danh sách yêu thích",
               isOpen: true,

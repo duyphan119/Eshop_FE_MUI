@@ -1,8 +1,8 @@
 import { Link } from "react-router-dom";
-import { Breadcrumbs } from "@mui/material";
-const _Breadcrumbs = ({ items, sx }) => {
+import MuiBreadcrumbs from "@mui/material/Breadcrumbs";
+const Breadcrumbs = ({ items, sx }) => {
   return (
-    <Breadcrumbs sx={sx} fontSize="14px">
+    <MuiBreadcrumbs sx={sx} fontSize="14px">
       {items.map((item, index) =>
         item.to ? (
           <Link to={item.to} key={index} className="hover-color-main-color">
@@ -12,8 +12,8 @@ const _Breadcrumbs = ({ items, sx }) => {
           <>{item.text}</>
         )
       )}
-    </Breadcrumbs>
+    </MuiBreadcrumbs>
   );
 };
 
-export default _Breadcrumbs;
+export default Breadcrumbs;

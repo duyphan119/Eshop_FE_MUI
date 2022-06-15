@@ -27,7 +27,7 @@ export const configAxios = (user, dispatch) => {
   );
   return instance;
 };
-export const configAxiosResponse = () => {
+export const axiosRes = () => {
   const instance = axios.create({
     withCredentials: true,
   });

@@ -3,17 +3,17 @@ const initialState = {
   toastMessage: {
     type: "success",
     isOpen: false,
-    text: ""
+    text: "",
   },
 };
 const toastSlice = createSlice({
   name: "toast",
   initialState: initialState,
   reducers: {
-    showToastMessage: (state, action) => {
-      state.toastMessage = action.payload ;
+    showToast: (state, action) => {
+      state.toastMessage = action.payload;
     },
   },
 });
-export const { showToastMessage } = toastSlice.actions;
+export const { showToast } = toastSlice.actions;
 export default toastSlice.reducer;
