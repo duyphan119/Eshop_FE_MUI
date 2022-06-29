@@ -11,7 +11,6 @@ import { AgGridReact } from "ag-grid-react";
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import ConfirmDialog from "../../components/ConfirmDialog";
-import ModalBanner from "../../components/ModalBanner";
 import Pagination from "../../components/Pagination";
 import { configAxiosAll, axiosRes } from "../../config/configAxios";
 import {
@@ -146,8 +145,7 @@ const BannerTabPanel = () => {
           href,
           isShow,
           page,
-          url:
-            urlList && urlList.length > 0 ? urlList[0].secure_url : current.url,
+          url: urlList && urlList.length > 0 ? urlList[0].path : current.url,
         };
         await configAxiosAll(user, dispatch).put(`${API_BANNER_URL}`, req);
         dispatch(updateBanner({ ...current, ...req }));
@@ -159,7 +157,7 @@ const BannerTabPanel = () => {
             href,
             isShow,
             page,
-            url: urlList && urlList.length > 0 ? urlList[0].secure_url : null,
+            url: urlList && urlList.length > 0 ? urlList[0].path : null,
           }
         );
         dispatch(newBanner(created));
@@ -212,18 +210,6 @@ const BannerTabPanel = () => {
                 columnDefs={columns}
               ></AgGridReact>
             </div>
-            {open && (
-              <ModalBanner
-                open={open}
-                handleClose={() => setOpen(false)}
-                labelOk={current ? "Sửa" : "Thêm"}
-                title={!current ? "Thêm banner" : "Sửa banner"}
-                isCloseAfterOk={true}
-                banner={current}
-                width={700}
-                handleOk={getData}
-              />
-            )}
           </div>
         )}
         {banner && banner.total_page && banner.total_page > 1 && (

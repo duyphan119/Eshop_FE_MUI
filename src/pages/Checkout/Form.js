@@ -1,30 +1,27 @@
-import {
-  Box,
-  Checkbox,
-  Divider,
-  FormControl,
-  FormControlLabel,
-  Grid,
-  InputLabel,
-  MenuItem,
-  Select,
-  TextField,
-} from "@mui/material";
+import { Box, Divider, Grid } from "@mui/material";
 import axios from "axios";
+import { memo } from "react";
 import { useEffect, useState } from "react";
 import { TitleControl } from "../../components/Title";
 import { API_PROVINCE_URL } from "../../constants";
-const Form = ({ order, setOrder }) => {
+const Form = ({ order, setOrder, setDeliveryPrice }) => {
   const [optionsCity, setOptionsCity] = useState([]);
   const [optionsDistrict, setOptionsDistricts] = useState([]);
   const [optionsWards, setOptionsWards] = useState([]);
   useEffect(() => {
     (async function () {
       const res = await axios.get(`${API_PROVINCE_URL}?depth=3`);
-      console.log({ res });
       setOptionsCity(res.data);
     })();
   }, []);
+
+  useEffect(() => {
+    if (order.city === "Thành phố Hồ Chí Minh") {
+      setDeliveryPrice();
+    } else {
+      setDeliveryPrice(20000);
+    }
+  }, [order.city, setDeliveryPrice]);
 
   useEffect(() => {
     if (optionsCity.length !== 0) {
@@ -78,12 +75,12 @@ const Form = ({ order, setOrder }) => {
             </Grid>
             <Grid item xs={12}>
               <div className="form-group">
-                <label htmlFor="city">Địa chỉ</label>
+                <label htmlFor="address">Địa chỉ</label>
                 <input
-                  id="city"
-                  value={order.street}
+                  id="street"
+                  value={order.address}
                   onChange={(e) =>
-                    setOrder({ ...order, street: e.target.value })
+                    setOrder({ ...order, address: e.target.value })
                   }
                   type="text"
                   placeholder="Địa chỉ"
@@ -97,7 +94,7 @@ const Form = ({ order, setOrder }) => {
                   value={order.city}
                   onChange={(e) => setOrder({ ...order, city: e.target.value })}
                 >
-                  <option>Chọn Tỉnh / Thành phố</option>
+                  <option value={-1}>Chọn Tỉnh / Thành phố</option>
                   {optionsCity.map((item, index) => (
                     <option value={item.name} key={index}>
                       {item.name}
@@ -109,15 +106,13 @@ const Form = ({ order, setOrder }) => {
             <Grid item xs={12}>
               <div className="form-group">
                 <label htmlFor="district">Quận / Huyện</label>
-                <select>
-                  <option
-                    value={order.district}
-                    onChange={(e) =>
-                      setOrder({ ...order, district: e.target.value })
-                    }
-                  >
-                    Quận / Huyện
-                  </option>
+                <select
+                  value={order.district}
+                  onChange={(e) =>
+                    setOrder({ ...order, district: e.target.value })
+                  }
+                >
+                  <option value="">Quận / Huyện</option>
                   {optionsDistrict.map((item, index) => (
                     <option value={item.name} key={index}>
                       {item.name}
@@ -133,7 +128,7 @@ const Form = ({ order, setOrder }) => {
                   value={order.ward}
                   onChange={(e) => setOrder({ ...order, ward: e.target.value })}
                 >
-                  <option>Chọn Phường / Xã</option>{" "}
+                  <option value="">Chọn Phường / Xã</option>{" "}
                   {optionsWards.map((item, index) => (
                     <option value={item.name} key={index}>
                       {item.name}
@@ -144,7 +139,7 @@ const Form = ({ order, setOrder }) => {
             </Grid>
             <Grid item xs={12}>
               <div className="form-group">
-                <label htmlFor="street">Ghi chú</label>
+                <label htmlFor="address">Ghi chú</label>
                 <textarea
                   value={order.description}
                   onChange={(e) =>
@@ -164,7 +159,12 @@ const Form = ({ order, setOrder }) => {
           <Divider orientation="vertical" />
           <TitleControl>Phương thức thanh toán</TitleControl>
           <div className="form-group-checkbox">
-            <input type="checkbox" id="payment-method" />
+            <input
+              type="checkbox"
+              id="payment-method"
+              checked={true}
+              onChange={(e) => {}}
+            />
             <label htmlFor="payment-method">
               Thanh toán tiền mặt khi nhận hàng (COD)
             </label>
@@ -178,4 +178,4 @@ const Form = ({ order, setOrder }) => {
   );
 };
 
-export default Form;
+export default memo(Form);

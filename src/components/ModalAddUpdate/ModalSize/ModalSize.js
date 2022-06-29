@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useSelector } from "react-redux";
 import { MyModal } from "../../Modal";
 
-const ModalColor = (props) => {
+const ModalOrder = (props) => {
   const { handleOk, ...others } = props;
 
   const current = useSelector((state) => state.color.current);
@@ -42,7 +42,6 @@ const ModalColor = (props) => {
             <div className="form-group mt-1">
               <label htmlFor="shortValue">Tên viết tắt</label>
               <input
-                required
                 placeholder="Nhập tên viết tắt"
                 id="shortValue"
                 value={shortValue}
@@ -58,7 +57,7 @@ const ModalColor = (props) => {
   );
 };
 
-ModalColor.propTypes = {
+ModalOrder.propTypes = {
   open: PropTypes.bool,
   handleOk: PropTypes.func,
   handleClose: PropTypes.func,
@@ -70,4 +69,4 @@ ModalColor.propTypes = {
   height: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
 };
 
-export default ModalColor;
+export default ModalOrder;

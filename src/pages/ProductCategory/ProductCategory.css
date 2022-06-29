@@ -196,3 +196,16 @@
 .sort-product-dropdown-item:hover svg {
   display: block;
 }
+
+.category-link:hover {
+  text-decoration: underline;
+  color: var(--main-color);
+}
+.sub-category-wrapper::before {
+  content: "";
+  position: absolute;
+  top: -10px;
+  left: 0;
+  width: 100%;
+  height: 10px;
+}

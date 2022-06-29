@@ -1,59 +1,60 @@
-import { AgGridReact } from "ag-grid-react";
+import {
+  Box,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableRow,
+} from "@mui/material";
 import * as React from "react";
 import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { TitlePaper } from "../../components/Title";
 import config from "../../config";
-import { LIMIT_RECENT_ORDERS } from "../../constants";
-import { calHeightDataGrid, formatThousandDigits } from "../../utils";
 
-export default function Orders() {
-  const columns = [
-    {
-      field: "id",
-      headerName: "ID",
-      flex: 2,
-    },
-    {
-      field: "category.name",
-      headerName: "Danh mục",
-      flex: 4,
-    },
-    {
-      field: "name",
-      headerName: "Tên sản phẩm",
-      flex: 15,
-    },
-    {
-      field: "price",
-      headerName: "Giá",
-      flex: 3,
-      valueFormatter: (params) => formatThousandDigits(params.data.price),
-    },
-  ];
-
-  const products = useSelector((state) => state.product.bestSellersDashboard);
-
+export default function BestSellers(props) {
+  const items = useSelector((state) => state.productDetail.bestSellerList);
   return (
-    <React.Fragment>
+    <Box>
       <TitlePaper>Sản phẩm bán chạy nhất</TitlePaper>
-      <div
-        style={{
-          width: "100%",
-          height: calHeightDataGrid(LIMIT_RECENT_ORDERS),
-        }}
-      >
-        <div
-          className="ag-theme-alpine"
-          style={{ width: "100%", height: "100%" }}
+      <Box mb={2}>
+        <Table
+          size="small"
+          sx={{
+            ".MuiTableCell-root": {
+              textAlign: "center",
+            },
+          }}
         >
-          <AgGridReact rowData={products} columnDefs={columns}></AgGridReact>
-        </div>
-      </div>
+          <TableHead>
+            <TableRow>
+              <TableCell>STT</TableCell>
+              <TableCell sx={{ textAlign: "left !important" }}>
+                Sản phẩm
+              </TableCell>
+              <TableCell>Màu sắc</TableCell>
+              <TableCell>Kích cỡ</TableCell>
+              <TableCell>Số lượng bán</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {items.map((item, index) => (
+              <TableRow key={index}>
+                <TableCell>{index + 1}</TableCell>
+                <TableCell sx={{ textAlign: "left !important" }}>
+                  {item.detail.product.name}
+                </TableCell>
+                <TableCell>{item.detail.color.value}</TableCell>
+                <TableCell>{item.detail.size.value}</TableCell>
+                <TableCell>{item.count}</TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </Box>
       <Link
         to={config.routes.productManagement}
         style={{
-          marginTop: "24px",
           color: "var(--main-color)",
           textDecoration: "underline",
           fontSize: "14px",
@@ -61,6 +62,6 @@ export default function Orders() {
       >
         Xem tất cả sản phẩm
       </Link>
-    </React.Fragment>
+    </Box>
   );
 }

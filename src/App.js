@@ -1,8 +1,7 @@
 import { Box } from "@mui/material";
-import { useEffect } from "react";
-import { Route, Routes } from "react-router-dom";
+import { Route, Routes, useNavigate } from "react-router-dom";
 import ScrollToTop from "react-scroll-to-top";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { ErrorBoundary } from "react-error-boundary";
 
 import { DefaultLayout } from "./layouts";
@@ -11,7 +10,11 @@ import { publicRoutes, adminRoutes } from "./routes";
 import "./App.css";
 import NavigateScrollToTop from "./components/NavigateScrollToTop";
 import ModalAddToCart from "./components/ModalAddToCart";
-import { checkIsAdmin } from "./utils";
+import { decodeToken } from "./utils";
+import { useEffect } from "react";
+import { axiosToken } from "./config/configAxios";
+import { API_USER_URL } from "./constants";
+import { setCurrentUser } from "./redux/authSlice";
 function ErrorFallback({ error, resetErrorBoundary }) {
   return (
     <div
@@ -28,7 +31,31 @@ function ErrorFallback({ error, resetErrorBoundary }) {
   );
 }
 function App() {
-  const user = useSelector((state) => state.auth.currentUser);
+  const token = useSelector((state) => state.auth.token);
+  const modal = useSelector((state) => state.cart.modal);
+
+  const navigate = useNavigate();
+
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    if (token) {
+      const user = decodeToken(token?.accessToken);
+      const promises = [];
+      promises.push(
+        axiosToken(token.accessToken, dispatch, navigate).get(
+          `${API_USER_URL}/${user.id}`
+        )
+      );
+      Promise.allSettled(promises)
+        .then((listRes) => {
+          if (listRes[0] && listRes[0].status === "fulfilled") {
+            dispatch(setCurrentUser(listRes[0].value.item));
+          }
+        })
+        .catch((err) => {});
+    }
+  }, [dispatch, navigate, token]);
 
   function showRoutes(routes) {
     return routes.map((router, index) => {
@@ -71,11 +98,13 @@ function App() {
       </Box>
       <Routes>
         {showRoutes(publicRoutes)}
-        {/* {checkIsAdmin(user) && showRoutes(adminRoutes)} */}
-        {showRoutes(adminRoutes)}
+        {token &&
+          decodeToken(token.accessToken)?.role === "admin" &&
+          showRoutes(adminRoutes)}
+        {/* {showRoutes(adminRoutes)} */}
       </Routes>
       <Toast />
-      <ModalAddToCart />
+      {modal.open && <ModalAddToCart />}
       {/* </SocketContext.Provider> */}
     </ErrorBoundary>
   );

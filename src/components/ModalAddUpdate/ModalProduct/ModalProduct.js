@@ -2,7 +2,7 @@ import { Box, Grid } from "@mui/material";
 import PropTypes from "prop-types";
 import { useState } from "react";
 import { useSelector } from "react-redux";
-import { toSlug, validateNumber } from "../../../utils";
+import { getURL, toSlug, validateNumber } from "../../../utils";
 import { MyModal } from "../../Modal";
 
 const ModalProduct = (props) => {
@@ -53,7 +53,10 @@ const ModalProduct = (props) => {
               <select
                 id="group-product"
                 value={indexGroupProduct}
-                onChange={(e) => setIndexGroupProduct(e.target.value)}
+                onChange={(e) => {
+                  setIndexGroupProduct(e.target.value);
+                  setName(groupProducts[e.target.value].name);
+                }}
               >
                 <option value={-1}>Chọn nhóm sản phẩm</option>
                 {groupProducts.map((item, index) => (
@@ -120,7 +123,7 @@ const ModalProduct = (props) => {
                 {file ? (
                   <img alt="" src={URL.createObjectURL(file)} />
                 ) : current ? (
-                  <img alt="" src={current.avatar} />
+                  <img alt="" src={getURL(current.avatar)} />
                 ) : (
                   "Chọn hình ảnh"
                 )}

@@ -19,8 +19,8 @@ import RemoveIcon from "@mui/icons-material/Remove";
 import AddIcon from "@mui/icons-material/Add";
 import { useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Link } from "react-router-dom";
-import { configAxiosAll } from "../../config/configAxios";
+import { Link, useNavigate } from "react-router-dom";
+import { axiosToken, configAxiosAll } from "../../config/configAxios";
 import { API_CART_ITEM_URL } from "../../constants";
 import {
   removeCartItem,
@@ -32,12 +32,16 @@ import {
   formatThousandDigits,
   getNewPrice,
   getThumbnailCartItem,
+  getURL,
 } from "../../utils";
 
-const CartItem = ({ item, checked }) => {
-  const user = useSelector((state) => state.auth.currentUser);
+const CartItem = ({ item }) => {
+  const currentUser = useSelector((state) => state.auth.currentUser);
+  const token = useSelector((state) => state.auth.token);
 
   const dispatch = useDispatch();
+
+  const navigate = useNavigate();
 
   // const hasDiscount = useMemo(() => {
   //   return (
@@ -52,12 +56,14 @@ const CartItem = ({ item, checked }) => {
   //   );
   // }, [item.detail.product.category.discounts]);
 
+  console.log({ item });
+
   async function handleUpdateCart(value) {
     try {
       let newQuantity = parseInt(value);
       if (!isNaN(newQuantity)) {
         if (newQuantity >= 0 && newQuantity <= item.detail.amount) {
-          await configAxiosAll(user, dispatch).put(
+          await axiosToken(token.accessToken, dispatch, navigate).put(
             `${API_CART_ITEM_URL}/${item.id}`,
             {
               detailId: item.detail.id,
@@ -82,7 +88,7 @@ const CartItem = ({ item, checked }) => {
 
   async function handleDeleteItem() {
     try {
-      await configAxiosAll(user, dispatch).delete(
+      await axiosToken(token.accessToken, dispatch, navigate).delete(
         `${API_CART_ITEM_URL}/${item.id}`
       );
       dispatch(removeCartItem(item));
@@ -96,7 +102,7 @@ const CartItem = ({ item, checked }) => {
         <Link to="/">
           <img
             alt=""
-            src={item.detail.avatar}
+            src={getURL(item.detail.avatar)}
             style={{ objectFit: "cover", width: 72, height: 80 }}
           />
         </Link>

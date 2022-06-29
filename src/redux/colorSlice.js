@@ -30,14 +30,12 @@ const colorSlice = createSlice({
       state.list.push(action.payload);
     },
     updateColor: (state, action) => {
-      const newColor = action.payload;
-      const index = state.list.findIndex((item) => item.id === newColor.id);
-      state.list[index] = { ...state.list[index], ...newColor };
-      state.current = null;
+      const data = action.payload;
+      const index = state.list.findIndex((item) => item.id === data.id);
+      state.list[index] = { ...state.list[index], ...data };
     },
     deleteColor: (state) => {
       state.list = state.list.filter((item) => item.id !== state.current.id);
-      state.current = null;
     },
     changePage: (state, action) => {
       state.page = action.payload;

@@ -1,27 +1,28 @@
-import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
 import {
-  Badge,
   Box,
-  Button,
-  FormControl,
   Table,
   TableBody,
   TableCell,
   TableHead,
   TableRow,
-  TextField,
 } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { memo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { TitleControl } from "../../components/Title";
 import config from "../../config";
-import { configAxiosAll } from "../../config/configAxios";
+import { axiosToken, configAxiosAll } from "../../config/configAxios";
 import { API_USER_COUPON_URL } from "../../constants";
-import { formatThousandDigits } from "../../utils";
-const Result = ({ onCheckout, totalPrice, finalPrice, setCoupon }) => {
+import { formatThousandDigits, getCouponPrice, getURL } from "../../utils";
+const Result = ({
+  onCheckout,
+  tempPrice,
+  setCoupon,
+  deliveryPrice,
+  coupon,
+}) => {
   const theme = useTheme();
   const matches = useMediaQuery(theme.breakpoints.up("lg"));
 
@@ -70,7 +71,7 @@ const Result = ({ onCheckout, totalPrice, finalPrice, setCoupon }) => {
                 <div style={{ display: "flex" }}>
                   <img
                     alt=""
-                    src={item.detail.avatar}
+                    src={getURL(item.detail.avatar)}
                     style={{
                       objectFit: "cover",
                       width: 36,
@@ -96,18 +97,26 @@ const Result = ({ onCheckout, totalPrice, finalPrice, setCoupon }) => {
       <div className="order-result-separate"></div>
       <Item
         leftLabel="Tạm tính"
-        rightLabel={`${formatThousandDigits(totalPrice)} VND`}
+        rightLabel={`${formatThousandDigits(tempPrice)} VND`}
       />
-      <Item leftLabel="Vận chuyển" rightLabel="0 VND" />
       <Item
         leftLabel="Giảm giá"
-        rightLabel={`${formatThousandDigits(0)} VND`}
+        rightLabel={`${coupon ? coupon.percent : 0} %`}
+      />
+      <Item
+        leftLabel="Vận chuyển"
+        rightLabel={`${formatThousandDigits(deliveryPrice)} VND`}
       />
       <div className="order-result-separate"></div>
       <Item
         isLast={true}
         leftLabel="Tổng cộng"
-        rightLabel={`${formatThousandDigits(totalPrice - finalPrice)} VND`}
+        rightLabel={`${formatThousandDigits(
+          getCouponPrice(
+            tempPrice - deliveryPrice,
+            coupon ? 100 - coupon.percent : 100
+          )
+        )} VND`}
       />
       <Link
         className="order-result-back-to-cart"
@@ -127,24 +136,28 @@ const Coupon = ({ setCoupon }) => {
   const [code, setCode] = useState("");
   const [msg, setMsg] = useState({ type: "", text: "" });
 
-  const user = useSelector((state) => state.auth.currentUser);
+  const token = useSelector((state) => state.auth.token);
 
   const dispatch = useDispatch();
 
+  const navigate = useNavigate();
+
   async function handleCheck() {
     try {
-      const data = await configAxiosAll(user, dispatch).get(
+      const data = await axiosToken(token.accessToken, dispatch, navigate).get(
         `${API_USER_COUPON_URL}?code=${code}`
       );
-      if (data && data.length > 0) {
-        setCoupon(data[0].coupon);
+      console.log({ data });
+      if (data && data.items.length > 0) {
+        setCoupon(data.items[0].coupon);
         setMsg({ type: "", text: "Mã giảm giá hợp lệ" });
       } else {
         setMsg({ type: "error", text: "Mã giảm giá không hợp lệ" });
       }
-    } catch (error) {}
+    } catch (error) {
+      console.log({ error });
+    }
   }
-
   return (
     <>
       <label htmlFor="coupon" style={{ fontSize: 12 }}>
@@ -162,6 +175,11 @@ const Coupon = ({ setCoupon }) => {
           style={{ flex: 1, padding: "4px 2px", outline: "none" }}
           id="coupon"
           placeholder="Nhập vào nếu có"
+          value={code}
+          onChange={(e) => {
+            setCode(e.target.value);
+            setMsg({ type: "", text: "" });
+          }}
         />
         <button
           style={{
@@ -169,6 +187,7 @@ const Coupon = ({ setCoupon }) => {
             width: 100,
             cursor: "pointer",
           }}
+          onClick={handleCheck}
         >
           Áp dụng
         </button>

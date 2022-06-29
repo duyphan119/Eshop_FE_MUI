@@ -7,8 +7,10 @@ import {
   YAxis,
   ResponsiveContainer,
   Tooltip,
+  CartesianGrid,
 } from "recharts";
 import { TitlePaper } from "../../components/Title";
+import { Box } from "@mui/material";
 
 export default function Chart({ data }) {
   const theme = useTheme();
@@ -16,35 +18,49 @@ export default function Chart({ data }) {
   return (
     <React.Fragment>
       <TitlePaper>Biểu đồ doanh thu hôm nay</TitlePaper>
-      <ResponsiveContainer>
-        <LineChart
-          data={data}
-          margin={{
-            top: 16,
-            right: 16,
-            bottom: 0,
-            left: 16,
-          }}
+      {data.length !== 0 ? (
+        <ResponsiveContainer>
+          <LineChart
+            data={data}
+            margin={{
+              top: 16,
+              right: 16,
+              bottom: 0,
+              left: 16,
+            }}
+          >
+            <XAxis
+              dataKey="hour"
+              stroke={theme.palette.text.secondary}
+              style={theme.typography.body2}
+              // angle={-45}
+              // textAnchor="end"
+            />
+            <YAxis
+              stroke={theme.palette.text.secondary}
+              style={theme.typography.body2}
+            ></YAxis>
+            <Tooltip />
+            <CartesianGrid strokeDasharray="3 3" />
+            <Line
+              isAnimationActive={true}
+              type="monotone"
+              dataKey="total"
+              stroke={theme.palette.primary.main}
+              dot={false}
+            />
+          </LineChart>
+        </ResponsiveContainer>
+      ) : (
+        <Box
+          display="flex"
+          alignItems="center"
+          height="100%"
+          justifyContent="center"
         >
-          <XAxis
-            dataKey="hour"
-            stroke={theme.palette.text.secondary}
-            style={theme.typography.body2}
-          />
-          <YAxis
-            stroke={theme.palette.text.secondary}
-            style={theme.typography.body2}
-          ></YAxis>
-          <Tooltip />
-          <Line
-            isAnimationActive={true}
-            type="monotone"
-            dataKey="total"
-            stroke={theme.palette.primary.main}
-            dot={false}
-          />
-        </LineChart>
-      </ResponsiveContainer>
+          Chưa có dữ liệu
+        </Box>
+      )}
     </React.Fragment>
   );
 }

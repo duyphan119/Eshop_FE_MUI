@@ -29,11 +29,13 @@ a {
   text-decoration: none;
   color: inherit;
 }
+.link-default:hover {
+  text-decoration: underline;
+  color: var(--main-color);
+}
 
 ul {
-  list-style-type: none;
   margin: 0;
-  padding: 0;
 }
 .fz-14 {
   font-size: 14px !important;
@@ -125,4 +127,7 @@ ul {
 }
 .ag-header {
   background-color: var(--main-color) !important;
+}
+.styles_scroll-to-top__2A70v {
+  z-index: 1301;
 }

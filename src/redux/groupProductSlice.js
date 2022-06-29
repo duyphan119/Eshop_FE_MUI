@@ -22,9 +22,21 @@ const groupProductSlice = createSlice({
     getAllGroupProducts: (state, action) => {
       state.all = action.payload;
     },
-    addGroupProduct: (state, action) => {},
-    updateGroupProduct: (state, action) => {},
-    deleteCategory: (state) => {},
+    addGroupProduct: (state, action) => {
+      state.all = [action.payload, ...state.all];
+    },
+    deleteGroupProduct: (state, action) => {
+      state.all = state.all.filter((item) => item.id !== action.payload);
+    },
+    updateGroupProduct: (state, action) => {
+      const data = action.payload;
+      const index = state.all.findIndex((item) => item.id === data.id);
+      console.log({ ...state.all[index], ...data, data });
+      state.all[index] = { ...state.all[index], ...data };
+    },
+    deleteCategory: (state) => {
+      state.all = state.all.filter((item) => item.id !== state.current.id);
+    },
     getCurrentGroupProduct: (state, action) => {
       state.current = action.payload;
     },

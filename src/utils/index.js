@@ -1,10 +1,14 @@
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
-import { IMAGE_IS_NOT_AVAILABLE_URL } from "../constants";
+import { SERVER_URL } from "../constants";
 import jwtDecode from "jwt-decode";
 
 export const calculateProductSale = (price, sale) => {
   return (price / 1000 - Math.floor(((price / 1000) * sale) / 100)) * 1000;
+};
+
+export const getCouponPrice = (price, percent) => {
+  return (((price / 1000) * percent) / 100) * 1000;
 };
 
 export const getThumbnailProduct = (product) => {
@@ -15,7 +19,7 @@ export const getThumbnailProduct = (product) => {
       }
     }
   } catch (error) {}
-  return IMAGE_IS_NOT_AVAILABLE_URL;
+  return "";
 };
 export const getThumbnailCartItem = (item) => {
   try {
@@ -26,7 +30,7 @@ export const getThumbnailCartItem = (item) => {
       return image.url;
     }
   } catch (error) {}
-  return IMAGE_IS_NOT_AVAILABLE_URL;
+  return "";
 };
 export const formatThousandDigits = (price) => {
   try {
@@ -34,6 +38,15 @@ export const formatThousandDigits = (price) => {
   } catch (error) {
     return 0;
   }
+};
+export const formatInputDate = (input) => {
+  if (!input) return "";
+  const dt = new Date(input.toString());
+  let date = dt.getDate();
+  let month = dt.getMonth() + 1;
+  return `${dt.getFullYear()}-${month < 10 ? "0" + month : month}-${
+    date < 10 ? "0" + date : date
+  }`;
 };
 export const formatDateVN = (input) => {
   if (!input) return "";
@@ -129,11 +142,11 @@ export const getTotalDaysOfMonth = () => {
 
 export const calHeightDataGrid = (
   rowCount,
-  rowHeight = 41,
+  rowHeight = 52,
   rowHeaderHeight = 56,
-  paginationHeight = 56
+  paginationHeight = 54
 ) => {
-  return rowCount * rowHeight + rowHeaderHeight + paginationHeight;
+  return rowCount * rowHeight + rowHeaderHeight + paginationHeight + 1;
 };
 export const getSku = (groupProduct, product, color, size) => {
   if (!groupProduct || !product || !color || !size) return "";
@@ -212,6 +225,13 @@ export const checkIsAdmin = (user) => {
   } catch (error) {}
   return false;
 };
+
+export const decodeToken = (token) => {
+  if (!token) {
+    return null;
+  }
+  return jwtDecode(token);
+};
 export const validateNumber = (input) => {
   try {
     let parseInput = parseInt(input);
@@ -250,4 +270,12 @@ export const toSlug = (str) => {
 
   // return
   return str;
+};
+export const getURL = (input) => {
+  try {
+    if (input) {
+      return `${SERVER_URL}${input}`;
+    }
+  } catch (error) {}
+  return "";
 };

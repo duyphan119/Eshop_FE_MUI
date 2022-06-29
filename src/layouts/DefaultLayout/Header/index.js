@@ -5,10 +5,14 @@ import { Badge, Box, Container, Grid } from "@mui/material";
 import Tooltip from "@mui/material/Tooltip";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Logo from "../../../components/Logo";
 import config from "../../../config";
-import { configAxiosAll, axiosRes } from "../../../config/configAxios";
+import {
+  configAxiosAll,
+  axiosRes,
+  axiosToken,
+} from "../../../config/configAxios";
 import {
   API_BANNER_URL,
   API_CART_URL,
@@ -16,6 +20,7 @@ import {
 } from "../../../constants";
 import { getCart } from "../../../redux/cartSlice";
 import { getWishlist } from "../../../redux/wishlistSlice";
+import { decodeToken } from "../../../utils";
 import AccountNotify from "./AccountNotify";
 import CartNotify from "./CartNotify";
 import "./Header.css";
@@ -25,45 +30,44 @@ import SearchBar from "./SearchBar";
 const Header = ({ headerRef }) => {
   const cart = useSelector((state) => state.cart.cart);
   const wishlist = useSelector((state) => state.wishlist.wishlist);
-  const user = useSelector((state) => state.auth.currentUser);
+  const token = useSelector((state) => state.auth.token);
 
   const [banner, setBanner] = useState();
-
   const dispatch = useDispatch();
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     const promises = [];
 
-    promises.push(
-      axiosRes().get(
-        `${API_BANNER_URL}?position=above-header&page=/&isShow=true`
-      )
-    );
+    // promises.push(
+    //   axiosRes().get(
+    //     `${API_BANNER_URL}?position=above-header&page=/&isShow=true`
+    //   )
+    // );
 
-    if (user && user.id) {
+    if (token) {
+      const user = decodeToken(token.accessToken);
       promises.push(axiosRes().get(`${API_PRODUCT_URL}/user/${user.id}`));
 
       promises.push(
-        configAxiosAll(user, dispatch).get(`${API_CART_URL}/user/${user.id}`)
+        axiosToken(token.accessToken, dispatch, navigate).get(
+          `${API_CART_URL}/user/${user.id}`
+        )
       );
     }
 
     Promise.allSettled(promises)
       .then((listRes) => {
-        if (listRes[0].status === "fulfilled") {
-          setBanner(listRes[0].value[0]);
+        if (listRes[0] && listRes[0].status === "fulfilled") {
+          dispatch(getWishlist(listRes[0].value));
         }
-        if (listRes.length > 1) {
-          if (listRes[1].status === "fulfilled") {
-            dispatch(getWishlist(listRes[1].value));
-          }
-          if (listRes[2].status === "fulfilled") {
-            dispatch(getCart(listRes[2].value));
-          }
+        if (listRes[1] && listRes[1].status === "fulfilled") {
+          dispatch(getCart(listRes[1].value));
         }
       })
       .catch((err) => () => {});
-  }, [user, dispatch]);
+  }, [token, navigate, dispatch]);
   return (
     <>
       <Box
@@ -154,10 +158,9 @@ const Header = ({ headerRef }) => {
                 <Link to="/account" className="header-account-link">
                   <AccountBoxOutlinedIcon />
                 </Link>
-                <AccountNotify />
               </div>
               <Link
-                to={config.routes.accountFavorite}
+                to={config.routes.profileFavorite}
                 className="header-favorite-link"
               >
                 <Tooltip title="Sản phẩm yêu thích">

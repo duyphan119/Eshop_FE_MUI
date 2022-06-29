@@ -4,7 +4,7 @@ import AddIcon from "@mui/icons-material/Add";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import { API_COUPON_URL, LIMIT_ROW_COUPON } from "../../../constants";
-import { calHeightDataGrid, formatDateVN } from "../../../utils";
+import { calHeightDataGrid, formatDateVN, getURL } from "../../../utils";
 import Pagination from "../../../components/Pagination";
 import "ag-grid-community/dist/styles/ag-grid.css";
 import "ag-grid-community/dist/styles/ag-theme-alpine.css";
@@ -51,14 +51,14 @@ const CouponManagement = () => {
       field: "avatar",
       headerName: "Hình ảnh",
       cellRenderer: (params) => (
-        <img src={params.data.avatar} height="32" alt="" />
+        <img src={getURL(params.data.avatar)} height="32" alt="" />
       ),
     },
     {
       field: "banner",
       headerName: "Quảng cáo",
       cellRenderer: (params) => (
-        <img src={params.data.banner} height="32" alt="" />
+        <img src={getURL(params.data.banner)} height="32" alt="" />
       ),
     },
     {
@@ -124,7 +124,7 @@ const CouponManagement = () => {
   return (
     <Box bgcolor="#fff" p={1}>
       <button
-        className="management-btn-add"
+        className="management-btn management-btn-add"
         onClick={() => {
           // dispatch(getCurrentCategory(null));
           // setOpen(true);

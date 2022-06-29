@@ -125,15 +125,13 @@ const orderSlice = createSlice({
     },
     updateOrder: (state, action) => {
       const newItem = action.payload;
-      const index = state.order.items.findIndex(
-        (item) => item.id === newItem.id
-      );
-      if (index !== -1) {
-        state.order.items[index] = {
-          ...state.order.items[index],
-          ...newItem,
-        };
-      }
+      const index = state.list.findIndex((item) => item.id === newItem.id);
+      state.list[index] = newItem;
+      state.current = null;
+    },
+    deleteOrder: (state, action) => {
+      const id = action.payload;
+      state.list = state.list.filter((item) => item.id !== id);
     },
     deletedOrder: (state, action) => {
       const id = action.payload;
@@ -160,10 +158,14 @@ const orderSlice = createSlice({
       state.list = action.payload.items;
       state.totalPage = action.payload.total_page;
     },
+    getAllOrders: (state, action) => {
+      state.list = action.payload;
+    },
   },
 });
 export const {
   getOrders,
+  getAllOrders,
   getCurrentClientOrder,
   getClientOrder,
   changeLimit,
@@ -177,5 +179,6 @@ export const {
   deletedClientOrder,
   newClientOrder,
   getRecentOrders,
+  deleteOrder,
 } = orderSlice.actions;
 export default orderSlice.reducer;

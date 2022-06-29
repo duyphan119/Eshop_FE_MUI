@@ -1,24 +1,15 @@
-import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
-import Avatar from "@mui/material/Avatar";
 import Box from "@mui/material/Box";
-import Button from "@mui/material/Button";
-import Container from "@mui/material/Container";
-import CssBaseline from "@mui/material/CssBaseline";
-import Grid from "@mui/material/Grid";
-import TextField from "@mui/material/TextField";
-import Typography from "@mui/material/Typography";
 import { useEffect } from "react";
+import { useForm } from "react-hook-form";
 import { useDispatch } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
-import { useForm } from "react-hook-form";
-import GoogleIcon from "@mui/icons-material/Google";
-import FacebookIcon from "@mui/icons-material/Facebook";
-import { API_AUTH_URL, SERVER_URL } from "../../constants";
-import { login } from "../../redux/authSlice";
-import { axiosRes } from "../../config/configAxios";
 import top_banner from "../../assets/imgs/hannah-morgan-39891.webp";
-import { Divider } from "@mui/material";
 import Breadcrumbs from "../../components/Breadcrumbs";
+import config from "../../config";
+import { axiosRes } from "../../config/configAxios";
+import { API_AUTH_URL } from "../../constants";
+import { setAccessToken } from "../../redux/authSlice";
+import { showToast } from "../../redux/toastSlice";
 import "./Login.css";
 const Login = () => {
   const dispatch = useDispatch();
@@ -28,14 +19,21 @@ const Login = () => {
   const {
     register,
     handleSubmit,
-    formState: { errors },
+    // formState: { errors },
   } = useForm();
   const onSubmit = (data) => {
     axiosRes()
       .post(`${API_AUTH_URL}/login`, data)
       .then((res) => {
-        dispatch(login(res));
-        navigate("/");
+        dispatch(setAccessToken(res.item));
+        dispatch(
+          showToast({
+            isOpen: true,
+            text: "Đăng nhập thành công",
+            type: "success",
+          })
+        );
+        navigate(config.routes.home);
       })
       .catch((err) => {});
   };
@@ -62,7 +60,7 @@ const Login = () => {
           items={[
             {
               text: "Trang chủ",
-              to: "/",
+              to: config.routes.home,
             },
             {
               text: "Tài khoản",
@@ -105,7 +103,6 @@ const Login = () => {
               required: "Trường này không được để trống",
               minLength: { value: 6, message: "Mật khẩu ít nhất 6 kí tự" },
             })}
-            fullWidth
             style={{ marginTop: 16 }}
             type="password"
             placeholder="Mật khẩu"
@@ -122,10 +119,16 @@ const Login = () => {
               marginBlock: 32,
             }}
           ></div>
-          <Link to={`/`} className="hover-color-main-color login-action-link">
+          <Link
+            to={config.routes.home}
+            className="hover-color-main-color login-action-link"
+          >
             Về trang chủ
           </Link>
-          <Link to={`/`} className="hover-color-main-color login-action-link">
+          <Link
+            to={config.routes.register}
+            className="hover-color-main-color login-action-link"
+          >
             Đăng ký
           </Link>
           <Link to={`/`} className="hover-color-main-color login-action-link">

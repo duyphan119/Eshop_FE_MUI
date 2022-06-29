@@ -6,8 +6,10 @@ import Stars from "../Stars";
 import RepliedComment from "../RepliedComment";
 import { fromNow } from "../../utils";
 import { configAxiosAll } from "../../config/configAxios";
-import { API_COMMENT_URL, API_REPLIED_COMMENT_URL } from "../../constants";
-import ModalReply from "../ModalReply";
+import {
+  API_COMMENT_PRODUCT_URL,
+  API_REPLIED_COMMENT_URL,
+} from "../../constants";
 import { deleteComment, newRepliedComment } from "../../redux/commentSlice";
 import ConfirmDialog from "../ConfirmDialog";
 
@@ -38,7 +40,7 @@ const Comment = ({ comment }) => {
   async function handleDelete() {
     try {
       await configAxiosAll(user, dispatch).delete(
-        `${API_COMMENT_URL}/${comment.id}`
+        `${API_COMMENT_PRODUCT_URL}/${comment.id}`
       );
       dispatch(deleteComment(comment.id));
     } catch (error) {}
@@ -106,16 +108,7 @@ const Comment = ({ comment }) => {
               comment.replied_comments.map((item, index) => {
                 return <RepliedComment comment={item} key={index} />;
               })}
-            {showReplyForm && (
-              <ModalReply
-                open={showReplyForm}
-                handleClose={() => setShowReplyForm(false)}
-                title="Phản hồi bình luận"
-                labelOk="Gửi"
-                handleOk={handleOk}
-                isCloseAfterOk={true}
-              />
-            )}
+
             {showDialog && (
               <ConfirmDialog
                 open={showDialog}

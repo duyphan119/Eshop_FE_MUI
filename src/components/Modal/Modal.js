@@ -11,9 +11,15 @@ const Modal = ({
   isCloseAfterOk,
   width,
   height,
+  sx,
+  disableScrollLock,
 }) => {
   return (
-    <MuiModal open={open} onClose={handleClose}>
+    <MuiModal
+      open={open}
+      onClose={handleClose}
+      disableScrollLock={disableScrollLock}
+    >
       <form
         onSubmit={(e) => {
           e.preventDefault();
@@ -36,11 +42,14 @@ const Modal = ({
             overflowY: "auto",
             overflowX: "hidden",
             outline: "none !important",
+            ...sx,
           }}
         >
-          <Typography variant="h5" mb={1}>
-            {title}
-          </Typography>
+          {title && (
+            <Typography variant="h5" mb={1}>
+              {title}
+            </Typography>
+          )}
           {children}
           {handleOk && (
             <Box display="flex" justifyContent="flex-end" mt={1}>

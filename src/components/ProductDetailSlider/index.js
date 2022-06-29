@@ -1,6 +1,7 @@
 import Slider from "react-slick";
 import "slick-carousel/slick/slick-theme.css";
 import "slick-carousel/slick/slick.css";
+import { getURL } from "../../utils";
 import "./product_detail_slider.css";
 const ProductDetailSlider = ({ images }) => {
   const _settings = {
@@ -16,7 +17,7 @@ const ProductDetailSlider = ({ images }) => {
         return (
           <img
             key={index}
-            src={item.url}
+            src={getURL(item.url)}
             alt=""
             style={{
               objectFit: "cover",

@@ -11,6 +11,7 @@ const initialState = {
     limit: LIMIT_ROW_PRODUCT_DETAIL,
   },
   list: [],
+  bestSellerList: [],
 };
 const productDetailSlice = createSlice({
   name: "productDetail",
@@ -21,6 +22,9 @@ const productDetailSlice = createSlice({
     },
     getAllProductDetails: (state, action) => {
       state.list = action.payload;
+    },
+    getBestSellerList: (state, action) => {
+      state.bestSellerList = action.payload;
     },
     addProductDetail: (state, action) => {
       state.list.push(action.payload);
@@ -54,5 +58,6 @@ export const {
   updateProductDetail,
   deleteProductDetail,
   getAllProductDetails,
+  getBestSellerList,
 } = productDetailSlice.actions;
 export default productDetailSlice.reducer;

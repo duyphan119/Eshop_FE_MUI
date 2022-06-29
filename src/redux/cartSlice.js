@@ -12,6 +12,7 @@ const initialState = {
   },
   modal: {
     open: false,
+    productSlug: "",
   },
 };
 const cartSlice = createSlice({
@@ -19,7 +20,7 @@ const cartSlice = createSlice({
   initialState: initialState,
   reducers: {
     showModalAddToCart: (state, action) => {
-      state.modal.open = action.payload;
+      state.modal = action.payload;
     },
     getCart: (state, action) => {
       state.cart = action.payload;

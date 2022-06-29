@@ -1,4 +1,5 @@
 import { Box, Chip, Modal, Typography } from "@mui/material";
+import { getURL } from "../../utils";
 
 const ProductDetailModal = ({ open, handleClose, item }) => {
   return (
@@ -66,9 +67,9 @@ const ProductDetailModal = ({ open, handleClose, item }) => {
               }}
             >
               <img
-                src={
+                src={getURL(
                   color.images.find((image) => image.color_id === color.id).url
-                }
+                )}
                 alt=""
                 style={{ width: "108px", height: "136px" }}
               />

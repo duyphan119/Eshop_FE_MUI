@@ -16,63 +16,22 @@ const userSlice = createSlice({
   name: "user",
   initialState: initialState,
   reducers: {
-    getAll: (state, action) => {
+    getAllUsers: (state, action) => {
       state.all = action.payload;
     },
     getUser: (state, action) => {
       state.user = action.payload;
     },
     addUser: (state, action) => {
-      const data = action.payload;
-      if (state.user.items) {
-        const index = state.user.items.findIndex((item) => item.id === data.id);
-        if (index === -1) {
-          state.user = {
-            items: [
-              data,
-              ...state.user.items.splice(state.user.items.length - 1, 1),
-            ],
-            limit: LIMIT_ROW_USER,
-            total_result: state.user.items.length + 1,
-            total_page: Math.ceil(
-              (state.user.items.length + 1) / LIMIT_ROW_USER
-            ),
-          };
-        } else {
-          state.user.items[index] = {
-            ...state.user.items[index],
-            ...data,
-          };
-        }
-      } else {
-        state.user = {
-          items: [data],
-          limit: LIMIT_ROW_USER,
-          total_result: 1,
-          total_page: 1,
-        };
-      }
+      state.all.push(action.payload);
     },
     updateUser: (state, action) => {
-      const newItem = action.payload;
-      const index = state.user.items.findIndex(
-        (item) => item.id === newItem.id
-      );
-      if (index !== -1) {
-        state.user.items[index] = {
-          ...state.user.items[index],
-          ...newItem,
-        };
-      }
+      const newSize = action.payload;
+      const index = state.all.findIndex((item) => item.id === newSize.id);
+      state.all[index] = { ...state.all[index], ...newSize };
     },
-    deleteUser: (state, action) => {
-      const id = action.payload;
-      state.user = {
-        items: [...state.user.items].filter((item) => item.id !== id),
-        total_result: state.user.items.length - 1,
-        total_page: Math.ceil((state.user.items.length - 1) / LIMIT_ROW_USER),
-        limit: LIMIT_ROW_USER,
-      };
+    deleteUser: (state) => {
+      state.all = state.all.filter((item) => item.id !== state.current.id);
     },
     getCurrentUser: (state, action) => {
       state.current = action.payload;
@@ -91,7 +50,7 @@ export const {
   getCurrentUser,
   updateUser,
   deleteUser,
-  getAll,
+  getAllUsers,
   getUser,
   changeLimit,
 } = userSlice.actions;

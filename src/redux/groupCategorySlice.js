@@ -3,6 +3,7 @@ import { LIMIT_ROW_GROUP_CATEGORY } from "../constants";
 const initialState = {
   current: null,
   all: [],
+  switchList: null,
   groupCategory: {
     items: [],
     totalResult: 0,
@@ -18,6 +19,7 @@ const groupCategorySlice = createSlice({
   reducers: {
     getAllGroupCategories: (state, action) => {
       state.all = action.payload;
+      state.switchList = action.payload;
     },
     getGroupCategory: (state, action) => {
       state.groupCategory = action.payload;
@@ -26,16 +28,12 @@ const groupCategorySlice = createSlice({
       state.all = [action.payload, ...state.all];
     },
     updateGroupCategory: (state, action) => {
-      const newGroupCategory = action.payload;
-      const index = state.all.findIndex(
-        (item) => item.id === newGroupCategory.id
-      );
-      state.all[index] = newGroupCategory;
-      state.current = null;
+      const data = action.payload;
+      const index = state.all.findIndex((item) => item.id === data.id);
+      state.all[index] = { ...state.all[index], ...data };
     },
     deleteGroupCategory: (state, action) => {
       state.all = state.all.filter((item) => item.id !== action.payload);
-      state.current = null;
     },
     getCurrentGroupCategory: (state, action) => {
       state.current = action.payload;

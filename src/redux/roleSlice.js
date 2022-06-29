@@ -16,23 +16,23 @@ const roleSlice = createSlice({
   name: "role",
   initialState: initialState,
   reducers: {
-    getAll: (state, action) => {
+    getAllRoles: (state, action) => {
       state.all = action.payload;
     },
     getRole: (state, action) => {
       state.role = action.payload;
     },
     addRole: (state, action) => {
-      state.list = [action.payload, ...state.list];
+      state.all = [action.payload, ...state.all];
     },
     updateRole: (state, action) => {
       const newRole = action.payload;
-      const index = state.list.findIndex((item) => item.id === newRole.id);
-      state.list[index] = newRole;
+      const index = state.all.findIndex((item) => item.id === newRole.id);
+      state.all[index] = newRole;
       state.current = null;
     },
     deleteRole: (state) => {
-      state.list = state.list.filter((item) => item.id !== state.current.id);
+      state.all = state.all.filter((item) => item.id !== state.current.id);
       state.current = null;
     },
     changePage: (state, action) => {
@@ -52,7 +52,7 @@ export const {
   getCurrentRole,
   updateRole,
   deleteRole,
-  getAll,
+  getAllRoles,
   changeLimit,
   getRole,
 } = roleSlice.actions;

@@ -9,7 +9,7 @@ const Breadcrumbs = ({ items, sx }) => {
             {item.text}
           </Link>
         ) : (
-          <>{item.text}</>
+          <div key={index}>{item.text}</div>
         )
       )}
     </MuiBreadcrumbs>

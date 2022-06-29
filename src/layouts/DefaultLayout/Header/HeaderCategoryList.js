@@ -4,59 +4,59 @@ import { memo, useEffect } from "react";
 import { Box, Container, Grid } from "@mui/material";
 import { axiosRes } from "../../../config/configAxios";
 import { API_GENDER_URL } from "../../../constants";
-import { getAllGenderCategories } from "../../../redux/genderCategorySlice";
+import { getAllGroupCategories } from "../../../redux/groupCategorySlice";
 const HeaderCategoryList = () => {
-  const genderCategories = useSelector((state) => state.genderCategory.all);
+  const groupCategories = useSelector((state) => state.groupCategory.all);
 
   const dispatch = useDispatch();
 
   useEffect(() => {
     (async function () {
       const data = await axiosRes().get(`${API_GENDER_URL}`);
-      dispatch(getAllGenderCategories(data));
+      dispatch(getAllGroupCategories(data));
     })();
   }, [dispatch]);
 
   return (
     <ul className="header-category-list">
-      {genderCategories.map((genderCategory) => {
+      {groupCategories.map((groupCategory) => {
         return (
-          <li className="header-category-list-item" key={genderCategory.slug}>
+          <li className="header-category-list-item" key={groupCategory.slug}>
             <Link
               className="header-category-list-item-link"
-              to={`/${genderCategory.slug}`}
+              to={`/${groupCategory.slug}`}
             >
-              {genderCategory.name}
+              {groupCategory.name}
             </Link>
             <Box className="header-category-list-notify">
               <Container>
                 <Grid container>
-                  {genderCategory.group_categories.map((groupCategory) => {
+                  {groupCategory.categories.map((category) => {
                     return (
-                      <Grid item sm={3} key={groupCategory.slug}>
+                      <Grid item sm={3} key={category.slug}>
                         <Link
-                          to={`/${groupCategory.slug}`}
+                          to={`/${category.slug}`}
                           className="header-category-list-notify-group-link"
                         >
                           {
-                            groupCategory.name
+                            category.name
                               .toLowerCase()
-                              .split(genderCategory.name.toLowerCase())[0]
+                              .split(groupCategory.name.toLowerCase())[0]
                           }
                         </Link>
                         <ul className="header-category-list-notify-links">
-                          {groupCategory.categories.map((category) => {
+                          {category.groupProducts.map((groupProduct) => {
                             return (
-                              <li key={category.slug}>
+                              <li key={groupProduct.slug}>
                                 <Link
-                                  to={`/${category.slug}`}
+                                  to={`/${groupProduct.slug}`}
                                   className="header-category-list-notify-link"
                                 >
                                   {
-                                    category.name
+                                    groupProduct.name
                                       .toLowerCase()
                                       .split(
-                                        genderCategory.name.toLowerCase()
+                                        groupCategory.name.toLowerCase()
                                       )[0]
                                   }
                                 </Link>

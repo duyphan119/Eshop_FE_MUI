@@ -2,7 +2,7 @@ import { Box, Grid } from "@mui/material";
 import PropTypes from "prop-types";
 import { useState } from "react";
 import { useSelector } from "react-redux";
-import { getSku } from "../../../utils";
+import { getSku, getURL } from "../../../utils";
 import { MyModal } from "../../Modal";
 
 const ModalProductDetail = (props) => {
@@ -161,7 +161,7 @@ const ModalProductDetail = (props) => {
                 {file ? (
                   <img alt="" src={URL.createObjectURL(file)} />
                 ) : current ? (
-                  <img alt="" src={current.avatar} />
+                  <img alt="" src={getURL(current.avatar)} />
                 ) : (
                   "Chọn hình ảnh"
                 )}

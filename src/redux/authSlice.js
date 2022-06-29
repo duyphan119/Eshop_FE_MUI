@@ -1,12 +1,26 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { LOCALSTORAGE_USER_NAME } from "../constants";
+import {
+  LOCALSTORAGE_ACCESS_TOKEN,
+  LOCALSTORAGE_USER_NAME,
+} from "../constants";
 const initialState = {
-  currentUser: JSON.parse(localStorage.getItem(LOCALSTORAGE_USER_NAME)),
+  currentUser: null,
+  token: JSON.parse(localStorage.getItem(LOCALSTORAGE_ACCESS_TOKEN)),
 };
 const authSlice = createSlice({
   name: "auth",
   initialState: initialState,
   reducers: {
+    setAccessToken: (state, action) => {
+      state.token = action.payload;
+      localStorage.setItem(
+        LOCALSTORAGE_ACCESS_TOKEN,
+        JSON.stringify(state.token)
+      );
+    },
+    setCurrentUser: (state, action) => {
+      state.currentUser = action.payload;
+    },
     login: (state, action) => {
       state.currentUser = action.payload;
       localStorage.setItem(
@@ -15,18 +29,27 @@ const authSlice = createSlice({
       );
     },
     logout: (state) => {
-      console.log("logout");
-      localStorage.setItem(LOCALSTORAGE_USER_NAME, null);
+      state.token = null;
+      localStorage.setItem(
+        LOCALSTORAGE_ACCESS_TOKEN,
+        JSON.stringify(state.token)
+      );
       state.currentUser = null;
     },
     refreshToken: (state, action) => {
-      if (state.currentUser.access_token !== action.payload) {
-        state.currentUser.access_token = action.payload;
-        localStorage.setItem(
-          LOCALSTORAGE_USER_NAME,
-          JSON.stringify(state.currentUser)
-        );
-      }
+      // if (state.currentUser.access_token !== action.payload) {
+      //   state.currentUser.access_token = action.payload;
+      //   localStorage.setItem(
+      //     LOCALSTORAGE_USER_NAME,
+      //     JSON.stringify(state.currentUser)
+      //   );
+      // }
+
+      state.accessToken = action.payload;
+      localStorage.setItem(
+        LOCALSTORAGE_ACCESS_TOKEN,
+        JSON.stringify(state.token)
+      );
     },
     updateUser: (state, action) => {
       state.currentUser = { ...state.currentUser, ...action.payload };
@@ -37,5 +60,12 @@ const authSlice = createSlice({
     },
   },
 });
-export const { login, logout, refreshToken, updateUser } = authSlice.actions;
+export const {
+  login,
+  logout,
+  refreshToken,
+  updateUser,
+  setAccessToken,
+  setCurrentUser,
+} = authSlice.actions;
 export default authSlice.reducer;

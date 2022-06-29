@@ -5,8 +5,10 @@ import { Box, IconButton, Tooltip } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import ConfirmDialog from "../../../components/ConfirmDialog";
 import { ModalProduct } from "../../../components/ModalAddUpdate";
-import { axiosRes } from "../../../config/configAxios";
+import { axiosRes, axiosToken } from "../../../config/configAxios";
 import {
   API_GROUP_PRODUCT_URL,
   API_PRODUCT_URL,
@@ -22,7 +24,7 @@ import {
   updateProduct,
 } from "../../../redux/productSlice";
 import { showToast } from "../../../redux/toastSlice";
-import { calHeightDataGrid } from "../../../utils";
+import { calHeightDataGrid, getURL } from "../../../utils";
 const rowHeight = 64;
 const ProductManagement = () => {
   const columns = [
@@ -50,7 +52,7 @@ const ProductManagement = () => {
               color="error"
               onClick={() => {
                 dispatch(getCurrentProduct(params.row));
-                // setOpenDialog(true);
+                setOpenDialog(true);
               }}
             >
               <DeleteIcon />
@@ -79,7 +81,7 @@ const ProductManagement = () => {
           <div
             style={{ display: "flex", alignItems: "center", height: rowHeight }}
           >
-            <img src={params.row.avatar} height="100%" alt="" />
+            <img src={getURL(params.row.avatar)} height="100%" alt="" />
             &nbsp;{params.row.name}
           </div>
         );
@@ -104,9 +106,13 @@ const ProductManagement = () => {
 
   const products = useSelector((state) => state.product.list);
   const current = useSelector((state) => state.product.current);
+  const token = useSelector((state) => state.auth.token);
   const page = useSelector((state) => state.product.page);
 
-  const [openModal, setOpenModal] = useState();
+  const navigate = useNavigate();
+
+  const [openDialog, setOpenDialog] = useState(false);
+  const [openModal, setOpenModal] = useState(false);
 
   const dispatch = useDispatch();
 
@@ -134,13 +140,19 @@ const ProductManagement = () => {
       if (file) {
         const formData = new FormData();
         formData.append("images", file);
-        listUrls = await axiosRes().post(`${API_UPLOAD_URL}`, formData);
+        const res = await axiosRes().post(`${API_UPLOAD_URL}`, formData);
+        listUrls = res.items;
         if (listUrls.length > 0) {
-          data.avatar = listUrls[0].secure_url;
+          data.avatar = listUrls[0].path;
         }
       }
+      console.log({ current, data });
       if (!current) {
-        const res = await axiosRes().post(`${API_PRODUCT_URL}`, data);
+        const res = await axiosToken(
+          token.accessToken,
+          dispatch,
+          navigate
+        ).post(`${API_PRODUCT_URL}`, data);
         dispatch(addProduct({ ...data, ...res.item }));
         dispatch(
           showToast({
@@ -150,16 +162,28 @@ const ProductManagement = () => {
           })
         );
       } else {
-        await axiosRes().put(`${API_PRODUCT_URL}/${current.id}`, data);
+        await axiosToken(token.accessToken, dispatch, navigate).put(
+          `${API_PRODUCT_URL}/${current.id}`,
+          data
+        );
         dispatch(updateProduct({ ...current, ...data }));
       }
     } catch (error) {}
   }
 
-  async function deleteById(id) {
+  async function handleDelete() {
     try {
-      await axiosRes().delete(`${API_PRODUCT_URL}/${current.id}`);
+      await axiosToken(token.accessToken, dispatch, navigate).delete(
+        `${API_PRODUCT_URL}/${current.id}`
+      );
       dispatch(deleteProduct(current.id));
+      dispatch(
+        showToast({
+          isOpen: true,
+          text: "Xoá thành công",
+          type: "success",
+        })
+      );
     } catch (error) {
       dispatch(
         showToast({ isOpen: true, type: "error", text: "Xoá thất bại" })
@@ -171,7 +195,7 @@ const ProductManagement = () => {
     <>
       <Box bgcolor="#fff" p={1}>
         <button
-          className="management-btn-add"
+          className="management-btn management-btn-add"
           onClick={() => {
             dispatch(getCurrentProduct(null));
             // setOpen(true);
@@ -204,9 +228,18 @@ const ProductManagement = () => {
           open={openModal}
           handleClose={() => setOpenModal(false)}
           handleOk={handleOk}
-          labelOk={"Thêm"}
-          title={"Thêm sản phẩm"}
-          isCloseAfterOk={false}
+          labelOk={current ? "Sửa" : "Thêm"}
+          title={current ? "Sửa sản phẩm" : "Thêm sản phẩm"}
+          isCloseAfterOk={current !== null}
+        />
+      )}
+      {openDialog && (
+        <ConfirmDialog
+          open={openDialog}
+          onClose={() => setOpenDialog(false)}
+          title="Xác nhận"
+          text="Bạn có chắc chắn muốn xoá sản phẩm này ?"
+          onConfirm={handleDelete}
         />
       )}
     </>

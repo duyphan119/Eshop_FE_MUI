@@ -9,7 +9,6 @@ import {
 } from "../../redux/commentSlice";
 import { fromNow } from "../../utils";
 import ConfirmDialog from "../ConfirmDialog";
-import ModalReply from "../ModalReply";
 
 const RepliedComment = ({ comment }) => {
   const user = useSelector((state) => state.auth.currentUser);
@@ -99,17 +98,7 @@ const RepliedComment = ({ comment }) => {
           )}
         </Box>
       </Box>
-      {openModal && (
-        <ModalReply
-          open={openModal}
-          handleClose={() => setOpenModal(false)}
-          comment={comment}
-          labelOk="Sửa"
-          title="Chỉnh sửa bình luận"
-          handleOk={handleUpdateRepliedComment}
-          isCloseAfterOk={true}
-        />
-      )}
+
       {showDialog && (
         <ConfirmDialog
           open={showDialog}

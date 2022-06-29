@@ -13,6 +13,8 @@ import PermIdentityIcon from "@mui/icons-material/PermIdentity";
 import RedeemIcon from "@mui/icons-material/Redeem";
 import DiscountIcon from "@mui/icons-material/Discount";
 import WidgetsIcon from "@mui/icons-material/Widgets";
+import InsertPhotoIcon from "@mui/icons-material/InsertPhoto";
+import LocalShippingIcon from "@mui/icons-material/LocalShipping";
 import { Box, Tooltip, useMediaQuery } from "@mui/material";
 import Divider from "@mui/material/Divider";
 import MuiDrawer from "@mui/material/Drawer";
@@ -25,6 +27,7 @@ import Logo from "../../../components/Logo";
 import config from "../../../config";
 import { DRAWER_WIDTH } from "../../../constants";
 import detailIcon from "../../../assets/imgs/detail.png";
+
 const StyledDrawer = styled(MuiDrawer, {
   shouldForwardProp: (prop) => prop !== "open",
 })(({ theme, open }) => ({
@@ -104,6 +107,11 @@ const Drawer = ({ open, toggleDrawer }) => {
           icon: <InventoryIcon sx={{ fontSize: 20 }} />,
         },
         {
+          text: "Hình ảnh sản phẩm",
+          to: config.routes.productImageManagement,
+          icon: <InsertPhotoIcon sx={{ fontSize: 20 }} />,
+        },
+        {
           text: "Chi tiết sản phẩm",
           to: config.routes.productDetailManagement,
           icon: <img alt="" src={detailIcon} width="20" height="20" />,
@@ -122,8 +130,8 @@ const Drawer = ({ open, toggleDrawer }) => {
         location.pathname === config.routes.sizeManagement,
     },
     {
-      text: "Bình luận",
-      to: config.routes.commentManagement,
+      text: "Đánh giá",
+      to: config.routes.CommentProductManagement,
       icon: <ModeCommentIcon sx={{ fontSize: 20 }} />,
     },
     {
@@ -153,6 +161,11 @@ const Drawer = ({ open, toggleDrawer }) => {
           text: "Ưu đãi",
           to: config.routes.couponManagement,
           icon: <RedeemIcon sx={{ fontSize: 20 }} />,
+        },
+        {
+          text: "Trạng thái đơn hàng",
+          to: "/a",
+          icon: <LocalShippingIcon sx={{ fontSize: 20 }} />,
         },
         {
           text: "Đơn hàng",

@@ -10,5 +10,6 @@ export { default as UserManagement } from "./UserManagement";
 export { default as RoleManagement } from "./RoleManagement";
 export { default as OrderManagement } from "./OrderManagement";
 export { default as CouponManagement } from "./CouponManagement";
-export { default as CommentManagement } from "./CommentManagement";
+export { default as CommentProductManagement } from "./CommentProductManagement";
 export { default as ProductDetailManagement } from "./ProductDetailManagement";
+export { default as ProductImageManagement } from "./ProductImageManagement";

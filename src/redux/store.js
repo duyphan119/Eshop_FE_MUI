@@ -23,6 +23,8 @@ import sizeGuideReducer from "./sizeGuideSlice";
 import groupProductReducer from "./groupProductSlice";
 import discountReducer from "./discountSlice";
 import productDetailReducer from "./productDetailSlice";
+import productImageReducer from "./productImageSlice";
+import commentProductReducer from "./commentProductSlice";
 const store = configureStore({
   reducer: {
     category: categoryReducer,
@@ -30,6 +32,7 @@ const store = configureStore({
     toast: toastReducer,
     product: productReducer,
     productDetail: productDetailReducer,
+    productImage: productImageReducer,
     cart: cartReducer,
     groupCategory: groupCategoryReducer,
     order: orderReducer,
@@ -49,6 +52,7 @@ const store = configureStore({
     sizeGuide: sizeGuideReducer,
     groupProduct: groupProductReducer,
     discount: discountReducer,
+    commentProduct: commentProductReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({

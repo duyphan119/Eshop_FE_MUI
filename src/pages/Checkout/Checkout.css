@@ -9,8 +9,7 @@
   position: absolute;
   top: 0;
   left: -12px;
-  min-height: 80vh;
-  height: 100%;
+  min-height: 100%;
   width: 0.5px;
   background-color: gray;
 }

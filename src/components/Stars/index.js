@@ -1,8 +1,10 @@
 import StarIcon from "@mui/icons-material/Star";
 import StarBorderIcon from "@mui/icons-material/StarBorder";
 import StarHalfIcon from "@mui/icons-material/StarHalf";
+import { memo, useState } from "react";
 import { EXAMPLE_STARS_ARRAY } from "../../constants";
 const Stars = ({ fontSize, rate, setRate, isActive }) => {
+  const [state, setState] = useState(rate);
   return (
     <ul
       style={{
@@ -17,14 +19,11 @@ const Stars = ({ fontSize, rate, setRate, isActive }) => {
         return (
           <li
             key={item + Math.random()}
-            style={{ color: "var(--star-color)", fontSize: fontSize }}
+            style={{ color: "var(--star-color)", fontSize }}
           >
             {!isActive && item <= rate && (
               <span>
-                <StarIcon
-                  fontSize={fontSize}
-                  sx={{ transform: "translateY(1px)" }}
-                />
+                <StarIcon sx={{ transform: "translateY(1px)", fontSize }} />
               </span>
             )}
             {!isActive &&
@@ -32,38 +31,35 @@ const Stars = ({ fontSize, rate, setRate, isActive }) => {
               (rate !== 0 && Math.ceil(rate) % 5 === 0 ? (
                 <span>
                   <StarHalfIcon
-                    fontSize={fontSize}
-                    sx={{ transform: "translateY(1px)" }}
+                    sx={{ transform: "translateY(1px)", fontSize }}
                   />
                 </span>
               ) : (
                 <span>
                   <StarBorderIcon
-                    fontSize={fontSize}
-                    sx={{ transform: "translateY(1px)" }}
+                    sx={{ transform: "translateY(1px)", fontSize }}
                   />
                 </span>
               ))}
             {isActive && (
               <span
-                onMouseEnter={() => {
+                onClick={() => {
                   setRate(item);
                 }}
-                onMouseLeave={() => {
-                  if (item === 1) {
-                    setRate(0);
+                onMouseEnter={() => {
+                  if (item > rate) {
+                    setState(item);
                   }
                 }}
+                onMouseLeave={() => {
+                  setState(rate);
+                }}
               >
-                {item <= rate ? (
-                  <StarIcon
-                    fontSize={fontSize}
-                    sx={{ transform: "translateY(1px)" }}
-                  />
+                {item <= state ? (
+                  <StarIcon sx={{ transform: "translateY(1px)", fontSize }} />
                 ) : (
                   <StarBorderIcon
-                    fontSize={fontSize}
-                    sx={{ transform: "translateY(1px)" }}
+                    sx={{ transform: "translateY(1px)", fontSize }}
                   />
                 )}
               </span>
@@ -75,4 +71,4 @@ const Stars = ({ fontSize, rate, setRate, isActive }) => {
   );
 };
 
-export default Stars;
+export default memo(Stars);

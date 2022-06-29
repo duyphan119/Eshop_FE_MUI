@@ -10,14 +10,13 @@ import ProductDetail from "../pages/ProductDetail";
 import Dashboard from "../pages/Dashboard";
 import Checkout from "../pages/Checkout";
 import CheckoutSuccess from "../pages/CheckoutSuccess";
-import AccountInfo from "../pages/AccountInfo";
+import Profile from "../pages/Profile";
 import ClientOrders from "../pages/ClientOrders";
 import Favorite from "../pages/Favorite";
 import Latest from "../pages/Latest";
-import { AccountLayout, ContentLayout, DashboardLayout } from "../layouts";
+import { ContentLayout, DashboardLayout } from "../layouts";
 
-import Statistics from "../pages/Statistcs";
-import WebsiteManagement from "../pages/WebsiteManagement";
+import Statistics from "../pages/Statistics";
 import config from "../config";
 import ChangePassword from "../pages/ChangePassword";
 import {
@@ -25,7 +24,7 @@ import {
   CategoryManagement,
   OrderManagement,
   UserManagement,
-  CommentManagement,
+  CommentProductManagement,
   ProductManagement,
   ProductDetailManagement,
   ColorManagement,
@@ -34,8 +33,10 @@ import {
   CouponManagement,
   DiscountManagement,
   GroupProductManagement,
+  ProductImageManagement,
 } from "../pages/Management";
 import { FormAddUpdateProduct } from "../pages/FormAddUpdateData";
+import ProfileEdit from "../pages/ProfileEdit";
 export const publicRoutes = [
   {
     path: config.routes.home,
@@ -71,29 +72,28 @@ export const publicRoutes = [
     component: ProductDetail,
   },
   {
-    path: config.routes.account,
-    component: AccountInfo,
-    layout: AccountLayout,
+    path: config.routes.profile,
+    component: Profile,
   },
   {
-    path: config.routes.accountOrder,
+    path: config.routes.profileEdit,
+    component: ProfileEdit,
+  },
+  {
+    path: config.routes.profileOrder,
     component: ClientOrders,
-    layout: AccountLayout,
   },
   {
-    path: config.routes.accountLatest,
+    path: config.routes.profileLatest,
     component: Latest,
-    layout: AccountLayout,
   },
   {
-    path: config.routes.accountFavorite,
+    path: config.routes.profileFavorite,
     component: Favorite,
-    layout: AccountLayout,
   },
   {
     path: config.routes.changePassword,
     component: ChangePassword,
-    layout: AccountLayout,
   },
   {
     path: config.routes.productCategory,
@@ -119,6 +119,11 @@ export const adminRoutes = [
   {
     path: config.routes.productManagement,
     component: ProductManagement,
+    layout: DashboardLayout,
+  },
+  {
+    path: config.routes.productImageManagement,
+    component: ProductImageManagement,
     layout: DashboardLayout,
   },
   {
@@ -167,18 +172,13 @@ export const adminRoutes = [
     layout: DashboardLayout,
   },
   {
-    path: config.routes.commentManagement,
-    component: CommentManagement,
+    path: config.routes.CommentProductManagement,
+    component: CommentProductManagement,
     layout: DashboardLayout,
   },
   {
     path: config.routes.statistics,
     component: Statistics,
-    layout: DashboardLayout,
-  },
-  {
-    path: config.routes.websiteManagement,
-    component: WebsiteManagement,
     layout: DashboardLayout,
   },
   {

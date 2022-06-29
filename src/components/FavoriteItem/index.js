@@ -7,7 +7,7 @@ import { API_PRODUCT_USER_URL, API_CART_ITEM_URL } from "../../constants";
 import { showToast } from "../../redux/toastSlice";
 import { removeWishlistItem } from "../../redux/wishlistSlice";
 import { addToCart } from "../../redux/cartSlice";
-import { formatThousandDigits } from "../../utils";
+import { formatThousandDigits, getURL } from "../../utils";
 
 const FavoriteItem = ({ item }) => {
   const user = useSelector((state) => state.auth.currentUser);
@@ -85,7 +85,7 @@ const FavoriteItem = ({ item }) => {
             src={
               item.colors[indexColor].images &&
               item.colors[indexColor].images.length > 0 &&
-              item.colors[indexColor].images[0].url
+              getURL(item.colors[indexColor].images[0].url)
             }
             alt=""
             style={{ width: "100px", height: "130px", objectFit: "cover" }}
@@ -117,7 +117,7 @@ const FavoriteItem = ({ item }) => {
                   }`,
                   borderRadius: "50%",
                   cursor: "pointer",
-                  backgroundImage: `url(${color.images[0].url})`,
+                  backgroundImage: `url(${getURL(color.images[0].url)})`,
                   backgroundPosition: "center",
                   backgroundSize: "cover",
                   backgroundClip: "content-box",

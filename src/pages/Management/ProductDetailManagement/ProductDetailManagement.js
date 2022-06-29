@@ -7,7 +7,6 @@ import { DataGrid } from "@mui/x-data-grid";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { ModalProductDetail } from "../../../components/ModalAddUpdate";
-import Pagination from "../../../components/Pagination";
 import { axiosRes } from "../../../config/configAxios";
 import {
   API_COLOR_URL,
@@ -20,17 +19,14 @@ import {
 import { getAllColors } from "../../../redux/colorSlice";
 import {
   addProductDetail,
-  changeLimit,
-  changePage,
   getAllProductDetails,
   getCurrentProductDetail,
-  getProductDetail,
   updateProductDetail,
 } from "../../../redux/productDetailSlice";
 import { getAllProducts } from "../../../redux/productSlice";
 import { getAllSizes } from "../../../redux/sizeSlice";
 import { showToast } from "../../../redux/toastSlice";
-import { calHeightDataGrid } from "../../../utils";
+import { calHeightDataGrid, getURL } from "../../../utils";
 const ProductDetailManagement = () => {
   const columns = [
     {
@@ -44,7 +40,7 @@ const ProductDetailManagement = () => {
       width: 320,
       renderCell: (params) => (
         <div style={{ display: "flex", alignItems: "center" }}>
-          <img src={params.row.product.avatar} height="32" alt="" />
+          <img src={getURL(params.row.product.avatar)} height="32" alt="" />
           &nbsp;
           {params.row.product.name}
         </div>
@@ -66,7 +62,7 @@ const ProductDetailManagement = () => {
     {
       field: "sku",
       headerName: "SKU",
-      width: 240,
+      width: 180,
     },
     {
       field: "amount",
@@ -78,7 +74,7 @@ const ProductDetailManagement = () => {
       headerName: "Hình ảnh",
       width: 120,
       renderCell: (params) => (
-        <img src={params.row.avatar} height="100%" alt="" />
+        <img src={getURL(params.row.avatar)} height="100%" alt="" />
       ),
     },
     {
@@ -160,12 +156,13 @@ const ProductDetailManagement = () => {
           item.avatar !== ""
       );
       if (file) {
-        if (index === -1) {
+        if (index === -1 || (current && index !== -1)) {
           const formData = new FormData();
           formData.append("images", file);
-          listUrls = await axiosRes().post(`${API_UPLOAD_URL}`, formData);
+          const res = await axiosRes().post(`${API_UPLOAD_URL}`, formData);
+          listUrls = res.items;
           if (listUrls.length > 0) {
-            data.avatar = listUrls[0].secure_url;
+            data.avatar = listUrls[0].path;
           }
         } else {
           data.avatar = productDetails[index].avatar;
@@ -191,7 +188,7 @@ const ProductDetailManagement = () => {
   return (
     <Box bgcolor="#fff" p={1}>
       <button
-        className="management-btn-add"
+        className="management-btn management-btn-add"
         onClick={() => {
           dispatch(getCurrentProductDetail(null));
           setOpenModal(true);
@@ -200,21 +197,19 @@ const ProductDetailManagement = () => {
         <AddIcon />
         Thêm chi tiết sản phẩm
       </button>
-      <Box>
-        <Box height={calHeightDataGrid(LIMIT_ROW_PRODUCT_DETAIL)}>
-          <DataGrid
-            columns={columns}
-            rows={productDetails}
-            pageSize={LIMIT_ROW_PRODUCT_DETAIL}
-            rowsPerPageOptions={[
-              LIMIT_ROW_PRODUCT_DETAIL,
-              LIMIT_ROW_PRODUCT_DETAIL * 5,
-              LIMIT_ROW_PRODUCT_DETAIL * 10,
-              LIMIT_ROW_PRODUCT_DETAIL * 20,
-              LIMIT_ROW_PRODUCT_DETAIL * 50,
-            ]}
-          />
-        </Box>
+      <Box height={calHeightDataGrid(LIMIT_ROW_PRODUCT_DETAIL)}>
+        <DataGrid
+          columns={columns}
+          rows={productDetails}
+          pageSize={LIMIT_ROW_PRODUCT_DETAIL}
+          rowsPerPageOptions={[
+            LIMIT_ROW_PRODUCT_DETAIL,
+            LIMIT_ROW_PRODUCT_DETAIL * 5,
+            LIMIT_ROW_PRODUCT_DETAIL * 10,
+            LIMIT_ROW_PRODUCT_DETAIL * 20,
+            LIMIT_ROW_PRODUCT_DETAIL * 50,
+          ]}
+        />
       </Box>
       {openModal && (
         <ModalProductDetail
@@ -224,8 +219,8 @@ const ProductDetailManagement = () => {
           handleClose={() => setOpenModal(false)}
           handleOk={handleOk}
           labelOk={current ? "Sửa" : "Thêm"}
-          title={current ? "Sửa sản phẩm" : "Thêm sản phẩm"}
-          isCloseAfterOk={false}
+          title={current ? "Sửa chi tiết sản phẩm" : "Thêm chi tiết sản phẩm"}
+          isCloseAfterOk={current !== null}
         />
       )}
     </Box>

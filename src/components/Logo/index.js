@@ -1,25 +1,29 @@
 import { Box } from "@mui/material";
 import { Link } from "react-router-dom";
 import config from "../../config";
+import logo from "../../assets/imgs/logo.jpg";
 
-const Logo = ({ style, sx }) => {
+const Logo = ({ style, sx, noLink }) => {
   return (
-    <Link to={config.routes.home} style={style}>
-      <Box
-        sx={{
-          height: 100,
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          fontSize: 40,
-          fontWeight: 600,
-          textTransform: "uppercase",
-          ...sx,
-        }}
-      >
-        Duy.P
-      </Box>
-    </Link>
+    <>
+      {!noLink ? (
+        <Link to={config.routes.home} style={{ ...style, ...sx }}>
+          <img
+            src={logo}
+            alt="logo"
+            style={{ objectFit: "cover", height: "100%" }}
+          />
+        </Link>
+      ) : (
+        <Box style={{ ...style, ...sx }}>
+          <img
+            src={logo}
+            alt="logo"
+            style={{ objectFit: "cover", height: "100%" }}
+          />
+        </Box>
+      )}
+    </>
   );
 };
 

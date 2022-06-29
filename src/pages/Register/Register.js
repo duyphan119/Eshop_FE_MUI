@@ -1,44 +1,48 @@
-import { useEffect, useRef } from "react";
-import Avatar from "@mui/material/Avatar";
-import Button from "@mui/material/Button";
-import CssBaseline from "@mui/material/CssBaseline";
-import TextField from "@mui/material/TextField";
-import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
-import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
-import Typography from "@mui/material/Typography";
-import Container from "@mui/material/Container";
-import { useForm } from "react-hook-form";
-import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
+import { useEffect, useRef } from "react";
+import { useForm } from "react-hook-form";
+import { useDispatch } from "react-redux";
+import { Link, useNavigate } from "react-router-dom";
 import top_banner from "../../assets/imgs/hannah-morgan-39891.webp";
-import { API_AUTH_URL } from "../../constants";
 import Breadcrumbs from "../../components/Breadcrumbs";
 import config from "../../config";
+import { API_AUTH_URL } from "../../constants";
+import { setAccessToken } from "../../redux/authSlice";
+import { showToast } from "../../redux/toastSlice";
 import "./Register.css";
 
 export default function Register() {
   const navigate = useNavigate();
+
+  const dispatch = useDispatch();
+
   const {
     register,
     handleSubmit,
     watch,
-    formState: { errors },
+    // formState: { errors },
   } = useForm();
-  const onSubmit = (data) => {
-    axios
-      .post(`${API_AUTH_URL}/register`, data)
-      .then(() => {
-        navigate(config.routes.home);
-      })
-      .catch((err) => {});
+  const onSubmit = async (data) => {
+    try {
+      await axios.post(`${API_AUTH_URL}/register`, data);
+      const res = await axios.post(`${API_AUTH_URL}/login`, data);
+      dispatch(setAccessToken(res.item));
+      dispatch(
+        showToast({
+          isOpen: true,
+          text: "Đăng ký thành công",
+          type: "success",
+        })
+      );
+      navigate(config.routes.home);
+    } catch (error) {}
   };
   const password = useRef({});
   password.current = watch("password", "");
   useEffect(() => {
     document.title = "Đăng kí";
   }, []);
-  console.log(errors);
   return (
     <>
       <div
@@ -140,6 +144,26 @@ export default function Register() {
           <div className="register-btn-submit">
             <button type="submit">Đăng ký</button>
           </div>
+          <div
+            style={{
+              height: 1,
+              backgroundColor: "gray",
+              width: 180,
+              marginBlock: 32,
+            }}
+          ></div>
+          <Link
+            to={config.routes.home}
+            className="hover-color-main-color register-action-link"
+          >
+            Về trang chủ
+          </Link>
+          <Link
+            to={config.routes.login}
+            className="hover-color-main-color register-action-link"
+          >
+            Đăng nhập
+          </Link>
         </Box>
       </Box>
     </>

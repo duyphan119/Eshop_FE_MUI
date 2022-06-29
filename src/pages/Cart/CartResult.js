@@ -47,7 +47,7 @@ const CartResult = () => {
         <div style={{ fontSize: 14 }}>
           Vận chuyển và thuế tính lúc thanh toán
         </div>
-        <div style={{ height: 40, marginTop: 16 }}>
+        <div style={{ height: 40, marginTop: 14 }}>
           <Button
             sx={{
               py: 1,
@@ -80,6 +80,7 @@ const CartResult = () => {
                 opacity: 1,
               },
             }}
+            onClick={handleCheckOut}
           >
             THANH TOÁN
           </Button>

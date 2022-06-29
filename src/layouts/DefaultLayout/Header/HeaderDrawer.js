@@ -29,8 +29,8 @@ const HeaderDrawer = () => {
   const navigate = useNavigate();
 
   const [state, setState] = useState(false);
-  const genderCategories = useSelector((state) => state.genderCategory.all);
-  const [showGenderCategories, setShowGenderCategories] = useState(false);
+  const groupCategories = useSelector((state) => state.groupCategory.all);
+  const [showGroupCategories, setShowGroupCategories] = useState(false);
 
   const toggleDrawer = (e) => {
     if (e.type === "keydown" && (e.key === "Tab" || e.key === "Shift")) {
@@ -48,7 +48,7 @@ const HeaderDrawer = () => {
 
   useEffect(() => {
     if (!state) {
-      setShowGenderCategories(false);
+      setShowGroupCategories(false);
     }
   }, [state]);
 
@@ -94,15 +94,15 @@ const HeaderDrawer = () => {
             </Link>
             <ListItem
               button
-              onClick={() => setShowGenderCategories(!showGenderCategories)}
+              onClick={() => setShowGroupCategories(!showGroupCategories)}
             >
               <ListItemIcon>
                 <CategoryOutlinedIcon />
               </ListItemIcon>
               <ListItemText primary="Danh mục" />
             </ListItem>
-            {showGenderCategories &&
-              genderCategories.map((genderCategory, index) => (
+            {showGroupCategories &&
+              groupCategories.map((genderCategory, index) => (
                 <Link
                   to={`/${genderCategory.slug}`}
                   style={{

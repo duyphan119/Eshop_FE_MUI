@@ -19,6 +19,9 @@ const discountSlice = createSlice({
     getDiscount: (state, action) => {
       state.discount = action.payload;
     },
+    getAllDiscounts: (state, action) => {
+      state.all = action.payload;
+    },
     addDiscount: (state, action) => {
       state.all = [action.payload, ...state.all];
     },
@@ -51,5 +54,6 @@ export const {
   deleteDiscount,
   changePage,
   changeLimit,
+  getAllDiscounts,
 } = discountSlice.actions;
 export default discountSlice.reducer;

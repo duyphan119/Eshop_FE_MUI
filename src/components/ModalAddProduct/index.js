@@ -16,7 +16,7 @@ import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { Editor } from "@tinymce/tinymce-react";
 import { Fragment, useState } from "react";
 import { useSelector } from "react-redux";
-import { formatDateVN, formatThousandDigits } from "../../utils";
+import { formatDateVN, formatThousandDigits, getURL } from "../../utils";
 import Modal from "../Modal";
 const ModalAddProduct = ({
   open,
@@ -310,7 +310,7 @@ const ModalAddProduct = ({
                         {item.urlList.map((el, index) => (
                           <Grid item xs={2} position="relative" key={index}>
                             <img
-                              src={el.url}
+                              src={getURL(el.url)}
                               style={{ width: "100%" }}
                               alt=""
                             />

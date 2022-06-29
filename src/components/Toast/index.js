@@ -8,8 +8,8 @@ const Toast = () => {
     if (toastMessage.text !== "") {
       toast[toastMessage.type](toastMessage.text, {
         position: "top-right",
-        autoClose: 3000,
-        hideProgressBar: true,
+        autoClose: 2000,
+        hideProgressBar: false,
         closeOnClick: true,
         pauseOnHover: true,
         draggable: true,
@@ -23,7 +23,7 @@ const Toast = () => {
     return (
       <ToastContainer
         position="top-right"
-        autoClose={3000}
+        autoClose={2000}
         hideProgressBar
         newestOnTop
         closeOnClick

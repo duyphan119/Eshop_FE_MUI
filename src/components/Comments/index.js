@@ -5,12 +5,11 @@ import { Link } from "react-router-dom";
 import Comment from "../Comment";
 import { SocketContext } from "../../context";
 import {
-  API_COMMENT_URL,
+  API_COMMENT_PRODUCT_URL,
   API_NOTIFICATION_URL,
   LIMIT_COMMENT,
 } from "../../constants";
 import { configAxiosAll, axiosRes } from "../../config/configAxios";
-import ModalComment from "../ModalComment";
 import { isShowCollapse, isShowLoadMore } from "../Button";
 import { getComment } from "../../redux/commentSlice";
 
@@ -30,11 +29,11 @@ const Comments = ({ product }) => {
     (async function () {
       try {
         const data1 = await axiosRes().get(
-          `${API_COMMENT_URL}/product/${product.id}?limit=${limit}`
+          `${API_COMMENT_PRODUCT_URL}/product/${product.id}?limit=${limit}`
         );
         dispatch(getComment(data1));
         const data2 = await axiosRes().get(
-          `${API_COMMENT_URL}/user/${user.id}/product/${product.id}`
+          `${API_COMMENT_PRODUCT_URL}/user/${user.id}/product/${product.id}`
         );
         setMyComment(data2);
       } catch (error) {}
@@ -53,14 +52,14 @@ const Comments = ({ product }) => {
       if (myComment) {
         // Sửa comment
         const res = await configAxiosAll(user, dispatch).put(
-          `${API_COMMENT_URL}`,
+          `${API_COMMENT_PRODUCT_URL}`,
           { ...reqComment, id: myComment.id }
         );
         setMyComment(res);
       } else {
         // Thêm comment
         const res = await configAxiosAll(user, dispatch).post(
-          `${API_COMMENT_URL}`,
+          `${API_COMMENT_PRODUCT_URL}`,
           reqComment
         );
         setMyComment(res);
@@ -138,17 +137,6 @@ const Comments = ({ product }) => {
         )}
         {isShowCollapse(comment, LIMIT_COMMENT, () => setLimit(LIMIT_COMMENT))}
       </Box>
-      {open && (
-        <ModalComment
-          open={open}
-          handleClose={() => setOpen(false)}
-          labelOk={myComment ? "Sửa" : "Gửi"}
-          isCloseAfterOk={true}
-          title={myComment ? "Sửa đánh giá của bạn" : "Viết đánh giá của bạn"}
-          comment={myComment}
-          handleOk={handleOk}
-        />
-      )}
     </Box>
   );
 };

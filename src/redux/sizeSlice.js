@@ -33,11 +33,9 @@ const sizeSlice = createSlice({
       const newSize = action.payload;
       const index = state.list.findIndex((item) => item.id === newSize.id);
       state.list[index] = { ...state.list[index], ...newSize };
-      state.current = null;
     },
     deleteSize: (state) => {
       state.list = state.list.filter((item) => item.id !== state.current.id);
-      state.current = null;
     },
     changePage: (state, action) => {
       state.page = action.payload;

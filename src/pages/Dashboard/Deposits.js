@@ -2,7 +2,8 @@ import Typography from "@mui/material/Typography";
 import * as React from "react";
 import { Link } from "react-router-dom";
 import { TitlePaper } from "../../components/Title";
-import { formatThousandDigits, formatDateTimeVN } from "../../utils";
+import config from "../../config";
+import { formatThousandDigits, formatDateVN } from "../../utils";
 
 export default function Deposits({ total }) {
   return (
@@ -12,11 +13,11 @@ export default function Deposits({ total }) {
         {formatThousandDigits(total)} ₫
       </Typography>
       <Typography color="text.secondary" sx={{ flex: 1 }}>
-        {formatDateTimeVN(new Date()).split(" ")[0]}
+        {formatDateVN(new Date())}
       </Typography>
       <div>
         <Link
-          to="/dashboard/statistics"
+          to={config.routes.statistics}
           style={{
             marginTop: "24px",
             color: "var(--main-color)",

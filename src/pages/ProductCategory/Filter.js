@@ -1,289 +1,174 @@
 import ClearOutlinedIcon from "@mui/icons-material/ClearOutlined";
 
-import { Badge, Box, Button, Typography } from "@mui/material";
-import ClickAwayListener from "@mui/material/ClickAwayListener";
-import { useState } from "react";
+import {
+  Badge,
+  Box,
+  Button,
+  Drawer,
+  IconButton,
+  Tooltip,
+  Typography,
+} from "@mui/material";
+import CloseIcon from "@mui/icons-material/Close";
+import { useCallback, useMemo, useState } from "react";
 import filter_icon from "../../assets/svg/svgexport-8.svg";
-const Filter = ({
-  filters,
-  setFilters,
-  colorFilters,
-  sizeFilters,
-  materialFilters,
-}) => {
-  const [min, setMin] = useState(0);
-  const [max, setMax] = useState(1000000);
-
+const priceFilters = [
+  {
+    text: "Dưới 100.000₫",
+    value: "0:100000",
+  },
+  {
+    text: "100.000₫ - 300.000₫",
+    value: "100000:300000",
+  },
+  {
+    text: "300.000₫ - 500.000₫",
+    value: "300000:500000",
+  },
+  {
+    text: "500.000₫ - 800.000₫",
+    value: "500000:800000",
+  },
+  {
+    text: "Trên 800.000₫",
+    value: "800000",
+  },
+];
+const Filter = ({ filters, setFilters, colorFilters, sizeFilters }) => {
   const [open, setOpen] = useState(false);
 
-  // Lọc theo giá
-  const handleSelectPriceFilter = (min, max) => {
-    let newFilters = { ...filters };
-
-    newFilters.price = [min, max];
-    setFilters(newFilters);
-  };
-
-  // Huỷ lọc theo giá
-  const handleDeselectPriceFilter = () => {
-    let newFilters = { ...filters };
-    newFilters.price = [];
-    setFilters(newFilters);
-  };
-
-  // Lọc theo màu sắc
-  const handleSelectColorFilter = (item, isActive) => {
-    let newFilters = { ...filters };
-    if (isActive) {
-      // Bỏ chọn
-      newFilters.color = newFilters.color.filter((el) => el !== item);
+  const handleSelect = (key, value) => {
+    let _filters = { ...filters };
+    if (!_filters[key] || !_filters[key].values) {
+      _filters = {
+        ..._filters,
+        [key]: {
+          values: [value],
+        },
+      };
     } else {
-      // Chọn
-      const index = newFilters.color.findIndex((el) => el === item);
-      if (index === -1) {
-        newFilters.color.push(item);
+      const index = _filters[key].values.findIndex((item) => item === value);
+      if (index !== -1) {
+        _filters[key].values.splice(index, 1);
       } else {
-        newFilters.color = newFilters.color.filter((el) => el !== item);
+        _filters[key].values.push(value);
       }
     }
-    setFilters({ ...newFilters });
+    setFilters(_filters);
   };
 
-  // Lọc theo chất liệu
-  const handleSelectMaterialFilter = (item, isActive) => {
-    let newFilters = { ...filters };
-    if (isActive) {
-      // Bỏ chọn
-      newFilters.material = newFilters.material.filter((el) => el !== item);
-    } else {
-      // Chọn
-      const index = newFilters.material.findIndex((el) => el === item);
-      if (index === -1) {
-        newFilters.material.push(item);
-      } else {
-        newFilters.material = newFilters.material.filter((el) => el !== item);
-      }
-    }
-    setFilters({ ...newFilters });
-  };
-
-  // Lọc theo kích cỡ
-  const handleSelectSizeFilter = (item, isActive) => {
-    let newFilters = { ...filters };
-    if (isActive) {
-      // Bỏ chọn
-      newFilters.size = newFilters.size.filter((el) => el !== item);
-    } else {
-      // Chọn
-      newFilters.size.push(item);
-    }
-    setFilters({ ...newFilters });
-  };
-
-  // Tính số lượng lọc
-  const countSelectedFilters = () => {
-    let result = 0;
-    if (filters.size.length > 0) result += filters.size.length;
-    if (filters.color.length > 0) result += filters.color.length;
-    if (filters.material.length > 0) result += filters.material.length;
-    if (filters.price.length > 0) result += 1;
-    return result;
-  };
   return (
-    <ClickAwayListener onClickAway={() => setOpen(false)}>
-      <div className="filter-product">
-        <Badge
-          badgeContent={countSelectedFilters()}
-          color="info"
-          onClick={() => setOpen(!open)}
-        >
-          <img
-            alt=""
-            src={filter_icon}
-            width="20px"
-            height="20px"
-            style={{ transform: "translateY(2px)", marginRight: "4px" }}
-          />
-          Lọc
-        </Badge>
-        {open && (
-          <Box className="filter-product-box custom-scrollbar">
-            <div
-              className="filter-product-close"
-              onClick={() => setOpen(false)}
-            >
-              <ClearOutlinedIcon />
-            </div>
-            {(filters.color.length !== 0 ||
-              filters.size.length !== 0 ||
-              filters.material.length !== 0 ||
-              filters.price.length !== 0) && (
-              <>
-                <Typography
-                  variant="body2"
-                  sx={{
-                    fontWeight: "600",
-                    whiteSpace: "nowrap",
-                  }}
-                >
-                  Đã chọn:
-                </Typography>
-                <ul className="filter-product-result-selected">
-                  {filters.price.length > 1 && (
-                    <li onClick={handleDeselectPriceFilter}>
-                      {`Từ ${filters.price[0]} ₫ - ${filters.price[1]} ₫`}
-                      <ClearOutlinedIcon />
-                    </li>
-                  )}
-                  {filters.material.map((item, index) => {
-                    return (
-                      <li
-                        key={Math.random()}
-                        onClick={() => handleSelectMaterialFilter(item, true)}
-                      >
-                        {item} <ClearOutlinedIcon />
-                      </li>
-                    );
-                  })}
-                  {filters.color.map((item, index) => {
-                    return (
-                      <li
-                        key={Math.random()}
-                        onClick={() => handleSelectColorFilter(item, true)}
-                      >
-                        {item} <ClearOutlinedIcon />
-                      </li>
-                    );
-                  })}
-                  {filters.size.map((item, index) => {
-                    return (
-                      <li
-                        key={Math.random()}
-                        onClick={() => handleSelectSizeFilter(item, true)}
-                      >
-                        {item} <ClearOutlinedIcon />
-                      </li>
-                    );
-                  })}
-                </ul>
-              </>
-            )}
-            <Typography
-              variant="body2"
-              sx={{
-                marginTop: "10px",
-                fontWeight: "600",
-              }}
-            >
-              Giá
-            </Typography>
-            <div className="filter-product-price">
-              <form>
-                <input
-                  type="number"
-                  value={min}
-                  min={0}
-                  onChange={(e) => setMin(parseInt(e.target.value))}
-                  onBlur={(e) => {
-                    if (parseInt(e.target.value) !== min.current)
-                      handleSelectPriceFilter(parseInt(e.target.value), max);
-                  }}
-                />
-                <input
-                  type="number"
-                  min={min}
-                  value={max}
-                  onChange={(e) => setMax(parseInt(e.target.value))}
-                  onBlur={(e) =>
-                    handleSelectPriceFilter(min, parseInt(e.target.value))
-                  }
-                />
-              </form>
-            </div>
-            <Typography
-              variant="body2"
-              sx={{
-                marginTop: "10px",
-                fontWeight: "600",
-              }}
-            >
-              Chát liệu
-            </Typography>
-            <ul className="filter-product-material">
-              {materialFilters.map((item) => {
-                let isActive = filters.material.find((el) => el === item);
-                return (
-                  <li
-                    key={Math.random()}
-                    className={`${isActive ? "active" : ""}`}
-                    onClick={() => handleSelectMaterialFilter(item, isActive)}
-                  >
-                    {item}
-                  </li>
-                );
-              })}
-            </ul>
-            <Typography
-              variant="body2"
-              sx={{
-                marginTop: "10px",
-                fontWeight: "600",
-              }}
-            >
-              Màu sắc
-            </Typography>
-            <ul className="filter-product-color">
-              {colorFilters.map((item) => {
-                let isActive = filters.color.find((el) => el === item);
-                return (
-                  <li
-                    key={Math.random()}
-                    className={`${isActive ? "active" : ""}`}
-                    onClick={() => handleSelectColorFilter(item, isActive)}
-                  >
-                    {item}
-                  </li>
-                );
-              })}
-            </ul>
-            <Typography
-              variant="body2"
-              sx={{
-                marginTop: "10px",
-                fontWeight: "600",
-              }}
-            >
-              Kích cỡ
-            </Typography>
-            <ul className="filter-product-size">
-              {sizeFilters.map((item) => {
-                let isActive = filters.size.find((el) => el === item);
-                return (
-                  <li
-                    key={Math.random() + item}
-                    className={`${isActive ? "active" : ""}`}
-                    onClick={() => handleSelectSizeFilter(item, isActive)}
-                  >
-                    {item}
-                  </li>
-                );
-              })}
-            </ul>
-            <div className="filter-product-actions">
-              <Button
-                variant="outlined"
-                sx={{
-                  marginRight: "4px",
-                }}
-                onClick={() => setFilters({ color: [], size: [], price: [] })}
-              >
-                Xoá lọc
-              </Button>
-            </div>
+    <div className="filter-product">
+      <Badge badgeContent={0} color="info" onClick={() => setOpen(!open)}>
+        <img
+          alt=""
+          src={filter_icon}
+          width="20px"
+          height="20px"
+          style={{ transform: "translateY(-1px)", marginRight: "8px" }}
+        />
+        Lọc
+      </Badge>
+      <Box
+        width="20vw"
+        p={2}
+        sx={{
+          overflowX: "hidden",
+          overflowY: "overlay",
+          transform: open ? "translateX(0)" : "translateX(-20vw)",
+          transition: "transform linear 0.2s",
+          cursor: "default",
+        }}
+        position="fixed"
+        left={0}
+        bgcolor="#fff"
+        top={0}
+        height="100vh"
+        className="custom-scrollbar"
+      >
+        <Box textAlign="right">
+          <Tooltip title="Đóng">
+            <span style={{ cursor: "pointer" }} onClick={() => setOpen(false)}>
+              <CloseIcon />
+            </span>
+          </Tooltip>
+        </Box>
+        <Box mb={3}>
+          <Box borderBottom="1px solid #000" fontSize={22}>
+            Giá
           </Box>
-        )}
-      </div>
-    </ClickAwayListener>
+          <Box>
+            {priceFilters.map((item, index) => (
+              <Box
+                key={index}
+                sx={{
+                  cursor: "pointer",
+                  "&:hover": {
+                    color: "var(--main-color)",
+                    textDecoration: "underline",
+                  },
+                }}
+                fontSize={12}
+                my={1}
+                onClick={() => handleSelect("price", item.value)}
+              >
+                {item.text}
+              </Box>
+            ))}
+          </Box>
+        </Box>
+        <Box mb={3}>
+          <Box borderBottom="1px solid #000" mb={1} fontSize={22}>
+            Màu
+          </Box>
+          <Box display="flex" flexWrap="wrap" justifyContent="space-between">
+            {colorFilters.map((item, index) => (
+              <Box
+                key={index}
+                sx={{
+                  cursor: "pointer",
+                  "&:hover": {
+                    color: "var(--main-color)",
+                    textDecoration: "underline",
+                  },
+                }}
+                fontSize={12}
+                width="50%"
+                my={1}
+                onClick={() => handleSelect("color", item)}
+              >
+                {item}
+              </Box>
+            ))}
+          </Box>
+        </Box>
+        <Box>
+          <Box borderBottom="1px solid #000" mb={1} fontSize={22}>
+            Kích cỡ
+          </Box>
+          <Box display="flex" flexWrap="wrap" justifyContent="space-between">
+            {sizeFilters.map((item, index) => (
+              <Box
+                key={index}
+                sx={{
+                  cursor: "pointer",
+                  "&:hover": {
+                    color: "var(--main-color)",
+                    textDecoration: "underline",
+                  },
+                }}
+                fontSize={12}
+                width="calc(100% / 3)"
+                my={1}
+                onClick={() => handleSelect("size", item)}
+              >
+                {item}
+              </Box>
+            ))}
+          </Box>
+        </Box>
+      </Box>
+    </div>
   );
 };
 

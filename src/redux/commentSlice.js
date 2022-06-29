@@ -6,11 +6,21 @@ const initialState = {
   limit: LIMIT_COMMENT,
   current: null,
   comment: null,
+  productDetail: {
+    list: [],
+    myComment: null,
+  },
 };
 const commentSlice = createSlice({
   name: "comment",
   initialState: initialState,
   reducers: {
+    getProductDetailComments: (state, action) => {
+      state.productDetail.list = action.payload;
+    },
+    getProductDetailMyComment: (state, action) => {
+      state.productDetail.myComment = action.payload;
+    },
     getAllComments: (state, action) => {
       state.list = action.payload;
     },
@@ -93,5 +103,7 @@ export const {
   updateRepliedComment,
   deleteRepliedComment,
   getComment,
+  getProductDetailComments,
+  getProductDetailMyComment,
 } = commentSlice.actions;
 export default commentSlice.reducer;
