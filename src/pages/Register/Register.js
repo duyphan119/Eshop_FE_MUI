@@ -35,7 +35,7 @@ export default function Register() {
           type: "success",
         })
       );
-      navigate(config.routes.home);
+      navigate(config.routes.login);
     } catch (error) {}
   };
   const password = useRef({});

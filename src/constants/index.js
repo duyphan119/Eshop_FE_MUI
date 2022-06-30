@@ -40,6 +40,7 @@ export const IMGBB_API_KEY = "4425dd35bf23326f3a6b0c0fdcd6963e";
 export const SERVER_UPLOAD_IMAGE_URL = "https://api.imgbb.com/1/upload";
 export const LOCALSTORAGE_CART_NAME = "shop-of-duy:cart";
 export const LOCALSTORAGE_USER_NAME = "shop-of-duy:user";
+export const LOCALSTORAGE_DESCRIPTION_CART = "DC";
 export const LOCALSTORAGE_ACCESS_TOKEN = "AT";
 export const EXAMPLE_STARS_ARRAY = [1, 2, 3, 4, 5];
 export const EXAMPLE_STARS_ARRAY_REVERSE = [5, 4, 3, 2, 1];

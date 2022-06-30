@@ -115,7 +115,12 @@ const Dashboard = () => {
             setCountProduct(listRes[4].value.item);
           }
           if (listRes[5].status === "fulfilled") {
-            setRevenueHoursInDay(listRes[5].value.items);
+            setRevenueHoursInDay(
+              listRes[5].value.items.map((item) => ({
+                ...item,
+                total: parseInt(item.total) / 1000,
+              }))
+            );
           }
           if (listRes[6].status === "fulfilled") {
             dispatch(getRecentOrders(listRes[6].value.items));

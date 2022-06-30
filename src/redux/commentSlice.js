@@ -10,6 +10,8 @@ const initialState = {
     list: [],
     myComment: null,
   },
+  listRep: [],
+  currentRep: null,
 };
 const commentSlice = createSlice({
   name: "comment",
@@ -77,9 +79,6 @@ const commentSlice = createSlice({
     changePage: (state, action) => {
       state.page = action.payload;
     },
-    getCurrentComment: (state, action) => {
-      state.current = action.payload;
-    },
     newRepliedComment: (state, action) => {
       const data = action.payload;
       // Tìm vị trí cái comment
@@ -89,6 +88,12 @@ const commentSlice = createSlice({
       if (index !== -1) {
         state.comment.items[index].replied_comments.push(data);
       }
+    },
+    getCurrentComment: (state, action) => {
+      state.current = action.payload;
+    },
+    getCurrentRepComment: (state, action) => {
+      state.currentRep = action.payload;
     },
   },
 });

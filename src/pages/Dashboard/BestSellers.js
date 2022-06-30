@@ -45,7 +45,9 @@ export default function BestSellers(props) {
                   {item.detail.product.name}
                 </TableCell>
                 <TableCell>{item.detail.color.value}</TableCell>
-                <TableCell>{item.detail.size.value}</TableCell>
+                <TableCell>
+                  {item.detail.size.shortValue !== "" && item.detail.size.value}
+                </TableCell>
                 <TableCell>{item.count}</TableCell>
               </TableRow>
             ))}

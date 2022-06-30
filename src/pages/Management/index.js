@@ -12,4 +12,5 @@ export { default as OrderManagement } from "./OrderManagement";
 export { default as CouponManagement } from "./CouponManagement";
 export { default as CommentProductManagement } from "./CommentProductManagement";
 export { default as ProductDetailManagement } from "./ProductDetailManagement";
+export { default as OrderStatusManagement } from "./OrderStatusManagement";
 export { default as ProductImageManagement } from "./ProductImageManagement";

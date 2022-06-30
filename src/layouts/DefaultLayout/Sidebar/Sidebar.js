@@ -6,7 +6,7 @@ import YouTubeIcon from "@mui/icons-material/YouTube";
 import FacebookIcon from "@mui/icons-material/Facebook";
 import InstagramIcon from "@mui/icons-material/Instagram";
 import "./Sidebar.css";
-import { Badge, Box, Tooltip } from "@mui/material";
+import { Badge, Box, ClickAwayListener, Tooltip } from "@mui/material";
 import Logo from "../../../components/Logo";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";

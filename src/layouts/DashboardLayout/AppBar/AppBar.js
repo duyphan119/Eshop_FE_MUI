@@ -90,6 +90,8 @@ const AppBar = ({ open, toggleDrawer }) => {
       _title = "Quản lý ưu đãi";
     } else if (location.pathname === config.routes.productDetailManagement) {
       _title = "Quản lý chi tiết sản phẩm";
+    } else if (location.pathname === config.routes.orderStatusManagement) {
+      _title = "Quản lý trạng thái đơn hàng";
     } else if (location.pathname === config.routes.productAdd) {
       _title = "Thêm sản phẩm";
     } else if (location.pathname === config.routes.productEdit) {

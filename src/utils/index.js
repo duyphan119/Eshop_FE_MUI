@@ -105,29 +105,15 @@ export const getTotalPrice = (cart) => {
   let result = 0;
   if (cart) {
     cart.items.forEach((item) => {
-      // if (
-      //   item.detail.product.category.discounts &&
-      //   item.detail.product.category.discounts.length > 0
-      // ) {
-      //   result +=
-      //     item.quantity *
-      //     getNewPrice(
-      //       item.detail.product.price,
-      //       item.detail.product.category.discounts[0].percent
-      //     );
-      // } else if (
-      //   item.detail.product.discounts &&
-      //   item.detail.product.discounts.length > 0
-      // ) {
-      //   result +=
-      //     item.quantity *
-      //     item.detail.product.discounts[
-      //       item.detail.product.discounts.length - 1
-      //     ].new_price;
-      // } else {
-      //   result += item.quantity * item.detail.product.price;
-      // }
-      result += item.quantity * item.detail.product.initPrice;
+      if (item?.detail?.product?.groupProduct?.discounts[0]?.percent) {
+        result +=
+          getFinalPrice(
+            item.detail.product.initPrice,
+            item.detail.product.groupProduct.discounts[0]
+          ) * item.quantity;
+      } else {
+        result += item.quantity * item.detail.product.initPrice;
+      }
     });
   }
   return result;

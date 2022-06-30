@@ -7,7 +7,7 @@ import { axiosRes } from "../../config/configAxios";
 import { API_PRODUCT_URL } from "../../constants";
 import { formatThousandDigits, getURL } from "../../utils";
 const SearchBar = (props) => {
-  const { open, setOpen } = props;
+  const { open, onClose } = props;
 
   const [q, setQ] = useState("");
   const [results, setResults] = useState([]);
@@ -34,7 +34,7 @@ const SearchBar = (props) => {
   }, [q]);
 
   return (
-    <Modal open={open} onClose={() => setOpen(false)} disableScrollLock>
+    <Modal open={open} onClose={onClose} disableScrollLock>
       <Box
         width={600}
         position="fixed"
@@ -85,11 +85,7 @@ const SearchBar = (props) => {
               className="custom-scrollbar"
             >
               {results.map((item, index) => (
-                <Link
-                  to={`/${item.slug}`}
-                  key={index}
-                  onClick={() => setOpen(false)}
-                >
+                <Link to={`/${item.slug}`} key={index} onClick={onClose}>
                   <Box py={1} px={2} display="flex" alignItems="center">
                     <Box>
                       <img
@@ -118,7 +114,7 @@ const SearchBar = (props) => {
                   color: "var(--main-color)",
                   textDecoration: "underline",
                 }}
-                onClick={() => setOpen(false)}
+                onClick={onClose}
               >
                 Xem tất cả
               </Link>

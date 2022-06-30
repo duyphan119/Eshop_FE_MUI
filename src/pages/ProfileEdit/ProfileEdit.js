@@ -15,6 +15,7 @@ import {
   API_USER_URL,
 } from "../../constants";
 import { setCurrentUser } from "../../redux/authSlice";
+import { showToast } from "../../redux/toastSlice";
 import { decodeToken, getURL } from "../../utils";
 
 const ProfileEdit = () => {
@@ -80,19 +81,19 @@ const ProfileEdit = () => {
 
   useEffect(() => {
     if (optionsCity.length !== 0) {
-      const _item = optionsCity.find((item) => item.name === currentUser.city);
+      const _item = optionsCity.find((item) => item.name === state.city);
       setOptionsDistricts(_item ? _item.districts : []);
     }
-  }, [currentUser?.city, optionsCity]);
+  }, [state.city, optionsCity]);
 
   useEffect(() => {
     if (optionsDistrict.length !== 0) {
       const _item = optionsDistrict.find(
-        (item) => item.name === currentUser.district
+        (item) => item.name === state.district
       );
       setOptionsWards(_item ? _item.wards : []);
     }
-  }, [currentUser?.district, optionsDistrict]);
+  }, [state.district, optionsDistrict]);
 
   const onSubmit = async (data) => {
     try {
@@ -107,14 +108,23 @@ const ProfileEdit = () => {
         `${API_USER_URL}/${currentUser.id}`,
         req
       );
-      if (file) {
+      if (file && currentUser.avatar) {
         await axiosRes().delete(API_UPLOAD_URL, {
           data: [{ path: currentUser.avatar }],
         });
       }
       dispatch(setCurrentUser({ ...currentUser, ...req }));
+      dispatch(
+        showToast({
+          isOpen: true,
+          text: "Sửa thông tin tài khoản thành công",
+          type: "success",
+        })
+      );
     } catch (error) {}
   };
+
+  if (!currentUser) return "";
 
   return (
     <Box>
@@ -152,7 +162,7 @@ const ProfileEdit = () => {
         justifyContent="center"
         flexDirection="column"
       >
-        <Box fontSize={26} pb={2}>
+        <Box fontSize={26} mb={3}>
           Sửa thông tin tài khoản cá nhân
         </Box>
         <Box
@@ -355,17 +365,14 @@ const ProfileEdit = () => {
                   justifyContent: "center",
                   textAlign: "center",
                   fontSize: 12,
-                  backgroundImage: `url(${
-                    file
-                      ? URL.createObjectURL(file)
-                      : state.avatar
-                      ? getURL(state.avatar)
-                      : ""
-                  })`,
+                  backgroundImage: `url('${
+                    file ? URL.createObjectURL(file) : getURL(state?.avatar)
+                  }')`,
                   backgroundSize: "cover",
+                  backgroundPosition: "center",
                 }}
               >
-                {!state.avatar && "Chọn ảnh"}
+                {(!file || (!state.avatar && !file)) && "Chọn ảnh"}
               </label>
               <input
                 type="file"

@@ -34,6 +34,8 @@ const ModalColor = (props) => {
       : -1
   );
 
+  console.log({ address });
+
   useEffect(() => {
     (async function () {
       const res = await axios.get(`${API_PROVINCE_URL}?depth=3`);
@@ -70,6 +72,7 @@ const ModalColor = (props) => {
           tempPrice,
           deliveryPrice,
           totalPrice,
+          address,
         });
       }}
     >

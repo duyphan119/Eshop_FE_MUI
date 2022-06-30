@@ -1,30 +1,26 @@
-import { Box, Button, Checkbox, FormControlLabel, Grid } from "@mui/material";
-import { useDispatch, useSelector } from "react-redux";
+import { Box, Button } from "@mui/material";
+import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { formatThousandDigits, getTotalPrice } from "../../utils";
 import config from "../../config";
-import { getCart, getSelectedCartItems } from "../../redux/cartSlice";
+import { useRef } from "react";
+import { LOCALSTORAGE_DESCRIPTION_CART } from "../../constants";
 const CartResult = () => {
   const cart = useSelector((state) => state.cart.cart);
 
   const navigate = useNavigate();
 
-  const dispatch = useDispatch();
+  const textareaRef = useRef();
 
   const handleCheckOut = () => {
     if (cart.items.length > 0) {
+      localStorage.setItem(
+        LOCALSTORAGE_DESCRIPTION_CART,
+        JSON.stringify(textareaRef.current?.value || "")
+      );
       navigate(config.routes.checkout);
     }
   };
-
-  function handleChange(e) {
-    if (e.target.checked) {
-      dispatch(getCart(cart));
-    } else {
-      dispatch(getCart({ items: [], count: 0 }));
-    }
-  }
-
   return (
     <Box display="flex" mt={4}>
       <Box flex={1}>
@@ -37,6 +33,7 @@ const CartResult = () => {
             outlineColor: "var(--main-color)",
           }}
           rows={5}
+          ref={textareaRef}
         ></textarea>
       </Box>
       <Box flex={1} textAlign="right">

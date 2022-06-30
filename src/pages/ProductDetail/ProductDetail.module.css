@@ -112,9 +112,20 @@
   border: 2px solid #000 !important;
   color: #000 !important;
 }
+.price-wrapper {
+  display: flex;
+  margin-top: 8px;
+}
+.new-price,
 .price {
-  font-size: 24px;
+  font-size: 18px;
   color: red;
+  margin-right: 8px;
+}
+
+.old-price {
+  color: gray;
+  text-decoration: line-through;
 }
 .rate {
   display: flex;

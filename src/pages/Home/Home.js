@@ -16,7 +16,7 @@ import do_nu_img from "../../assets/imgs/home/do-nu.jpg";
 import slingbag_img from "../../assets/imgs/home/slingbag.jpg";
 import BannerSlider from "../../components/BannerSlider";
 import Product from "../../components/Product";
-import { axiosToken, configAxiosAll } from "../../config/configAxios";
+import { axiosToken } from "../../config/configAxios";
 import { API_PRODUCT_URL, LIMIT_NEW_PRODUCT } from "../../constants";
 
 const Home = () => {
@@ -59,7 +59,7 @@ const Home = () => {
           { url: banner5, href: "/" },
         ]}
       ></BannerSlider>
-      <Box>
+      <Box mb={1}>
         <Grid container spacing={3}>
           <Grid
             item

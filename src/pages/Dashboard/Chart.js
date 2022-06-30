@@ -8,6 +8,8 @@ import {
   ResponsiveContainer,
   Tooltip,
   CartesianGrid,
+  BarChart,
+  Bar,
 } from "recharts";
 import { TitlePaper } from "../../components/Title";
 import { Box } from "@mui/material";
@@ -20,7 +22,21 @@ export default function Chart({ data }) {
       <TitlePaper>Biểu đồ doanh thu hôm nay</TitlePaper>
       {data.length !== 0 ? (
         <ResponsiveContainer>
-          <LineChart
+          <BarChart
+            data={data}
+            margin={{
+              top: 16,
+              right: 16,
+              bottom: 0,
+              left: 0,
+            }}
+          >
+            <XAxis dataKey="hour" unit="h" />
+            <YAxis unit="k" />
+            <Tooltip />
+            <Bar dataKey="total" fill="var(--main-color)" />
+          </BarChart>
+          {/* <LineChart
             data={data}
             margin={{
               top: 16,
@@ -49,7 +65,7 @@ export default function Chart({ data }) {
               stroke={theme.palette.primary.main}
               dot={false}
             />
-          </LineChart>
+          </LineChart> */}
         </ResponsiveContainer>
       ) : (
         <Box

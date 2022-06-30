@@ -1,47 +1,23 @@
-import AddOutlinedIcon from "@mui/icons-material/AddOutlined";
-import DeleteIcon from "@mui/icons-material/Delete";
-import RemoveOutlinedIcon from "@mui/icons-material/RemoveOutlined";
-import {
-  Box,
-  Checkbox,
-  FormControlLabel,
-  Grid,
-  IconButton,
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableRow,
-  Typography,
-} from "@mui/material";
+import { IconButton, TableCell, TableRow } from "@mui/material";
 import ClearIcon from "@mui/icons-material/Clear";
 import RemoveIcon from "@mui/icons-material/Remove";
 import AddIcon from "@mui/icons-material/Add";
 import { useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
-import { axiosToken, configAxiosAll } from "../../config/configAxios";
+import { axiosToken } from "../../config/configAxios";
 import { API_CART_ITEM_URL } from "../../constants";
-import {
-  removeCartItem,
-  updateCart,
-  selectCartItem,
-  deSelectCartItem,
-} from "../../redux/cartSlice";
-import {
-  formatThousandDigits,
-  getNewPrice,
-  getThumbnailCartItem,
-  getURL,
-} from "../../utils";
+import { removeCartItem, updateCart } from "../../redux/cartSlice";
+import { formatThousandDigits, getFinalPrice, getURL } from "../../utils";
 
 const CartItem = ({ item }) => {
-  const currentUser = useSelector((state) => state.auth.currentUser);
   const token = useSelector((state) => state.auth.token);
 
   const dispatch = useDispatch();
 
   const navigate = useNavigate();
+
+  console.log({ item });
 
   // const hasDiscount = useMemo(() => {
   //   return (
@@ -56,7 +32,14 @@ const CartItem = ({ item }) => {
   //   );
   // }, [item.detail.product.category.discounts]);
 
-  console.log({ item });
+  const newPrice = useMemo(() => {
+    if (item?.detail?.product?.groupProduct?.discounts[0]?.percent)
+      return getFinalPrice(
+        item.detail.product.initPrice,
+        item.detail.product.groupProduct.discounts[0]
+      );
+    return 0;
+  }, [item]);
 
   async function handleUpdateCart(value) {
     try {
@@ -117,7 +100,7 @@ const CartItem = ({ item }) => {
         </Link>
       </TableCell>
       <TableCell sx={{ textAlign: "center" }}>
-        {formatThousandDigits(item.detail.product.initPrice)} ₫
+        {formatThousandDigits(newPrice || item.detail.product.initPrice)} ₫
       </TableCell>
       <TableCell sx={{ textAlign: "center" }}>
         <IconButton
@@ -147,7 +130,10 @@ const CartItem = ({ item }) => {
         </IconButton>
       </TableCell>
       <TableCell sx={{ textAlign: "center" }}>
-        {formatThousandDigits(item.detail.product.initPrice * item.quantity)} ₫
+        {formatThousandDigits(
+          (newPrice || item.detail.product.initPrice) * item.quantity
+        )}{" "}
+        ₫
       </TableCell>
       <TableCell sx={{ textAlign: "center" }}>
         <IconButton

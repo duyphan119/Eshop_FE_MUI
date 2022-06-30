@@ -10,9 +10,20 @@
   display: flex;
   align-items: center;
 }
+.price-wrapper {
+  display: flex;
+  margin-top: 8px;
+}
+.new-price,
 .price {
   font-size: 18px;
   color: red;
+  margin-right: 8px;
+}
+
+.old-price {
+  color: gray;
+  text-decoration: line-through;
 }
 .color-preview-item {
   width: 48px;

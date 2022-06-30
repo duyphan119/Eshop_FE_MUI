@@ -28,7 +28,12 @@ import { showToast } from "../../redux/toastSlice";
 import { addToCart } from "../../redux/cartSlice";
 import styles from "./ProductDetail.module.css";
 import Breadcrumbs from "../../components/Breadcrumbs";
-import { decodeToken, formatThousandDigits, getURL } from "../../utils";
+import {
+  decodeToken,
+  formatThousandDigits,
+  getFinalPrice,
+  getURL,
+} from "../../utils";
 import { addToLatest } from "../../redux/productSlice";
 // import { SocketContext } from "../../context";
 import Product from "../../components/Product";
@@ -71,8 +76,15 @@ const ProductDetail = ({ query }) => {
 
   const { slug } = useParams();
 
-  const hasDiscount =
-    product && product.discounts && product.discounts.length > 0;
+  const newPrice = useMemo(() => {
+    if (product?.groupProduct?.discounts[0]?.percent) {
+      return getFinalPrice(
+        product.initPrice,
+        product.groupProduct.discounts[0]
+      );
+    }
+    return 0;
+  }, [product]);
 
   // useEffect(() => {
   //   if (product) {
@@ -217,8 +229,8 @@ const ProductDetail = ({ query }) => {
           await axiosToken(token.accessToken, dispatch, navigate).post(
             `${API_PRODUCT_USER_URL}`,
             {
-              product_id: product.id,
-              user_id: currentUser.id,
+              productId: product.id,
+              userId: currentUser.id,
             }
           );
           dispatch(addToWishlist(product));
@@ -261,8 +273,6 @@ const ProductDetail = ({ query }) => {
       ? (result + parseInt(myComment.rate)) / (n + 1)
       : result / n;
   }, [comments, myComment]);
-
-  // console.log({ product });
 
   if (!product) return "";
 
@@ -333,15 +343,24 @@ const ProductDetail = ({ query }) => {
               </div>
             </div>
             <div className={cx("rate")}>
-              <Stars rate={getAverageStar} />
+              <Stars rate={getAverageStar} isActive={true} />
               <div className="">
                 &nbsp;(
                 {myComment ? comments.length + 1 : comments.length}&nbsp;đánh
                 giá)
               </div>
             </div>
-            <div className={cx("price")}>
-              {formatThousandDigits(product.initPrice)} ₫
+            <div className={cx("price-wrapper")}>
+              <div
+                className={`${cx("price")} ${newPrice ? cx("old-price") : ""}`}
+              >
+                {formatThousandDigits(product.initPrice)} ₫
+              </div>
+              {newPrice && (
+                <div className={cx("new-price")}>
+                  {formatThousandDigits(newPrice)} ₫
+                </div>
+              )}
             </div>
             <Typography variant="body1" sx={{ mt: 2 }}>
               Màu sắc: {product?.colors[indexColor].value}

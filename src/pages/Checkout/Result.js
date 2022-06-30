@@ -13,9 +13,14 @@ import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import { TitleControl } from "../../components/Title";
 import config from "../../config";
-import { axiosToken, configAxiosAll } from "../../config/configAxios";
+import { axiosToken } from "../../config/configAxios";
 import { API_USER_COUPON_URL } from "../../constants";
-import { formatThousandDigits, getCouponPrice, getURL } from "../../utils";
+import {
+  formatThousandDigits,
+  getCouponPrice,
+  getFinalPrice,
+  getURL,
+} from "../../utils";
 const Result = ({
   onCheckout,
   tempPrice,
@@ -65,32 +70,43 @@ const Result = ({
           </TableRow>
         </TableHead>
         <TableBody>
-          {cart?.items.map((item, index) => (
-            <TableRow key={index}>
-              <TableCell sx={{ fontSize: 10, textTransform: "uppercase" }}>
-                <div style={{ display: "flex" }}>
-                  <img
-                    alt=""
-                    src={getURL(item.detail.avatar)}
-                    style={{
-                      objectFit: "cover",
-                      width: 36,
-                    }}
-                  />
-                  <span>{item.detail.product.groupProduct.category.name}</span>
-                </div>
-                <div>{item.detail.sku}</div>
-              </TableCell>
-              <TableCell sx={{ fontSize: 10, textAlign: "center" }}>
-                {item.quantity}
-              </TableCell>
-              <TableCell sx={{ fontSize: 10, textAlign: "center" }}>
-                {formatThousandDigits(
-                  item.quantity * item.detail.product.initPrice
-                )}
-              </TableCell>
-            </TableRow>
-          ))}
+          {cart?.items.map((item, index) => {
+            let newPrice = 0;
+            if (item?.detail?.product?.groupProduct?.discounts[0]?.percent) {
+              newPrice = getFinalPrice(
+                item.detail.product.initPrice,
+                item.detail.product.groupProduct.discounts[0]
+              );
+            }
+            return (
+              <TableRow key={index}>
+                <TableCell sx={{ fontSize: 10, textTransform: "uppercase" }}>
+                  <div style={{ display: "flex" }}>
+                    <img
+                      alt=""
+                      src={getURL(item.detail.avatar)}
+                      style={{
+                        objectFit: "cover",
+                        width: 36,
+                      }}
+                    />
+                    <span>
+                      {item.detail.product.groupProduct.category.name}
+                    </span>
+                  </div>
+                  <div>{item.detail.sku}</div>
+                </TableCell>
+                <TableCell sx={{ fontSize: 10, textAlign: "center" }}>
+                  {item.quantity}
+                </TableCell>
+                <TableCell sx={{ fontSize: 10, textAlign: "center" }}>
+                  {formatThousandDigits(
+                    item.quantity * (newPrice || item.detail.product.initPrice)
+                  )}
+                </TableCell>
+              </TableRow>
+            );
+          })}
         </TableBody>
       </Table>
       <Coupon setCoupon={setCoupon} />

@@ -6,6 +6,7 @@ const initialState = {
   limit: LIMIT_ROW_COMMENT_PRODUCT,
   current: null,
   commentProduct: null,
+  currentRep: null,
 };
 const commentProductSlice = createSlice({
   name: "commentProduct",
@@ -22,49 +23,25 @@ const commentProductSlice = createSlice({
         state.list = [action.payload, ...state.list];
     },
     updateCommentProduct: (state, action) => {
-      const newCommentProduct = action.payload;
-      const index = state.commentProduct.items.findIndex(
-        (item) => item.id === newCommentProduct.id
-      );
-      state.commentProduct.items[index] = {
-        ...state.commentProduct.items[index],
-        ...newCommentProduct,
-      };
-    },
-    updateRepliedCommentProduct: (state, action) => {
       const data = action.payload;
-      const index = state.commentProduct.items.findIndex(
-        (item) => item.id === data.commentProduct_id
-      );
-      if (index !== -1) {
-        const index2 = state.commentProduct.items[
-          index
-        ].replied_commentProducts.findIndex((item) => item.id === data.id);
-        if (index2 !== -1)
-          state.commentProduct.items[index].replied_commentProducts[index2] = {
-            ...state.commentProduct.items[index].replied_commentProducts[
-              index2
-            ],
-            ...data,
-          };
-      }
+      const index = state.list.findIndex((item) => item.id === data.id);
+      state.list[index] = { ...state.list[index], ...data };
     },
     deleteCommentProduct: (state, action) => {
       const id = action.payload;
-      state.commentProduct.items = state.commentProduct.items.filter(
-        (item) => item.id !== id
-      );
+      state.list = state.list.filter((item) => item.id !== id);
+      state.current = null;
     },
-    deleteRepliedCommentProduct: (state, action) => {
-      const { commentProductId, id } = action.payload;
-      const index = state.commentProduct.items.findIndex(
-        (item) => item.id === commentProductId
+    deleteRepCommentProduct: (state, action) => {
+      const id = action.payload;
+      const index = state.list.findIndex(
+        (item) => item.id === state.current.id
       );
       if (index !== -1) {
-        state.commentProduct.items[index].replied_commentProducts =
-          state.commentProduct.items[index].replied_commentProducts.filter(
-            (item) => item.id !== id
-          );
+        state.list[index].repComments = state.list[index].repComments.filter(
+          (item) => item.id !== id
+        );
+        state.currentRep = null;
       }
     },
     changePage: (state, action) => {
@@ -73,14 +50,31 @@ const commentProductSlice = createSlice({
     getCurrentCommentProduct: (state, action) => {
       state.current = action.payload;
     },
-    newRepliedCommentProduct: (state, action) => {
+    getCurrentRepCommentProduct: (state, action) => {
+      state.currentRep = action.payload;
+    },
+    newRepCommentProduct: (state, action) => {
       const data = action.payload;
-      // Tìm vị trí cái commentProduct
-      const index = state.commentProduct.items.findIndex(
-        (item) => item.id === data.commentProduct_id
+      const index = state.list.findIndex(
+        (item) => item.id === state.current.id
       );
       if (index !== -1) {
-        state.commentProduct.items[index].replied_commentProducts.push(data);
+        state.list[index].repComments.push(data);
+      }
+    },
+    updateRepCommentProduct: (state, action) => {
+      const data = action.payload;
+      const index = state.list.findIndex(
+        (item) => item.id === state.current.id
+      );
+      if (index !== -1) {
+        const index2 = state.list[index].repComments.findIndex(
+          (el) => el.id === data.id
+        );
+        state.list[index].repComments[index2] = {
+          ...state.list[index].repComments[index2],
+          ...data,
+        };
       }
     },
   },
@@ -92,9 +86,9 @@ export const {
   getCurrentCommentProduct,
   updateCommentProduct,
   deleteCommentProduct,
-  newRepliedCommentProduct,
-  updateRepliedCommentProduct,
-  deleteRepliedCommentProduct,
-  getCommentProduct,
+  newRepCommentProduct,
+  updateRepCommentProduct,
+  deleteRepCommentProduct,
+  getCurrentRepCommentProduct,
 } = commentProductSlice.actions;
 export default commentProductSlice.reducer;

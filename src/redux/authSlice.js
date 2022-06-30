@@ -3,9 +3,14 @@ import {
   LOCALSTORAGE_ACCESS_TOKEN,
   LOCALSTORAGE_USER_NAME,
 } from "../constants";
+
 const initialState = {
   currentUser: null,
-  token: JSON.parse(localStorage.getItem(LOCALSTORAGE_ACCESS_TOKEN)),
+  token: JSON.parse(
+    localStorage.getItem(LOCALSTORAGE_ACCESS_TOKEN) !== "undefined"
+      ? localStorage.getItem(LOCALSTORAGE_ACCESS_TOKEN)
+      : "null"
+  ),
 };
 const authSlice = createSlice({
   name: "auth",

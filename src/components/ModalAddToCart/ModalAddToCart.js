@@ -1,7 +1,7 @@
 import { Box, Container, Grid, Typography } from "@mui/material";
 import ArrowDropUpRoundedIcon from "@mui/icons-material/ArrowDropUpRounded";
 import ArrowDropDownRoundedIcon from "@mui/icons-material/ArrowDropDownRounded";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import classNames from "classnames/bind";
 import { axiosToken } from "../../config/configAxios";
@@ -9,11 +9,9 @@ import { API_CART_ITEM_URL, API_PRODUCT_URL } from "../../constants";
 import { addToCart, showModalAddToCart } from "../../redux/cartSlice";
 import { addToLatest } from "../../redux/productSlice";
 import { showToast } from "../../redux/toastSlice";
-import { formatThousandDigits, getURL } from "../../utils";
+import { formatThousandDigits, getFinalPrice, getURL } from "../../utils";
 import Modal from "../Modal";
 import Stars from "../Stars";
-import "slick-carousel/slick/slick-theme.css";
-import "slick-carousel/slick/slick.css";
 import styles from "./ModalAddToCart.module.css";
 import { useNavigate } from "react-router-dom";
 const cx = classNames.bind(styles);
@@ -55,6 +53,20 @@ const ModalAddToCart = () => {
     })();
   }, [dispatch, navigate, modal, token]);
 
+  const newPrice = useMemo(() => {
+    console.log({ product });
+    if (
+      product?.groupProduct?.discounts &&
+      product?.groupProduct?.discounts[0]?.percent
+    ) {
+      return getFinalPrice(
+        product.initPrice,
+        product.groupProduct.discounts[0]
+      );
+    }
+    return 0;
+  }, [product]);
+
   const handleChangeQuantity = (value) => {
     try {
       let newQuantity = parseInt(value);
@@ -95,12 +107,10 @@ const ModalAddToCart = () => {
           dispatch,
           navigate
         ).post(`${API_CART_ITEM_URL}`, {
-          product_detail_id:
-            product.colors[indexColor].sizes[indexSize].detail_id,
+          detailId: product.colors[indexColor].sizes[indexSize].detailId,
           quantity,
-          cart_id: currentUser.cart.id,
         });
-        dispatch(addToCart(data));
+        dispatch(addToCart(data.item));
         dispatch(
           showToast({
             type: "success",
@@ -111,7 +121,7 @@ const ModalAddToCart = () => {
       } catch (error) {}
     }
   }
-  console.log({ product });
+
   if (!product) return "";
 
   return (
@@ -153,53 +163,19 @@ const ModalAddToCart = () => {
             </Grid>
             <Grid item xs={12} lg={6}>
               <div className={cx("name")}>{product.name}</div>
-              <div className={cx("rate")}>
-                <Stars
-                  rate={
-                    // product.rate &&
-                    // product.rate.total_rate &&
-                    // product.rate.count > 0
-                    //   ? product.rate.total_rate / product.rate.count
-                    //   : 0
-                    0
-                  }
-                  fontSize="18px"
-                />
-                <Typography variant="body2" className={cx("rate-count")}>
-                  &nbsp;(
-                  {product.rate
-                    ? product.rate.count === 0
-                      ? "Chưa có"
-                      : product.rate.count
-                    : "Chưa có"}
-                  &nbsp;đánh giá)
-                </Typography>
-              </div>
-              {/* <Typography variant="body2">
-                {hasDiscount && (
-                  <span style={{ color: "var(--main-color)" }}>
-                    {formatThousandDigits(
-                      product.discounts[product.discounts.length - 1].new_price
-                    )}
-                    đ
-                  </span>
-                )}
-                <span
-                  style={
-                    hasDiscount
-                      ? {
-                          textDecoration: "line-through",
-                          marginLeft: "4px",
-                          color: "gray",
-                        }
-                      : {}
-                  }
+              <div className={cx("price-wrapper")}>
+                <div
+                  className={`${cx("price")} ${
+                    newPrice ? cx("old-price") : ""
+                  }`}
                 >
-                  {formatThousandDigits(product.price)} ₫
-                </span>
-              </Typography> */}
-              <div className={cx("price")}>
-                {formatThousandDigits(product.initPrice)} ₫
+                  {formatThousandDigits(product.initPrice)} ₫
+                </div>
+                {newPrice && (
+                  <div className={cx("new-price")}>
+                    {formatThousandDigits(newPrice)} ₫
+                  </div>
+                )}
               </div>
               <Typography variant="body2" sx={{ mt: 2 }}>
                 Màu sắc: {product?.colors[indexColor].value}
@@ -235,19 +211,22 @@ const ModalAddToCart = () => {
               <Box display="flex" mt={2}>
                 <Box>
                   {product.colors[indexColor].sizes[indexSize].shortValue !==
-                    "0" && (
-                    <Typography variant="body2">
-                      Kích cỡ:{" "}
-                      {product.colors[indexColor].sizes[indexSize].value}
-                    </Typography>
-                  )}
+                    "0" &&
+                    product.colors[indexColor].sizes[indexSize].shortValue !==
+                      "" && (
+                      <Typography variant="body2">
+                        Kích cỡ:{" "}
+                        {product.colors[indexColor].sizes[indexSize].value}
+                      </Typography>
+                    )}
                   <Box
                     style={{
                       display: "flex",
                     }}
                   >
                     {product.colors[indexColor].sizes.map((item, index) => {
-                      if (item.shortValue === "0") return "";
+                      if (item.shortValue === "0" || item.shortValue === "")
+                        return "";
                       return (
                         <div
                           className={`${cx("size-preview-item")} ${
@@ -266,7 +245,14 @@ const ModalAddToCart = () => {
                     })}
                   </Box>
                 </Box>
-                <Box ml={6}>
+                <Box
+                  ml={
+                    product.colors[indexColor].sizes.length === 1 &&
+                    product.colors[indexColor].sizes[0].shortValue === ""
+                      ? 0
+                      : 6
+                  }
+                >
                   <Box>
                     <Typography variant="body2">Số lượng:</Typography>
                   </Box>

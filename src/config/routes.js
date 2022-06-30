@@ -25,6 +25,7 @@ const routes = {
   roleManagement: "/dashboard/role",
   couponManagement: "/dashboard/coupon",
   websiteManagement: "/dashboard/website",
+  orderStatusManagement: "/dashboard/order-status",
   productDetailManagement: "/dashboard/product-detail",
   statistics: "/dashboard/statistics",
   productCategory: "/:slug",

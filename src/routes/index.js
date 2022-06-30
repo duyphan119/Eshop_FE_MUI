@@ -34,6 +34,7 @@ import {
   DiscountManagement,
   GroupProductManagement,
   ProductImageManagement,
+  OrderStatusManagement,
 } from "../pages/Management";
 import { FormAddUpdateProduct } from "../pages/FormAddUpdateData";
 import ProfileEdit from "../pages/ProfileEdit";
@@ -169,6 +170,11 @@ export const adminRoutes = [
   {
     path: config.routes.groupProductManagement,
     component: GroupProductManagement,
+    layout: DashboardLayout,
+  },
+  {
+    path: config.routes.orderStatusManagement,
+    component: OrderStatusManagement,
     layout: DashboardLayout,
   },
   {

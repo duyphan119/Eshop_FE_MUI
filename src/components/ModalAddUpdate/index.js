@@ -11,3 +11,7 @@ export { default as ModalDiscount } from "./ModalDiscount";
 export { default as ModalOrder } from "./ModalOrder";
 export { default as ModalRole } from "./ModalRole";
 export { default as ModalProductImage } from "./ModalProductImage";
+export { default as ModalCommentProduct } from "./ModalCommentProduct";
+export { default as ModalCoupon } from "./ModalCoupon";
+export { default as ModalOrderStatus } from "./ModalOrderStatus";
+export { default as ModalRepCommentProduct } from "./ModalRepCommentProduct";

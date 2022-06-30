@@ -199,7 +199,8 @@ const OrderManagement = () => {
     try {
       if (current) {
         await axiosToken(token?.accessToken, dispatch, navigate).put(
-          `${API_ORDER_URL}/${current.id}`
+          `${API_ORDER_URL}/${current.id}`,
+          data
         );
         dispatch(updateOrder({ ...current, ...data }));
       }

@@ -1,8 +1,8 @@
 import AddShoppingCartIcon from "@mui/icons-material/AddShoppingCart";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import FavoriteBorderOutlinedIcon from "@mui/icons-material/FavoriteBorderOutlined";
-import { Box, Tooltip, Typography } from "@mui/material";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { Box, Tooltip } from "@mui/material";
+import { useMemo, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import classNames from "classnames/bind";
@@ -24,13 +24,35 @@ const Product = ({ product }) => {
 
   const navigate = useNavigate();
 
-  // const [indexColor, setIndexColor] = useState(0);
+  const [avatarPreview, setAvatarPreview] = useState("");
 
   const productRef = useRef();
 
   const checkIsLoved = useMemo(() => {
     return wishlist.findIndex((item) => item.id === product.id) !== -1;
   }, [product, wishlist]);
+
+  const isHot = useMemo(() => {
+    return (
+      product?.groupProduct?.isHot ||
+      product?.groupProduct?.category?.isHot ||
+      product?.groupProduct?.category?.groupCategory?.isHot
+    );
+  }, [product]);
+
+  const details = useMemo(() => {
+    const result = [];
+    if (product.details) {
+      for (let detail of product.details) {
+        if (result.findIndex((el) => el === detail.avatar) === -1) {
+          result.push(detail.avatar);
+        }
+        if (result.length === 3) break;
+      }
+    }
+
+    return result;
+  }, [product]);
 
   async function handleAddToFavoriteList() {
     if (token) {
@@ -89,32 +111,7 @@ const Product = ({ product }) => {
   return (
     <Box className={cx("box")}>
       <div className={cx("tags")}>
-        {/* {product &&
-        product.category.discounts &&
-        product.category.discounts.length > 0 ? (
-          <div className={`${cx("tag") ${cx("tag-sale")`}}>
-            -{product.category.discounts[0].percent}%
-          </div>
-        ) : (
-          product.discounts &&
-          product.discounts.length > 0 && (
-            <div className={`${cx("tag") ${cx("tag-sale")`}}>
-              -
-              {Math.round(
-                ((product.price -
-                  product.discounts[product.discounts.length - 1].new_price) /
-                  product.price) *
-                  100
-              )}
-              %
-            </div>
-          )
-        )}
-        {checkIsNewProduct && (
-          <div className={`${cx("tag") ${cx("tag-new")`}}>Mới</div>
-        )} */}
-
-        {/* <div className={`${cx("tag") ${cx("tag-hot")`}}>Hot</div> */}
+        {isHot && <div className={`${cx("tag")} ${cx("tag-hot")}`}>Hot</div>}
         {product?.groupProduct?.discounts[0]?.percent && (
           <div className={`${cx("tag")} ${cx("tag-sale")}`}>
             -{product.groupProduct.discounts[0].percent}%
@@ -134,8 +131,29 @@ const Product = ({ product }) => {
         }}
       >
         <Link to={`/${product.slug}`} className={cx("img-link")}>
-          <img src={getURL(product?.avatar)} alt={product?.name} />
+          <img
+            src={getURL(avatarPreview || product?.avatar)}
+            alt={product?.name}
+          />
         </Link>
+        {details.length > 0 && (
+          <div
+            className={cx("preview-colors")}
+            onMouseLeave={() => setAvatarPreview("")}
+          >
+            {details.map((item, index) => {
+              return (
+                <div
+                  key={index}
+                  className={cx("preview-color")}
+                  onMouseEnter={() => setAvatarPreview(item)}
+                >
+                  <img src={getURL(item)} alt="" />
+                </div>
+              );
+            })}
+          </div>
+        )}
         <div
           className={cx("btn-add-to-cart")}
           onClick={() => {
@@ -169,18 +187,6 @@ const Product = ({ product }) => {
           </Tooltip>
         )}
       </div>
-      {/* <Tooltip title={product.name}>
-        <Link
-          to={`/${product.slug}`}
-          className="product-name three-dot three-dot-2 hover-color-main-color"
-          style={{
-            height: "45px",
-            marginTop: "1px",
-          }}
-        >
-          {product.name}
-        </Link>
-      </Tooltip> */}
 
       <div className={cx("price-wrapper")}>
         <span

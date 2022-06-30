@@ -4,7 +4,11 @@ import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import config from "../../config";
 import { axiosToken } from "../../config/configAxios";
-import { API_ORDER_URL, API_USER_URL } from "../../constants";
+import {
+  API_ORDER_URL,
+  API_USER_URL,
+  LOCALSTORAGE_DESCRIPTION_CART,
+} from "../../constants";
 import { setCurrentUser } from "../../redux/authSlice";
 // import { SocketContext } from "../../context";
 import { getCart } from "../../redux/cartSlice";
@@ -37,6 +41,9 @@ const Checkout = () => {
     district: "",
     telephone: "",
     fullName: "",
+    description: JSON.parse(
+      localStorage.getItem(LOCALSTORAGE_DESCRIPTION_CART)
+    ),
   });
   const [tempPrice, setTempPrice] = useState(0);
   const [deliveryPrice, setDeliveryPrice] = useState(0);

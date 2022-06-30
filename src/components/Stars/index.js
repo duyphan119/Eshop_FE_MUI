@@ -4,7 +4,7 @@ import StarHalfIcon from "@mui/icons-material/StarHalf";
 import { memo, useState } from "react";
 import { EXAMPLE_STARS_ARRAY } from "../../constants";
 const Stars = ({ fontSize, rate, setRate, isActive }) => {
-  const [state, setState] = useState(rate);
+  const [state, setState] = useState(rate || 0);
   return (
     <ul
       style={{

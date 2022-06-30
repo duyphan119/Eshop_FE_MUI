@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useSelector } from "react-redux";
 import { MyModal } from "../../Modal";
 
-const ModalOrder = (props) => {
+const ModalSize = (props) => {
   const { handleOk, ...others } = props;
 
   const current = useSelector((state) => state.color.current);
@@ -57,7 +57,7 @@ const ModalOrder = (props) => {
   );
 };
 
-ModalOrder.propTypes = {
+ModalSize.propTypes = {
   open: PropTypes.bool,
   handleOk: PropTypes.func,
   handleClose: PropTypes.func,
@@ -69,4 +69,4 @@ ModalOrder.propTypes = {
   height: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
 };
 
-export default ModalOrder;
+export default ModalSize;
